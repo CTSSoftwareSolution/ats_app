@@ -1,0 +1,64 @@
+import 'package:ats_app/Presentation/provider/login_provider.dart';
+import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/input_formatters.dart';
+import 'package:ats_app/utilities/validators.dart';
+import 'package:ats_app/widgets/custom_text.dart';
+import 'package:ats_app/widgets/custom_text_field.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class LoginScreenItem extends StatelessWidget {
+  const LoginScreenItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final loginProvider = context.watch<LoginProvider>();
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 60.0,horizontal: 30.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(text: "EMAIL",fontFamily: "Regular",fontSize: 16,textColor: whiteColor,),
+          SizedBox(height: 5.0,),
+          CustomTextField(
+            contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+            maxLines: 1,
+            fillColor: textFieldColor,
+            errorColor: whiteColor,
+            hint: "Enter your email",
+            controller: loginProvider.emailController,
+            hintStyle: TextStyle(fontSize: 16, fontFamily: "Regular"),
+            readOnly: false,
+            textCapitalization: TextCapitalization.none,
+            validator: (value) => Validators.emailValidation(value!, context),
+            inputFormatters: InputFormatters.specialRestrictions,
+          ),
+          SizedBox(height: 20.0,),
+          CustomText(text: "PASSWORD",fontFamily: "Regular",fontSize: 16,textColor: whiteColor,),
+          SizedBox(height: 5.0,),
+          CustomTextField(
+            contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+            maxLines: 1,
+            fillColor: textFieldColor,
+            errorColor: whiteColor,
+            hint: "Enter your password",
+            controller: loginProvider.passwordController,
+            hintStyle: TextStyle(fontSize: 16, fontFamily: "Regular"),
+            readOnly: false,
+            obscureText: loginProvider.passwordVisible,
+            textCapitalization: TextCapitalization.none,
+            validator: (value) => Validators.passwordValidation(value!, context),
+            inputFormatters: InputFormatters.spaceNotAllowed,
+            suffixIcon: IconButton(
+              color: appColor,
+                onPressed: (){
+                  loginProvider.passwordVisibility();
+                },
+                icon: Icon(
+                    loginProvider.passwordVisible == true ? Icons.visibility_off_rounded : Icons.visibility_rounded)),
+          ),
+        ],
+      ),
+    );
+  }
+}
