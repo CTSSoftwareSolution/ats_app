@@ -24,8 +24,12 @@ const galleryIcon = "assets/gallery-icon.png";
 const cameraBackArrow = "assets/camera-back-arrow.png";
 const cameraButtonIcon = "assets/camera_button.png";
 const vehicleIcon = "assets/vehicle.png";
-const logoutIcon = "assets/log-out.png";
+const logoutIcon = "assets/logout.png";
 const emptyBoxImage = "assets/empty-box.png";
+const userImage = "assets/user.png";
+const editIcon = "assets/edit.png";
+const editProfileIcon = "assets/edit_profile.png";
+const forwardIcon = "assets/forward_icon.png";
 
 
 final List<String> vehicleGridTitles = <String>[

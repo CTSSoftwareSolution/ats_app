@@ -13,7 +13,7 @@ Widget navigationIcon(
   final bool isActive = currentIndex == index;
 
   return Expanded(
-    child: GestureDetector(
+    child: InkWell(
       onTap: () => onTabSelected(index),
       child: AnimatedScale(
         scale: isActive ? 1.0 : 0.9,

@@ -129,4 +129,14 @@ class InputFormatters {
     ),
   ];
 
+  static List<TextInputFormatter> get addressValidation => [
+    FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9\s,.\-/#&()]"),),
+    FilteringTextInputFormatter.deny(RegExp(r"  ")),
+    LengthLimitingTextInputFormatter(200),
+    FilteringTextInputFormatter.deny(
+      RegExp(
+          r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])'),
+    ),
+  ];
+
 }

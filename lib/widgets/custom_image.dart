@@ -12,6 +12,7 @@ class CustomImage extends StatelessWidget {
   final Color? color;
   final double? scale;
   final bool? switchToNetwork;
+  final String? defaultImage;
   const CustomImage(
       {super.key,
       required this.image,
@@ -20,6 +21,7 @@ class CustomImage extends StatelessWidget {
       this.fit,
       this.color,
       this.switchToNetwork = false,
+        this.defaultImage,
       this.scale});
 
   @override
@@ -34,7 +36,7 @@ class CustomImage extends StatelessWidget {
             height: height,
             errorBuilder: (BuildContext context, Object exception,
                 StackTrace? stackTrace) {
-              return Image.asset(noImage);
+              return Image.asset(defaultImage!);
             },
             loadingBuilder: (BuildContext context, Widget child,
                 ImageChunkEvent? loadingProgress) {

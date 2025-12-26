@@ -57,6 +57,9 @@ class LoginProvider extends ChangeNotifier {
           await Preferences.setPreferences();
           Preferences.setUserId(value.data![0].userId.toString());
           Preferences.setToken(value.data![0].token.toString());
+          Preferences.setName(value.data![0].fullName.toString());
+          Preferences.setEmail(value.data![0].email.toString());
+          Preferences.setImage(value.data![0].imageUpload.toString());
           navigationProvider.updateIndex(0);
           context.push(BottomNavigationBarScreen());
         } else {

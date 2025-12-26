@@ -31,32 +31,13 @@ class HomeShimmer extends StatelessWidget {
             children: [
           
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      CustomImage(image: logoImage,height: 28.0,width: 28.0,),
-                      SizedBox(width: 15.0,),
-                      CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",)
-                    ],
-                  ),
-                  GestureDetector(
-                      onTap: (){
-                        customShowDialog(context: context, title: "Log out", subTitle: 'Are you sure, you want to log out?',
-                            cancelClick: () {
-                              context.pop(context);
-                            },
-                            okClick: () {
-                              Preferences.clear();
-                              loginProvider.emailController.clear();
-                              loginProvider.passwordController.clear();
-                              context.push(LoginScreen());
-                            }
-                        );
-                      },
-                      child: CustomImage(image: logoutIcon,height: 30.0,width: 30.0,color: appColor,))
+                  CustomImage(image: logoImage,height: 28.0,width: 28.0,),
+                  SizedBox(width: 15.0,),
+                  CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",)
                 ],
               ),
+           
               const SizedBox(height: 25),
           
           

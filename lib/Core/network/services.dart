@@ -22,3 +22,4 @@ const vehicleTypeUrl = "$baseUrl/getVehicleTypes";
 const vehicleClassUrl = "$baseUrl/getVehicleClass";
 const vehiclePartsUrl = "$baseUrl/getVehicleParts";
 const sliderUrl = "$baseUrl/getSlider";
+const profileDetailsUrl = "$baseUrl/getProfile";

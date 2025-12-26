@@ -112,4 +112,11 @@ class Validators {
       return "Enter valid email id !";
     }
   }
+
+  static String? globalValidation(String value) {
+    if (value.isEmpty) {
+      return 'This field is required!';
+    }
+    return null;
+  }
 }

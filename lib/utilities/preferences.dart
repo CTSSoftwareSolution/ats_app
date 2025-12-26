@@ -7,6 +7,9 @@ class Preferences {
 
   static String userId = 'userId';
   static String token = 'token';
+  static String name = 'name';
+  static String email = 'email';
+  static String image = 'image';
 
 
   static Future<void> setPreferences() async {
@@ -25,10 +28,16 @@ class Preferences {
 
   static Future<bool> setUserId(String value) =>setString(userId, value);
   static Future<bool> setToken(String value) =>setString(token, value);
+  static Future<bool> setName(String value) =>setString(name, value);
+  static Future<bool> setEmail(String value) =>setString(email, value);
+  static Future<bool> setImage(String value) =>setString(image, value);
 
 
   static dynamic getUserId() => getString(userId);
   static dynamic getToken() => getString(token);
+  static dynamic getName() => getString(name);
+  static dynamic getEmail() => getString(email);
+  static dynamic getImage() => getString(image);
 
 
 }
