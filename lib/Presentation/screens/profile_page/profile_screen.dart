@@ -1,8 +1,10 @@
+import 'package:ats_app/Presentation/provider/profile_details_provider.dart';
 import 'package:ats_app/Presentation/screens/profile_page/profile_details_container.dart';
 import 'package:ats_app/utilities/profile_menu_widget.dart';
 import 'package:ats_app/widgets/custom_text.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../../../utilities/color_data.dart';
@@ -23,9 +25,18 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+@override
+  void initState(){
+    super.initState();
+    final provider = Provider.of<ProfileDetailsProvider>(context,listen: false);
+    provider.getAppVersion();
+
+}
   @override
   Widget build(BuildContext context) {
     final loginProvider = Provider.of<LoginProvider>(context);
+    final provider = Provider.of<ProfileDetailsProvider>(context);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -71,75 +82,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               }),
             ]),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: CustomText(text: provider.appVersion,textAlign: TextAlign.center,fontFamily: "Bold",),
+            )
           ],
         ),
-        // Column(
-        //   children: [
-        //
-        //     Padding(
-        //       padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 15.0),
-        //       child: ProfileDetailsContainer(),
-        //     ),
-        //     Padding(
-        //       padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
-        //       child: GestureDetector(
-        //         onTap: (){
-        //           context.push(ProfileViewScreen());
-        //         },
-        //         child: Container(
-        //           decoration: BoxDecoration(
-        //             color: cardBackgroundColor,
-        //             borderRadius: BorderRadius.all(Radius.circular(5.0)),
-        //           ),
-        //           child: Padding(
-        //             padding: const EdgeInsets.symmetric(vertical: 15.0,horizontal: 15.0),
-        //             child: Row(
-        //               children: [
-        //                 CustomImage(image: editProfileIcon,height: 25.0,width: 25.0,color: whiteColor,),
-        //                 SizedBox(width: 10.0,),
-        //                 CustomText(text: "Personal Details",fontSize: 16.0,fontFamily: "Bold",)
-        //               ],
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //     Padding(
-        //       padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
-        //       child: GestureDetector(
-        //         onTap: (){
-        //           customShowDialog(context: context, title: "Log out", subTitle: 'Are you sure, you want to log out?',
-        //               cancelClick: () {
-        //                 context.pop(context);
-        //               },
-        //               okClick: () {
-        //                 Preferences.clear();
-        //                 loginProvider.emailController.clear();
-        //                 loginProvider.passwordController.clear();
-        //                 context.push(LoginScreen());
-        //               }
-        //           );
-        //         },
-        //         child: Container(
-        //           decoration: BoxDecoration(
-        //               color: cardBackgroundColor,
-        //             borderRadius: BorderRadius.all(Radius.circular(5.0)),
-        //           ),
-        //           child: Padding(
-        //             padding: const EdgeInsets.symmetric(vertical: 15.0,horizontal: 15.0),
-        //             child: Row(
-        //               children: [
-        //                 CustomImage(image: logoutIcon,height: 25.0,width: 25.0,color: whiteColor,),
-        //                 SizedBox(width: 10.0,),
-        //                 CustomText(text: "Logout",fontSize: 16.0,fontFamily: "Bold",)
-        //               ],
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //   ],
-        // )
       ),
     );
   }

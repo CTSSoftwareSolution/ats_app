@@ -2,6 +2,7 @@ import 'package:ats_app/Domain/entities/profile_details_entity.dart';
 import 'package:ats_app/Domain/usecases/profile_details_usecases.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../Data/model/request_model/profile_details_req_model.dart';
 import '../../widgets/custom_loader.dart';
@@ -12,6 +13,7 @@ class ProfileDetailsProvider extends ChangeNotifier{
   ProfileDetailsProvider({required this.profileDetailsUseCases});
 
   bool isLoading = true;
+  String appVersion = "Unknown";
 
   ProfileDetailsEntity? profileDetailsEntity;
 
@@ -22,7 +24,7 @@ class ProfileDetailsProvider extends ChangeNotifier{
   final carNameController = TextEditingController();
   final carBrandController = TextEditingController();
   final carModelController = TextEditingController();
-
+   String? imageUrl;
   Future<ProfileDetailsEntity?> profileDetailsApi(BuildContext context)async{
     isLoading = true;
     try {
@@ -53,6 +55,22 @@ class ProfileDetailsProvider extends ChangeNotifier{
       carNameController.text = userData.carName.toString();
       carBrandController.text = userData.carBrand.toString();
       carModelController.text = userData.carModel.toString();
+      imageUrl = userData.profileImage.toString();
     }
+  }
+
+
+
+  Future<void> getAppVersion() async {
+    try {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+      appVersion = 'Version: ${packageInfo.version}';
+
+    } catch (e) {
+
+      appVersion = 'Error';
+    }
+    notifyListeners();
   }
 }

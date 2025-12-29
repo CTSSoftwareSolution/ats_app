@@ -25,6 +25,10 @@ class LoginScreenItem extends StatelessWidget {
             maxLines: 1,
             fillColor: textFieldColor,
             errorColor: whiteColor,
+            focusedErrorBorder:  OutlineInputBorder(
+              borderSide: BorderSide(color: appColor, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
             hint: "Enter your email",
             controller: loginProvider.emailController,
             hintStyle: TextStyle(fontSize: 16, fontFamily: "Regular"),
@@ -41,6 +45,10 @@ class LoginScreenItem extends StatelessWidget {
             maxLines: 1,
             fillColor: textFieldColor,
             errorColor: whiteColor,
+            focusedErrorBorder:  OutlineInputBorder(
+              borderSide: BorderSide(color: appColor, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
             hint: "Enter your password",
             controller: loginProvider.passwordController,
             hintStyle: TextStyle(fontSize: 16, fontFamily: "Regular"),

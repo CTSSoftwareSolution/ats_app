@@ -1,5 +1,6 @@
 import 'package:ats_app/Presentation/provider/inspection_result_provider.dart';
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/input_formatters.dart';
 import 'package:ats_app/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -93,6 +94,7 @@ final resultProvider = Provider.of<InspectionResultProvider>(context,listen:fals
               hintStyle: TextStyle(fontFamily: "Medium", fontSize: 14,color: blackColor),
               readOnly: false,
               textCapitalization: TextCapitalization.words,
+              inputFormatters: InputFormatters.descriptionValidation,
             ),
             SizedBox(height: 30),
             CustomButton(

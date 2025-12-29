@@ -32,6 +32,7 @@ class CustomTextField extends StatelessWidget {
   final TextStyle hintStyle;
   final ValueChanged<String>? onChanged;
   final TextAlign? textAlign;
+  final InputBorder? focusedErrorBorder;
 
   const CustomTextField({
     super.key,
@@ -58,7 +59,8 @@ class CustomTextField extends StatelessWidget {
     this.disabledBorder,
     this.textAlign,
     this.borderWidth,
-    this.errorColor
+    this.errorColor,
+    this.focusedErrorBorder
 
   });
 
@@ -103,6 +105,7 @@ class CustomTextField extends StatelessWidget {
             borderSide: BorderSide(color: appColor, width: borderWidth ?? 1),
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
           ),
+          focusedErrorBorder: focusedErrorBorder,
           border: OutlineInputBorder(
             borderSide: BorderSide(color: appColor, width: borderWidth ?? 1),
             borderRadius: BorderRadius.all(Radius.circular(5.0)),

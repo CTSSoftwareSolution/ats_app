@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
+import '../../../utilities/preferences.dart';
+import '../../../widgets/custom_image.dart';
 import '../../../widgets/custom_text.dart';
 import '../../provider/profile_details_provider.dart';
 import '../profile_page/profile_details_container.dart';
@@ -54,10 +56,20 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
           physics: BouncingScrollPhysics(),
           padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
           children: [
-            ProfileDetailsContainer(),
-            SizedBox(height: 20.0),
+           // ProfileDetailsContainer(),
             buildSection([
-              SizedBox(height: 10.0),
+              SizedBox(height: 20.0),
+              CircleAvatar(
+                backgroundColor: whiteColor,
+                radius: 50,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: ClipRRect(
+                    child: CustomImage(image: profileDetails.imageUrl??"",fit: BoxFit.cover,switchToNetwork: true,defaultImage: userImage,),
+                  ),
+                ),
+              ),
+              SizedBox(height: 15.0),
               buildProfileView(
                 title: "Full Name",
                 value: profileDetails.nameController.text
@@ -77,11 +89,11 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                   title: "Address",
                   value: profileDetails.addressController.text
               ),
-              SizedBox(height: 10.0),
+              SizedBox(height: 20.0),
             ]),
             SizedBox(height: 15.0),
             buildSection([
-              SizedBox(height: 10.0),
+              SizedBox(height: 20.0),
               buildProfileView(
                   title: "Car Name",
                   value: profileDetails.carNameController.text
@@ -96,7 +108,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                   title: "Car Model",
                   value: profileDetails.carModelController.text
               ),
-              SizedBox(height: 10.0),
+              SizedBox(height: 20.0),
             ]),
           ],
 

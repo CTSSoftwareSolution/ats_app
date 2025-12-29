@@ -44,31 +44,32 @@ class _InspectionResultScreenState extends State<InspectionResultScreen> {
         ),
       ),
       body: SafeArea(
-        child: Column(
+        child: Stack(
+          alignment: Alignment.bottomCenter,
           children: [
-            Expanded(
-              child: ListView.builder(
-                  padding: EdgeInsets.only(bottom: 30.0,top: 12),
-                  physics: BouncingScrollPhysics(),
-                  itemCount: 15,
-                  shrinkWrap: false ,
-                  itemBuilder: (context,index){
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 10.0),
-                      child: InspectionResultScreenItem(
-                        onPress: () {
-                          statusDialogBox(context: context
-                          );
-                        },),
-                    );}),
-            ),
+            ListView.builder(
+                padding: EdgeInsets.only(bottom: 80.0,top: 12),
+                physics: BouncingScrollPhysics(),
+                itemCount: 15,
+                shrinkWrap: false ,
+                itemBuilder: (context,index){
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 10.0),
+                    child: InspectionResultScreenItem(
+                      onPress: () {
+                        statusDialogBox(context: context
+                        );
+                      },),
+                  );}),
             Padding(
               padding: const EdgeInsets.only(left: 15.0,right: 15.0, bottom: 10.0 ),
               child: CustomButton(
                 width: double.infinity,
                 height: 50,
                 buttonText: "Submit",
-                onPress: () {},
+                onPress: () {
+                  context.push(BottomNavigationBarScreen());
+                },
                 backgroundColor: appColor,
                 foregroundColor: whiteColor,
                 shape: RoundedRectangleBorder(

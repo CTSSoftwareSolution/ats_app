@@ -4,8 +4,10 @@ import 'package:ats_app/Domain/usecases/login_usecases.dart';
 import 'package:ats_app/Presentation/screens/bottom_navigation/bottom_navigation_bar.dart';
 import 'package:ats_app/utilities/custom_progress_indicator.dart';
 import 'package:ats_app/utilities/preferences.dart';
+import 'package:ats_app/widgets/custom_toast.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/custom_loader.dart';
@@ -63,7 +65,8 @@ class LoginProvider extends ChangeNotifier {
           navigationProvider.updateIndex(0);
           context.push(BottomNavigationBarScreen());
         } else {
-          context.showErrorSnackBar(value.message.toString());
+          context.showErrorToast(msg: value.message.toString(), toastLength: Toast.LENGTH_SHORT);
+         // context.showErrorSnackBar(value.message.toString());
         }
       }
     });

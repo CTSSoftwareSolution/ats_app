@@ -109,7 +109,7 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
                   controller: classProvider.searchController,
                 ),
               ),
-              SizedBox(height: 5.0),
+              SizedBox(height: 12.0),
 
               Expanded(
                 child:  ListView.builder(

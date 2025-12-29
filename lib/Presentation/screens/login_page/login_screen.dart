@@ -19,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loginProvider = Provider.of<LoginProvider>(context);
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -47,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         buttonText: "Login",
                         onPress: () {
                           if(loginFormKey.currentState!.validate()){
-                            context.read<LoginProvider>().login(context);
+                            loginProvider.login(context);
                           }
                         },
                         backgroundColor: whiteColor,

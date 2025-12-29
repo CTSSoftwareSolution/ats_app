@@ -89,8 +89,9 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20.0,),
+                SizedBox(height: 25.0,),
                 CustomStepper(currentStep: partsProvider.currentStep, totalStep: partsProvider.totalPages,),
+                SizedBox(height: 15.0,),
                 Expanded(
                   child:
                   ListView.builder(
