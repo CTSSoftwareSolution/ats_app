@@ -30,6 +30,11 @@ const userImage = "assets/user.png";
 const editIcon = "assets/edit.png";
 const editProfileIcon = "assets/edit_profile.png";
 const forwardIcon = "assets/forward_icon.png";
+const versionControlIcon = "assets/version.png";
+const contactUsIcon = "assets/contact-us.png";
+const termsIcon = "assets/terms-conditions.png";
+const privacyIcon = "assets/privacy-policy.png";
+const notificationIcon = "assets/notification.png";
 
 
 final List<String> vehicleGridTitles = <String>[

@@ -1,12 +1,5 @@
-import 'package:ats_app/utilities/preferences.dart';
-import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-
-import '../Presentation/provider/login_provider.dart';
-import '../Presentation/screens/login_page/login_screen.dart';
-import '../widgets/custom_dialog_box.dart';
 import '../widgets/custom_image.dart';
 import '../widgets/custom_text.dart';
 import 'color_data.dart';
@@ -19,7 +12,7 @@ class HomeShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loginProvider = Provider.of<LoginProvider>(context);
+
     return Shimmer.fromColors(
       baseColor: Colors.grey.shade300,
       highlightColor: Colors.grey.shade100,

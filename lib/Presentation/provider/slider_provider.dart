@@ -8,7 +8,10 @@ import '../../widgets/custom_loader.dart';
 class SliderProvider extends ChangeNotifier {
   SliderUseCases sliderUseCases;
 
-  SliderProvider({required this.sliderUseCases});
+  SliderProvider({required this.sliderUseCases}){
+    sliderApi();
+  }
+
   SliderEntity? sliderEntity;
   bool isLoading = true;
 
@@ -44,9 +47,9 @@ class SliderProvider extends ChangeNotifier {
     isLoading = true;
     try {
       sliderEntity = await sliderUseCases.execute();
-      if (sliderEntity != null && sliderEntity!.data!.isNotEmpty) {
-        startAutoSlide();
-      }
+      // if (sliderEntity != null && sliderEntity!.data!.isNotEmpty) {
+      //   startAutoSlide();
+      // }
     } catch (e) {
       sliderEntity = null;
     } finally {

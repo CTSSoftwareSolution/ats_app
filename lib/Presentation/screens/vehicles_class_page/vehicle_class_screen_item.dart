@@ -21,38 +21,46 @@ class VehicleClassScreenItem extends StatelessWidget {
         decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5.0)),
           color: cardBackgroundColor,
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 10.0),
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 10.0),
+              child: Column(
                 children: [
-                  CustomImage(image: defaultImage,scale: 4,),
-                  SizedBox(width: 15.0,),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(text: classDataModel.vehicleClass.toString(),fontFamily: "Bold",fontSize: 18.0,),
-                        CustomText(text: classDataModel.regNo.toString(),fontFamily: "Medium",fontSize: 14.0,overflow: TextOverflow.visible,),
-                        SizedBox(height: 5.0,),
-                        CustomText(text: classDataModel.make.toString(),fontFamily: "Medium",fontSize: 14.0,overflow: TextOverflow.visible,),
-                      ],
-                    ),
-                  ),
                   Row(
                     children: [
-                      CustomImage(image: petrolIcon,scale: 4.5,),
-                      SizedBox(width: 5.0,),
-                      CustomText(text: classDataModel.fuelType.toString(),fontSize: 14.0,fontFamily: "Bold",)
+                      CustomImage(image: defaultImage,scale: 4,),
+                      SizedBox(width: 15.0,),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText(text: classDataModel.vehicleClass.toString(),fontFamily: "Bold",fontSize: 18.0,),
+                            CustomText(text: classDataModel.regNo.toString(),fontFamily: "Medium",fontSize: 14.0,overflow: TextOverflow.visible,),
+                            SizedBox(height: 3.0,),
+                            CustomText(text: classDataModel.make.toString(),fontFamily: "Medium",fontSize: 14.0,overflow: TextOverflow.visible,),
+                          ],
+                        ),
+                      ),
+
                     ],
-                  )
+                  ),
+
                 ],
               ),
-
-            ],
-          ),
+            ),
+            Positioned(
+              top: 10,
+              right: 10,
+              child: Row(
+                children: [
+                  CustomImage(image: petrolIcon,scale: 4.5,),
+                  SizedBox(width: 5.0,),
+                  CustomText(text: classDataModel.fuelType.toString(),fontSize: 14.0,fontFamily: "Bold",)
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );

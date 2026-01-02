@@ -174,7 +174,10 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
                       }
                       else if(partsProvider.currentPage == partsProvider.totalPages - 1){
                         final images = fileProvider.allImages;
-                        final imagesName = images.map((value)=> value!.name);
+                        final imagesName = images
+                            .where((value) => value != null)
+                            .map((value) => value!.name)
+                            .toList();
                         debugPrint("All Images: $imagesName");
                         context.push(InspectionResultScreen());
                         const snack = SnackBar(content: Text("All images completed"),duration: Duration(seconds: 3),);

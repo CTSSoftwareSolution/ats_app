@@ -42,10 +42,11 @@ class ProfileDetailsContainer extends StatelessWidget {
               children: [
                 CustomText(
                   text: Preferences.getName(),
-                  fontSize: 18,
+                  fontSize: 21,
                   fontFamily: "Bold",
                   textColor: whiteColor,
                 ),
+                SizedBox(height: 3,),
                 CustomText(
                   text: Preferences.getEmail(),
                   fontSize: 14,

@@ -15,7 +15,8 @@ Widget buildSection(List<Widget> tiles) {
 Widget buildTile(
     String leadingImage,
     String title,
-    String trailingImage,
+    String subtitle,
+    Widget child,
     VoidCallback onTap,
     ) {
   return InkWell(
@@ -24,7 +25,7 @@ Widget buildTile(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Padding(
-          padding:  EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+          padding: EdgeInsets.all(15),
           child: Row(
             children: [
             CircleAvatar(
@@ -36,17 +37,38 @@ Widget buildTile(
             ),
           ),
               SizedBox(width: 8),
-              CustomText(
-                text: title,
-                fontSize: 15,
-                fontFamily: "SemiBold",
+              subtitle.isEmpty
+                  ? Center(
+                child: CustomText(
+                  text: title,
+                  fontSize: 16,
+                  fontFamily: "ExtraBold",
+                ),
+              )
+                  : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    text: title,
+                    fontSize: 16,
+                    fontFamily: "ExtraBold",
+                  ),
+                  SizedBox(height: 3,),
+                  CustomText(
+                    text: subtitle,
+                    fontSize: 12,
+                    fontFamily: "Medium",
+                    textColor: Colors.grey,
+                  ),
+                ],
               ),
             ],
           ),
         ),
         Padding(
           padding:  EdgeInsets.only(right: 15.0),
-          child: Image.asset(trailingImage, height: 12),
+          child: child
         ),
       ],
     ),

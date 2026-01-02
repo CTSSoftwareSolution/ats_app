@@ -1,3 +1,4 @@
+import 'package:ats_app/Presentation/provider/MediaPicker/file_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_screen.dart';
 import 'package:ats_app/Presentation/screens/vehicles_class_page/vehicle_class_screen_item.dart';
@@ -42,6 +43,7 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
   Widget build(BuildContext context) {
     final typeProvider = Provider.of<VehicleTypeProvider>(context);
     final classProvider = Provider.of<VehicleClassProvider>(context);
+    final fileProvider = Provider.of<FileProvider>(context);
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0.0,
@@ -66,26 +68,7 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
-          child: classProvider.isLoading
-              ? Center(child: CustomLoader.loader())
-              : classProvider.vehicleClassEntity == null ||
-              classProvider.vehicleClassEntity!.data == null ||
-              classProvider.vehicleClassEntity!.data!.isEmpty
-              ? Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CustomImage(image: emptyBoxImage,scale: 2.5,),
-                CustomText(
-                  text: "No active vehicle found"
-                      .toString(),
-                  fontFamily: "Bold",
-                  fontSize: 17,
-                ),
-              ],
-            ),
-          )
-              :
+          child:
           Column(
             children: [
               SizedBox(height: 10,),
@@ -98,7 +81,8 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
                     classProvider.searchValue = value;
                     if(value.length >= 3){
                       classProvider.vehicleClassApi(context);
-                    }else if(value.isEmpty){
+                    }
+                    else if(value.isEmpty){
                       classProvider.vehicleClassApi(context);
                     }
                   },
@@ -112,7 +96,26 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
               SizedBox(height: 12.0),
 
               Expanded(
-                child:  ListView.builder(
+                child: classProvider.isLoading
+                    ? Center(child: CustomLoader.loader())
+                    :
+                classProvider.vehicleClassEntity == null ||
+                    classProvider.vehicleClassEntity!.data == null ||
+                    classProvider.vehicleClassEntity!.data!.isEmpty
+                    ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomImage(image: emptyBoxImage,scale: 2.5,),
+                      CustomText(
+                        text: "No active vehicle found",
+                        fontFamily: "Bold",
+                        fontSize: 17,
+                      ),
+                    ],
+                  ),
+                )
+                    : ListView.builder(
                   controller: scrollController,
                   physics: BouncingScrollPhysics(),
                   itemCount: classProvider.vehicleClassEntity!.data!.length +
@@ -142,6 +145,7 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
                                       .vehicleClassEntity!
                                       .data![index],
                                 );
+                                fileProvider.clearAll(context);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

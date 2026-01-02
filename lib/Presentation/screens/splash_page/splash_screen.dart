@@ -1,14 +1,6 @@
-
-import 'dart:async';
-
 import 'package:ats_app/Presentation/provider/splash_provider.dart';
-import 'package:ats_app/Presentation/screens/bottom_navigation/bottom_navigation_bar.dart';
-import 'package:ats_app/Presentation/screens/login_page/login_screen.dart';
-import 'package:ats_app/utilities/preferences.dart';
-import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../utilities/custom_progress_indicator.dart';
 import '../../../utilities/logo_screen_item.dart';
 

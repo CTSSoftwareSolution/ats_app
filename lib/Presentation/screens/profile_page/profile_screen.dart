@@ -25,14 +25,18 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
-@override
-  void initState(){
+  @override
+  void initState() {
     super.initState();
-    final provider = Provider.of<ProfileDetailsProvider>(context,listen: false);
+    final provider = Provider.of<ProfileDetailsProvider>(
+      context,
+      listen: false,
+    );
     provider.getAppVersion();
+  }
 
-}
+  bool switchValue = true;
+
   @override
   Widget build(BuildContext context) {
     final loginProvider = Provider.of<LoginProvider>(context);
@@ -53,19 +57,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: ListView(
           physics: BouncingScrollPhysics(),
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+          padding: EdgeInsets.all(12.0),
           children: [
             ProfileDetailsContainer(),
             SizedBox(height: 20),
             buildSection([
-              buildTile(editProfileIcon, "Personal Details", forwardIcon, () {
-                context.push(ProfileViewScreen());
-                //context.push(ProfileViewEditScreen());
-              }),
+              buildTile(
+                editProfileIcon,
+                "Personal Details",
+                "View your personal details",
+                Image.asset(forwardIcon, height: 12),
+                    () {
+                  context.push(ProfileViewScreen());
+                },
+              ),
             ]),
             SizedBox(height: 10),
             buildSection([
-              buildTile(logoutIcon, "Logout", forwardIcon, () {
+              buildTile(
+                notificationIcon,
+                "Notification",
+                "Manage your alerts and notifications",
+                Switch(
+                  padding: EdgeInsets.zero,
+                  activeThumbColor: appColor,
+                  value: switchValue,
+                  onChanged: (value) => setState(() => switchValue = value),
+                ),
+                () {},
+              ),
+            ]),
+            SizedBox(height: 10),
+            buildSection([
+              buildTile(
+                privacyIcon,
+                "Privacy Policy",
+                "Learn how we protect your data",
+                Image.asset(forwardIcon, height: 12),
+                () {},
+              ),
+            ]),
+            SizedBox(height: 10),
+            buildSection([
+              buildTile(
+                termsIcon,
+                "Terms & Conditions",
+                "Our rules, explained simply",
+                Image.asset(forwardIcon, height: 12),
+                () {},
+              ),
+            ]),
+            SizedBox(height: 10),
+            buildSection([
+              buildTile(
+                contactUsIcon,
+                "Contact Us",
+                "We are here, if you need any help",
+                Image.asset(forwardIcon, height: 12),
+                () {},
+              ),
+            ]),
+            SizedBox(height: 10),
+            buildSection([
+              buildTile(logoutIcon, "Logout",
+                  "Sign out safely and easily",
+                  SizedBox.shrink(),
+                      () {
                 customShowDialog(
                   context: context,
                   title: "Log out",
@@ -82,10 +139,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               }),
             ]),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: CustomText(text: provider.appVersion,textAlign: TextAlign.center,fontFamily: "Bold",),
-            )
+            SizedBox(height: 10),
+            buildSection([
+              buildTile(
+                versionControlIcon,
+                provider.appVersion,
+                "",
+                SizedBox.shrink(),
+                () {},
+              ),
+            ]),
           ],
         ),
       ),

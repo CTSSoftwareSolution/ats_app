@@ -1,16 +1,11 @@
-import 'package:ats_app/Presentation/provider/login_provider.dart';
 import 'package:ats_app/Presentation/screens/home_pages/select_vehicle.dart';
-import 'package:ats_app/Presentation/screens/login_page/login_screen.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/image_data.dart';
-import 'package:ats_app/utilities/preferences.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
-import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/home_shimmer.dart';
-import '../../../widgets/custom_dialog_box.dart';
 import '../../provider/slider_provider.dart';
 import '../../provider/vehicle_type_provider.dart';
 import 'image_slider.dart';
@@ -28,8 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    final sliderProvider = Provider.of<SliderProvider>(context, listen: false);
-    sliderProvider.sliderApi();
+      final sliderProvider = Provider.of<SliderProvider>(context, listen: false);
+    sliderProvider.startAutoSlide();
     final typeProvider = Provider.of<VehicleTypeProvider>(context, listen: false);
     typeProvider.vehicleTypeApi();
   }
