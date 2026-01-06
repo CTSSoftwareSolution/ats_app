@@ -1,4 +1,5 @@
 import 'package:ats_app/Presentation/provider/splash_provider.dart';
+import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/custom_progress_indicator.dart';
@@ -16,8 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState(){
     super.initState();
-    final splashProvider = Provider.of<SplashProvider>(context,listen: false);
-    splashProvider.startTimer(context);
+    context.read<SplashProvider>().startTimer(context);
   }
 
   @override
@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 Expanded(child: LogoScreenItem()),
                 CustomProgressIndicator(),
-                SizedBox(height: 100.0,)
+                100.height,
               ],
             )
         ),

@@ -1,5 +1,6 @@
 import 'package:ats_app/Presentation/screens/home_pages/select_vehicle.dart';
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/image_data.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
@@ -23,19 +24,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-      final sliderProvider = Provider.of<SliderProvider>(context, listen: false);
-    sliderProvider.startAutoSlide();
-    final typeProvider = Provider.of<VehicleTypeProvider>(context, listen: false);
-    typeProvider.vehicleTypeApi();
+    context.read<SliderProvider>().startAutoSlide();
+    context.read<VehicleTypeProvider>().vehicleTypeApi();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final sliderProvider = context.watch<SliderProvider>();
-    final vehicleProvider = context.watch<VehicleTypeProvider>();
     final bool isHomeLoading =
-        sliderProvider.isLoading || vehicleProvider.isLoading;
+        context.watch<SliderProvider>().isLoading || context.watch<VehicleTypeProvider>().isLoading;
     return Scaffold(
      body: SafeArea(
          child:  isHomeLoading
@@ -53,34 +49,34 @@ class _HomeScreenState extends State<HomeScreen> {
                  Row(
                    children: [
                      CustomImage(image: logoImage,height: 28.0,width: 28.0,),
-                     SizedBox(width: 15.0,),
+                     15.width,
                      CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",)
                    ],
                  ),
-                 SizedBox(height: 25.0,),
+                 25.height,
                  ImageSlider(),
-                 SizedBox(height: 30.0,),
+                 30.height,
                  SelectVehicle(),
-                 SizedBox(height: 60.0,),
+                 60.height,
                  CustomText(text: "Scan, Detect", fontFamily: "Heavy", fontSize: 46.0,textColor: scanTextColor,),
                  Row(
                    children: [
                      CustomText(text: "Drive Safe", fontFamily: "Heavy", fontSize: 46.0,textColor: scanTextColor,),
-                     SizedBox(width: 10.0,),
+                     10.width,
                      CustomImage( image: heartIcon,scale: 4,),
                    ],
                  ),
-                 SizedBox(height: 20.0,),
+                 20.height,
                  CustomImage(scale: 4, image: dividerImage,),
-                 SizedBox(height: 20.0,),
+                 20.height,
                  Row(
                    children: [
                      CustomImage(image: logoImage,height: 18.0,width: 18.0,),
-                     SizedBox(width: 10.0,),
+                     10.width,
                      CustomText(text: "ATS Corporation", fontSize: 15.0, fontFamily: "Black",)
                    ],
                  ),
-                 SizedBox(height: 40.0,),
+                40.height
                ],
              ),
            ),

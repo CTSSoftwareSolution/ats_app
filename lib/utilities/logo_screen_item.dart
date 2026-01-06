@@ -1,3 +1,4 @@
+import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/custom_image.dart';
@@ -15,7 +16,7 @@ class LogoScreenItem extends StatelessWidget {
 
       children: [
         CustomImage(image: appLogoImage, scale: 4),
-        SizedBox(height: 5.0,),
+        5.height,
         CustomText(
           text: "ATS\nCORPORATION",
           fontSize: 24,

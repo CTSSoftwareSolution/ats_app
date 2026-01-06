@@ -16,10 +16,8 @@ class _ImageSliderState extends State<ImageSlider> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<SliderProvider>(context);
-    final sliderData = provider.sliderEntity?.data;
-
-    if (sliderData == null || sliderData.isEmpty) {
+    final sliderProvider = context.watch<SliderProvider>().sliderEntity?.data;
+    if (sliderProvider == null || sliderProvider.isEmpty) {
       return SizedBox(
         height: 180,
         child: Shimmer.fromColors(
@@ -40,17 +38,17 @@ class _ImageSliderState extends State<ImageSlider> {
           alignment: Alignment.bottomCenter,
           children: [
             PageView.builder(
-              controller: provider.pageController,
-              itemCount: sliderData.length,
+              controller: context.watch<SliderProvider>().pageController,
+              itemCount: sliderProvider.length,
               allowImplicitScrolling: true,
               onPageChanged: (index) {
-                provider.setCurrentIndex(index);
+                context.read<SliderProvider>().setCurrentIndex(index);
                 },
               itemBuilder: (context, index) {
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(5),
                   child:
-                    Image.network(sliderData[index].images.toString(),width: double.infinity,fit: BoxFit.cover,gaplessPlayback: true,
+                    Image.network(sliderProvider[index].images.toString(),width: double.infinity,fit: BoxFit.cover,gaplessPlayback: true,
                       frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
                         if (frame == null && !wasSynchronouslyLoaded) {
                           return SizedBox(
@@ -94,14 +92,14 @@ class _ImageSliderState extends State<ImageSlider> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
-                      sliderData.length,
+                      sliderProvider.length,
                           (index) => AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
                                             margin: const EdgeInsets.symmetric(horizontal: 2.5),
                                             width:  10,
                                             height: 10,
                                             decoration: BoxDecoration(
-                          color: provider.currentIndex == index
+                          color: context.watch<SliderProvider>().currentIndex == index
                               ? appColor
                               : indicatorColor,
                           shape: BoxShape.circle,

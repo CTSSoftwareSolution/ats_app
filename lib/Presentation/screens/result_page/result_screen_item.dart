@@ -1,3 +1,4 @@
+import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,7 +23,7 @@ class ResultScreenItem extends StatelessWidget {
             Row(
               children: [
                 CustomImage(image: defaultImage,scale: 4,),
-                SizedBox(width: 10.0,),
+                10.width,
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,18 +35,18 @@ class ResultScreenItem extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 5.0,),
+           5.height,
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   CustomImage(image: passImage,scale: 4.5,),
-                  SizedBox(width: 5.0,),
+                  5.width,
                   CustomText(text: "Pass",fontFamily: "Bold",fontSize: 16.0,textColor: greenColor,),
-                  SizedBox(width: 20.0,),
+                  20.width,
                   CustomImage(image: failImage,scale: 4.5,),
-                  SizedBox(width: 5.0,),
+                  5.width,
                   CustomText(text: "Fail",fontFamily: "Bold",fontSize: 16.0,textColor: redColor,),
                 ],
               ),

@@ -1,3 +1,4 @@
+import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../widgets/custom_image.dart';
@@ -26,12 +27,12 @@ class HomeShimmer extends StatelessWidget {
               Row(
                 children: [
                   CustomImage(image: logoImage,height: 28.0,width: 28.0,),
-                  SizedBox(width: 15.0,),
+                  15.width,
                   CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",)
                 ],
               ),
            
-              const SizedBox(height: 25),
+              25.height,
           
           
               Container(
@@ -43,7 +44,7 @@ class HomeShimmer extends StatelessWidget {
               ),
             ),
           
-              const SizedBox(height: 30),
+              30.height,
           
           
               GridView.builder(
@@ -65,26 +66,26 @@ class HomeShimmer extends StatelessWidget {
                   );
                 },
               ),
-              SizedBox(height: 60.0,),
+              60.height,
               CustomText(text: "Scan, Detect", fontFamily: "Heavy", fontSize: 46.0,textColor: scanTextColor,),
               Row(
                 children: [
                   CustomText(text: "Drive Safe", fontFamily: "Heavy", fontSize: 46.0,textColor: scanTextColor,),
-                  SizedBox(width: 10.0,),
+                 10.width,
                   CustomImage( image: heartIcon,scale: 4,),
                 ],
               ),
-              SizedBox(height: 20.0,),
+              20.height,
               CustomImage(scale: 4, image: dividerImage,),
-              SizedBox(height: 20.0,),
+            20.height,
               Row(
                 children: [
                   CustomImage(image: logoImage,height: 18.0,width: 18.0,),
-                  SizedBox(width: 10.0,),
+                  10.width,
                   CustomText(text: "ATS Corporation", fontSize: 15.0, fontFamily: "Black",)
                 ],
               ),
-              SizedBox(height: 40.0,),
+             40.height
           
             ],
           ),

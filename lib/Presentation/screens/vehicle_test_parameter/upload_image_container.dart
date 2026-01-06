@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:ats_app/Presentation/provider/MediaPicker/file_provider.dart';
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/image_data.dart';
 import 'package:ats_app/widgets/custom_button.dart';
 import 'package:ats_app/widgets/custom_image.dart';
@@ -14,8 +15,8 @@ class UploadImageContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fileProvider = Provider.of<FileProvider>(context);
-    final image = fileProvider.getImage(index);
+    final image = context.watch<FileProvider>().getImage(index);
+
 
     return Container(
       width: double.infinity,
@@ -40,7 +41,7 @@ class UploadImageContainer extends StatelessWidget {
               : Column(
                   children: [
                     CustomImage(image: uploadIcon, scale: 4),
-                    SizedBox(height: 15.0),
+                   15.height,
                     CustomButton(
                       height: 30.0,
                       width: 120.0,

@@ -1,3 +1,4 @@
+import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 import '../utilities/color_data.dart';
 import '../widgets/custom_text.dart';
@@ -21,7 +22,7 @@ void customBottomSheet({required BuildContext context, required String title, re
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 5.0,),
+                 5.height,
                   Center(
                     child: Container(
                       width: 66,
@@ -32,14 +33,14 @@ void customBottomSheet({required BuildContext context, required String title, re
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.0,),
+                  16.height,
                   CustomText(
                     text: title,
                     fontSize: 18,
                     fontFamily: "Bold",
 
                   ),
-                  SizedBox(height: 15.0,),
+                  15.height,
                   child
                 ],
               )),

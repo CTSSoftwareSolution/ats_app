@@ -1,3 +1,4 @@
+import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,7 @@ class EditVehicleDetailsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profileDetails = Provider.of<ProfileDetailsProvider>(context);
+    final profileDetails = context.watch<ProfileDetailsProvider>();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0,horizontal: 15.0),
       child: Container(
@@ -27,7 +28,7 @@ class EditVehicleDetailsItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(text: "Car Name", fontSize: 15, fontFamily: "Bold"),
-              SizedBox(height: 8.0,),
+              8.height,
               CustomTextField(
                 readOnly: true,
                 controller: profileDetails.carNameController,
@@ -42,9 +43,9 @@ class EditVehicleDetailsItem extends StatelessWidget {
                 ), textCapitalization: TextCapitalization.words,
                 hintStyle: TextStyle(fontFamily: "Medium", fontSize: 12),
               ),
-              SizedBox(height: 18.0,),
+              18.height,
               CustomText(text: "Car Brand", fontSize: 15, fontFamily: "Bold"),
-              SizedBox(height: 8.0,),
+              8.height,
               CustomTextField(
                 readOnly: true,
                 controller: profileDetails.carBrandController,
@@ -59,9 +60,9 @@ class EditVehicleDetailsItem extends StatelessWidget {
                 ), textCapitalization: TextCapitalization.none,
                 hintStyle: TextStyle(fontFamily: "Medium", fontSize: 12),
               ),
-              SizedBox(height: 18.0,),
+              18.height,
               CustomText(text: "Car Model", fontSize: 15, fontFamily: "Bold"),
-              SizedBox(height: 8.0,),
+              8.height,
               CustomTextField(
                 readOnly: true,
                 controller: profileDetails.carModelController,

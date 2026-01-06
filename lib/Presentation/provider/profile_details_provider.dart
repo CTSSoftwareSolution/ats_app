@@ -12,6 +12,7 @@ class ProfileDetailsProvider extends ChangeNotifier{
 
   ProfileDetailsProvider({required this.profileDetailsUseCases});
 
+  bool switchValue = true;
   bool isLoading = true;
   String appVersion = "Unknown";
 

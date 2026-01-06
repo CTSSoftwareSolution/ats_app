@@ -1,3 +1,4 @@
+import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utilities/color_data.dart';
@@ -26,7 +27,7 @@ class InspectionResultScreenItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomText(text: "Reverse Light",fontFamily: "Bold", fontSize: 20.0,),
-                SizedBox(height: 5.0,),
+               5.height,
                 Row(
                   children: [
                     CustomText(text: "Status: ",fontFamily: "Bold", fontSize: 16.0,),

@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:ats_app/Presentation/provider/bottom_navigation_provider.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/custom_dialog_box.dart';
@@ -20,7 +21,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final navigationProvider = Provider.of<BottomNavigationProvider>(context);
+    final navigationProvider = context.watch<BottomNavigationProvider>();
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -32,14 +33,14 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
             title: "Exit",
             subTitle: "Do you really want to exit this app?",
             cancelClick: () {
-              Navigator.of(context).pop();
-            },
+              context.pop();
+              },
             okClick: () {
               exit(0);
             },
           );
         } else {
-          navigationProvider.updateIndex(0);
+          context.read<BottomNavigationProvider>().updateIndex(0);
         }
       },
       child: Scaffold(

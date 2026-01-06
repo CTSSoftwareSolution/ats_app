@@ -1,5 +1,6 @@
 import 'package:ats_app/Presentation/provider/inspection_result_provider.dart';
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/input_formatters.dart';
 import 'package:ats_app/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,8 @@ import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text.dart';
 
 statusDialogBox({required BuildContext context}) {
-final resultProvider = Provider.of<InspectionResultProvider>(context,listen:false);
+
+
   showDialog(
     context: context,
     builder: (BuildContext context) => Dialog(
@@ -28,7 +30,7 @@ final resultProvider = Provider.of<InspectionResultProvider>(context,listen:fals
               fontFamily: "Medium",
               textColor: blackColor,
             ),
-            SizedBox(height: 20),
+            20.height,
             Row(
               children: [
                 CustomText(
@@ -45,7 +47,7 @@ final resultProvider = Provider.of<InspectionResultProvider>(context,listen:fals
                 ),
               ],
             ),
-            SizedBox(height: 10),
+           10.height,
             Row(
               children: [
                 CustomText(
@@ -62,7 +64,7 @@ final resultProvider = Provider.of<InspectionResultProvider>(context,listen:fals
                 ),
               ],
             ),
-            SizedBox(height: 30),
+            30.height,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -90,13 +92,13 @@ final resultProvider = Provider.of<InspectionResultProvider>(context,listen:fals
               fillColor: whiteColor,
               minLines: 3,
               hint: "Write a reason",
-              controller: resultProvider.controller,
+              controller: context.watch<InspectionResultProvider>().controller,
               hintStyle: TextStyle(fontFamily: "Medium", fontSize: 14,color: blackColor),
               readOnly: false,
               textCapitalization: TextCapitalization.words,
               inputFormatters: InputFormatters.descriptionValidation,
             ),
-            SizedBox(height: 30),
+            30.height,
             CustomButton(
               width: double.infinity,
               height: 40,

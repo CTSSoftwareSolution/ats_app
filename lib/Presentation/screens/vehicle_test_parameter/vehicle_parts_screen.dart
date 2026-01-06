@@ -2,6 +2,7 @@
 
 import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
+import 'package:ats_app/utilities/extension.dart';
 
 import 'package:ats_app/widgets/custom_button.dart';
 import 'package:ats_app/widgets/custom_loader.dart';
@@ -31,27 +32,25 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
   @override
   void initState() {
     super.initState();
-    final testProvider = Provider.of<VehiclePartsProvider>(context,listen: false);
-    testProvider.vehiclePartsApi(context);
+    context.read<VehiclePartsProvider>().vehiclePartsApi(context);
   }
 
 
 
   @override
   Widget build(BuildContext context) {
-    final fileProvider = Provider.of<FileProvider>(context);
-    final partsProvider = Provider.of<VehiclePartsProvider>(context);
+    final partsProvider = context.watch<VehiclePartsProvider>();
     if (!partsProvider.isLoading &&
         partsProvider.vehiclePartsEntity != null &&
         partsProvider.vehiclePartsEntity!.data != null) {
-      partsProvider.currentPageData = partsProvider.getCurrentPageData();
+      partsProvider.currentPageData = context.read<VehiclePartsProvider>().getCurrentPageData();
     }
     return PopScope(
       canPop: partsProvider.currentStep == 0,
         onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         if (partsProvider.currentStep > 0) {
-          partsProvider.previousPage();
+          context.read<VehiclePartsProvider>().previousPage();
           }
         },
       child: Scaffold(
@@ -67,7 +66,7 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
           leading: IconButton(
             onPressed: (){
               if(partsProvider.currentStep > 0){
-                partsProvider.previousPage();
+                context.read<VehiclePartsProvider>().previousPage();
               }else{
                 Navigator.pop(context);
               }
@@ -89,9 +88,9 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 25.0,),
+                25.height,
                 CustomStepper(currentStep: partsProvider.currentStep, totalStep: partsProvider.totalPages,),
-                SizedBox(height: 15.0,),
+                15.height,
                 Expanded(
                   child:
                   ListView.builder(
@@ -114,11 +113,11 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
                               fontFamily: "Medium",
                               fontSize: 15.0,
                             ),
-                            SizedBox(height: 10.0),
+                            10.height,
                             UploadImageContainer(
                               index: allIndex,
                               onTap: () {
-                                fileProvider.setCurrentIndex(allIndex);
+                                context.read<FileProvider>().setCurrentIndex(allIndex);
                                 customBottomSheet(
                                   context: context,
                                   title: "Select Media",
@@ -128,7 +127,7 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
                                 );
                               },
                             ),
-                            fileProvider.getImage(allIndex) != null
+                            context.read<FileProvider>().getImage(allIndex) != null
                                 ? Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 5.0),
                                   child: CustomButton(
@@ -136,7 +135,7 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
                                       width: double.infinity,
                                       buttonText: "Re-upload",
                                       onPress: () {
-                                        fileProvider.setCurrentIndex(allIndex);
+                                        context.read<FileProvider>().setCurrentIndex(allIndex);
                                         customBottomSheet(
                                           context: context,
                                           title: "Select Media",
@@ -168,12 +167,12 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
                     height: 50.0,
                     buttonText:partsProvider.currentPage == partsProvider.totalPages - 1 ? "Submit" : "Next",
                     onPress: () {
-                      partsProvider.nextStepper();
+                      context.read<VehiclePartsProvider>().nextStepper();
                       if (partsProvider.currentPage < partsProvider.totalPages - 1) {
-                        partsProvider.nextPage();
+                        context.read<VehiclePartsProvider>().nextPage();
                       }
                       else if(partsProvider.currentPage == partsProvider.totalPages - 1){
-                        final images = fileProvider.allImages;
+                        final images = context.read<FileProvider>().allImages;
                         final imagesName = images
                             .where((value) => value != null)
                             .map((value) => value!.name)

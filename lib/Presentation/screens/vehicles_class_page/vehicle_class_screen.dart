@@ -4,6 +4,7 @@ import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_part
 import 'package:ats_app/Presentation/screens/vehicles_class_page/vehicle_class_screen_item.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
@@ -25,15 +26,12 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
   @override
   void initState() {
     super.initState();
-    final classProvider =
-    Provider.of<VehicleClassProvider>(context, listen: false);
-
-    classProvider.vehicleClassApi(context);
+    context.read<VehicleClassProvider>().vehicleClassApi(context);
 
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
-        classProvider.vehicleClassApi(context, loadMore: true);
+        context.read<VehicleClassProvider>().vehicleClassApi(context, loadMore: true);
       }
     });
   }
@@ -41,15 +39,14 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final typeProvider = Provider.of<VehicleTypeProvider>(context);
-    final classProvider = Provider.of<VehicleClassProvider>(context);
-    final fileProvider = Provider.of<FileProvider>(context);
+    final vehicleType = context.watch<VehicleTypeProvider>().selectedType!.vehicleType;
+    final classProvider = context.watch<VehicleClassProvider>().vehicleClassEntity?.data;
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0.0,
         backgroundColor: appColor,
         title: CustomText(
-          text: typeProvider.selectedType!.vehicleType.toString(),
+          text: vehicleType.toString(),
           fontSize: 20,
           fontFamily: "SemiBold",
           textColor: whiteColor,
@@ -78,30 +75,30 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
                 ),
                 child: CustomSearchTextField(
                   onChanged: (String value) {
-                    classProvider.searchValue = value;
+                    context.read<VehicleClassProvider>().searchValue = value;
                     if(value.length >= 3){
-                      classProvider.vehicleClassApi(context);
+                      context.read<VehicleClassProvider>().vehicleClassApi(context);
                     }
                     else if(value.isEmpty){
-                      classProvider.vehicleClassApi(context);
+                      context.read<VehicleClassProvider>().vehicleClassApi(context);
                     }
                   },
                   onCloseClick: () {
-                    classProvider.searchController.clear();
-                    classProvider.vehicleClassApi(context);
+                    context.read<VehicleClassProvider>().searchController.clear();
+                    context.read<VehicleClassProvider>().vehicleClassApi(context);
                   },
-                  controller: classProvider.searchController,
+                  controller: context.watch<VehicleClassProvider>().searchController,
                 ),
               ),
               SizedBox(height: 12.0),
 
               Expanded(
-                child: classProvider.isLoading
+                child: context.watch<VehicleClassProvider>().isLoading
                     ? Center(child: CustomLoader.loader())
                     :
-                classProvider.vehicleClassEntity == null ||
-                    classProvider.vehicleClassEntity!.data == null ||
-                    classProvider.vehicleClassEntity!.data!.isEmpty
+                context.watch<VehicleClassProvider>().vehicleClassEntity == null ||
+                    classProvider == null ||
+                    classProvider.isEmpty
                     ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -118,45 +115,36 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
                     : ListView.builder(
                   controller: scrollController,
                   physics: BouncingScrollPhysics(),
-                  itemCount: classProvider.vehicleClassEntity!.data!.length +
-                      (classProvider.isLoadMore ? 1 : 0),
-                       itemBuilder: (context, index) {
-                          if (index ==
-                              classProvider.vehicleClassEntity!.data!.length) {
-                            return Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Center(
-                                child: CustomLoader.loader(),
-                              ),
-                            );
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 5.0,
-                              horizontal: 8.0,
-                            ),
-                            child: VehicleClassScreenItem(
-                              classDataModel: classProvider
-                                  .vehicleClassEntity!
-                                  .data![index],
-                              onTap: () {
-                                classProvider.setSelectedClass(
-                                  classProvider
-                                      .vehicleClassEntity!
-                                      .data![index],
-                                );
-                                fileProvider.clearAll(context);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => VehiclePartsScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
+                  itemCount: classProvider.length +
+                      (context.watch<VehicleClassProvider>().isLoadMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index ==
+                        classProvider.length) {
+                      return Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Center(
+                          child: CustomLoader.loader(),
+                        ),
+                      );
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 5.0,
+                        horizontal: 8.0,
                       ),
+                      child: VehicleClassScreenItem(
+                        classDataModel: classProvider[index],
+                        onTap: () {
+                          context.read<VehicleClassProvider>().setSelectedClass(
+                            classProvider[index],
+                          );
+                          context.read<FileProvider>().clearAll(context);
+                          context.push(VehiclePartsScreen());
+                          },
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           ),

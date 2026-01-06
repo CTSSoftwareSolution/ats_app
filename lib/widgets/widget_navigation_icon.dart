@@ -1,4 +1,5 @@
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 
 import 'custom_text.dart';
@@ -45,7 +46,7 @@ Widget navigationIcon(
                 color: isActive ? whiteColor : bottomIconColor,
               ),
             ),
-            SizedBox(height: 3,),
+            3.height,
             CustomText(
               text: title,
               fontSize: 12,

@@ -1,3 +1,4 @@
+import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/profile_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,13 +24,12 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
   @override
   void initState(){
     super.initState();
-    final profileDetails = Provider.of<ProfileDetailsProvider>(context,listen:false);
-    profileDetails.profileDetailsApi(context);
+    context.read<ProfileDetailsProvider>().profileDetailsApi(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final profileDetails = Provider.of<ProfileDetailsProvider>(context);
+    final profileDetails = context.watch<ProfileDetailsProvider>();
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0.0,
@@ -58,7 +58,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
           children: [
            // ProfileDetailsContainer(),
             buildSection([
-              SizedBox(height: 20.0),
+             20.height,
               CircleAvatar(
                 backgroundColor: whiteColor,
                 radius: 50,
@@ -69,46 +69,46 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 15.0),
+             15.height,
               buildProfileView(
                 title: "Full Name",
                 value: profileDetails.nameController.text
               ),
-              SizedBox(height: 10.0),
+             10.height,
               buildProfileView(
                   title: "Email Id",
                   value: profileDetails.emailController.text
               ),
-              SizedBox(height: 10.0),
+              10.height,
               buildProfileView(
                   title: "Mobile Number",
                   value: profileDetails.mobileController.text
               ),
-              SizedBox(height: 10.0),
+              10.height,
               buildProfileView(
                   title: "Address",
                   value: profileDetails.addressController.text
               ),
-              SizedBox(height: 20.0),
+              20.height,
             ]),
-            SizedBox(height: 15.0),
+            15.height,
             buildSection([
-              SizedBox(height: 20.0),
+              20.height,
               buildProfileView(
                   title: "Car Name",
                   value: profileDetails.carNameController.text
               ),
-              SizedBox(height: 10.0),
+              10.height,
               buildProfileView(
                   title: "Car Brand",
                   value: profileDetails.carBrandController.text
               ),
-              SizedBox(height: 10.0),
+              10.height,
               buildProfileView(
                   title: "Car Model",
                   value: profileDetails.carModelController.text
               ),
-              SizedBox(height: 20.0),
+              20.height,
             ]),
           ],
 

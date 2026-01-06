@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_text.dart';
+import '../../provider/bottom_navigation_provider.dart';
 import 'inspection_result_screen_item.dart';
 
 class InspectionResultScreen extends StatefulWidget {
@@ -22,64 +23,66 @@ class InspectionResultScreen extends StatefulWidget {
 class _InspectionResultScreenState extends State<InspectionResultScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0.0,
-        backgroundColor: appColor,
-        title: CustomText(
-          text: "Result",
-          fontSize: 20,
-          fontFamily: "SemiBold",
-          textColor: whiteColor,
-        ),
-        leading: IconButton(
-          onPressed: () {
-            context.push(BottomNavigationBarScreen());
-          },
-          icon: ImageIcon(
-            AssetImage(backArrowIcon),
-            color: whiteColor,
-            size: 20,
+    return PopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          titleSpacing: 0.0,
+          backgroundColor: appColor,
+          title: CustomText(
+            text: "Result",
+            fontSize: 20,
+            fontFamily: "SemiBold",
+            textColor: whiteColor,
+          ),
+          leading: IconButton(
+            onPressed: () {
+              context.pop();
+            },
+            icon: ImageIcon(
+              AssetImage(backArrowIcon),
+              color: whiteColor,
+              size: 20,
+            ),
           ),
         ),
-      ),
-      body: SafeArea(
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            ListView.builder(
-                padding: EdgeInsets.only(bottom: 80.0,top: 12),
-                physics: BouncingScrollPhysics(),
-                itemCount: 15,
-                shrinkWrap: false ,
-                itemBuilder: (context,index){
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 10.0),
-                    child: InspectionResultScreenItem(
-                      onPress: () {
-                        statusDialogBox(context: context
-                        );
-                      },),
-                  );}),
-            Padding(
-              padding: const EdgeInsets.only(left: 15.0,right: 15.0, bottom: 10.0 ),
-              child: CustomButton(
-                width: double.infinity,
-                height: 50,
-                buttonText: "Submit",
-                onPress: () {
-                  context.push(BottomNavigationBarScreen());
-                },
-                backgroundColor: appColor,
-                foregroundColor: whiteColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(30.0))
+        body: SafeArea(
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              ListView.builder(
+                  padding: EdgeInsets.only(bottom: 80.0,top: 12),
+                  physics: BouncingScrollPhysics(),
+                  itemCount: 15,
+                  shrinkWrap: false ,
+                  itemBuilder: (context,index){
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 10.0),
+                      child: InspectionResultScreenItem(
+                        onPress: () {
+                          statusDialogBox(context: context
+                          );
+                        },),
+                    );}),
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0,right: 15.0, bottom: 10.0 ),
+                child: CustomButton(
+                  width: double.infinity,
+                  height: 50,
+                  buttonText: "Submit",
+                  onPress: () {
+                    context.push(BottomNavigationBarScreen());
+                  },
+                  backgroundColor: appColor,
+                  foregroundColor: whiteColor,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30.0))
+                  ),
+                  fontSize: 20,
+                  fontFamily: "Bold",
                 ),
-                fontSize: 20,
-                fontFamily: "Bold",
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

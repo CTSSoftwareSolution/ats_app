@@ -21,7 +21,7 @@ class TypeScreen extends StatefulWidget {
 class _TypeScreenState extends State<TypeScreen> {
   @override
   Widget build(BuildContext context) {
-    final typeProvider = context.watch<VehicleTypeProvider>();
+    final typeProvider = context.watch<VehicleTypeProvider>().vehicleTypeEntity?.data;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -30,9 +30,9 @@ class _TypeScreenState extends State<TypeScreen> {
       ),
       body: SafeArea(child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: typeProvider.isLoading
+          child: context.watch<VehicleTypeProvider>().isLoading
               ? Center(child: CustomLoader.loader(),)
-              : typeProvider.vehicleTypeEntity!.data!.isEmpty
+              : typeProvider!.isEmpty
               ? Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -48,7 +48,7 @@ class _TypeScreenState extends State<TypeScreen> {
           )
               :
           GridView.builder(
-            itemCount: typeProvider.vehicleTypeEntity!.data!.length <= 4 ? typeProvider.vehicleTypeEntity?.data?.length : 4,
+            itemCount: typeProvider.length <= 4 ? typeProvider.length : 4,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -59,9 +59,9 @@ class _TypeScreenState extends State<TypeScreen> {
             ),
             itemBuilder: (BuildContext context, int index) {
               return buildVehicleCard(
-                  title: typeProvider.vehicleTypeEntity!.data![index].vehicleType.toString(),
+                  title: typeProvider[index].vehicleType.toString(),
                   imagePath: vehicleGridImages[index], onTap: () {
-                    typeProvider.setSelectedType(typeProvider.vehicleTypeEntity!.data![index]);
+                context.read<VehicleTypeProvider>().setSelectedType(typeProvider[index]);
                     Navigator.push(context, MaterialPageRoute(builder: (context)=> VehicleClassScreen()));
                   }
               );

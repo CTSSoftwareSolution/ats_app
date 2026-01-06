@@ -1,4 +1,5 @@
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:extensions_pro/extensions_pro.dart';
@@ -17,7 +18,7 @@ class ProfileDetailsContainer extends StatelessWidget {
     return  Container(
       decoration: BoxDecoration(
         color: appColor,
-        borderRadius: BorderRadius.all(Radius.circular(15.0)),
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
@@ -36,7 +37,7 @@ class ProfileDetailsContainer extends StatelessWidget {
                 )
               ),
             ),
-            SizedBox(width: 10.0,),
+            10.width,
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -46,7 +47,7 @@ class ProfileDetailsContainer extends StatelessWidget {
                   fontFamily: "Bold",
                   textColor: whiteColor,
                 ),
-                SizedBox(height: 3,),
+                3.height,
                 CustomText(
                   text: Preferences.getEmail(),
                   fontSize: 14,

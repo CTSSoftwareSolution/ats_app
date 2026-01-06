@@ -1,4 +1,5 @@
 import 'package:ats_app/Presentation/provider/profile_details_provider.dart';
+import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ class EditPersonalDetailsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   final profileDetails = Provider.of<ProfileDetailsProvider>(context);
+   final profileDetails = context.watch<ProfileDetailsProvider>();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0,horizontal: 15.0),
       child: Container(
@@ -43,7 +44,7 @@ class EditPersonalDetailsItem extends StatelessWidget {
                 ),
               ),
               CustomText(text: "Full Name", fontSize: 15, fontFamily: "Bold"),
-              SizedBox(height: 8.0,),
+              8.height,
               CustomTextField(
                 readOnly: true,
                 controller: profileDetails.nameController,
@@ -58,9 +59,9 @@ class EditPersonalDetailsItem extends StatelessWidget {
                 ), textCapitalization: TextCapitalization.words,
                 hintStyle: TextStyle(fontFamily: "Medium", fontSize: 12),
               ),
-              SizedBox(height: 18.0,),
+              18.height,
               CustomText(text: "Email Id", fontSize: 15, fontFamily: "Bold"),
-              SizedBox(height: 8.0,),
+              8.height,
               CustomTextField(
                 readOnly: true,
                 controller: profileDetails.emailController,
@@ -75,9 +76,9 @@ class EditPersonalDetailsItem extends StatelessWidget {
                 ), textCapitalization: TextCapitalization.none,
                 hintStyle: TextStyle(fontFamily: "Medium", fontSize: 12),
               ),
-              SizedBox(height: 18.0,),
+              18.height,
               CustomText(text: "Mobile Number", fontSize: 15, fontFamily: "Bold"),
-              SizedBox(height: 8.0,),
+              8.height,
               CustomTextField(
                 readOnly: true,
                 controller: profileDetails.mobileController,
@@ -92,9 +93,9 @@ class EditPersonalDetailsItem extends StatelessWidget {
                 ), textCapitalization: TextCapitalization.none,
                 hintStyle: TextStyle(fontFamily: "Medium", fontSize: 12),
               ),
-              SizedBox(height: 18.0,),
+              18.height,
               CustomText(text: "Address", fontSize: 15, fontFamily: "Bold"),
-              SizedBox(height: 8.0,),
+              8.height,
               CustomTextField(
                 minLines: 4,
                 readOnly: true,

@@ -1,6 +1,8 @@
 import 'package:ats_app/Presentation/provider/vehicle_type_provider.dart';
+import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/image_data.dart';
 import 'package:ats_app/widgets/custom_text.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/select_vehicle_shimmer.dart';
@@ -17,10 +19,10 @@ class SelectVehicle extends StatefulWidget {
 class _SelectVehicleState extends State<SelectVehicle> {
   @override
   Widget build(BuildContext context) {
-    final typeProvider = context.watch<VehicleTypeProvider>();
-    return typeProvider.isLoading
+    final typeProvider = context.watch<VehicleTypeProvider>().vehicleTypeEntity?.data;
+    return context.watch<VehicleTypeProvider>().isLoading
         ? SelectVehicleShimmer()
-        : typeProvider.vehicleTypeEntity!.data!.isEmpty
+        : typeProvider!.isEmpty
         ? SelectVehicleShimmer()
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,10 +32,10 @@ class _SelectVehicleState extends State<SelectVehicle> {
                 fontSize: 20.0,
                 fontFamily: "ExtraBold",
               ),
-              SizedBox(height: 10.0),
+              10.height,
               GridView.builder(
-                itemCount: typeProvider.vehicleTypeEntity!.data!.length <= 4
-                    ? typeProvider.vehicleTypeEntity?.data?.length
+                itemCount: typeProvider.length <= 4
+                    ? typeProvider.length
                     : 4,
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
@@ -45,23 +47,14 @@ class _SelectVehicleState extends State<SelectVehicle> {
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   return buildVehicleCard(
-                    title: typeProvider
-                        .vehicleTypeEntity!
-                        .data![index]
+                    title: typeProvider[index]
                         .vehicleType
                         .toString(),
                     imagePath: vehicleGridImages[index],
                     onTap: () {
-                      typeProvider.setSelectedType(
-                        typeProvider.vehicleTypeEntity!.data![index],
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => VehicleClassScreen(),
-                        ),
-                      );
-                    },
+                      context.read<VehicleTypeProvider>().setSelectedType(typeProvider[index]);
+                      context.push(VehicleClassScreen());
+                      },
                   );
                 },
               ),

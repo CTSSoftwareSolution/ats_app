@@ -1,4 +1,5 @@
 import 'package:ats_app/Data/model/response_model/vehicle_class_res_model.dart';
+import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,14 +31,14 @@ class VehicleClassScreenItem extends StatelessWidget {
                   Row(
                     children: [
                       CustomImage(image: defaultImage,scale: 4,),
-                      SizedBox(width: 15.0,),
+                      15.width,
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CustomText(text: classDataModel.vehicleClass.toString(),fontFamily: "Bold",fontSize: 18.0,),
                             CustomText(text: classDataModel.regNo.toString(),fontFamily: "Medium",fontSize: 14.0,overflow: TextOverflow.visible,),
-                            SizedBox(height: 3.0,),
+                            3.height,
                             CustomText(text: classDataModel.make.toString(),fontFamily: "Medium",fontSize: 14.0,overflow: TextOverflow.visible,),
                           ],
                         ),
@@ -55,7 +56,7 @@ class VehicleClassScreenItem extends StatelessWidget {
               child: Row(
                 children: [
                   CustomImage(image: petrolIcon,scale: 4.5,),
-                  SizedBox(width: 5.0,),
+                 5.width,
                   CustomText(text: classDataModel.fuelType.toString(),fontSize: 14.0,fontFamily: "Bold",)
                 ],
               ),

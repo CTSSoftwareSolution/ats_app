@@ -1,5 +1,7 @@
 import 'package:ats_app/Presentation/screens/profile_view_edit_page/edit_personal_details_item.dart';
 import 'package:ats_app/Presentation/screens/profile_view_edit_page/edit_vehicle_details_item.dart';
+import 'package:ats_app/utilities/extension.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
@@ -19,8 +21,7 @@ class _ProfileViewEditScreenState extends State<ProfileViewEditScreen> {
   @override
   void initState(){
     super.initState();
-    final profileDetails = Provider.of<ProfileDetailsProvider>(context,listen:false);
-    profileDetails.profileDetailsApi(context);
+    context.read<ProfileDetailsProvider>().profileDetailsApi(context);
   }
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class _ProfileViewEditScreenState extends State<ProfileViewEditScreen> {
         ),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+           context.pop();
           },
           icon: ImageIcon(
             AssetImage(backArrowIcon),
@@ -50,7 +51,7 @@ class _ProfileViewEditScreenState extends State<ProfileViewEditScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20.0,),
+              20.height,
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: CustomText(text: "Personal Details", fontSize: 18, fontFamily: "Heavy",),

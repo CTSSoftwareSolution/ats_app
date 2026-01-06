@@ -1,6 +1,7 @@
 
 
 import '../Data/model/list_model.dart';
+import '../Data/model/profile_model.dart';
 
 const logoImage = "assets/logo.png";
 const appLogoImage = "assets/app-logo.png";
@@ -56,167 +57,14 @@ List<ListModel> mediaSource = [
   const ListModel(1, 'Gallery',galleryIcon),
 ];
 
-List<Map<String, Object>> imageModel = [
-  {
-    "id": 1,
-    "title": "Upload Headlight Photo",
-    "subtitle": "Capture or upload the front headlight",
-    "isRequired": true,
-  },
-  {
-    "id": 2,
-    "title": "Upload Windscreen Photo",
-    "subtitle": "Capture or upload the front windscreen",
-    "isRequired": true,
-  },
-  {
-    "id": 3,
-    "title": "Upload Wing Mirrors Photo",
-    "subtitle": "Capture or upload the wing mirrors",
-    "isRequired": true,
-  },
-  {
-    "id": 4,
-    "title": "Upload Headlight Photo",
-    "subtitle": "Capture or upload the front headlight",
-    "isRequired": true,
-  },
-  {
-    "id": 5,
-    "title": "Upload Windscreen Photo",
-    "subtitle": "Capture or upload the front windscreen",
-    "isRequired": true,
-  },
-  {
-    "id": 6,
-    "title": "Upload Wing Mirrors Photo",
-    "subtitle": "Capture or upload the wing mirrors",
-    "isRequired": true,
-  },
-  {
-    "id": 7,
-    "title": "Upload Headlight Photo",
-    "subtitle": "Capture or upload the front headlight",
-    "isRequired": true,
-  },
-  {
-    "id": 8,
-    "title": "Upload Windscreen Photo",
-    "subtitle": "Capture or upload the front windscreen",
-    "isRequired": true,
-  },
-  {
-    "id": 9,
-    "title": "Upload Wing Mirrors Photo",
-    "subtitle": "Capture or upload the wing mirrors",
-    "isRequired": true,
-  },
-  {
-    "id": 10,
-    "title": "Upload Headlight Photo",
-    "subtitle": "Capture or upload the front headlight",
-    "isRequired": true,
-  },
-  {
-    "id": 11,
-    "title": "Upload Windscreen Photo",
-    "subtitle": "Capture or upload the front windscreen",
-    "isRequired": true,
-  },
-  {
-    "id": 12,
-    "title": "Upload Wing Mirrors Photo",
-    "subtitle": "Capture or upload the wing mirrors",
-    "isRequired": true,
-  },
-  {
-    "id": 13,
-    "title": "Upload Headlight Photo",
-    "subtitle": "Capture or upload the front headlight",
-    "isRequired": true,
-  },
-  {
-    "id": 14,
-    "title": "Upload Windscreen Photo",
-    "subtitle": "Capture or upload the front windscreen",
-    "isRequired": true,
-  },
-  {
-    "id": 15,
-    "title": "Upload Wing Mirrors Photo",
-    "subtitle": "Capture or upload the wing mirrors",
-    "isRequired": true,
-  },
-  {
-    "id": 16,
-    "title": "Upload Headlight Photo",
-    "subtitle": "Capture or upload the front headlight",
-    "isRequired": true,
-  },
-  {
-    "id": 17,
-    "title": "Upload Windscreen Photo",
-    "subtitle": "Capture or upload the front windscreen",
-    "isRequired": true,
-  },
-  {
-    "id": 18,
-    "title": "Upload Wing Mirrors Photo",
-    "subtitle": "Capture or upload the wing mirrors",
-    "isRequired": true,
-  },
-  {
-    "id": 19,
-    "title": "Upload Headlight Photo",
-    "subtitle": "Capture or upload the front headlight",
-    "isRequired": true,
-  },
-  {
-    "id": 20,
-    "title": "Upload Windscreen Photo",
-    "subtitle": "Capture or upload the front windscreen",
-    "isRequired": true,
-  },
-  {
-    "id": 21,
-    "title": "Upload Wing Mirrors Photo",
-    "subtitle": "Capture or upload the wing mirrors",
-    "isRequired": true,
-  },
-  {
-    "id": 22,
-    "title": "Upload Headlight Photo",
-    "subtitle": "Capture or upload the front headlight",
-    "isRequired": true,
-  },
-  {
-    "id": 23,
-    "title": "Upload Windscreen Photo",
-    "subtitle": "Capture or upload the front windscreen",
-    "isRequired": true,
-  },
-  {
-    "id": 24,
-    "title": "Upload Wing Mirrors Photo",
-    "subtitle": "Capture or upload the wing mirrors",
-    "isRequired": true,
-  },
-  {
-    "id": 25,
-    "title": "Upload Headlight Photo",
-    "subtitle": "Capture or upload the front headlight",
-    "isRequired": true,
-  },
-  {
-    "id": 26,
-    "title": "Upload Windscreen Photo",
-    "subtitle": "Capture or upload the front windscreen",
-    "isRequired": true,
-  },
-  {
-    "id": 27,
-    "title": "Upload Wing Mirrors Photo",
-    "subtitle": "Capture or upload the wing mirrors",
-    "isRequired": true,
-  },
+
+List<ProfileModel> profileGridValues = [
+  const ProfileModel(0, 'Personal Details','View your personal details',editProfileIcon,ProfileTrailingType.arrow),
+  const ProfileModel(1, 'Notification','Manage your alerts and notifications',notificationIcon,ProfileTrailingType.switchButton),
+  const ProfileModel(2, 'Privacy Policy','Learn how we protect your data',privacyIcon,ProfileTrailingType.arrow),
+  const ProfileModel(3, 'Terms & Conditions','Our rules, explained simply',termsIcon,ProfileTrailingType.arrow),
+  const ProfileModel(4, 'Contact Us','We are here, if you need any help',contactUsIcon,ProfileTrailingType.arrow),
+  const ProfileModel(5, 'Logout','Sign out safely and easily',logoutIcon,ProfileTrailingType.none),
+  const ProfileModel(6, '','',versionControlIcon,ProfileTrailingType.none),
 ];
+

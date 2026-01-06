@@ -1,4 +1,5 @@
 
+import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Presentation/provider/MediaPicker/file_provider.dart';
@@ -10,7 +11,7 @@ import 'color_data.dart';
 import 'image_data.dart';
 
 Widget mediaPickerTiles({required BuildContext context}) {
-  final fileProvider = Provider.of<FileProvider>(context, listen: false);
+ // final fileProvider = Provider.of<FileProvider>(context, listen: false);
   int selectedIndex = -1;
   return SafeArea(
     bottom: true,
@@ -32,14 +33,14 @@ Widget mediaPickerTiles({required BuildContext context}) {
                     selectedIndex = index;
                     if (mediaSource[index].id == 0) {
                       Navigator.pop(context);
-                      await fileProvider.initCamera();
+                      await context.read<FileProvider>().initCamera();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => CameraScreen()),
                       );
                     } else if (mediaSource[index].id == 1) {
                       Navigator.pop(context);
-                      fileProvider.pickSingleImage(context);
+                      context.read<FileProvider>().pickSingleImage(context);
                     }
                   },
                   child: Container(
@@ -52,12 +53,12 @@ Widget mediaPickerTiles({required BuildContext context}) {
                     ),
                     child: Row(
                       children: [
-                        SizedBox(width: 20),
+                       20.width,
                         CustomImage(
                           image: mediaSource[index].image,
                           scale: 4.0,
                         ),
-                        SizedBox(width: 15),
+                       15.width,
                         CustomText(
                           text: mediaSource[index].name,
                           fontSize: 18.0,

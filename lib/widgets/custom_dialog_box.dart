@@ -1,4 +1,5 @@
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
@@ -43,14 +44,14 @@ customShowDialog({
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            10.height,
             CustomText(
               text: subTitle,
               fontSize: 16.0,
               fontWeight: FontWeight.w500,
               textColor: blackColor,
             ),
-            SizedBox(height: 15),
+           15.height,
             Row(
 
               children: [
@@ -67,7 +68,7 @@ customShowDialog({
                   fontSize: 15.0,
                 ),),
 
-                SizedBox(width: 5.0,),
+                5.width,
                 Expanded(child: CustomButton(
                   width: 135.0,
                   height: 30.0,

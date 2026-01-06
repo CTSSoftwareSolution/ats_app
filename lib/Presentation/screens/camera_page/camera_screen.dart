@@ -1,6 +1,7 @@
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:camera/camera.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/image_data.dart';
@@ -13,28 +14,28 @@ class CameraScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fileProvider = Provider.of<FileProvider>(context);
-    if (fileProvider.controller == null ||
-        !fileProvider.controller!.value.isInitialized) {
+    final cameraController = context.watch<FileProvider>().controller;
+    if (cameraController == null ||
+        !cameraController.value.isInitialized) {
       return Scaffold(
         backgroundColor: Colors.black,
         body: Center(child: CustomLoader.loader()),
       );
     }
     final size = MediaQuery.of(context).size;
-    final scale = size.aspectRatio * fileProvider.controller!.value.aspectRatio;
+    final scale = size.aspectRatio * cameraController.value.aspectRatio;
     return Scaffold(
       body: Stack(
         children: [
           Transform.scale(
             scale: scale < 1 ? 1 / scale : scale,
-            child: Center(child: CameraPreview(fileProvider.controller!)),
+            child: Center(child: CameraPreview(cameraController)),
           ),
           Positioned(
             top: MediaQuery.of(context).padding.top + 50,
             left: 16,
             child: GestureDetector(
-              onTap: () => Navigator.pop(context),
+              onTap: () => context.pop(),
               child: Container(
                 height: 45.0,
                 padding: const EdgeInsets.all(8),
@@ -53,9 +54,9 @@ class CameraScreen extends StatelessWidget {
             child: Center(
               child: GestureDetector(
                 onTap: () async {
-                  await fileProvider.takePicture(context);
+                  await context.read<FileProvider>().takePicture(context);
                   if (!context.mounted) return;
-                  Navigator.pop(context);
+                 context.pop();
                 },
                 child: CustomImage(image: cameraButtonIcon, scale: 4),
               ),

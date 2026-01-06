@@ -1,4 +1,6 @@
-class SliderResModel {
+import 'package:ats_app/Domain/entities/slider_entity.dart';
+
+class SliderResModel extends SliderEntity{
   SliderResModel({
       bool? status, 
       String? message, 
