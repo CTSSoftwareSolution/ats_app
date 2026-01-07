@@ -35,14 +35,10 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
     context.read<VehiclePartsProvider>().vehiclePartsApi(context);
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final partsProvider = context.watch<VehiclePartsProvider>();
-    if (!partsProvider.isLoading &&
-        partsProvider.vehiclePartsEntity != null &&
-        partsProvider.vehiclePartsEntity!.data != null) {
+    if (!partsProvider.isLoading && partsProvider.vehiclePartsEntity != null && partsProvider.vehiclePartsEntity!.data != null) {
       partsProvider.currentPageData = context.read<VehiclePartsProvider>().getCurrentPageData();
     }
     return PopScope(
@@ -69,8 +65,7 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
                 context.read<VehiclePartsProvider>().previousPage();
               }else{
                 Navigator.pop(context);
-              }
-              },
+              }},
             icon: ImageIcon(
               AssetImage(backArrowIcon),
               color: whiteColor,
