@@ -22,46 +22,48 @@ Widget buildTile(
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Padding(
-        padding: EdgeInsets.all(15),
-        child: Row(
-          children: [
-          CircleAvatar(
-          radius: 20.0,
-          backgroundColor: appColor,
-          child: AspectRatio(
-            aspectRatio: 2,
-            child: ClipOval(child: Image(image: AssetImage(leadingImage),color: whiteColor,)),
-          ),
-        ),
-            10.width,
-            subtitle.isEmpty
-                ? Center(
-              child: CustomText(
-                text: title,
-                fontSize: 16,
-                fontFamily: "ExtraBold",
-              ),
-            )
-                : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomText(
-                  text: title,
-                  fontSize: 16,
-                  fontFamily: "ExtraBold",
-                ),
-                3.height,
-                CustomText(
-                  text: subtitle,
-                  fontSize: 12,
-                  fontFamily: "Medium",
-                  textColor: Colors.grey,
-                ),
-              ],
+      Expanded(
+        child: Padding(
+          padding: EdgeInsets.all(15),
+          child: Row(
+            children: [
+            CircleAvatar(
+            radius: 20.0,
+            backgroundColor: appColor,
+            child: AspectRatio(
+              aspectRatio: 2,
+              child: ClipOval(child: Image(image: AssetImage(leadingImage),color: whiteColor,)),
             ),
-          ],
+          ),
+              10.width,
+              Expanded(
+                child: subtitle.isEmpty
+                    ? CustomText(
+                      text: title,
+                      fontSize: 16,
+                      fontFamily: "ExtraBold",
+                    )
+                    : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomText(
+                      text: title,
+                      fontSize: 16,
+                      fontFamily: "ExtraBold",
+                    ),
+                    3.height,
+                    CustomText(
+                      text: subtitle,
+                      fontSize: 12,
+                      fontFamily: "Medium",
+                      textColor: Colors.grey,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       Padding(

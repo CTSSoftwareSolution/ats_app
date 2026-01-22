@@ -26,6 +26,9 @@ class ProfileDetailsProvider extends ChangeNotifier{
   final carBrandController = TextEditingController();
   final carModelController = TextEditingController();
    String? imageUrl;
+
+
+
   Future<ProfileDetailsEntity?> profileDetailsApi(BuildContext context)async{
     isLoading = true;
     try {

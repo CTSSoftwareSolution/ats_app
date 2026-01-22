@@ -21,7 +21,7 @@ class TypeScreen extends StatefulWidget {
 class _TypeScreenState extends State<TypeScreen> {
   @override
   Widget build(BuildContext context) {
-    final typeProvider = context.watch<VehicleTypeProvider>().vehicleTypeEntity?.data;
+    final typeProvider = context.watch<VehicleTypeProvider>().vehicleTypeEntity?.data ?? [];
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -32,7 +32,7 @@ class _TypeScreenState extends State<TypeScreen> {
           padding: const EdgeInsets.all(8.0),
           child: context.watch<VehicleTypeProvider>().isLoading
               ? Center(child: CustomLoader.loader(),)
-              : typeProvider!.isEmpty
+              : typeProvider.isEmpty
               ? Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

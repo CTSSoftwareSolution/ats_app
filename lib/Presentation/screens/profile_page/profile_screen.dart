@@ -49,15 +49,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10.0,
-                horizontal: 12,
+              padding: const EdgeInsets.only(
+                top: 10.0,
+                left: 12, right: 10
               ),
               child: ProfileDetailsContainer(),
             ),
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.only(bottom: 50),
+                padding: EdgeInsets.only(top:10,bottom: 100),
                 physics: BouncingScrollPhysics(),
                 itemCount: profileGridValues.length,
                 shrinkWrap: true,

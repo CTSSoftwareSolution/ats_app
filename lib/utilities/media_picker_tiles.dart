@@ -33,7 +33,7 @@ Widget mediaPickerTiles({required BuildContext context}) {
                     selectedIndex = index;
                     if (mediaSource[index].id == 0) {
                       Navigator.pop(context);
-                      await context.read<FileProvider>().initCamera();
+                    //  await context.read<FileProvider>().initCamera();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => CameraScreen()),

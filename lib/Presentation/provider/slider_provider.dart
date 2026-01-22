@@ -8,9 +8,10 @@ import '../../widgets/custom_loader.dart';
 class SliderProvider extends ChangeNotifier {
   SliderUseCases sliderUseCases;
 
-  SliderProvider({required this.sliderUseCases}){
-    sliderApi();
-  }
+  SliderProvider({required this.sliderUseCases});
+  // {
+  //   sliderApi();
+  // }
 
   SliderEntity? sliderEntity;
   bool isLoading = true;

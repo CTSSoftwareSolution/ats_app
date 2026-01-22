@@ -19,10 +19,10 @@ class SelectVehicle extends StatefulWidget {
 class _SelectVehicleState extends State<SelectVehicle> {
   @override
   Widget build(BuildContext context) {
-    final typeProvider = context.watch<VehicleTypeProvider>().vehicleTypeEntity?.data;
+    final typeProvider = context.watch<VehicleTypeProvider>().vehicleTypeEntity?.data ?? [];
     return context.watch<VehicleTypeProvider>().isLoading
         ? SelectVehicleShimmer()
-        : typeProvider!.isEmpty
+        : typeProvider.isEmpty
         ? SelectVehicleShimmer()
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,

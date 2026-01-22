@@ -3,6 +3,7 @@ import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/input_formatters.dart';
 import 'package:ats_app/widgets/custom_text_field.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/custom_button.dart';
@@ -103,7 +104,9 @@ statusDialogBox({required BuildContext context}) {
               width: double.infinity,
               height: 40,
               buttonText: "Submit",
-              onPress: () {},
+              onPress: () {
+                context.pop();
+              },
               backgroundColor: appColor,
               foregroundColor: whiteColor,
               shape: RoundedRectangleBorder(

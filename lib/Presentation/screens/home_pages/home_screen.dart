@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     context.read<SliderProvider>().startAutoSlide();
     context.read<VehicleTypeProvider>().vehicleTypeApi();
+    context.read<SliderProvider>(). sliderApi();
   }
 
   @override
