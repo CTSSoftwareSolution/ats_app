@@ -75,13 +75,16 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
                 ),
                 child: CustomSearchTextField(
                   onChanged: (String value) {
-                    context.read<VehicleClassProvider>().searchValue = value;
-                    if(value.length >= 3){
-                      context.read<VehicleClassProvider>().vehicleClassApi(context);
-                    }
-                    else if(value.isEmpty){
-                      context.read<VehicleClassProvider>().vehicleClassApi(context);
-                    }
+
+                    context.read<VehicleClassProvider>()
+                        .onSearchChanged(context, value);
+                    // context.read<VehicleClassProvider>().searchValue = value;
+                    // if(value.length >= 3){
+                    //   context.read<VehicleClassProvider>().vehicleClassApi(context);
+                    // }
+                    // else if(value.isEmpty){
+                    //   context.read<VehicleClassProvider>().vehicleClassApi(context);
+                    // }
                   },
                   onCloseClick: () {
                     context.read<VehicleClassProvider>().searchController.clear();

@@ -1,15 +1,10 @@
-
-
 import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
 import 'package:ats_app/utilities/extension.dart';
-
 import 'package:ats_app/widgets/custom_button.dart';
 import 'package:ats_app/widgets/custom_loader.dart';
-import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 import '../../../utilities/media_picker_tiles.dart';
@@ -166,25 +161,40 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
                     width: double.infinity,
                     height: 50.0,
                     buttonText:partsProvider.currentPage == partsProvider.totalPages - 1 ? "Submit" : "Next",
-                    onPress: () {
+                    onPress: () async {
                       context.read<VehiclePartsProvider>().nextStepper();
+
                       if (partsProvider.currentPage < partsProvider.totalPages - 1) {
                         context.read<VehiclePartsProvider>().nextPage();
+                      } else {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const InspectionResultScreen(),
+                          ),
+                        );
+                        context.read<VehiclePartsProvider>().resetStepper();
                       }
-                      else if(partsProvider.currentPage == partsProvider.totalPages - 1){
-                        final images = context.read<FileProvider>().allImages;
-                        final imagesName = images
-                            .where((value) => value != null)
-                            .map((value) => value!.name)
-                            .toList();
-                        debugPrint("All Images: $imagesName");
-                        context.push(InspectionResultScreen());
-                        const snack = SnackBar(content: Text("All images completed"),duration: Duration(seconds: 3),);
-                        ScaffoldMessenger.of(context).showSnackBar(snack);
-
-                      }
-
                     },
+                    // onPress: () {
+                    //   context.read<VehiclePartsProvider>().nextStepper();
+                    //   if (partsProvider.currentPage < partsProvider.totalPages - 1) {
+                    //     context.read<VehiclePartsProvider>().nextPage();
+                    //   }
+                    //   else if(partsProvider.currentPage == partsProvider.totalPages - 1){
+                    //     final images = context.read<FileProvider>().allImages;
+                    //     final imagesName = images
+                    //         .where((value) => value != null)
+                    //         .map((value) => value!.name)
+                    //         .toList();
+                    //     debugPrint("All Images: $imagesName");
+                    //     context.push(InspectionResultScreen());
+                    //     // const snack = SnackBar(content: Text("All images completed"),duration: Duration(seconds: 3),);
+                    //     // ScaffoldMessenger.of(context).showSnackBar(snack);
+                    //
+                    //   }
+                    //
+                    // },
                     backgroundColor: appColor,
                     foregroundColor: whiteColor,
                     shape: RoundedRectangleBorder(

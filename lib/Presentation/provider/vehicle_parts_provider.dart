@@ -50,7 +50,11 @@ class VehiclePartsProvider extends ChangeNotifier{
     }
   }
 
-
+  void resetStepper() {
+    currentStep--;
+    currentPageData = getCurrentPageData();
+    notifyListeners();
+  }
 
   List<PartsDataModel> getCurrentPageData() {
     final startIndex = (currentPage * itemsPerPage).clamp(0, vehiclePartsEntity!.data!.length);

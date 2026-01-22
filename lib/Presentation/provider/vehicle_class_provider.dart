@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ats_app/Data/model/request_model/vehicle_class_req_model.dart';
 import 'package:ats_app/Presentation/provider/vehicle_type_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,11 +25,25 @@ class VehicleClassProvider extends ChangeNotifier{
 
   final searchController = TextEditingController();
   String searchValue = "";
+  Timer? debounce;
 
   ClassDataModel? classDataModel;
   ClassDataModel? get selectedClass => classDataModel;
   void setSelectedClass(ClassDataModel data){
     classDataModel = data;
+  }
+
+  void onSearchChanged(BuildContext context, String value) {
+    searchValue = value;
+
+    if (debounce?.isActive ?? false) {
+      debounce!.cancel();
+    }
+
+
+    debounce = Timer(const Duration(milliseconds: 500), () {
+      vehicleClassApi(context);
+    });
   }
 
   Future<VehicleClassEntity?> vehicleClassApi(BuildContext context,{bool loadMore = false}) async {

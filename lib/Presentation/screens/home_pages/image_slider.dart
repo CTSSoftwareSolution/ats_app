@@ -25,7 +25,7 @@ class _ImageSliderState extends State<ImageSlider> {
           highlightColor: Colors.grey.shade100,
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7),
+              borderRadius: BorderRadius.all(Radius.circular(7)),
               color: Colors.white,
             ),
           ),
@@ -46,35 +46,43 @@ class _ImageSliderState extends State<ImageSlider> {
                 },
               itemBuilder: (context, index) {
                 return ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child:
-                    Image.network(sliderProvider[index].images.toString(),width: double.infinity,fit: BoxFit.cover,gaplessPlayback: true,
-                      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                        if (frame == null && !wasSynchronouslyLoaded) {
-                          return SizedBox(
-                            height: 180,
-                            child: Shimmer.fromColors(
-                              baseColor: Colors.grey.shade300,
-                              highlightColor: Colors.grey.shade100,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(7),
-                                  color: Colors.white,
-                                ),
+                    borderRadius: BorderRadius.all(Radius.circular(7)),
+                  child: Image.network(sliderProvider[index].images.toString(),width: double.infinity,fit: BoxFit.cover,gaplessPlayback: true,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey.shade200,
+                        alignment: Alignment.center,
+                        child: const Icon(Icons.broken_image),
+                      );
+                    },
+                    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                      if (frame == null && !wasSynchronouslyLoaded) {
+                        return SizedBox(
+                          height: 180,
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey.shade300,
+                            highlightColor: Colors.grey.shade100,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(7)),
+                                color: Colors.white,
                               ),
                             ),
-                          );
-                        }
-                        return Container(
+                          ),
+                        );
+                      }
+                      return ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(7)),
+                        child: Container(
                           decoration: BoxDecoration(
+
                             border: Border.all(color: appColor, width: 2),
-                            borderRadius: BorderRadius.circular(7),
                           ),
                           child: child,
-                        );
-                      },
-                    )
-
+                        ),
+                      );
+                    },
+                  )
                 );
               },
             ),

@@ -1,16 +1,11 @@
-import 'package:ats_app/Presentation/provider/inspection_result_provider.dart';
 import 'package:ats_app/Presentation/screens/bottom_navigation/bottom_navigation_bar.dart';
 import 'package:ats_app/Presentation/screens/inspection_result/status_dialog_box.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/widgets/custom_button.dart';
-import 'package:ats_app/widgets/custom_dialog_box.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_text.dart';
-import '../../provider/bottom_navigation_provider.dart';
 import 'inspection_result_screen_item.dart';
 
 class InspectionResultScreen extends StatefulWidget {
@@ -36,7 +31,7 @@ class _InspectionResultScreenState extends State<InspectionResultScreen> {
           ),
           leading: IconButton(
             onPressed: () {
-              context.pop();
+             context.pop();
             },
             icon: ImageIcon(
               AssetImage(backArrowIcon),

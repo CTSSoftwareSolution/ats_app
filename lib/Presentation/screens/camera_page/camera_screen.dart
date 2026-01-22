@@ -8,10 +8,21 @@ import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../provider/MediaPicker/file_provider.dart';
 
-class CameraScreen extends StatelessWidget {
+class CameraScreen extends StatefulWidget {
 
   const CameraScreen({super.key});
 
+  @override
+  State<CameraScreen> createState() => _CameraScreenState();
+}
+
+class _CameraScreenState extends State<CameraScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+     context.read<FileProvider>().initCamera();
+  }
   @override
   Widget build(BuildContext context) {
     final cameraController = context.watch<FileProvider>().controller;
