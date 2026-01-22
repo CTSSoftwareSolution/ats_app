@@ -16,8 +16,6 @@ class UploadImageContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final image = context.watch<FileProvider>().getImage(index);
-
-
     return Container(
       width: double.infinity,
       height: 150.0,
