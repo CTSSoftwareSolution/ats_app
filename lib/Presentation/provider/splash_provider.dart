@@ -7,6 +7,8 @@ import '../screens/login_page/login_screen.dart';
 
 class SplashProvider extends ChangeNotifier{
 
+  final loginFormKey= GlobalKey<FormState>();
+
   void startTimer(BuildContext context){
     Timer(Duration(seconds: 2), (){ checkLoginStatus(context); });
   }
@@ -15,7 +17,7 @@ class SplashProvider extends ChangeNotifier{
     await Preferences.setPreferences();
     String userId = Preferences.getUserId();
     if(userId.isEmpty){
-       context.push(LoginScreen());
+      context.push(LoginScreen());
     }else{
      context.push(const BottomNavigationBarScreen());
     }

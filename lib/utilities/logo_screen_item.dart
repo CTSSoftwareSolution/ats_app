@@ -13,7 +13,6 @@ class LogoScreenItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-
       children: [
         CustomImage(image: appLogoImage, scale: 4),
         5.height,

@@ -1,19 +1,12 @@
-import 'package:ats_app/Presentation/provider/MediaPicker/file_provider.dart';
 import 'package:ats_app/Presentation/provider/multiple_provider.dart';
-import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
-import 'package:ats_app/Presentation/screens/bottom_navigation/bottom_navigation_bar.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:provider/provider.dart';
-
 import 'Core/network/services.dart';
-import 'Presentation/provider/bottom_navigation_provider.dart';
 import 'Presentation/provider/permission_provider.dart';
-import 'Presentation/screens/login_page/login_screen.dart';
 import 'Presentation/screens/splash_page/splash_screen.dart';
 
 
