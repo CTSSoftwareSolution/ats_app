@@ -1,4 +1,5 @@
 import 'package:ats_app/Presentation/provider/splash_provider.dart';
+import 'package:ats_app/Presentation/screens/splash_page/splash_screen_responsive.dart';
 import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,13 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-            child: Column(
-              children: [
-                Expanded(child: LogoScreenItem()),
-                CustomProgressIndicator(),
-                100.height,
-              ],
-            )
+            child: SplashScreenResponsiveLayout()
         ),
       ),
     );

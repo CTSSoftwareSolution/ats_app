@@ -5,55 +5,61 @@ import 'package:flutter/material.dart';
 import 'custom_text.dart';
 
 Widget navigationIcon(
-    String icon,
-    int index,
-    String title,
-    int currentIndex,
-    ValueChanged<int> onTabSelected,
-    ) {
+  String icon,
+  int index,
+  String title,
+  int currentIndex,
+  ValueChanged<int> onTabSelected,
+
+) {
   final bool isActive = currentIndex == index;
 
   return Expanded(
     child: InkWell(
-      onTap: () => onTabSelected(index),
+      onTap: () => onTabSelected.call(index),
       child: AnimatedScale(
         scale: isActive ? 1.0 : 0.9,
         duration: const Duration(milliseconds: 200),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 50),
-              decoration: BoxDecoration(
-                color: isActive
-                    ? Colors.white.withOpacity(0.0)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: isActive
-                    ? [
-                  BoxShadow(
-                    color: Colors.white.withOpacity(0.9),
-                    blurRadius: 12,
-                    spreadRadius: 2,
-                  ),
-                ]
-                    : [],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+          child:
+          Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 50),
+                decoration: BoxDecoration(
+                  color: isActive
+                      ? Colors.white.withOpacity(0.0)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: isActive
+                      ? [
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.9),
+                      blurRadius: 12,
+                      spreadRadius: 2,
+                    ),
+                  ]
+                      : [],
+                ),
+                child: ImageIcon(
+                  AssetImage(icon),
+                  size: 20,
+                  color: isActive ? whiteColor : bottomIconColor,
+                ),
               ),
-              child: ImageIcon(
-                AssetImage(icon),
-                size: 20,
-                color: isActive ? whiteColor : bottomIconColor,
-              ),
-            ),
-            3.height,
-            CustomText(
-              text: title,
-              fontSize: 12,
-              fontFamily: "Bold",
-              textColor: isActive ? whiteColor : bottomIconColor,
-            )
-          ],
+              3.height,
+              CustomText(
+                text: title,
+                fontSize: 12,
+                fontFamily: "Bold",
+                textColor: isActive ? whiteColor : bottomIconColor,
+              )
+            ],
+          )
+
         ),
       ),
     ),

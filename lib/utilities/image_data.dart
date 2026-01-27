@@ -1,5 +1,6 @@
 
 
+import '../Data/model/bottom_nav_model.dart';
 import '../Data/model/list_model.dart';
 import '../Data/model/profile_model.dart';
 
@@ -68,3 +69,11 @@ List<ProfileModel> profileGridValues = [
   const ProfileModel(6, '','',versionControlIcon,ProfileTrailingType.none),
 ];
 
+
+
+List<BottomNavModel> bottomNavValue = [
+  BottomNavModel(0, "Home", homeIcon),
+  BottomNavModel(1, "Result", resultIcon),
+  BottomNavModel(2, "Type", vehicleIcon),
+  BottomNavModel(3, "Profile", profileIcon),
+];

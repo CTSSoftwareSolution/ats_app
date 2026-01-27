@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:ats_app/Presentation/provider/bottom_navigation_provider.dart';
+import 'package:ats_app/Presentation/screens/bottom_navigation/navigation_bar_responsive.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,27 +45,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
         }
       },
       child: Scaffold(
-       body:  Stack(
-         children: [
-           Positioned.fill(
-             child: navigationProvider
-                 .pages[navigationProvider.pageIndex],
-           ),
-           Positioned(
-             left: 15,right: 15,bottom: 20,
-             child: SafeArea(
-               child: CustomBottomNavigation(
-                 currentIndex: navigationProvider.pageIndex,
-                 onTabSelected: (index) {
-                   setState(() {
-                     navigationProvider.pageIndex = index;
-                   });
-                 },
-               ),
-             ),
-           ),
-         ],
-       )
+       body:  NavigationBarResponsiveLayout()
+
       ),
     );
 
