@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:ats_app/Presentation/provider/MediaPicker/file_provider.dart';
+import 'package:ats_app/Responsive/responsive_ext.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/image_data.dart';
@@ -11,14 +12,15 @@ import 'package:provider/provider.dart';
 class UploadImageContainer extends StatelessWidget {
   final VoidCallback onTap;
   final int index;
-  const UploadImageContainer({super.key, required this.onTap, required this.index});
+  final bool isTablet;
+  const UploadImageContainer({super.key, required this.onTap, required this.index, required this.isTablet});
 
   @override
   Widget build(BuildContext context) {
     final image = context.watch<FileProvider>().getImage(index);
     return Container(
       width: double.infinity,
-      height: 150.0,
+      height: isTablet ? 125.0 : 150.0,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
         color: cardBackgroundColor,

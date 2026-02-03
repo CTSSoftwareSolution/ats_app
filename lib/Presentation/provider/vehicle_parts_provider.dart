@@ -23,6 +23,9 @@ class VehiclePartsProvider extends ChangeNotifier{
   int currentStep = 0;
   int get totalPages => (vehiclePartsEntity!.data!.length / itemsPerPage).ceil();
 
+  int itemsPerPageForTablet = 4;
+  int get totalPagesForTablet => (vehiclePartsEntity!.data!.length / itemsPerPageForTablet).ceil();
+
   void resetPage(){
   currentPage = 0;
   currentStep = 0;
@@ -59,6 +62,12 @@ class VehiclePartsProvider extends ChangeNotifier{
   List<PartsDataModel> getCurrentPageData() {
     final startIndex = (currentPage * itemsPerPage).clamp(0, vehiclePartsEntity!.data!.length);
     final endIndex = ((currentPage + 1) * itemsPerPage).clamp(0, vehiclePartsEntity!.data!.length);
+    return vehiclePartsEntity!.data!.sublist(startIndex, endIndex);
+  }
+
+  List<PartsDataModel> getCurrentPageDataForTablet() {
+    final startIndex = (currentPage * itemsPerPageForTablet).clamp(0, vehiclePartsEntity!.data!.length);
+    final endIndex = ((currentPage + 1) * itemsPerPageForTablet).clamp(0, vehiclePartsEntity!.data!.length);
     return vehiclePartsEntity!.data!.sublist(startIndex, endIndex);
   }
 

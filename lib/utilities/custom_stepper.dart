@@ -5,10 +5,12 @@ class CustomStepper extends StatelessWidget {
   final int totalStep;
   final int currentStep;
 
+
   const CustomStepper({
     super.key,
     required this.currentStep,
     required this.totalStep,
+
   });
 
   @override

@@ -13,6 +13,7 @@ import '../login_page/login_screen.dart';
 class TabletBottomNavigation extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTabSelected;
+
   const TabletBottomNavigation({
     super.key,
     required this.currentIndex,
