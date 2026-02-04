@@ -23,8 +23,19 @@ class VehiclePartsProvider extends ChangeNotifier{
   int currentStep = 0;
   int get totalPages => (vehiclePartsEntity!.data!.length / itemsPerPage).ceil();
 
-  int itemsPerPageForTablet = 4;
-  int get totalPagesForTablet => (vehiclePartsEntity!.data!.length / itemsPerPageForTablet).ceil();
+
+
+  int _itemsPerPageForTablet = 4;
+
+  void setTabletItemsPerPage(bool isPortrait) {
+    _itemsPerPageForTablet = isPortrait ? 4 : 6;
+    currentPageData = getCurrentPageDataForTablet();
+    notifyListeners();
+  }
+
+  int get itemsPerPageForTablet => _itemsPerPageForTablet;
+  int get totalPagesForTablet =>
+      (vehiclePartsEntity!.data!.length / _itemsPerPageForTablet).ceil();
 
   void resetPage(){
   currentPage = 0;
@@ -39,15 +50,15 @@ class VehiclePartsProvider extends ChangeNotifier{
     }
   }
 
-  void nextStepper(){
-    if(currentStep < totalPages){
+  void nextStepper(int stepperNext){
+    if(currentStep < stepperNext){
       currentStep++;
       notifyListeners();
     }
   }
 
-  void nextPage(){
-    if(currentPage < totalPages - 1){
+  void nextPage(int pageNext){
+    if(currentPage < pageNext){
       currentPage++;
       notifyListeners();
     }
@@ -59,6 +70,12 @@ class VehiclePartsProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void resetStepperForTablet(){
+    currentStep--;
+    currentPageData = getCurrentPageDataForTablet();
+    notifyListeners();
+  }
+
   List<PartsDataModel> getCurrentPageData() {
     final startIndex = (currentPage * itemsPerPage).clamp(0, vehiclePartsEntity!.data!.length);
     final endIndex = ((currentPage + 1) * itemsPerPage).clamp(0, vehiclePartsEntity!.data!.length);
@@ -66,8 +83,8 @@ class VehiclePartsProvider extends ChangeNotifier{
   }
 
   List<PartsDataModel> getCurrentPageDataForTablet() {
-    final startIndex = (currentPage * itemsPerPageForTablet).clamp(0, vehiclePartsEntity!.data!.length);
-    final endIndex = ((currentPage + 1) * itemsPerPageForTablet).clamp(0, vehiclePartsEntity!.data!.length);
+    final startIndex = (currentPage * _itemsPerPageForTablet).clamp(0, vehiclePartsEntity!.data!.length);
+    final endIndex = ((currentPage + 1) * _itemsPerPageForTablet).clamp(0, vehiclePartsEntity!.data!.length);
     return vehiclePartsEntity!.data!.sublist(startIndex, endIndex);
   }
 

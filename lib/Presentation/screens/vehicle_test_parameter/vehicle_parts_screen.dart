@@ -37,20 +37,11 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
   Widget build(BuildContext context) {
     final bool isTablet = MediaQuery.of(context).size.width >= 600;
     final partsProvider = context.watch<VehiclePartsProvider>();
-    if(isTablet){
-      if (!partsProvider.isLoading &&
-          partsProvider.vehiclePartsEntity != null &&
-          partsProvider.vehiclePartsEntity!.data != null) {
-        partsProvider.currentPageData = context.read<VehiclePartsProvider>().getCurrentPageDataForTablet();
-      }
-    }else{
-      if (!partsProvider.isLoading &&
-          partsProvider.vehiclePartsEntity != null &&
-          partsProvider.vehiclePartsEntity!.data != null) {
-        partsProvider.currentPageData = context.read<VehiclePartsProvider>().getCurrentPageData();
-      }
+    if (!partsProvider.isLoading &&
+        partsProvider.vehiclePartsEntity != null &&
+        partsProvider.vehiclePartsEntity!.data != null) {
+      partsProvider.currentPageData = isTablet ? context.read<VehiclePartsProvider>().getCurrentPageDataForTablet() : context.read<VehiclePartsProvider>().getCurrentPageData();
     }
-
     return PopScope(
       canPop: partsProvider.currentStep == 0,
         onPopInvokedWithResult: (didPop, result) {

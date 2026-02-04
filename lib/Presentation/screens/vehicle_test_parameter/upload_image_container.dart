@@ -20,12 +20,13 @@ class UploadImageContainer extends StatelessWidget {
     final image = context.watch<FileProvider>().getImage(index);
     return Container(
       width: double.infinity,
-      height: isTablet ? 125.0 : 150.0,
+      height: isTablet ? 130.0 : 150.0,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
         color: cardBackgroundColor,
       ),
-      child: Column(
+      child:
+      Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           image != null
@@ -35,7 +36,7 @@ class UploadImageContainer extends StatelessWidget {
                     File( image.path),
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    height: 150.0,
+                    height: isTablet ? 130.0 : 150.0,
                   ),
                 )
               : Column(

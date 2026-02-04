@@ -1,8 +1,6 @@
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
-import 'package:ats_app/Responsive/responsive_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../utilities/color_data.dart';
 import '../../../utilities/extension.dart';
 import '../../../utilities/media_picker_tiles.dart';
@@ -19,6 +17,7 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final image = context.watch<FileProvider>().getImage(allIndex);
     return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -27,15 +26,13 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
               fontFamily: "Bold",
               fontSize: 18.0,
             ),
-            Expanded(
-              child: CustomText(
-                text: "Capture or upload the ${item.vehiclePartName}",
-                fontFamily: "Medium",
-                fontSize: 15.0,
+            CustomText(
+              text: "Capture or upload the ${item.vehiclePartName}",
+              fontFamily: "Medium",
+              fontSize: 15.0,
 
-              ),
             ),
-            isTablet ? 15.height : 10.height,
+           isTablet ? 15.height : 10.height,
             UploadImageContainer(
               index: allIndex,
               onTap: () {
@@ -49,7 +46,7 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
                 );
               }, isTablet: isTablet,
             ),
-            context.read<FileProvider>().getImage(allIndex) != null
+            image != null
                 ? Padding(
               padding:  EdgeInsets.symmetric(vertical: 5.0),
               child: CustomButton(
