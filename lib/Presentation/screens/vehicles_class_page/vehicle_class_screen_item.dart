@@ -25,7 +25,7 @@ class VehicleClassScreenItem extends StatelessWidget {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 10.0),
+              padding: const EdgeInsets.symmetric(vertical: 13.0,horizontal: 10.0),
               child: Column(
                 children: [
                   Row(

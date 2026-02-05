@@ -43,7 +43,7 @@ class _VehiclePartsResponsiveLayoutState extends State<VehiclePartsResponsiveLay
                         constraints.isTablet ? 35.height : 25.height,
                         Center(
                           child: CustomStepper(currentStep: partsProvider.currentStep, totalStep: constraints.isTablet ? partsProvider.totalPagesForTablet : partsProvider.totalPages,
-                            width: constraints.isTablet ? (orientation ==  Orientation.portrait ? double.infinity : constraints.contentMaxWidth) : double.infinity,),
+                            width: constraints.isTablet ? (orientation ==  Orientation.portrait ? double.infinity : constraints.contentMaxWidth/2) : double.infinity,),
                         ),
                         constraints.isTablet ? 30.height : 15.height,
                         Expanded(
@@ -76,9 +76,8 @@ class _VehiclePartsResponsiveLayoutState extends State<VehiclePartsResponsiveLay
                           ),
                         ),
                         constraints.isTablet ?
-                        Positioned(
-                          right: 50,
-                          left: 20,
+                        Align(
+                          alignment: Alignment.bottomRight,
                           child: ResponsiveButton(width: 200,
                             buttonText: partsProvider.currentPage == partsProvider.totalPagesForTablet - 1
                                       ? "Submit" : "Next",

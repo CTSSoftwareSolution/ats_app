@@ -24,7 +24,8 @@ class TabletBottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 15),
-      child: Container(
+      child:
+      Container(
         width: 70,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10)),

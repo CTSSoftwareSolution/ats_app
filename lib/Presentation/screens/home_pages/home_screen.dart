@@ -7,9 +7,11 @@ import 'package:ats_app/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/home_shimmer.dart';
+import '../../../utilities/home_shimmer_responsive.dart';
 import '../../provider/slider_provider.dart';
 import '../../provider/vehicle_type_provider.dart';
 import 'home_screen_responsive.dart';
+import 'home_screen_responsive_item.dart';
 import 'image_slider.dart';
 
 
@@ -37,7 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
      body: SafeArea(
          child:
-         isHomeLoading ? const HomeShimmer() :
+         isHomeLoading ?
+         const HomeShimmerResponsive()
+             :
          HomeScreenResponsive()
      ),
 
