@@ -53,7 +53,12 @@ class _SelectVehicleState extends State<SelectVehicle> {
                     imagePath: vehicleGridImages[index],
                     onTap: () {
                       context.read<VehicleTypeProvider>().setSelectedType(typeProvider[index]);
-                      context.push(VehicleClassScreen());
+                      final isLandscape =
+                          MediaQuery.of(context).orientation == Orientation.landscape;
+
+                      if (!isLandscape) {
+                        context.push(VehicleClassScreen());
+                      }
                       },
                   );
                 },

@@ -17,79 +17,89 @@ customShowDialog({
 }) {
   showDialog(
     context: context,
-    builder: (BuildContext context) => LayoutBuilder(
+    builder: (BuildContext context) =>
+        LayoutBuilder(
       builder: (context, constraints) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(5.0))
-            ),
-            padding: EdgeInsets.all(constraints.isTablet ? 32 : 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: (){ context.pop(); },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return OrientationBuilder(
+          builder: (context,orientations) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: constraints.isTablet ? (orientations == Orientation.landscape ? constraints.maxWidth/2.5 : constraints.maxWidth/1.5 ): double.infinity,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: constraints.isTablet ? 20 : 16, vertical: constraints.isTablet ? 25 : 15),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      GestureDetector(
+                        onTap: (){ context.pop(); },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CustomText(
+                              text: title,
+                              fontSize: constraints.isTablet ? 21.0 :18.0,
+                              fontWeight: FontWeight.w700,
+                              textColor: blackColor,
+                            ),
+                            CustomImage(image: closeIcon,scale: 20,)
+                          ],
+                        ),
+                      ),
+                      10.height,
                       CustomText(
-                        text: title,
-                        fontSize: constraints.isTablet ? 21.0 :18.0,
-                        fontWeight: FontWeight.w700,
+                        text: subTitle,
+                        fontSize: constraints.isTablet ? 19.0 :16.0,
+                        fontWeight: FontWeight.w500,
                         textColor: blackColor,
                       ),
-                      CustomImage(image: closeIcon,scale: 20,)
+                     15.height,
+                      Row(
+
+                        children: [
+                          Expanded(child: CustomButton(
+                            width: 135.0,
+                            height: constraints.isTablet ? 35.0 : 30.0,
+                            buttonText: "Yes",
+                            onPress: okClick,
+                            backgroundColor: appColor,
+                            foregroundColor: whiteColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            fontSize: constraints.isTablet ? 18.0 : 15.0,
+                          ),),
+
+                          5.width,
+                          Expanded(child: CustomButton(
+                            width: 135.0,
+                            height: constraints.isTablet ? 35.0 : 30.0,
+                            buttonText: "No",
+                            onPress: cancelClick,
+                            backgroundColor: greyColor,
+                            foregroundColor: whiteColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            fontSize: constraints.isTablet ? 18.0 : 15.0,
+                          ),)
+
+                        ],
+                      ),
                     ],
                   ),
                 ),
-                10.height,
-                CustomText(
-                  text: subTitle,
-                  fontSize: constraints.isTablet ? 19.0 :16.0,
-                  fontWeight: FontWeight.w500,
-                  textColor: blackColor,
-                ),
-               15.height,
-                Row(
-
-                  children: [
-                    Expanded(child: CustomButton(
-                      width: 135.0,
-                      height: 30.0,
-                      buttonText: "Yes",
-                      onPress: okClick,
-                      backgroundColor: appColor,
-                      foregroundColor: whiteColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      fontSize: 15.0,
-                    ),),
-
-                    5.width,
-                    Expanded(child: CustomButton(
-                      width: 135.0,
-                      height: 30.0,
-                      buttonText: "No",
-                      onPress: cancelClick,
-                      backgroundColor: greyColor,
-                      foregroundColor: whiteColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      fontSize: constraints.isTablet ? 18.0 : 15.0,
-                    ),)
-
-                  ],
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          }
         );
       }
     ),

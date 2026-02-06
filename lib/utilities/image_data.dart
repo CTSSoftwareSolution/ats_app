@@ -37,6 +37,7 @@ const contactUsIcon = "assets/contact-us.png";
 const termsIcon = "assets/terms-conditions.png";
 const privacyIcon = "assets/privacy-policy.png";
 const notificationIcon = "assets/notification.png";
+const noDataIcon = "assets/no-data.png";
 
 
 final List<String> vehicleGridTitles = <String>[
