@@ -28,8 +28,11 @@ class _VehiclePartsResponsiveLayoutState extends State<VehiclePartsResponsiveLay
       builder: (context, constraints) {
         return OrientationBuilder(
           builder: (context,orientation) {
-            constraints.isTablet ?
-            context.read<VehiclePartsProvider>().setTabletItemsPerPage(orientation == Orientation.portrait) : null;
+            if (constraints.isTablet && partsProvider.vehiclePartsEntity != null) {
+              partsProvider.setTabletItemsPerPage(
+                orientation == Orientation.portrait,
+              );
+            }
             return Center(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: constraints.horizontalPadding),
