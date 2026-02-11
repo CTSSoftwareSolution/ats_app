@@ -1,11 +1,12 @@
 import 'package:ats_app/Data/model/request_model/pre_inspection_result_req_model.dart';
-import 'package:ats_app/Domain/entities/inspection_que_entity.dart';
 import 'package:ats_app/Domain/entities/pre_inspection_result_entity.dart';
-import 'package:ats_app/Domain/usecases/inspection_que_usecases.dart';
 import 'package:ats_app/Domain/usecases/pre_inspection_result_usecases.dart';
+import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/custom_loader.dart';
+import 'inspection_form_provider.dart';
 
 class PreInspectionResultProvider extends ChangeNotifier{
   PreInspectionResultUseCases preInspectionResultUseCases;
@@ -18,15 +19,26 @@ class PreInspectionResultProvider extends ChangeNotifier{
 
 
 
-  Future<PreInspectionResultEntity?> saveResultApi()async{
-
+  Future<PreInspectionResultEntity?> saveResultApi(BuildContext context)async{
+    final classProvider = Provider.of<VehicleClassProvider>(context,listen: false);
+    final inspectionProvider = Provider.of<InspectionFormProvider>(context, listen: false);
     isLoading = true;
+
+    final resultList = inspectionProvider.answers.entries.map((value){
+      return Results(
+        inspectionResult: value.value == "Yes" ? "Pass" : "Fail",
+        questionId: value.key,
+        remarks: "",
+        severityLevel: "",
+        evidenceUrl: ""
+      );
+    }).toList();
 
     try {
       PreInspectionResultReqModel resultReqModel = PreInspectionResultReqModel(
-        vehicleNo: "",
+        vehicleNo: classProvider.selectedClass?.regNo,
         inspectedBy: "",
-        results: []
+        results: resultList
       );
 
       preInspectionResultEntity = await preInspectionResultUseCases.execute(resultReqModel);

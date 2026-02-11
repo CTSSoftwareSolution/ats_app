@@ -45,6 +45,11 @@ final List<String> vehicleGridTitles = <String>[
   "HCV",
 ];
 
+final List<ListModel> inspectionTypeTitles = [
+  const ListModel(0, 'Manual Inspection', ""),
+  const ListModel(1, 'Machine Inspection',""),
+];
+
 final List<String> vehicleGridImages = <String>[
   "assets/vehicle-image/blue-car.jpg",
   "assets/vehicle-image/white-car.jpg",

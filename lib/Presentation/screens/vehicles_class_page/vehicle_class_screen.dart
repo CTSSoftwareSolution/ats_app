@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
+import '../../../widgets/confirmation_dialog_box.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/custom_search_bar.dart';
 import '../../provider/vehicle_type_provider.dart';
@@ -141,8 +142,7 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
                           context.read<VehicleClassProvider>().setSelectedClass(
                             classProvider[index],
                           );
-                          context.read<FileProvider>().clearAll(context);
-                          context.push(VehiclePartsScreen());
+                          confirmationDialogBox(context: context);
                           },
                       ),
                     );

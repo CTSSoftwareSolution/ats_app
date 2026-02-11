@@ -37,4 +37,9 @@ class InspectionFormProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void clearAnswer(){
+    answers.clear();
+    notifyListeners();
+  }
+
 }
