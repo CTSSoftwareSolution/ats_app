@@ -74,7 +74,7 @@ confirmationDialogBox({
                           }
                         },
                         child: Container(
-                          height: 60.0,
+                          height: 50.0,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
                             color: isSelected
@@ -83,7 +83,11 @@ confirmationDialogBox({
                           ),
                           child: Row(
                             children: [
-                              20.width,
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: CustomImage(image: inspectionTypeTitles[index].image,scale: 20,),
+                              ),
+                              10.width,
                               CustomText(
                                 text: inspectionTypeTitles[index].name,
                                 fontSize: 16.0,

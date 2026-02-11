@@ -36,6 +36,8 @@ const contactUsIcon = "assets/contact-us.png";
 const termsIcon = "assets/terms-conditions.png";
 const privacyIcon = "assets/privacy-policy.png";
 const notificationIcon = "assets/notification.png";
+const manualInspectionIcon = "assets/manual-inspection.png";
+const machineInspectionIcon = "assets/machine-inspection.png";
 
 
 final List<String> vehicleGridTitles = <String>[
@@ -46,8 +48,8 @@ final List<String> vehicleGridTitles = <String>[
 ];
 
 final List<ListModel> inspectionTypeTitles = [
-  const ListModel(0, 'Manual Inspection', ""),
-  const ListModel(1, 'Machine Inspection',""),
+  const ListModel(0, 'Manual Inspection', manualInspectionIcon),
+  const ListModel(1, 'Machine Inspection', machineInspectionIcon),
 ];
 
 final List<String> vehicleGridImages = <String>[
