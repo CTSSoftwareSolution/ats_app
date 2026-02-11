@@ -23,3 +23,5 @@ const vehicleClassUrl = "$baseUrl/getVehicleClass";
 const vehiclePartsUrl = "$baseUrl/getVehicleParts";
 const sliderUrl = "$baseUrl/getSlider";
 const profileDetailsUrl = "$baseUrl/getProfile";
+const inspectionQueUrl = "$baseUrl/getPreInspectionQuestions";
+const savePreInspectionResultsUrl = "$baseUrl/savePreInspectionResults";

@@ -11,6 +11,7 @@ import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
 import '../../provider/login_provider.dart';
 import '../login_page/login_screen.dart';
+import '../pre_inspection_form/inspection_form_screen.dart';
 import '../profile_view_details_page/profile_view_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -80,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             buildTile(
                               profileGridValues[index].image,
-                              index == 6 ? context.watch<ProfileDetailsProvider>().appVersion : profileGridValues[index].title,
+                              index == 7 ? context.watch<ProfileDetailsProvider>().appVersion : profileGridValues[index].title,
                               profileGridValues[index].subtitle,
                               getTrailingWidget(profileGridValues[index]),
                             ),
@@ -112,6 +113,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 4:
         break;
       case 5:
+        context.push(InspectionFormScreen());
+        break;
+      case 6:
         customShowDialog(
           context: context,
           title: "Log out",
@@ -127,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         );
         break;
-      case 6:
+      case 7:
         break;
       default:
         break;
