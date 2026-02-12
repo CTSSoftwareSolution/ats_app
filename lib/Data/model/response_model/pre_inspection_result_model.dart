@@ -1,4 +1,6 @@
-class PreInspectionResultModel {
+import 'package:ats_app/Domain/entities/pre_inspection_result_entity.dart';
+
+class PreInspectionResultModel extends PreInspectionResultEntity{
   PreInspectionResultModel({
       bool? status, 
       String? message, 

@@ -1,18 +1,19 @@
-import 'package:ats_app/Presentation/provider/MediaPicker/file_provider.dart';
+import 'package:ats_app/Presentation/provider/inspection_type_provider.dart';
+import 'package:ats_app/Presentation/provider/pre_ins_manual_status_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
-import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_screen.dart';
 import 'package:ats_app/Presentation/screens/vehicles_class_page/vehicle_class_screen_item.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
-import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
-import '../../../widgets/confirmation_dialog_box.dart';
+import '../../../utilities/inspection_type_tiles.dart';
+import '../../../widgets/custom_bottomsheet.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/custom_search_bar.dart';
 import '../../provider/vehicle_type_provider.dart';
+
 
 class VehicleClassScreen extends StatefulWidget {
   const VehicleClassScreen({super.key});
@@ -28,6 +29,7 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
   void initState() {
     super.initState();
     context.read<VehicleClassProvider>().vehicleClassApi(context);
+    context.read<InspectionTypeProvider>().getInspectionType();
 
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
@@ -142,7 +144,12 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
                           context.read<VehicleClassProvider>().setSelectedClass(
                             classProvider[index],
                           );
-                          confirmationDialogBox(context: context);
+                          context.read<PreInsManualStatusProvider>().getManualStatusApi(context);
+                          customBottomSheet(
+                              context: context,
+                              title: 'Select Inspection Type',
+                              child:  inspectionTypeTiles(context: context)
+                          );
                           },
                       ),
                     );

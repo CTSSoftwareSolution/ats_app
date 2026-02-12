@@ -47,9 +47,9 @@ final List<String> vehicleGridTitles = <String>[
   "HCV",
 ];
 
-final List<ListModel> inspectionTypeTitles = [
-  const ListModel(0, 'Manual Inspection', manualInspectionIcon),
-  const ListModel(1, 'Machine Inspection', machineInspectionIcon),
+final List<String> inspectionTypeImage = <String>[
+  manualInspectionIcon,
+  machineInspectionIcon,
 ];
 
 final List<String> vehicleGridImages = <String>[

@@ -25,3 +25,6 @@ const sliderUrl = "$baseUrl/getSlider";
 const profileDetailsUrl = "$baseUrl/getProfile";
 const inspectionQueUrl = "$baseUrl/getPreInspectionQuestions";
 const savePreInspectionResultsUrl = "$baseUrl/savePreInspectionResults";
+const getInspectionTypeUrl = "$baseUrl/getInspectionType";
+const getPreInspectionDetailsUrl = "$baseUrl/getPreInspectionDetailsByVehicleID";
+const checkManualInsStatusUrl = "$baseUrl/checkManualInspectionStatus";
