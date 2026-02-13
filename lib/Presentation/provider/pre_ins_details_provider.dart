@@ -13,6 +13,8 @@ class PreInsDetailsProvider extends ChangeNotifier{
 
   PreInsDetailsEntity? preInsDetailsEntity;
 
+
+
    bool isLoading = false;
 
   Future<PreInsDetailsEntity?> getPreInsDetailsApi(BuildContext context) async{

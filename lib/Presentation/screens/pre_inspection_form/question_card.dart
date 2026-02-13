@@ -27,13 +27,11 @@ Widget questionCard(CarData carData, BuildContext context) {
           const SizedBox(height: 12),
           Row(
             children: [
-              radioButton(int.parse(carData.questionId.toString()), "Yes", context,),
+              radioButton(int.parse(carData.questionId.toString()), "Pass", context,),
               const SizedBox(width: 20),
-              radioButton(int.parse(carData.questionId.toString()), "No", context),
+              radioButton(int.parse(carData.questionId.toString()), "Fail", context),
             ],
           ),
-
-
         ],
       ),
     ),

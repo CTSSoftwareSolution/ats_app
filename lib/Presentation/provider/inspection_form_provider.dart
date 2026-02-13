@@ -14,6 +14,8 @@ class InspectionFormProvider extends ChangeNotifier{
   InspectionQueEntity? inspectionQueEntity;
 
   Map<int, String> answers = {};
+  Map<int, String> savedAnswers = {};
+
   bool showValidationError = false;
 
   Future<InspectionQueEntity?> questionListApi()async{
@@ -43,6 +45,10 @@ class InspectionFormProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void loadPreviousAnswers(Map<int, String> previousAnswers) {
+    answers = Map.from(previousAnswers);
+    notifyListeners();
+  }
 
   bool areAllQuestionsAnswered() {
     if (inspectionQueEntity?.data == null) return false;

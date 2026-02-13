@@ -26,7 +26,7 @@ class PreInspectionResultProvider extends ChangeNotifier{
 
     final resultList = inspectionProvider.answers.entries.map((value){
       return Results(
-        inspectionResult: value.value == "Yes" ? "Pass" : "Fail",
+        inspectionResult: value.value,
         questionId: value.key,
         remarks: "",
         severityLevel: "",

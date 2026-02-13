@@ -148,7 +148,7 @@ class _VehicleClassScreenState extends State<VehicleClassScreen> {
                           customBottomSheet(
                               context: context,
                               title: 'Select Inspection Type',
-                              child:  inspectionTypeTiles(context: context)
+                              child:  inspectionTypeTiles(context: context, parentContext: context)
                           );
                           },
                       ),

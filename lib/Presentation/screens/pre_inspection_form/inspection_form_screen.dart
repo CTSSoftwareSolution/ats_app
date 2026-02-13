@@ -1,4 +1,6 @@
 import 'package:ats_app/Presentation/provider/inspection_form_provider.dart';
+import 'package:ats_app/Presentation/provider/pre_ins_details_provider.dart';
+import 'package:ats_app/Presentation/provider/pre_ins_manual_status_provider.dart';
 import 'package:ats_app/Presentation/provider/pre_inspection_result_provider.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/question_card.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/vehicle_section_title.dart';
@@ -22,7 +24,27 @@ class _InspectionFormScreenState extends State<InspectionFormScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<InspectionFormProvider>().questionListApi();
+    initializeData();
+  }
+
+  Future<void> initializeData() async{
+    final formProvider = context.read<InspectionFormProvider>();
+    formProvider.questionListApi();
+
+    final checkStatus = Provider.of<PreInsManualStatusProvider>(context, listen: false);
+    final status = checkStatus.preInsManualStatusEntity?.data;
+    if(status == "Fail" || status == "Pass"){
+      final detailsProvider = context.read<PreInsDetailsProvider>();
+      await detailsProvider.getPreInsDetailsApi(context);
+
+      if(detailsProvider.preInsDetailsEntity?.data != null){
+        for (var item in detailsProvider.preInsDetailsEntity!.data!){
+          int questionId = int.parse(item.questionId.toString());
+          formProvider.savedAnswers[questionId] = item.inspectionResult.toString();
+        }
+        formProvider.loadPreviousAnswers(formProvider.savedAnswers);
+      }
+    }
   }
 
   @override

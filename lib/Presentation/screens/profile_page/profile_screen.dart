@@ -81,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             buildTile(
                               profileGridValues[index].image,
-                              index == 7 ? context.watch<ProfileDetailsProvider>().appVersion : profileGridValues[index].title,
+                              index == 6 ? context.watch<ProfileDetailsProvider>().appVersion : profileGridValues[index].title,
                               profileGridValues[index].subtitle,
                               getTrailingWidget(profileGridValues[index]),
                             ),
@@ -113,9 +113,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 4:
         break;
       case 5:
-        context.push(InspectionFormScreen());
-        break;
-      case 6:
         customShowDialog(
           context: context,
           title: "Log out",
@@ -131,9 +128,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         );
         break;
-      case 7:
+      case 6:
         break;
-      default:
+        default:
         break;
     }
   }

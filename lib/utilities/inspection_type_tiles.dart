@@ -6,6 +6,7 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Presentation/provider/MediaPicker/file_provider.dart';
+import '../Presentation/screens/pre_inspection_form/handle_inspection_tap.dart';
 import '../Presentation/screens/pre_inspection_form/inspection_form_screen.dart';
 import '../Presentation/screens/vehicle_test_parameter/vehicle_parts_screen.dart';
 import '../widgets/custom_button.dart';
@@ -15,7 +16,7 @@ import 'color_data.dart';
 import 'custom_confirmation_dialog_box.dart';
 import 'image_data.dart';
 
-Widget inspectionTypeTiles({required BuildContext context}) {
+Widget inspectionTypeTiles({required BuildContext context,required BuildContext parentContext, }) {
   final typeProvider = Provider.of<InspectionTypeProvider>(context,listen: false);
   final statusProvider = Provider.of<PreInsManualStatusProvider>(context,listen: false);
   int selectedIndex = -1;
@@ -32,61 +33,16 @@ Widget inspectionTypeTiles({required BuildContext context}) {
             itemCount: typeProvider.inspectionTypeEntity!.data!.length,
             itemBuilder: (context, index) {
               final bool isSelected = selectedIndex == index;
+              final inspection =
+              typeProvider.inspectionTypeEntity!.data![index];
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3.0),
                 child: InkWell(
-                  onTap: () async {
-                    selectedIndex = index;
-                    if (typeProvider.inspectionTypeEntity!.data![index].inspectionTypeCode == "1") {
-                      context.pop();
-                      context.push(InspectionFormScreen());
-                    } else if (typeProvider.inspectionTypeEntity!.data![index].inspectionTypeCode == "2") {
-                      context.pop();
-                      if( statusProvider.preInsManualStatusEntity?.data == null ){
-
-                        customConfirmationDialogBox(context: context, text: 'Please complete the Manual Inspection before proceeding to Machine Inspection.',
-                            buttons: [
-                              DialogButton(
-                                text: "Manual Inspection",
-                                textColor: appColor,
-                                onPressed: () {
-                                  context.pop();
-                                  context.push(InspectionFormScreen());
-                                },
-                              ),
-                            ]);
-
-                      }else if( statusProvider.preInsManualStatusEntity?.data == "Fail" ){
-
-                        customConfirmationDialogBox(context: context, text: 'Manual Inspection has failed. Do you want to continue Manual Inspection or proceed with Machine Inspection?',
-                            buttons: [
-                              DialogButton(
-                                text: "Manual Inspection",
-                                textColor: redColor,
-                                onPressed: () {
-                                  context.pop();
-                                  context.push(InspectionFormScreen());
-                                },
-                              ),
-                              DialogButton(
-                                text: "Machine Inspection",
-                                textColor: appColor,
-                                onPressed: () {
-                                  context.pop();
-                                  context.push(VehiclePartsScreen());
-                                },
-                              ),
-                            ]
-                            );
-
-                      }else{
-
-                        context.read<FileProvider>().clearAll(context);
-                        context.push(VehiclePartsScreen());
-
-                      }
-                    }
-                  },
+                  onTap: () => handleInspectionTap(
+                    context,
+                    parentContext,
+                    inspection.inspectionTypeCode,
+                  ),
                   child: Container(
                     height: 55.0,
                     decoration: BoxDecoration(
