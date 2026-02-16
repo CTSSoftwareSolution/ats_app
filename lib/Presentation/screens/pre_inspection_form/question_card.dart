@@ -15,7 +15,7 @@ Widget questionCard(CarData carData, BuildContext context) {
       borderRadius: BorderRadius.circular(12),
     ),
     child: Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(top: 16,bottom: 16,left: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -32,6 +32,7 @@ Widget questionCard(CarData carData, BuildContext context) {
               radioButton(int.parse(carData.questionId.toString()), "Fail", context),
             ],
           ),
+
         ],
       ),
     ),

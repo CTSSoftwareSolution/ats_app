@@ -119,4 +119,20 @@ class Validators {
     }
     return null;
   }
+
+
+  static String? validateIp(String value) {
+    if (value.isEmpty) return "IP address is required";
+
+    final ipRegex = RegExp(
+      r'^((25[0-5]|2[0-4]\d|1?\d{1,2})\.){3}'
+      r'(25[0-5]|2[0-4]\d|1?\d{1,2})$',
+    );
+
+    if (!ipRegex.hasMatch(value)) {
+      return "Enter valid IP address";
+    }
+
+    return null;
+  }
 }

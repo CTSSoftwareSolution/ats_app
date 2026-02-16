@@ -18,6 +18,9 @@ class InspectionFormProvider extends ChangeNotifier{
 
   bool showValidationError = false;
 
+
+
+
   Future<InspectionQueEntity?> questionListApi()async{
 
     isLoading = true;
@@ -50,19 +53,19 @@ class InspectionFormProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  bool areAllQuestionsAnswered() {
-    if (inspectionQueEntity?.data == null) return false;
-
-    for (var section in inspectionQueEntity!.data!) {
-      for (var question in section.carData!) {
-        int qId = int.parse(question.questionId.toString());
-        if (!answers.containsKey(qId) || answers[qId] == null) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
+  // bool areAllQuestionsAnswered() {
+  //   if (inspectionQueEntity?.data == null) return false;
+  //
+  //   for (var section in inspectionQueEntity!.data!) {
+  //     for (var question in section.carData!) {
+  //       int qId = int.parse(question.questionId.toString());
+  //       if (!answers.containsKey(qId) || answers[qId] == null) {
+  //         return false;
+  //       }
+  //     }
+  //   }
+  //   return true;
+  // }
 
 
 }

@@ -41,6 +41,7 @@ const noDataIcon = "assets/no-data.png";
 
 const manualInspectionIcon = "assets/manual-inspection.png";
 const machineInspectionIcon = "assets/machine-inspection.png";
+const configIcon = "assets/config-icon.png";
 
 
 final List<String> vehicleGridTitles = <String>[

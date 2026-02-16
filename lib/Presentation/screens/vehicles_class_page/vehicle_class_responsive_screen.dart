@@ -1,3 +1,4 @@
+import 'package:ats_app/Presentation/provider/inspection_type_provider.dart';
 import 'package:ats_app/Presentation/screens/vehicles_class_page/vehicle_class_screen_item.dart';
 import 'package:ats_app/Responsive/responsive_ext.dart';
 import 'package:ats_app/utilities/extension.dart';
@@ -43,6 +44,7 @@ class _VehicleClassResponsiveLayoutState extends State<VehicleClassResponsiveLay
   @override
   Widget build(BuildContext context) {
     final classProvider = context.watch<VehicleClassProvider>().vehicleClassEntity?.data;
+    final insTypeProvider = context.watch<InspectionTypeProvider>();
     return  LayoutBuilder(
       builder: (context, constraints) {
         return OrientationBuilder(
@@ -158,6 +160,10 @@ class _VehicleClassResponsiveLayoutState extends State<VehicleClassResponsiveLay
                               );
                               context.read<FileProvider>().clearAll(context);
                               context.read<PreInsManualStatusProvider>().getManualStatusApi(context);
+
+                              insTypeProvider.inspectionTypeEntity!.data!.isEmpty ?
+                                  CustomLoader.showToast("Failed to connect!")
+                              :
                               customBottomSheet(
                                   context: context,
                                   title: 'Select Inspection Type',
