@@ -70,9 +70,9 @@ void openMachineInspection(BuildContext context, BuildContext parentContext){
         buttons: [
           DialogButton(
             text: "Manual Inspection",
-            textColor: appColor,
+            textColor: whiteColor,
+            backgroundColor: appColor,
             onPressed: () {
-
               Navigator.pop(parentContext);
               Navigator.push(
                 parentContext,
@@ -88,7 +88,8 @@ void openMachineInspection(BuildContext context, BuildContext parentContext){
         buttons: [
           DialogButton(
             text: "Manual Inspection",
-            textColor: redColor,
+            textColor: whiteColor,
+            backgroundColor: redColor,
             onPressed: () {
               Navigator.pop(parentContext);
               Navigator.push(
@@ -99,7 +100,8 @@ void openMachineInspection(BuildContext context, BuildContext parentContext){
           ),
           DialogButton(
             text: "Machine Inspection",
-            textColor: appColor,
+            textColor: whiteColor,
+            backgroundColor: appColor,
             onPressed: () {
               Navigator.pop(parentContext);
               Navigator.push(

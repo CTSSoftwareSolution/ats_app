@@ -1,5 +1,6 @@
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/extension.dart';
+import 'package:ats_app/widgets/custom_button.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
@@ -45,12 +46,23 @@ customConfirmationDialogBox({
               alignment: Alignment.topRight,
                 child: InkWell(
                   onTap: (){ context.pop(); },
-                    child: CustomImage(image: closeIcon,scale: 2,))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomText(
+                          text: "Alert !!!",
+                          fontSize: 22.0,
+                          fontFamily: "ExtraBold",
+                          textColor: blackColor,
+                        ),
+                        CustomImage(image: closeIcon,scale: 2,),
+                      ],
+                    ))),
             10.height,
             CustomText(
               text: text,
               fontSize: 14.0,
-              fontWeight: FontWeight.w700,
+              fontFamily: "Bold",
               textColor: blackColor,
             ),
             10.height,
@@ -59,9 +71,20 @@ customConfirmationDialogBox({
               mainAxisAlignment: MainAxisAlignment.end,
               children: buttons.map((button) {
                 return Expanded(
-                  child: TextButton(onPressed: button.onPressed,
-                      child: CustomText(text: button.text, textColor: button.textColor, fontSize: 13.5, fontFamily: "Bold",)
-                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: CustomButton(
+
+                        buttonText: button.text,
+                        onPress: button.onPressed, backgroundColor: button.backgroundColor!, foregroundColor: button.textColor!,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20.0))
+                        ),
+                        fontSize: 13.0, fontFamily: "Bold",),
+                  )
+                  // TextButton(onPressed: button.onPressed,
+                  //     child: CustomText(text: button.text, textColor: button.textColor, fontSize: 13.5, fontFamily: "Bold",)
+                  // ),
                 );
               }).toList(),
             ),
