@@ -46,6 +46,7 @@ void openManualInspection(BuildContext context, BuildContext parentContext) {
             textColor: whiteColor,
             backgroundColor: appColor,
             onPressed: () {
+
               Navigator.pop(parentContext);
               Navigator.push(
                 parentContext,
@@ -55,6 +56,13 @@ void openManualInspection(BuildContext context, BuildContext parentContext) {
           ),
         ]);
   }
+  else{
+
+    //context.read<FileProvider>().clearAll(context);
+    context.push(InspectionFormScreen());
+
+  }
+
 }
 
 void openMachineInspection(BuildContext context, BuildContext parentContext){
@@ -114,9 +122,7 @@ void openMachineInspection(BuildContext context, BuildContext parentContext){
     );
   }
   else{
-
     context.read<FileProvider>().clearAll(context);
     context.push(VehiclePartsScreen());
-
   }
 }
