@@ -39,12 +39,20 @@ const privacyIcon = "assets/privacy-policy.png";
 const notificationIcon = "assets/notification.png";
 const noDataIcon = "assets/no-data.png";
 
+const manualInspectionIcon = "assets/manual-inspection.png";
+const machineInspectionIcon = "assets/machine-inspection.png";
+
 
 final List<String> vehicleGridTitles = <String>[
   "LCV",
   "LMV",
   "EV",
   "HCV",
+];
+
+final List<String> inspectionTypeImage = <String>[
+  manualInspectionIcon,
+  machineInspectionIcon,
 ];
 
 final List<String> vehicleGridImages = <String>[

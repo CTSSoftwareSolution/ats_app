@@ -37,6 +37,20 @@ class CustomLoader {
     });
   }
 
+  static errorMessage(String msg) {
+    Fluttertoast.showToast(
+        msg: msg,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: redColor,
+        textColor: whiteColor,
+        fontSize: 14.0);
+    Future.delayed(Duration(milliseconds: 1000), () {
+      Fluttertoast.cancel();
+    });
+  }
+
   static internetMessage({required String msg, required BuildContext context}) {
     context.showCustomSnackBar(message: "No Internet", backgroundColor: redColor);
   }

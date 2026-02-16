@@ -12,6 +12,7 @@ import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/custom_search_bar.dart';
+import '../../provider/inspection_type_provider.dart';
 import '../../provider/vehicle_type_provider.dart';
 
 class VehicleClassScreen extends StatefulWidget {
@@ -23,8 +24,20 @@ class VehicleClassScreen extends StatefulWidget {
 
 class _VehicleClassScreenState extends State<VehicleClassScreen> {
 
+  final ScrollController scrollController = ScrollController();
 
-
+  @override
+  void initState() {
+    super.initState();
+    context.read<VehicleClassProvider>().vehicleClassApi(context);
+    context.read<InspectionTypeProvider>().getInspectionType();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        context.read<VehicleClassProvider>().vehicleClassApi(context, loadMore: true);
+      }
+    });
+  }
 
 
   @override

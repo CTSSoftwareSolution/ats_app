@@ -6,11 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../utilities/image_data.dart';
+import '../../../utilities/inspection_type_tiles.dart';
+import '../../../widgets/custom_bottomsheet.dart';
 import '../../../widgets/custom_image.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/custom_search_bar.dart';
 import '../../../widgets/custom_text.dart';
 import '../../provider/MediaPicker/file_provider.dart';
+import '../../provider/pre_ins_manual_status_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../vehicle_test_parameter/vehicle_parts_screen.dart';
 
@@ -154,9 +157,24 @@ class _VehicleClassResponsiveLayoutState extends State<VehicleClassResponsiveLay
                                 classProvider[index],
                               );
                               context.read<FileProvider>().clearAll(context);
-                              context.push(VehiclePartsScreen());
+                              context.read<PreInsManualStatusProvider>().getManualStatusApi(context);
+                              customBottomSheet(
+                                  context: context,
+                                  title: 'Select Inspection Type',
+                                  child:  inspectionTypeTiles(context: context, parentContext: context)
+                              );
                             },
                           ),
+
+                          //
+                          // VehicleClassScreenItem(
+                          //   classDataModel: classProvider[index],
+                          //   onTap: () {
+                          //     context.read<VehicleClassProvider>().setSelectedClass(classProvider[index]);
+                          //     context.read<FileProvider>().clearAll(context);
+                          //     context.push(VehiclePartsScreen());
+                          //   },
+                          // ),
                         );
                       },
                     ),
