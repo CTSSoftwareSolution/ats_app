@@ -56,77 +56,6 @@ class QuestionTile extends StatelessWidget {
     }
   }
 
-  void _showImageSourceSheet(
-      BuildContext context, InspectionFormProvider provider) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Add Evidence Photo',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.grey.shade800,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Upload a photo to document this issue',
-                style:
-                TextStyle(fontSize: 12, color: Colors.grey.shade500),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: ImageSourceOption(
-                      icon: Icons.camera_alt_rounded,
-                      label: 'Camera',
-                      color: const Color(0xFF1A3C6E),
-                      onTap: () {
-                        Navigator.pop(context);
-                        _pickImage(context, provider, ImageSource.camera);
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ImageSourceOption(
-                      icon: Icons.photo_library_rounded,
-                      label: 'Gallery',
-                      color: const Color(0xFF0D7377),
-                      onTap: () {
-                        Navigator.pop(context);
-                        _pickImage(context, provider, ImageSource.gallery);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<InspectionFormProvider>(
@@ -189,8 +118,6 @@ class QuestionTile extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-
-              // ── Yes / No Buttons ──
               Row(
                 children: [
                   AnswerButton(
@@ -218,8 +145,6 @@ class QuestionTile extends StatelessWidget {
                   ),
                 ],
               ),
-
-              // ── Image Picker (shown only when No selected) ──
               AnimatedCrossFade(
                 duration: const Duration(milliseconds: 300),
                 crossFadeState: isNo
@@ -236,11 +161,11 @@ class QuestionTile extends StatelessWidget {
                       categoryIndex: categoryIndex,
                       questionIndex: questionIndex,
                     ),
-                    onReplace: () => _showImageSourceSheet(context, provider),
+                    onReplace: () =>_pickImage(context, provider, ImageSource.camera),
                   )
                       : ImagePickerPrompt(
                     onTap: () =>
-                        _showImageSourceSheet(context, provider),
+                        _pickImage(context, provider, ImageSource.camera),
                   ),
                 ),
               ),

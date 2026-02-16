@@ -72,6 +72,8 @@ class _InspectionPageState extends State<InspectionPage>
               controller: _tabController,
               indicatorColor: Colors.white,
               indicatorWeight: 3,
+              indicatorAnimation: TabIndicatorAnimation.elastic,
+              indicatorSize: TabBarIndicatorSize.label,
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white54,
               labelStyle: const TextStyle(
