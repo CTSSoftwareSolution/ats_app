@@ -2,7 +2,6 @@ import 'package:ats_app/Presentation/screens/vehicles_class_page/vehicle_class_s
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../Responsive/responsive_ext.dart';
 import '../../../utilities/extension.dart';
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_image.dart';

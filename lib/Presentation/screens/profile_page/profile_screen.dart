@@ -1,4 +1,5 @@
 import 'package:ats_app/Presentation/provider/profile_details_provider.dart';
+import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_page/inspection_page.dart';
 import 'package:ats_app/Presentation/screens/profile_page/profile_details_container.dart';
 import 'package:ats_app/utilities/profile_menu_widget.dart';
 import 'package:extensions_pro/extensions_pro.dart';
@@ -106,6 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 1:
         break;
       case 2:
+        context.push(InspectionPage());
         break;
       case 3:
         break;

@@ -2,12 +2,10 @@ import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:ats_app/widgets/custom_image.dart';
-import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_text.dart';
-import '../profile_view_edit_page/profile_view_edit_screen.dart';
 
 
 class ProfileDetailsContainer extends StatelessWidget {

@@ -13,6 +13,7 @@ import '../../../widgets/custom_loader.dart';
 import '../../../widgets/custom_search_bar.dart';
 import '../../../widgets/custom_text.dart';
 import '../../provider/MediaPicker/file_provider.dart';
+import '../../provider/inspection_type_provider.dart';
 import '../../provider/pre_ins_manual_status_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../vehicle_test_parameter/vehicle_parts_screen.dart';
@@ -43,6 +44,8 @@ class _VehicleClassResponsiveLayoutState extends State<VehicleClassResponsiveLay
   @override
   Widget build(BuildContext context) {
     final classProvider = context.watch<VehicleClassProvider>().vehicleClassEntity?.data;
+    final typeProvider = Provider.of<InspectionTypeProvider>(context);
+
     return  LayoutBuilder(
       builder: (context, constraints) {
         return OrientationBuilder(
@@ -61,7 +64,6 @@ class _VehicleClassResponsiveLayoutState extends State<VehicleClassResponsiveLay
                       width: constraints.isTablet ? constraints.maxWidth/1.5 : double.infinity,
                       child: CustomSearchTextField(
                         onChanged: (String value) {
-
                           context.read<VehicleClassProvider>()
                               .onSearchChanged(context, value);
                         },
@@ -153,16 +155,18 @@ class _VehicleClassResponsiveLayoutState extends State<VehicleClassResponsiveLay
                           child: VehicleClassScreenItem(
                             classDataModel: classProvider[index],
                             onTap: () {
-                              context.read<VehicleClassProvider>().setSelectedClass(
-                                classProvider[index],
-                              );
+                              context.read<VehicleClassProvider>().setSelectedClass(classProvider[index],);
                               context.read<FileProvider>().clearAll(context);
                               context.read<PreInsManualStatusProvider>().getManualStatusApi(context);
-                              customBottomSheet(
+                              if(typeProvider.inspectionTypeEntity!.status!=false) {
+                                customBottomSheet(
                                   context: context,
                                   title: 'Select Inspection Type',
                                   child:  inspectionTypeTiles(context: context, parentContext: context)
                               );
+                              }else{
+                                context.showErrorSnackBar("Something went wrong!");
+                              }
                             },
                           ),
 

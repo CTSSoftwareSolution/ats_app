@@ -1,5 +1,4 @@
 import 'package:ats_app/Presentation/screens/result_page/result_screen_item.dart';
-import 'package:ats_app/utilities/image_data.dart';
 import 'package:ats_app/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 

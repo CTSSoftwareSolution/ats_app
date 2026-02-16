@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:ats_app/Presentation/provider/MediaPicker/file_provider.dart';
-import 'package:ats_app/Responsive/responsive_ext.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/image_data.dart';

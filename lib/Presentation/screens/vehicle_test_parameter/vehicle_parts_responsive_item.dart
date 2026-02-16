@@ -6,7 +6,6 @@ import '../../../utilities/extension.dart';
 import '../../../utilities/media_picker_tiles.dart';
 import '../../../widgets/custom_bottomsheet.dart';
 import '../../../widgets/custom_button.dart';
-import '../../../widgets/custom_dialog_box.dart';
 import '../../../widgets/custom_text.dart';
 import '../../provider/MediaPicker/file_provider.dart';
 

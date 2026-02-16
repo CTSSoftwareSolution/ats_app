@@ -1,19 +1,10 @@
 import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
-import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_responsive.dart';
-import 'package:ats_app/utilities/extension.dart';
-import 'package:ats_app/widgets/custom_button.dart';
-import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
-import '../../../utilities/media_picker_tiles.dart';
-import '../../../widgets/custom_bottomsheet.dart';
-import '../../../utilities/custom_stepper.dart';
 import '../../../widgets/custom_text.dart';
-import '../../provider/MediaPicker/file_provider.dart';
-import '../inspection_result/inspection_result_screen.dart';
 
 class VehiclePartsScreen extends StatefulWidget {
   const VehiclePartsScreen({super.key});

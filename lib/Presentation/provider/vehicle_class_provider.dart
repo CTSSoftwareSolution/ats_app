@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../../Data/model/response_model/vehicle_class_res_model.dart';
 import '../../Domain/entities/vehicle_class_entity.dart';
 import '../../Domain/usecases/vehicle_class_usecases.dart';
-import '../../widgets/custom_loader.dart';
 
 class VehicleClassProvider extends ChangeNotifier{
   VehicleClassUseCases vehicleClassUseCases;

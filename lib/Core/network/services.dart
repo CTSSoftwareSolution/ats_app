@@ -2,9 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_alice/alice.dart';
 
-
-
-
 const baseUrl = "https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev";
 
 Map<String, String> authHeader = {

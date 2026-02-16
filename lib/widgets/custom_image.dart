@@ -1,7 +1,6 @@
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 
-import '../utilities/image_data.dart';
 
 
 class CustomImage extends StatelessWidget {

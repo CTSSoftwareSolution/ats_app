@@ -1,5 +1,4 @@
 import 'package:ats_app/Presentation/screens/bottom_navigation/navigation_rail.dart';
-import 'package:ats_app/Presentation/screens/bottom_navigation/tablet_bottom_navigation.dart';
 import 'package:ats_app/Responsive/responsive_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,9 +1,7 @@
-import 'dart:math' as math;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import 'color_data.dart';
 
 class LoaderPainter extends CustomPainter{
   final double progress;

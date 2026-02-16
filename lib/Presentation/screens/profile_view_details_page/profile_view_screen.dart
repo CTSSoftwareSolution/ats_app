@@ -5,12 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
-import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_image.dart';
-import '../../../widgets/custom_loader.dart';
 import '../../../widgets/custom_text.dart';
 import '../../provider/profile_details_provider.dart';
-import '../profile_page/profile_details_container.dart';
 
 class ProfileViewScreen extends StatefulWidget {
   const ProfileViewScreen({super.key});

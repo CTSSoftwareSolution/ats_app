@@ -1,19 +1,13 @@
 import 'package:ats_app/Presentation/provider/inspection_type_provider.dart';
 import 'package:ats_app/Presentation/provider/pre_ins_manual_status_provider.dart';
 import 'package:ats_app/utilities/extension.dart';
-import 'package:ats_app/widgets/custom_dialog_box.dart';
-import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../Presentation/provider/MediaPicker/file_provider.dart';
 import '../Presentation/screens/pre_inspection_form/handle_inspection_tap.dart';
-import '../Presentation/screens/pre_inspection_form/inspection_form_screen.dart';
-import '../Presentation/screens/vehicle_test_parameter/vehicle_parts_screen.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_image.dart';
 import '../widgets/custom_text.dart';
 import 'color_data.dart';
-import 'custom_confirmation_dialog_box.dart';
 import 'image_data.dart';
 
 Widget inspectionTypeTiles({required BuildContext context,required BuildContext parentContext, }) {

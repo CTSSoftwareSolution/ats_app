@@ -1,4 +1,3 @@
-import 'package:ats_app/Presentation/provider/pre_ins_details_provider.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,7 @@ import '../../../utilities/custom_confirmation_dialog_box.dart';
 import '../../provider/MediaPicker/file_provider.dart';
 import '../../provider/pre_ins_manual_status_provider.dart';
 import '../vehicle_test_parameter/vehicle_parts_screen.dart';
-import 'inspection_form_screen.dart';
+import 'inspection_page/inspection_page.dart';
 
 void handleInspectionTap(
     BuildContext context,
@@ -37,7 +36,7 @@ void openManualInspection(BuildContext context, BuildContext parentContext) {
   final status = statusProvider.preInsManualStatusEntity?.data;
 
   if(status == "Fail"){
-    context.push(InspectionFormScreen());
+    context.push(InspectionPage());
   }else if(status == "Pass"){
     customConfirmationDialogBox(context: parentContext, text: 'Manual Inspection passed successfully. You can continue to Machine Inspection.',
         buttons: [
@@ -59,7 +58,8 @@ void openManualInspection(BuildContext context, BuildContext parentContext) {
   else{
 
     //context.read<FileProvider>().clearAll(context);
-    context.push(InspectionFormScreen());
+  //  context.push(InspectionFormScreen());
+    context.push(InspectionPage());
 
   }
 
@@ -102,7 +102,7 @@ void openMachineInspection(BuildContext context, BuildContext parentContext){
               Navigator.pop(parentContext);
               Navigator.push(
                 parentContext,
-                MaterialPageRoute(builder: (_) => InspectionFormScreen()),
+                MaterialPageRoute(builder: (_) => InspectionPage()),
               );
             },
           ),

@@ -63,11 +63,12 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SliderProvider(sliderUseCases: SliderUseCases(sliderRepository: SliderRepoImpl()))),
         ChangeNotifierProvider(create: (_) => ProfileDetailsProvider(profileDetailsUseCases: ProfileDetailsUseCases(profileDetailsRepository: ProfileDetailsRepoImpl()))),
         ChangeNotifierProvider(create: (_) => InspectionResultProvider()),
+
         ChangeNotifierProvider(create: (_) => InspectionFormProvider(inspectionQueUseCases: InspectionQueUseCases(inspectionQueRepository: InspectionQueImpl()))),
         ChangeNotifierProvider(create: (_) => PreInspectionResultProvider(preInspectionResultUseCases: PreInspectionResultUseCases(preInspectionResultRepository: PreInspectionResultImpl()))),
         ChangeNotifierProvider(create: (_) => InspectionTypeProvider(inspectionTypeUseCases: InspectionTypeUseCases(inspectionTypeRepository: InspectionTypeImpl()))),
         ChangeNotifierProvider(create: (_) => PreInsManualStatusProvider(preInsManualStatusUseCases: PreInsManualStatusUseCases(preInsManualStatusRepository: PreInsManualStatusImpl()))),
-        ChangeNotifierProvider(create: (_) => PreInsDetailsProvider(preInsDetailsUseCases: PreInsDetailsUseCases(preInsDetailsRepository: PreInsDetailsImpl())))
+        ChangeNotifierProvider(create: (_) => PreInsDetailsProvider(preInsDetailsUseCases: PreInsDetailsUseCases(preInsDetailsRepository: PreInsDetailsImpl()))),
       ],
       child: const MyApp(),
     );
