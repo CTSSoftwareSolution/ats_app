@@ -63,7 +63,6 @@ class _VehiclePartsResponsiveLayoutState extends State<VehiclePartsResponsiveLay
                                         return VehiclePartsResponsiveItem(item: item, allIndex: allIndex, isTablet: true,);
                                       }
                                   )
-
                          : ListView.builder(
                             itemCount: partsProvider.currentPageData.length,
                             itemBuilder: (context, index) {
@@ -84,18 +83,14 @@ class _VehiclePartsResponsiveLayoutState extends State<VehiclePartsResponsiveLay
                                       ? "Submit" : "Next",
                             onPress: () {
                               context.read<VehiclePartsProvider>().nextStepper(partsProvider.totalPagesForTablet);
-
-                                    if (partsProvider.currentPage < partsProvider.totalPagesForTablet - 1)
-                                        {
+                                    if (partsProvider.currentPage < partsProvider.totalPagesForTablet - 1) {
                                       context.read<VehiclePartsProvider>().nextPage(partsProvider.totalPagesForTablet - 1);
                                     } else {
                                       context.push(InspectionResultScreen());
                                      context.read<VehiclePartsProvider>().resetStepperForTablet();
-
                                     }
                             },),
                         ) :
-
                         ResponsiveButton(width: double.infinity,
                           buttonText: partsProvider.currentPage == partsProvider.totalPages - 1
                               ? "Submit" : "Next",
@@ -111,42 +106,6 @@ class _VehiclePartsResponsiveLayoutState extends State<VehiclePartsResponsiveLay
 
                             }
                           },)
-
-                        // Padding(
-                        //   padding: const EdgeInsets.only(bottom: 20.0),
-                        //   child: CustomButton(
-                        //     width: constraints.isTablet ?  200 : double.infinity,
-                        //     height: 50.0,
-                        //     buttonText: partsProvider.currentPage ==   (constraints.isTablet
-                        //         ? partsProvider.totalPagesForTablet - 1
-                        //         : partsProvider.totalPages - 1) ? "Submit" : "Next",
-                        //     onPress: () async {
-                        //       context.read<VehiclePartsProvider>().nextStepper(constraints.isTablet ? partsProvider.totalPagesForTablet : partsProvider.totalPages);
-                        //
-                        //       if (partsProvider.currentPage < (constraints.isTablet
-                        //           ? partsProvider.totalPagesForTablet - 1
-                        //           : partsProvider.totalPages - 1)) {
-                        //         context.read<VehiclePartsProvider>().nextPage(constraints.isTablet
-                        //             ? partsProvider.totalPagesForTablet - 1
-                        //             : partsProvider.totalPages - 1);
-                        //       } else {
-                        //         context.push(InspectionResultScreen());
-                        //         constraints.isTablet ? context.read<VehiclePartsProvider>().resetStepperForTablet() :
-                        //         context.read<VehiclePartsProvider>().resetStepper();
-                        //       }
-                        //
-                        //     },
-                        //     backgroundColor: appColor,
-                        //     foregroundColor: whiteColor,
-                        //     shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadiusGeometry.all(
-                        //         Radius.circular(30.0),
-                        //       ),
-                        //     ),
-                        //     fontSize: 20.0,
-                        //     fontFamily: "Bold",
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),

@@ -1,4 +1,5 @@
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
@@ -8,6 +9,7 @@ import '../../../widgets/custom_bottomsheet.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text.dart';
 import '../../provider/MediaPicker/file_provider.dart';
+import '../camera_page/camera_screen.dart';
 
 class VehiclePartsResponsiveItem extends StatelessWidget {
   final dynamic item;
@@ -41,39 +43,20 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
                 index: allIndex,
                 onTap: () {
                   context.read<FileProvider>().setCurrentIndex(allIndex);
-                  customBottomSheet(
-                    context: context,
-                    title: "Select Media",
-                    child: mediaPickerTiles(context: context),
-                  );
+                  context.push(CameraScreen());
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => CameraScreen()),
+                  // );
+
+                  // customBottomSheet(
+                  //   context: context,
+                  //   title: "Select Media",
+                  //   child: mediaPickerTiles(context: context),
+                  // );
                 },
                 isTablet: isTablet,
               ),
-        image != null
-            ? Padding(
-                padding: EdgeInsets.symmetric(vertical: 5.0),
-                child: CustomButton(
-                  height: 38,
-                  width: double.infinity,
-                  buttonText: "Re-upload",
-                  onPress: () {
-                    context.read<FileProvider>().setCurrentIndex(allIndex);
-                    customBottomSheet(
-                      context: context,
-                      title: "Select Media",
-                      child: mediaPickerTiles(context: context),
-                    );
-                  },
-                  backgroundColor: appColor,
-                  foregroundColor: whiteColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  ),
-                  fontSize: 15,
-                  fontFamily: "Bold",
-                ),
-              )
-            : SizedBox.shrink(),
       ],
     );
   }

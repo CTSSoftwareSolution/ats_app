@@ -1,4 +1,5 @@
 import 'package:ats_app/Presentation/screens/vehicles_class_page/vehicle_class_screen_item.dart';
+import 'package:ats_app/utilities/color_data.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,7 @@ class _TabletVehicleClassScreenState extends State<TabletVehicleClassScreen> {
   Widget build(BuildContext context) {
     final classProvider = context.watch<VehicleClassProvider>().vehicleClassEntity?.data;
     return Scaffold(
+      backgroundColor: background,
       body: SafeArea(
           child:  Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
@@ -55,9 +57,7 @@ class _TabletVehicleClassScreenState extends State<TabletVehicleClassScreen> {
                           width: double.infinity,
                           child: CustomSearchTextField(
                             onChanged: (String value) {
-
-                              context.read<VehicleClassProvider>()
-                                  .onSearchChanged(context, value);
+                              context.read<VehicleClassProvider>().onSearchChanged(context, value);
                             },
                             onCloseClick: () {
                               context.read<VehicleClassProvider>().searchController.clear();
