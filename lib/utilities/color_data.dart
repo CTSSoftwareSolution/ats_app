@@ -16,4 +16,5 @@ const greyColor = Color(0xf38b8b8b);
 const mediaPickerColor = Color(0x45d9d9d9);
 const cameraBackConColor = Color(0x4fd9d9d9);
 const textFieldColor = Color(0xf3e8e8e8);
+const background = Color(0xfff4f5fa);
 
