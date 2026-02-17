@@ -139,4 +139,11 @@ class InputFormatters {
     ),
   ];
 
+  static List<TextInputFormatter> get ipAddressFormat => [
+    FilteringTextInputFormatter.allow(
+      RegExp(r'[0-9.:a-zA-Z/\-]'),
+    ),
+    FilteringTextInputFormatter.deny(RegExp(r"  ")),
+  ];
+
 }

@@ -17,6 +17,7 @@ class CustomText extends StatelessWidget {
   final VoidCallback? click;
   final TextDecoration? decoration;
   final bool? softWrap;
+  final double? letterSpacing;
 
   const CustomText({
     super.key,
@@ -34,6 +35,7 @@ class CustomText extends StatelessWidget {
     this.bottomPadding = 0,
     this.decoration,
     this.click,
+    this.letterSpacing,
     this.softWrap, this.decorationColor
   });
 
@@ -52,6 +54,7 @@ class CustomText extends StatelessWidget {
             textAlign: textAlign,
             softWrap: softWrap,
             style: TextStyle(
+              letterSpacing: letterSpacing,
                 decoration: decoration,
                 decorationColor: decorationColor,
                 overflow: overflow,

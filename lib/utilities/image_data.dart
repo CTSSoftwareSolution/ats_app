@@ -71,11 +71,12 @@ List<ListModel> mediaSource = [
 List<ProfileModel> profileGridValues = [
   const ProfileModel(0, 'Personal Details','View your personal details',editProfileIcon,ProfileTrailingType.arrow),
   const ProfileModel(1, 'Notification','Manage your alerts and notifications',notificationIcon,ProfileTrailingType.switchButton),
-  const ProfileModel(2, 'Privacy Policy','Learn how we protect your data',privacyIcon,ProfileTrailingType.arrow),
-  const ProfileModel(3, 'Terms & Conditions','Our rules, explained simply',termsIcon,ProfileTrailingType.arrow),
-  const ProfileModel(4, 'Contact Us','We are here, if you need any help',contactUsIcon,ProfileTrailingType.arrow),
-  const ProfileModel(5, 'Logout','Sign out safely and easily',logoutIcon,ProfileTrailingType.none),
-  const ProfileModel(6, '','',versionControlIcon,ProfileTrailingType.none),
+  const ProfileModel(2, 'IP Config','',notificationIcon,ProfileTrailingType.arrow),
+  const ProfileModel(3, 'Privacy Policy','Learn how we protect your data',privacyIcon,ProfileTrailingType.arrow),
+  const ProfileModel(4, 'Terms & Conditions','Our rules, explained simply',termsIcon,ProfileTrailingType.arrow),
+  const ProfileModel(5, 'Contact Us','We are here, if you need any help',contactUsIcon,ProfileTrailingType.arrow),
+  const ProfileModel(6, 'Logout','Sign out safely and easily',logoutIcon,ProfileTrailingType.none),
+  const ProfileModel(7, '','',versionControlIcon,ProfileTrailingType.none),
 ];
 
 

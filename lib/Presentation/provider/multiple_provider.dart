@@ -28,6 +28,7 @@ import 'package:ats_app/Presentation/provider/splash_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_type_provider.dart';
+import 'package:ats_app/Presentation/screens/ip_config/ip_address_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -63,12 +64,12 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SliderProvider(sliderUseCases: SliderUseCases(sliderRepository: SliderRepoImpl()))),
         ChangeNotifierProvider(create: (_) => ProfileDetailsProvider(profileDetailsUseCases: ProfileDetailsUseCases(profileDetailsRepository: ProfileDetailsRepoImpl()))),
         ChangeNotifierProvider(create: (_) => InspectionResultProvider()),
-
         ChangeNotifierProvider(create: (_) => InspectionFormProvider(inspectionQueUseCases: InspectionQueUseCases(inspectionQueRepository: InspectionQueImpl()))),
         ChangeNotifierProvider(create: (_) => PreInspectionResultProvider(preInspectionResultUseCases: PreInspectionResultUseCases(preInspectionResultRepository: PreInspectionResultImpl()))),
         ChangeNotifierProvider(create: (_) => InspectionTypeProvider(inspectionTypeUseCases: InspectionTypeUseCases(inspectionTypeRepository: InspectionTypeImpl()))),
         ChangeNotifierProvider(create: (_) => PreInsManualStatusProvider(preInsManualStatusUseCases: PreInsManualStatusUseCases(preInsManualStatusRepository: PreInsManualStatusImpl()))),
         ChangeNotifierProvider(create: (_) => PreInsDetailsProvider(preInsDetailsUseCases: PreInsDetailsUseCases(preInsDetailsRepository: PreInsDetailsImpl()))),
+        ChangeNotifierProvider(create: (_) => IpAddressProvider())
       ],
       child: const MyApp(),
     );

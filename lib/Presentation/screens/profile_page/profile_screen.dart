@@ -11,6 +11,8 @@ import '../../../utilities/image_data.dart';
 import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
 import '../../provider/login_provider.dart';
+import '../ip_config/IpAddressBottomSheet.dart';
+import '../ip_config/ip_address_bottom_sheet.dart';
 import '../login_page/login_screen.dart';
 import '../profile_view_details_page/profile_view_screen.dart';
 
@@ -82,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             buildTile(
                               profileGridValues[index].image,
-                              index == 6 ? context.watch<ProfileDetailsProvider>().appVersion : profileGridValues[index].title,
+                              index == 7 ? context.watch<ProfileDetailsProvider>().appVersion : profileGridValues[index].title,
                               profileGridValues[index].subtitle,
                               getTrailingWidget(profileGridValues[index]),
                             ),
@@ -108,13 +110,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 1:
         break;
       case 2:
-        context.push(InspectionPage());
+        showIpAddressBottomSheet(context);
         break;
       case 3:
+        context.push(InspectionPage());
         break;
       case 4:
         break;
       case 5:
+        break;
+      case 6:
         customShowDialog(
           context: context,
           title: "Log out",
@@ -130,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         );
         break;
-      case 6:
+      case 7:
         break;
       default:
         break;
