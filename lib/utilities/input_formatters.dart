@@ -147,7 +147,7 @@ class IpInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-    // Remove any character that is not a digit
+
     String digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
     List<String> parts = [];
 
@@ -164,10 +164,10 @@ class IpInputFormatter extends TextInputFormatter {
       }
     }
 
-    // Join with dots
+
     String formatted = parts.join('.');
 
-    // Maintain cursor position
+
     return TextEditingValue(
       text: formatted,
       selection: TextSelection.collapsed(offset: formatted.length),
