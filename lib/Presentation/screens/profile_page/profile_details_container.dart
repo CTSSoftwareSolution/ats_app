@@ -7,55 +7,126 @@ import 'package:flutter/material.dart';
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_text.dart';
 
-
 class ProfileDetailsContainer extends StatelessWidget {
   const ProfileDetailsContainer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       decoration: BoxDecoration(
-        color: appColor,
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        borderRadius: BorderRadius.circular(24.0),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            appColor,
+            appColor.withOpacity(0.75),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: appColor.withOpacity(0.38),
+            blurRadius: 24,
+            spreadRadius: 0,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 60,
-              height: 60,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: whiteColor,
-                  shape: BoxShape.circle,),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 8.0),
-                  child: CustomImage(image: Preferences.getImage(),fit: BoxFit.cover,switchToNetwork: true,defaultImage: userImage),
-                )
+      child: Stack(
+        children: [
+          Positioned(
+            bottom: -20,
+            left: -20,
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.06),
               ),
             ),
-            10.width,
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 22.0, horizontal: 20.0),
+            child: Row(
               children: [
-                CustomText(
-                  text: Preferences.getName(),
-                  fontSize: 21,
-                  fontFamily: "Bold",
-                  textColor: whiteColor,
+                // Avatar
+                Container(
+                  width: 68,
+                  height: 68,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.14),
+                        blurRadius: 14,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.9),
+                      width: 2.5,
+                    ),
+                  ),
+                  child: ClipOval(
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: CustomImage(
+                        image: Preferences.getImage(),
+                        fit: BoxFit.cover,
+                        switchToNetwork: true,
+                        defaultImage: userImage,
+                      ),
+                    ),
+                  ),
                 ),
-                3.height,
-                CustomText(
-                  text: Preferences.getEmail(),
-                  fontSize: 14,
-                  fontFamily: "SemiBold",
-                  textColor: whiteColor,
+                16.width,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomText(
+                        text: Preferences.getName(),
+                        fontSize: 20,
+                        fontFamily: "Bold",
+                        textColor: Colors.white,
+                      ),
+                      5.height,
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.18),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Icon(
+                              Icons.email_outlined,
+                              color: Colors.white,
+                              size: 11,
+                            ),
+                          ),
+                          6.width,
+                          Flexible(
+                            child: CustomText(
+                              text: Preferences.getEmail(),
+                              fontSize: 13,
+                              fontFamily: "Medium",
+                              textColor: Colors.white.withOpacity(0.85),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

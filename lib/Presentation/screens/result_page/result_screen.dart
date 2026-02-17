@@ -1,5 +1,6 @@
 import 'package:ats_app/Presentation/screens/result_page/result_screen_item.dart';
 import 'package:ats_app/widgets/custom_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utilities/color_data.dart';
@@ -15,6 +16,7 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: appColor,

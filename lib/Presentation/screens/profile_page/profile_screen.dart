@@ -34,6 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: appColor,
