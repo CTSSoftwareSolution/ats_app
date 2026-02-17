@@ -1,5 +1,6 @@
 import 'package:ats_app/Domain/entities/slider_entity.dart';
 import 'package:ats_app/Domain/repositories/slider_repository.dart';
+import 'package:flutter/cupertino.dart';
 
 class SliderUseCases {
   SliderRepository sliderRepository;

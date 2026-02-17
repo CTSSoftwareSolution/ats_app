@@ -53,7 +53,7 @@ class ErrorScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: provider.fetchInspectionData,
+              onPressed: ()=>provider.fetchInspectionData(),
               icon: const Icon(Icons.refresh),
               label: const Text('Try Again'),
               style: ElevatedButton.styleFrom(

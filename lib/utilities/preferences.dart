@@ -10,6 +10,7 @@ class Preferences {
   static String name = 'name';
   static String email = 'email';
   static String image = 'image';
+  static String ipAddress = 'ipAddress';
 
 
   static Future<void> setPreferences() async {
@@ -31,6 +32,7 @@ class Preferences {
   static Future<bool> setName(String value) =>setString(name, value);
   static Future<bool> setEmail(String value) =>setString(email, value);
   static Future<bool> setImage(String value) =>setString(image, value);
+  static Future<bool> setIPAddress(String value) =>setString(ipAddress, value);
 
 
   static dynamic getUserId() => getString(userId);
@@ -38,6 +40,7 @@ class Preferences {
   static dynamic getName() => getString(name);
   static dynamic getEmail() => getString(email);
   static dynamic getImage() => getString(image);
+  static dynamic getIPAddress() => getString(ipAddress);
 
 
 }

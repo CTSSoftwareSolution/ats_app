@@ -1,6 +1,7 @@
 import 'package:ats_app/Data/model/request_model/profile_details_req_model.dart';
 import 'package:ats_app/Domain/entities/profile_details_entity.dart';
 import 'package:ats_app/Domain/repositories/profile_details_repository.dart';
+import 'package:flutter/cupertino.dart';
 
 class ProfileDetailsUseCases {
   ProfileDetailsRepository profileDetailsRepository;

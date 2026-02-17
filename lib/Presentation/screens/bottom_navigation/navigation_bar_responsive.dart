@@ -25,10 +25,7 @@ class _NavigationBarResponsiveLayoutState
           child: constraints.isTablet
               ? Row(
                   children: [
-                    TabletNavigationRail(
-                      currentIndex: navigationProvider.pageIndex,
-                      onTabSelected: navigationProvider.updateIndex,
-                    ),
+                    TabletNavigationRail(),
                     Expanded(
                       child: navigationProvider
                           .pages[navigationProvider.pageIndex],
@@ -46,12 +43,7 @@ class _NavigationBarResponsiveLayoutState
                       right: 15,
                       bottom: 20,
                       child: SafeArea(
-                        child: CustomBottomNavigation(
-                          currentIndex: navigationProvider.pageIndex,
-                          onTabSelected: (index) {
-                            navigationProvider.updateIndex(index);
-                          },
-                        ),
+                        child: CustomBottomNavigation(),
                       ),
                     ),
                   ],

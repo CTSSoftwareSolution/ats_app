@@ -2,13 +2,17 @@ import 'package:ats_app/Data/model/request_model/pre_inspection_result_req_model
 import 'package:ats_app/Data/model/response_model/pre_inspection_result_model.dart';
 import 'package:ats_app/Domain/entities/pre_inspection_result_entity.dart';
 import 'package:ats_app/Domain/repositories/pre_inspection_result_repository.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import '../../Core/network/api_services.dart';
 import '../../Core/network/services.dart';
+import '../../Presentation/screens/ip_config/ip_address_provider.dart';
 
 class PreInspectionResultImpl implements PreInspectionResultRepository{
 
   @override
   Future<PreInspectionResultEntity> saveResult(PreInspectionResultReqModel resultReqModel) async{
+    //final baseUrl = context.read<IpAddressProvider>().baseUrl;
     try{
       final response = await ApiService.post(resultReqModel, savePreInspectionResultsUrl);
       final model = PreInspectionResultModel.fromJson(response);

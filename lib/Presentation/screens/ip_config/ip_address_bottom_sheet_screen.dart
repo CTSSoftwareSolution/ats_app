@@ -24,7 +24,7 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
   void initState(){
     super.initState();
     final configProvider = Provider.of<ConfigProvider>(context, listen: false);
-    configProvider.loadCurrentIp(context);
+    //configProvider.loadCurrentIp(context);
 
     configProvider.animationController = AnimationController(
       vsync: this,
@@ -322,74 +322,102 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    gradient: LinearGradient(
-                                      colors: configProvider.isLoading
-                                          ? [Colors.blue[300]!, Colors.blue[400]!]
-                                          : [
-                                        Colors.blue[500]!,
-                                        Colors.blue[600]!,
-                                        Colors.blue[700]!,
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  gradient: LinearGradient(
+                                    colors: configProvider.isLoading
+                                        ? [Colors.blue[300]!, Colors.blue[400]!]
+                                        : [
+                                      Colors.blue[500]!,
+                                      Colors.blue[600]!,
+                                      Colors.blue[700]!,
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.blue.withOpacity(0.4),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                      spreadRadius: 0,
                                     ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.blue.withOpacity(0.4),
-                                        blurRadius: 12,
-                                        offset: const Offset(0, 4),
-                                        spreadRadius: 0,
+                                  ],
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: configProvider.isLoading
+                                      ? null
+                                      : () async {
+                                    await configProvider.saveIpAddress(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: configProvider.isLoading
+                                      ? const SizedBox(
+                                    height: 18,
+                                    width: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                      : const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.save_rounded, size: 18),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Save Address',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 0.3,
+                                        ),
                                       ),
                                     ],
                                   ),
-                                  child: ElevatedButton(
-                                    onPressed: configProvider.isLoading
-                                        ? null
-                                        : () async {
-                                      await configProvider.saveIpAddress(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
-                                      elevation: 0,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                    child: configProvider.isLoading
-                                        ? const SizedBox(
-                                      height: 18,
-                                      width: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.5,
-                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                      ),
-                                    )
-                                        : const Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.save_rounded, size: 18),
-                                        SizedBox(width: 8),
-                                        Text(
-                                          'Save Address',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 0.3,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
                                 ),
                               ),
+                              const SizedBox(height: 16),
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.blue[50]!,
+                                      Colors.blue[100]!.withOpacity(0.3),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: Colors.blue[200]!,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline_rounded,
+                                      color: Colors.blue[700],
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: CustomText(text: "Changes will take effect immediately for all API requests",
+                                      fontSize: 11.0, textColor: Colors.blue[900],fontFamily: "Medium",),
+                                    )
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         ),

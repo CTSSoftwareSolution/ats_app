@@ -1,13 +1,18 @@
 import 'package:ats_app/Data/model/response_model/inspection_que_model.dart';
 import 'package:ats_app/Domain/entities/inspection_que_entity.dart';
 import 'package:ats_app/Domain/repositories/inspection_que_repository.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import '../../Core/network/api_services.dart';
 import '../../Core/network/services.dart';
+import '../../Presentation/screens/ip_config/ip_address_provider.dart';
 
 class InspectionQueImpl implements InspectionQueRepository{
 
   @override
   Future<InspectionQueEntity> questionApi() async{
+    //final baseUrl = context.read<IpAddressProvider>().baseUrl;
+
     try{
       final response = await ApiService.post("", inspectionQueUrl);
       final model = InspectionModel.fromJson(response);

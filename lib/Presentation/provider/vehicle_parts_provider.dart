@@ -109,7 +109,7 @@ class VehiclePartsProvider extends ChangeNotifier {
         vehicleClass: classProvider.selectedClass?.vehicleClass.toString(),
       );
       vehiclePartsEntity = await vehiclePartsUseCases.execute(
-        vehiclePartsReqModel,
+        vehiclePartsReqModel
       );
       return vehiclePartsEntity;
     } catch (e) {

@@ -9,20 +9,20 @@ import '../../../utilities/image_data.dart';
 import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
 import '../../../widgets/custom_image.dart';
+import '../../provider/bottom_navigation_provider.dart';
 import '../login_page/login_screen.dart';
 
 class TabletNavigationRail extends StatelessWidget {
-  final int currentIndex;
-  final ValueChanged<int> onTabSelected;
+
 
   const TabletNavigationRail({
     super.key,
-    required this.currentIndex,
-    required this.onTabSelected,
+
   });
 
   @override
   Widget build(BuildContext context) {
+    final navigationProvider = context.watch<BottomNavigationProvider>();
     return Padding(
       padding: EdgeInsets.only(top: 40, bottom: 15, left: 20),
       child: Container(
@@ -35,8 +35,8 @@ class TabletNavigationRail extends StatelessWidget {
             ),
           ),
         child: NavigationRail(
-          selectedIndex: currentIndex,
-          onDestinationSelected: onTabSelected,
+          selectedIndex: navigationProvider.pageIndex,
+          onDestinationSelected: navigationProvider.updateIndex,
           minWidth: 70,
           backgroundColor: Colors.transparent,
           labelType: NavigationRailLabelType.none,

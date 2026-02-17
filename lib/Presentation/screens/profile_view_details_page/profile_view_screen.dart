@@ -20,7 +20,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ProfileDetailsProvider>().profileDetailsApi(context);
+    context.read<ProfileDetailsProvider>().profileDetailsApi();
   }
 
   @override

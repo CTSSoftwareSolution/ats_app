@@ -21,7 +21,7 @@ class _ProfileViewEditScreenState extends State<ProfileViewEditScreen> {
   @override
   void initState(){
     super.initState();
-    context.read<ProfileDetailsProvider>().profileDetailsApi(context);
+    context.read<ProfileDetailsProvider>().profileDetailsApi();
   }
   @override
   Widget build(BuildContext context) {

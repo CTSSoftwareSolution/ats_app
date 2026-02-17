@@ -13,10 +13,10 @@ class ConfigProvider extends ChangeNotifier{
   bool isLoading = false;
 
 
-  void loadCurrentIp(BuildContext context) {
-    final provider = Provider.of<IpAddressProvider>(context, listen: false);
-    ipController.text = provider.baseUrl;
-  }
+  // void loadCurrentIp(BuildContext context) {
+  //   final provider = Provider.of<IpAddressProvider>(context, listen: false);
+  //   ipController.text = provider.baseUrl;
+  // }
 
   Future<void> saveIpAddress(BuildContext context) async {
     if (formKey.currentState!.validate()) {

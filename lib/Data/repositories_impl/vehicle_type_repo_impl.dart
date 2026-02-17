@@ -2,12 +2,16 @@ import 'package:ats_app/Core/network/services.dart';
 import 'package:ats_app/Data/model/response_model/vehicle_type_res_model.dart';
 import 'package:ats_app/Domain/entities/vehicle_type_entity.dart';
 import 'package:ats_app/Domain/repositories/vehicle_type_repository.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 import '../../Core/network/api_services.dart';
+import '../../Presentation/screens/ip_config/ip_address_provider.dart';
 
 class VehicleTypeRepoImpl implements VehicleTypeRepository{
   @override
   Future<VehicleTypeEntity> vehicleTypeApi() async {
+   // final baseUrl = context.read<IpAddressProvider>().baseUrl;
     try{
       final response = await ApiService.post("", vehicleTypeUrl);
       final model = VehicleTypeResModel.fromJson(response);

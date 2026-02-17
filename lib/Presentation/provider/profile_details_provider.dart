@@ -29,7 +29,7 @@ class ProfileDetailsProvider extends ChangeNotifier{
 
 
 
-  Future<ProfileDetailsEntity?> profileDetailsApi(BuildContext context)async{
+  Future<ProfileDetailsEntity?> profileDetailsApi()async{
     isLoading = true;
     try {
       ProfileDetailsReqModel profileDetailsReqModel = ProfileDetailsReqModel(
