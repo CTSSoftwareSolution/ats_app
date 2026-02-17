@@ -70,6 +70,7 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
+
                     Colors.blue[50]!,
                     Colors.white,
                     Colors.white,
@@ -105,8 +106,10 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    Colors.blue[300]!,
-                                    Colors.blue[400]!,
+                                    appColor.withOpacity(0.55),
+                                    appColor.withOpacity(0.65),
+                                    // Colors.blue[300]!,
+                                    // Colors.blue[400]!,
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(8),
@@ -117,7 +120,7 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                               width: 28,
                               height: 3,
                               decoration: BoxDecoration(
-                                color: Colors.blue[200],
+                                color: appColor.withOpacity(0.45),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
@@ -137,9 +140,12 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      Colors.blue[600]!,
-                                      Colors.blue[700]!,
-                                      Colors.blue[800]!,
+                                      appColor.withOpacity(0.85),
+                                      appColor.withOpacity(0.95),
+                                      appColor,
+                                      // Colors.blue[600]!,
+                                      // Colors.blue[700]!,
+                                      // Colors.blue[800]!,
                                     ],
                                   ),
                                   borderRadius: BorderRadius.circular(16),
@@ -156,10 +162,10 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: cardBackgroundColor,
                                         borderRadius: BorderRadius.circular(10),
                                         border: Border.all(
-                                          color: Colors.white.withOpacity(0.3),
+                                          color: cardBackgroundColor,
                                           width: 1.5,
                                         ),
                                       ),
@@ -190,7 +196,8 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                   Icon(
                                     Icons.storage_rounded,
                                     size: 16,
-                                    color: Colors.blue[700],
+                                    color: appColor,
+                                    //color: Colors.blue[700],
                                   ),
                                   const SizedBox(width: 6),
                                   CustomText(text: "Server IP Address", fontSize: 13,
@@ -205,7 +212,8 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.blue.withOpacity(0.06),
+                                      color: appColor.withOpacity(0.06),
+                                     //color: Colors.blue.withOpacity(0.06),
                                       blurRadius: 12,
                                       offset: const Offset(0, 3),
                                       spreadRadius: 0,
@@ -228,8 +236,10 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
                                           colors: [
-                                            Colors.blue[400]!,
-                                            Colors.blue[600]!,
+                                            appColor.withOpacity(0.75),
+                                            appColor.withOpacity(0.95),
+                                            // Colors.blue[400]!,
+                                            // Colors.blue[600]!,
                                           ],
                                         ),
                                         borderRadius: BorderRadius.circular(10),
@@ -318,16 +328,20 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                         borderRadius: BorderRadius.circular(12),
                                         gradient: LinearGradient(
                                           colors: [
-                                            Colors.blue[500]!,
-                                            Colors.blue[600]!,
-                                            Colors.blue[700]!,
+                                            appColor.withOpacity(0.85),
+                                            appColor.withOpacity(0.95),
+                                            appColor,
+                                            // Colors.blue[500]!,
+                                            // Colors.blue[600]!,
+                                            // Colors.blue[700]!,
                                           ],
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight,
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.blue.withOpacity(0.4),
+                                            color: appColor.withOpacity(0.4),
+                                           // color: Colors.blue.withOpacity(0.4),
                                             blurRadius: 12,
                                             offset: const Offset(0, 4),
                                             spreadRadius: 0,
@@ -342,7 +356,7 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.transparent,
                                           shadowColor: Colors.transparent,
-                                          foregroundColor: Colors.white,
+                                          foregroundColor:whiteColor,
                                           padding: const EdgeInsets.symmetric(vertical: 12),
                                           elevation: 0,
                                           shape: RoundedRectangleBorder(
@@ -367,16 +381,20 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                         borderRadius: BorderRadius.circular(12),
                                         gradient: LinearGradient(
                                           colors: [
-                                            Colors.blue[500]!,
-                                            Colors.blue[600]!,
-                                            Colors.blue[700]!,
+                                            appColor.withOpacity(0.85),
+                                            appColor.withOpacity(0.95),
+                                            appColor,
+                                            // Colors.blue[500]!,
+                                            // Colors.blue[600]!,
+                                            // Colors.blue[700]!,
                                           ],
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight,
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.blue.withOpacity(0.4),
+                                            color: appColor.withOpacity(0.4),
+                                           // color: Colors.blue.withOpacity(0.4),
                                             blurRadius: 12,
                                             offset: const Offset(0, 4),
                                             spreadRadius: 0,
@@ -385,12 +403,12 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                       ),
                                       child: ElevatedButton(
                                         onPressed: () async {
-                                          appConfig.updateBaseUrl(context: context, newUrl: '106.1.105:600');
+                                          appConfig.updateBaseUrl(context: context, newUrl: ipController.text);
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.transparent,
                                           shadowColor: Colors.transparent,
-                                          foregroundColor: Colors.white,
+                                          foregroundColor: whiteColor,
                                           padding: const EdgeInsets.symmetric(vertical: 12),
                                           elevation: 0,
                                           shape: RoundedRectangleBorder(
@@ -423,13 +441,16 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      Colors.blue[50]!,
-                                      Colors.blue[100]!.withOpacity(0.3),
+                                      cardBackgroundColor,
+                                      appColor.withOpacity(0.08),
+                                      // Colors.blue[50]!,
+                                      // Colors.blue[100]!.withOpacity(0.3),
                                     ],
                                   ),
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
-                                    color: Colors.blue[200]!,
+                                    color: appColor.withOpacity(0.3),
+                                   // color: Colors.blue[200]!,
                                     width: 1,
                                   ),
                                 ),
@@ -437,7 +458,8 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                   children: [
                                     Icon(
                                       Icons.info_outline_rounded,
-                                      color: Colors.blue[700],
+                                      color: appColor,
+                                      // color: Colors.blue[700],
                                       size: 18,
                                     ),
                                     const SizedBox(width: 10),
