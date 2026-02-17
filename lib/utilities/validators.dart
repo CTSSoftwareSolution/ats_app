@@ -126,112 +126,28 @@ class Validators {
       return 'Please enter an IP address';
     }
 
-    // Trim whitespace
     String input = value.trim();
 
-    // Remove http:// or https:// for validation
-    String cleanValue = input.replaceAll(RegExp(r'^https?://'), '');
+    // IPv4 regex: four groups of 1-3 digits separated by dots
+    final ipv4Pattern = RegExp(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$');
+    final match = ipv4Pattern.firstMatch(input);
 
-    // Split by colon to separate IP/domain from port and path
-    List<String> parts = cleanValue.split(':');
-
-    if (parts.isEmpty) {
-      return 'Invalid format';
+    if (match == null) {
+      return 'Enter a valid IPv4 address';
     }
 
-    String ipOrDomain = parts[0];
-    String? portAndPath;
+    // Check each octet
+    for (int i = 1; i <= 4; i++) {
+      String octet = match.group(i)!;
+      int? octetValue = int.tryParse(octet);
 
-    if (parts.length > 1) {
-      portAndPath = parts.sublist(1).join(':');
+      if (octetValue == null) return 'Invalid IP address';
+      if (octetValue < 0 || octetValue > 255) return 'IP octets must be 0-255 (found $octetValue)';
+      if (octet.length > 1 && octet.startsWith('0')) return 'Remove leading zeros from IP';
     }
 
-    // Validate IP address format
-    final ipPattern = RegExp(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$');
-    final ipMatch = ipPattern.firstMatch(ipOrDomain);
-
-    if (ipMatch != null) {
-      // It's an IP address - validate octets
-      for (int i = 1; i <= 4; i++) {
-        String octet = ipMatch.group(i)!;
-        int? octetValue = int.tryParse(octet);
-
-        if (octetValue == null) {
-          return 'Invalid IP address';
-        }
-
-        if (octetValue < 0 || octetValue > 255) {
-          return 'IP octets must be 0-255 (found: $octetValue)';
-        }
-
-        // Check for leading zeros (e.g., 192.168.001.1)
-        if (octet.length > 1 && octet.startsWith('0')) {
-          return 'Remove leading zeros from IP';
-        }
-      }
-    } else {
-      // Check if it's a valid domain name
-      final domainPattern = RegExp(
-        r'^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$',
-      );
-
-      if (!domainPattern.hasMatch(ipOrDomain)) {
-        return 'Enter valid IP or domain name';
-      }
-
-      // Additional domain validation
-      if (ipOrDomain.length > 253) {
-        return 'Domain name too long';
-      }
-
-      // Check each label length
-      List<String> labels = ipOrDomain.split('.');
-      for (String label in labels) {
-        if (label.length > 63) {
-          return 'Domain label too long';
-        }
-        if (label.isEmpty) {
-          return 'Invalid domain format';
-        }
-      }
-    }
-
-    // Validate port if present
-    if (portAndPath != null) {
-      // Extract port (everything before the first '/')
-      String portPart = portAndPath.split('/')[0];
-
-      if (portPart.isNotEmpty) {
-        int? port = int.tryParse(portPart);
-
-        if (port == null) {
-          return 'Port must be a number';
-        }
-
-        if (port < 1 || port > 65535) {
-          return 'Port must be 1-65535 (found: $port)';
-        }
-      }
-    }
-
-    // Additional checks
-    if (cleanValue.contains('..')) {
-      return 'Invalid format (consecutive dots)';
-    }
-
-    if (cleanValue.contains('::')) {
-      return 'Invalid format (consecutive colons)';
-    }
-
-    if (cleanValue.startsWith('.') || cleanValue.endsWith('.')) {
-      return 'Cannot start/end with dot';
-    }
-
-    if (cleanValue.startsWith(':')) {
-      return 'Cannot start with colon';
-    }
-
-    return null;
+    return null; // Valid IPv4
   }
+
 
 }

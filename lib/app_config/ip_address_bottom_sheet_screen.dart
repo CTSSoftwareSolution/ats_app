@@ -6,6 +6,7 @@ import 'package:ats_app/utilities/validators.dart';
 import 'package:ats_app/widgets/custom_text.dart';
 import 'package:ats_app/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 
@@ -43,6 +44,9 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
       CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic)
     );
     animationController.forward();
+
+    ipController.text = appConfig.baseUrl;
+
     ipController.addListener((){
       setState(() {});
     });
@@ -200,7 +204,7 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                     //color: Colors.blue[700],
                                   ),
                                   const SizedBox(width: 6),
-                                  CustomText(text: "Server IP Address", fontSize: 13,
+                                  CustomText(text: "Server IPv4 Address", fontSize: 13,
                                   textColor: Colors.grey[800],
                                     fontFamily: "Bold",)
                                 ],
@@ -221,9 +225,14 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                   ],
                                 ),
                                 child: CustomTextField(
+                                  validator: (value) => Validators.validateIpAddress(value!),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.deny(RegExp(r" ")),
+                                      IpInputFormatter(),
+                                    ],
                                     controller:ipController,
                                     keyboardType: TextInputType.number,
-                                    hint: "192.168.1.100:8080",
+                                    hint: "192.168.1.100",
                                     hintStyle: TextStyle(
                                       color: Colors.grey[400],
                                       fontSize: 13,
@@ -308,7 +317,7 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: Text(
-                                        'Format: IP:PORT (e.g., 192.168.1.1:8080)',
+                                        'Format: IPv4 (e.g., 192.168.1.1)',
                                         style: TextStyle(
                                           fontSize: 11,
                                           color: Colors.amber[900],
@@ -403,7 +412,10 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                       ),
                                       child: ElevatedButton(
                                         onPressed: () async {
-                                          appConfig.updateBaseUrl(context: context, newUrl: ipController.text);
+                                          if(formKey.currentState!.validate()){
+                                            appConfig.updateBaseUrl(context: context, newUrl: ipController.text);
+                                          }
+
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.transparent,

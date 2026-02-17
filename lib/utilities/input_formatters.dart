@@ -139,11 +139,39 @@ class InputFormatters {
     ),
   ];
 
-  static List<TextInputFormatter> get ipAddressFormat => [
-    FilteringTextInputFormatter.allow(
-      RegExp(r'[0-9.:a-zA-Z/\-]'),
-    ),
-    FilteringTextInputFormatter.deny(RegExp(r"  ")),
-  ];
+
 
 }
+
+class IpInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    // Remove any character that is not a digit
+    String digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    List<String> parts = [];
+
+    for (int i = 0; i < digitsOnly.length && parts.length < 4; i++) {
+      if (parts.length == 0) {
+        parts.add(digitsOnly[i]);
+      } else {
+        String lastPart = parts.last;
+        if (lastPart.length < 3) {
+          parts[parts.length - 1] = lastPart + digitsOnly[i];
+        } else {
+          parts.add(digitsOnly[i]);
+        }
+      }
+    }
+
+    // Join with dots
+    String formatted = parts.join('.');
+
+    // Maintain cursor position
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
+
