@@ -52,7 +52,13 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
 
 
 
-
+  @override
+  void dispose() {
+    final configProvider = Provider.of<ConfigProvider>(context, listen: false);
+    configProvider.animationController.dispose();
+    configProvider.ipController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
