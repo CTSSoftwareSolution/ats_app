@@ -8,12 +8,14 @@ import 'package:overlay_support/overlay_support.dart';
 import 'Core/network/services.dart';
 import 'Presentation/provider/permission_provider.dart';
 import 'Presentation/screens/splash_page/splash_screen.dart';
+import 'app_config/app_config.dart';
 
 
 List<CameraDescription>? cameras;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await appConfig.load();
   cameras = await availableCameras();
   final permissionProvider = PermissionProvider();
   await permissionProvider.checkAndRequestPermissions();

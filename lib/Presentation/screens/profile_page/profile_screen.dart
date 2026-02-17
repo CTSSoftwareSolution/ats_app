@@ -6,13 +6,12 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../Data/model/profile_model.dart';
+import '../../../app_config/ip_address_bottom_sheet_screen.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
 import '../../provider/login_provider.dart';
-import '../ip_config/IpAddressBottomSheet.dart';
-import '../ip_config/ip_address_bottom_sheet.dart';
 import '../login_page/login_screen.dart';
 import '../profile_view_details_page/profile_view_screen.dart';
 
@@ -110,14 +109,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 1:
         break;
       case 2:
-        showIpAddressBottomSheet(context);
+        context.push(InspectionPage());
         break;
       case 3:
-        context.push(InspectionPage());
         break;
       case 4:
         break;
       case 5:
+        showIpAddressBottomSheet(context);
         break;
       case 6:
         customShowDialog(
