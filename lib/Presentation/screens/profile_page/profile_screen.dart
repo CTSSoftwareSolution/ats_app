@@ -141,7 +141,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     switch (item.trailingType) {
       case ProfileTrailingType.arrow:
         return Image.asset(forwardIcon, height: 12);
-
       case ProfileTrailingType.switchButton:
         return Switch(
           activeThumbColor: appColor,
@@ -152,7 +151,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             });
           },
         );
-
       case ProfileTrailingType.none:
         return SizedBox.shrink();
     }

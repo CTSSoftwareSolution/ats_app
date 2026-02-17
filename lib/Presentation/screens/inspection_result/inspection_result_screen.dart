@@ -20,6 +20,7 @@ class _InspectionResultScreenState extends State<InspectionResultScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       child: Scaffold(
+        backgroundColor: background,
         appBar: AppBar(
           titleSpacing: 0.0,
           backgroundColor: appColor,

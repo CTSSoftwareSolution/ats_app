@@ -7,8 +7,7 @@ import 'package:provider/provider.dart';
 import '../../Data/model/request_model/vehicle_parts_req_model.dart';
 import '../../widgets/custom_loader.dart';
 
-
-class VehiclePartsProvider extends ChangeNotifier{
+class VehiclePartsProvider extends ChangeNotifier {
   VehiclePartsUseCases vehiclePartsUseCases;
 
   VehiclePartsProvider({required this.vehiclePartsUseCases});
@@ -18,12 +17,10 @@ class VehiclePartsProvider extends ChangeNotifier{
   VehiclePartsEntity? vehiclePartsEntity;
   List<PartsDataModel> currentPageData = [];
 
-   int currentPage = 0;
-   int itemsPerPage = 2;
+  int currentPage = 0;
+  int itemsPerPage = 2;
   int currentStep = 0;
   int get totalPages => (vehiclePartsEntity!.data!.length / itemsPerPage).ceil();
-
-
 
   int _itemsPerPageForTablet = 4;
 
@@ -37,10 +34,10 @@ class VehiclePartsProvider extends ChangeNotifier{
   int get totalPagesForTablet =>
       (vehiclePartsEntity!.data!.length / _itemsPerPageForTablet).ceil();
 
-  void resetPage(){
-  currentPage = 0;
-  currentStep = 0;
-}
+  void resetPage() {
+    currentPage = 0;
+    currentStep = 0;
+  }
 
   void previousPage() {
     if (currentStep > 0) {
@@ -50,15 +47,15 @@ class VehiclePartsProvider extends ChangeNotifier{
     }
   }
 
-  void nextStepper(int stepperNext){
-    if(currentStep < stepperNext){
+  void nextStepper(int stepperNext) {
+    if (currentStep < stepperNext) {
       currentStep++;
       notifyListeners();
     }
   }
 
-  void nextPage(int pageNext){
-    if(currentPage < pageNext){
+  void nextPage(int pageNext) {
+    if (currentPage < pageNext) {
       currentPage++;
       notifyListeners();
     }
@@ -70,34 +67,50 @@ class VehiclePartsProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void resetStepperForTablet(){
+  void resetStepperForTablet() {
     currentStep--;
     currentPageData = getCurrentPageDataForTablet();
     notifyListeners();
   }
 
   List<PartsDataModel> getCurrentPageData() {
-    final startIndex = (currentPage * itemsPerPage).clamp(0, vehiclePartsEntity!.data!.length);
-    final endIndex = ((currentPage + 1) * itemsPerPage).clamp(0, vehiclePartsEntity!.data!.length);
+    final startIndex = (currentPage * itemsPerPage).clamp(
+      0,
+      vehiclePartsEntity!.data!.length,
+    );
+    final endIndex = ((currentPage + 1) * itemsPerPage).clamp(
+      0,
+      vehiclePartsEntity!.data!.length,
+    );
     return vehiclePartsEntity!.data!.sublist(startIndex, endIndex);
   }
 
   List<PartsDataModel> getCurrentPageDataForTablet() {
-    final startIndex = (currentPage * _itemsPerPageForTablet).clamp(0, vehiclePartsEntity!.data!.length);
-    final endIndex = ((currentPage + 1) * _itemsPerPageForTablet).clamp(0, vehiclePartsEntity!.data!.length);
+    final startIndex = (currentPage * _itemsPerPageForTablet).clamp(
+      0,
+      vehiclePartsEntity!.data!.length,
+    );
+    final endIndex = ((currentPage + 1) * _itemsPerPageForTablet).clamp(
+      0,
+      vehiclePartsEntity!.data!.length,
+    );
     return vehiclePartsEntity!.data!.sublist(startIndex, endIndex);
   }
 
-
-  Future<VehiclePartsEntity?> vehiclePartsApi(BuildContext context)async{
-    final classProvider = Provider.of<VehicleClassProvider>(context,listen: false);
+  Future<VehiclePartsEntity?> vehiclePartsApi(BuildContext context) async {
+    final classProvider = Provider.of<VehicleClassProvider>(
+      context,
+      listen: false,
+    );
     isLoading = true;
     resetPage();
     try {
       VehiclePartsReqModel vehiclePartsReqModel = VehiclePartsReqModel(
-          vehicleClass: classProvider.selectedClass?.vehicleClass.toString()
+        vehicleClass: classProvider.selectedClass?.vehicleClass.toString(),
       );
-      vehiclePartsEntity = await vehiclePartsUseCases.execute(vehiclePartsReqModel);
+      vehiclePartsEntity = await vehiclePartsUseCases.execute(
+        vehiclePartsReqModel,
+      );
       return vehiclePartsEntity;
     } catch (e) {
       vehiclePartsEntity = null;
@@ -108,5 +121,4 @@ class VehiclePartsProvider extends ChangeNotifier{
     }
     return null;
   }
-
 }

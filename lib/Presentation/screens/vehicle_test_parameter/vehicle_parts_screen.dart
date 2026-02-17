@@ -22,8 +22,6 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
     context.read<VehiclePartsProvider>().vehiclePartsApi(context);
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final bool isTablet = MediaQuery.of(context).size.width >= 600;
@@ -42,6 +40,7 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
           }
         },
       child: Scaffold(
+        backgroundColor: background,
         appBar: AppBar(
           titleSpacing: 0.0,
           backgroundColor: appColor,
