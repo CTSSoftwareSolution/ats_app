@@ -5,6 +5,7 @@ import 'package:ats_app/utilities/validators.dart';
 import 'package:ats_app/widgets/custom_text.dart';
 import 'package:ats_app/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 
@@ -224,7 +225,10 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                     controller: configProvider.ipController,
                                     validator: (value) => Validators.validateIpAddress(value!),
                                     keyboardType: TextInputType.number,
-                                    inputFormatters: InputFormatters.ipAddressFormat,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.deny(RegExp(r" ")),
+                                      IpInputFormatter(),
+                                    ],
                                     hint: "192.168.1.100:8080",
                                     hintStyle: TextStyle(
                                       color: Colors.grey[400],
