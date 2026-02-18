@@ -1,17 +1,20 @@
 
+import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/submit_fab_widget.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../provider/inspection_form_provider.dart';
+import '../../../provider/vehicle_type_provider.dart';
 import '../inspection_widgets/error_screen.dart';
 import '../inspection_widgets/loading_screen.dart';
 import '../inspection_widgets/section_tab_view.dart';
 
 
 class InspectionPage extends StatefulWidget {
-  const InspectionPage({super.key});
+  final bool? isEditMode ;
+  const InspectionPage({super.key,  this.isEditMode});
 
   @override
   State<InspectionPage> createState() => _InspectionPageState();
@@ -21,13 +24,28 @@ class _InspectionPageState extends State<InspectionPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _tabController = TabController(length: 3, vsync: this);
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     context.read<InspectionFormProvider>().fetchInspectionData();
+  //   });
+  // }
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<InspectionFormProvider>().fetchInspectionData();
+      final provider = context.read<InspectionFormProvider>();
+      final vehicleClass = context.read<VehicleClassProvider>();
+      if (widget.isEditMode==true) {
+        provider.fetchAndPrefill(vehicleClass.selectedClass!.regNo.toString());
+      } else {
+        provider.fetchInspectionData();
+      }
     });
   }
 

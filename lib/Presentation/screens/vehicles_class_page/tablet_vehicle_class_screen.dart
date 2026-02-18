@@ -26,9 +26,7 @@ class _TabletVehicleClassScreenState extends State<TabletVehicleClassScreen> {
   @override
   void initState() {
     super.initState();
-
     context.read<VehicleClassProvider>().vehicleClassApi(context);
-
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {

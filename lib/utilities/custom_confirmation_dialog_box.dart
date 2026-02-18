@@ -1,11 +1,7 @@
 import 'package:ats_app/utilities/color_data.dart';
-import 'package:ats_app/utilities/extension.dart';
-import 'package:ats_app/widgets/custom_button.dart';
-import 'package:ats_app/widgets/custom_image.dart';
-import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
-import '../utilities/image_data.dart';
-import '../widgets/custom_text.dart';
+
+
 
 class DialogButton {
   final String text;
@@ -25,72 +21,157 @@ customConfirmationDialogBox({
   required BuildContext context,
   required String text,
   required List<DialogButton> buttons,
-
 }) {
   showDialog(
     context: context,
-    builder: (BuildContext context) => Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5.0))
+    barrierColor: appColor.withOpacity(0.15),
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-                child: InkWell(
-                  onTap: (){ context.pop(); },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomText(
-                          text: "Alert !!!",
-                          fontSize: 22.0,
-                          fontFamily: "ExtraBold",
-                          textColor: blackColor,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: appColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        CustomImage(image: closeIcon,scale: 2,),
-                      ],
-                    ))),
-            10.height,
-            CustomText(
-              text: text,
-              fontSize: 14.0,
-              fontFamily: "Bold",
-              textColor: blackColor,
-            ),
-            10.height,
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: buttons.map((button) {
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: CustomButton(
-
-                        buttonText: button.text,
-                        onPress: button.onPressed, backgroundColor: button.backgroundColor!, foregroundColor: button.textColor!,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20.0))
+                        child: const Icon(
+                          Icons.info_outline_rounded,
+                          color: appColor,
+                          size: 20,
                         ),
-                        fontSize: 13.0, fontFamily: "Bold",),
-                  )
-                  // TextButton(onPressed: button.onPressed,
-                  //     child: CustomText(text: button.text, textColor: button.textColor, fontSize: 13.5, fontFamily: "Bold",)
-                  // ),
-                );
-              }).toList(),
-            ),
-          ],
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        "Alert !!!",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0D1B4B),
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF3F4F6),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        size: 16,
+                        color: Color(0xFF6B7280),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+              Container(
+                height: 1,
+                color: appColor.withOpacity(0.1),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF374151),
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: buttons.asMap().entries.map((entry) {
+                  final i = entry.key;
+                  final button = entry.value;
+                  return Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: i == 0 ? 0 : 10),
+                      child: _ActionButton(button: button),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
         ),
-      ),
-    ),
+      );
+    },
   );
+}
+
+class _ActionButton extends StatefulWidget {
+  final DialogButton button;
+  const _ActionButton({required this.button});
+
+  @override
+  State<_ActionButton> createState() => _ActionButtonState();
+}
+
+class _ActionButtonState extends State<_ActionButton> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final bg = widget.button.backgroundColor ?? appColor;
+    final fg = widget.button.textColor ?? Colors.white;
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) {
+        setState(() => _pressed = false);
+        widget.button.onPressed();
+      },
+      onTapCancel: () => setState(() => _pressed = false),
+      child: AnimatedScale(
+        scale: _pressed ? 0.96 : 1.0,
+        duration: const Duration(milliseconds: 120),
+        child: Container(
+          height: 46,
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: bg.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            widget.button.text,
+            style: TextStyle(
+              color: fg,
+              fontWeight: FontWeight.w700,
+              fontSize: 13.5,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

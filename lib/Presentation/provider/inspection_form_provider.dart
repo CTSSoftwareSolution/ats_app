@@ -1,17 +1,15 @@
 
-// ─────────────────────────────────────────────
-//  FILE: lib/inspection_provider.dart
-// ─────────────────────────────────────────────
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:ats_app/Presentation/PreInspectionDetailsModelsModels.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../../Data/model/response_model/inspection_que_model.dart';
 import '../../../Domain/entities/inspection_que_entity.dart';
 import '../../../Domain/usecases/inspection_que_usecases.dart';
-import '../../../widgets/custom_loader.dart';
+import '../../Core/network/services.dart';
 import '../screens/pre_inspection_form/answer_models.dart';
 
 /// Answer State
@@ -22,6 +20,7 @@ class QuestionAnswer {
   AnswerState answer;
   File? imagePath;
   String? uploadedImageUrl;
+  String? existingEvidenceUrl; // ← ADDED: edit mode ka purana image URL
 
   QuestionAnswer({required this.carData, this.answer = AnswerState.unanswered});
 }
@@ -81,28 +80,34 @@ class InspectionFormProvider extends ChangeNotifier {
   static const String _apiUrl =
       'https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getPreInspectionQuestions';
 
+  // ← ADDED
+  static const String _editApiUrl =
+      'https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getPreInspectionDetailsByVehicleID';
+
   bool _isLoading = false;
   bool _hasError = false;
   String _errorMessage = '';
   InspectionQueEntity? _model;
   List<SectionState> _sections = [];
+  bool _isEditMode = false; // ← ADDED
 
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
   String get errorMessage => _errorMessage;
   InspectionQueEntity?  get model => _model;
   List<SectionState> get sections => _sections;
+  bool get isEditMode => _isEditMode; // ← ADDED
 
   int get grandTotalAnswered => _sections.fold(0, (sum, s) => sum + s.totalAnswered);
   int get grandTotalQuestions => _sections.fold(0, (sum, s) => sum + s.totalQuestions);
   bool get isFullyComplete => grandTotalQuestions > 0 && grandTotalAnswered == grandTotalQuestions;
 
- /// Fetch API
-
+  /// Fetch API (unchanged)
   Future<void> fetchInspectionData() async {
     _isLoading = true;
     _hasError = false;
     _errorMessage = '';
+    _isEditMode = false; // ← ADDED
     _sections = [];
     notifyListeners();
 
@@ -117,9 +122,7 @@ class InspectionFormProvider extends ChangeNotifier {
         _buildSections(_model!.data!);
         debugPrint('→ Sections built: ${_sections.length}');
       } else {
-        _setError(
-          'API Error: ${_model?.message ?? 'status=false or data=null'}',
-        );
+        _setError('API Error: ${_model?.message ?? 'status=false or data=null'}');
       }
     } on TimeoutException {
       _setError('Request timed out. Check internet connection.');
@@ -136,9 +139,59 @@ class InspectionFormProvider extends ChangeNotifier {
     }
   }
 
+  // ← ADDED: Edit mode fetch
+  Future<void> fetchAndPrefill(String vehicleNo) async {
+    _isLoading = true;
+    _hasError = false;
+    _errorMessage = '';
+    _isEditMode = true;
+    _sections = [];
+    notifyListeners();
 
-  /// Build Sections
+    try {
+      debugPrint('→ [EditMode] Fetching for vehicle: $vehicleNo');
 
+      final response = await http.post(Uri.parse(_editApiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({'vehicle_no': vehicleNo}),
+      ).timeout(const Duration(seconds: 30));
+
+      if (kDebugMode) {
+        alice.onHttpResponse(response, body: jsonEncode({'vehicle_no': vehicleNo}));
+      }
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        final editModel = PreInspectionDetailsModelsModels.fromJson(decoded);
+
+        if (editModel.status == true && editModel.data != null) {
+          _buildSectionsFromDetailsModel(editModel.data!);
+          debugPrint('→ [EditMode] Sections built: ${_sections.length}');
+        } else {
+          _setError(editModel.message ?? 'status=false or data=null');
+        }
+      } else {
+        _setError('HTTP Error ${response.statusCode}');
+      }
+    } on TimeoutException {
+      _setError('Request timed out. Check internet connection.');
+    } on SocketException catch (e) {
+      _setError('No internet connection: ${e.message}');
+    } on FormatException catch (e) {
+      _setError('Data parse error: ${e.message}');
+    } catch (e, stack) {
+      debugPrint('→ [EditMode] ERROR: $e\n$stack');
+      _setError('Unexpected error: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Build Sections (unchanged)
   void _buildSections(InspectorData data) {
     _sections = [
       SectionState(
@@ -161,6 +214,63 @@ class InspectionFormProvider extends ChangeNotifier {
         color: const Color(0xFF7B2D8B),
         icon: Icons.task_alt_outlined,
         categories: _buildFromPostInspection(data.postInspection ?? []),
+      ),
+    ];
+  }
+
+  // ← ADDED: Edit mode section builder
+  // Classes: PreInspectionDetail, InspectionDetail, PostInspectionDetails, CarDataDetails
+  void _buildSectionsFromDetailsModel(PreInspectionDetailsData data) {
+    AnswerState parseAnswer(String? r) {
+      if (r == 'Pass') return AnswerState.Pass;
+      if (r == 'Fail') return AnswerState.Fail;
+      return AnswerState.unanswered;
+    }
+
+    // CarDataDetails → QuestionAnswer
+    QuestionAnswer fromCarDataDetails(CarDataDetails q) {
+      final cd = CarData(
+        questionId: q.questionId?.toInt(),
+        questionText: q.questionText,
+      );
+      final qa = QuestionAnswer(
+        carData: cd,
+        answer: parseAnswer(q.inspectionResult), // ← pre-fill
+      );
+      qa.existingEvidenceUrl = q.evidenceUrl; // ← purana image URL
+      return qa;
+    }
+
+    _sections = [
+      SectionState(
+        label: 'Pre-Inspection',
+        subtitle: 'Before vehicle enters',
+        color: const Color(0xFF0D7377),
+        icon: Icons.assignment_turned_in_outlined,
+        categories: (data.preInspection ?? []).map((cat) => CategoryState(
+          title: cat.title ?? 'Unknown',
+          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
+        )).toList(),
+      ),
+      SectionState(
+        label: 'Inspection',
+        subtitle: 'Main vehicle check',
+        color: const Color(0xFF1A3C6E),
+        icon: Icons.directions_car_outlined,
+        categories: (data.inspection ?? []).map((cat) => CategoryState(
+          title: cat.title ?? 'Unknown',
+          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
+        )).toList(),
+      ),
+      SectionState(
+        label: 'Post-Inspection',
+        subtitle: 'After vehicle exits',
+        color: const Color(0xFF7B2D8B),
+        icon: Icons.task_alt_outlined,
+        categories: (data.postInspection ?? []).map((cat) => CategoryState(
+          title: cat.title ?? 'Unknown',
+          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
+        )).toList(),
       ),
     ];
   }
@@ -189,8 +299,7 @@ class InspectionFormProvider extends ChangeNotifier {
             .toList(),
       )).toList();
 
-  /// Answer
-
+  /// Answer (unchanged)
   void answerQuestion({
     required int sectionIndex,
     required int categoryIndex,
@@ -215,7 +324,6 @@ class InspectionFormProvider extends ChangeNotifier {
 
     _sections[sectionIndex].categories[categoryIndex]
         .questions[questionIndex].uploadedImageUrl = uploadedUrl;
-
 
     notifyListeners();
   }
@@ -259,7 +367,8 @@ class InspectionFormProvider extends ChangeNotifier {
               questionId: q.carData.questionId?.toString() ?? '',
               questionText: q.carData.questionText ?? '',
               answer: q.answer.name,
-              imagePath: q.uploadedImageUrl ?? '',
+              // naya image → uploadedImageUrl, warna purana evidenceUrl
+              imagePath: q.uploadedImageUrl ?? q.existingEvidenceUrl ?? '', // ← CHANGED
             ));
           }
         }
@@ -267,7 +376,6 @@ class InspectionFormProvider extends ChangeNotifier {
     }
     return result;
   }
-
 
   void _setError(String message) {
     _hasError = true;

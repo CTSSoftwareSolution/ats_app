@@ -1,32 +1,82 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 
 class ImagePreview extends StatelessWidget {
-  final File imageFile;
+  final File? imageFile;         // local image (new upload)
+  final String? imageUrl;        // network image (existing evidence)
   final VoidCallback onRemove;
   final VoidCallback onReplace;
 
-  const ImagePreview({super.key,
-    required this.imageFile,
+  const ImagePreview({
+    super.key,
+    this.imageFile,
+    this.imageUrl,
     required this.onRemove,
     required this.onReplace,
-  });
+  }) : assert(imageFile != null || imageUrl != null,
+  'Either imageFile or imageUrl must be provided');
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        // ── Image (File or Network) ──
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: Image.file(
-            imageFile,
+          child: imageFile != null
+              ? Image.file(
+            imageFile!,
             width: double.infinity,
             height: 160,
             fit: BoxFit.cover,
+          )
+              : Image.network(
+            imageUrl!,
+            width: double.infinity,
+            height: 160,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Container(
+                width: double.infinity,
+                height: 160,
+                color: Colors.grey.shade200,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                        : null,
+                    strokeWidth: 2,
+                    color: Colors.grey.shade500,
+                  ),
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) => Container(
+              width: double.infinity,
+              height: 160,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.broken_image_rounded,
+                      color: Colors.grey.shade400, size: 36),
+                  const SizedBox(height: 6),
+                  Text('Could not load image',
+                      style: TextStyle(
+                          color: Colors.grey.shade500, fontSize: 12)),
+                ],
+              ),
+            ),
           ),
         ),
+
+        // ── Bottom overlay: Replace + Remove ──
         Positioned(
           bottom: 0,
           left: 0,
@@ -50,13 +100,12 @@ class ImagePreview extends StatelessWidget {
                 Expanded(
                   child: GestureDetector(
                     onTap: onReplace,
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.edit_rounded,
-                            color: Colors.white, size: 14),
-                        const SizedBox(width: 4),
-                        const Text(
+                        Icon(Icons.edit_rounded, color: Colors.white, size: 14),
+                        SizedBox(width: 4),
+                        Text(
                           'Replace',
                           style: TextStyle(
                               color: Colors.white,
@@ -70,8 +119,8 @@ class ImagePreview extends StatelessWidget {
                 GestureDetector(
                   onTap: onRemove,
                   child: Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.red.shade600,
                       borderRadius: BorderRadius.circular(6),

@@ -26,13 +26,13 @@ class VehicleClassResponsiveLayout extends StatefulWidget {
 }
 
 class _VehicleClassResponsiveLayoutState extends State<VehicleClassResponsiveLayout> {
+
   final ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
-
     context.read<VehicleClassProvider>().vehicleClassApi(context);
-
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
@@ -45,7 +45,6 @@ class _VehicleClassResponsiveLayoutState extends State<VehicleClassResponsiveLay
   Widget build(BuildContext context) {
     final classProvider = context.watch<VehicleClassProvider>().vehicleClassEntity?.data;
     final typeProvider = Provider.of<InspectionTypeProvider>(context);
-
     return  LayoutBuilder(
       builder: (context, constraints) {
         return OrientationBuilder(
@@ -76,7 +75,6 @@ class _VehicleClassResponsiveLayoutState extends State<VehicleClassResponsiveLay
                     ),
                   ),
                   constraints.isTablet ? 24.height : 12.height,
-
                   Expanded(
                     child: context.watch<VehicleClassProvider>().isLoading
                         ? Center(child: CustomLoader.loader())
