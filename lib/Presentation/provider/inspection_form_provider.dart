@@ -14,8 +14,7 @@ import '../../../Domain/usecases/inspection_que_usecases.dart';
 import '../../../widgets/custom_loader.dart';
 import '../screens/pre_inspection_form/answer_models.dart';
 
-// ─── Answer State ────────────────────────────
-
+/// Answer State
 enum AnswerState { unanswered, Pass, Fail }
 
 class QuestionAnswer {
@@ -73,10 +72,7 @@ class SectionState {
   bool get isComplete => totalAnswered == totalQuestions;
 }
 
-// ─────────────────────────────────────────────
-//  PROVIDER
-// ─────────────────────────────────────────────
-
+///  PROVIDER
 class InspectionFormProvider extends ChangeNotifier {
   InspectionQueUseCases inspectionQueUseCases;
 
@@ -101,7 +97,7 @@ class InspectionFormProvider extends ChangeNotifier {
   int get grandTotalQuestions => _sections.fold(0, (sum, s) => sum + s.totalQuestions);
   bool get isFullyComplete => grandTotalQuestions > 0 && grandTotalAnswered == grandTotalQuestions;
 
-  // ── Fetch API ─────────────────────────────
+ /// Fetch API
 
   Future<void> fetchInspectionData() async {
     _isLoading = true;
@@ -141,7 +137,7 @@ class InspectionFormProvider extends ChangeNotifier {
   }
 
 
-  // ── Build Sections ────────────────────────
+  /// Build Sections
 
   void _buildSections(InspectorData data) {
     _sections = [
@@ -193,7 +189,7 @@ class InspectionFormProvider extends ChangeNotifier {
             .toList(),
       )).toList();
 
-  // ── Answer ────────────────────────────────
+  /// Answer
 
   void answerQuestion({
     required int sectionIndex,
