@@ -1,11 +1,10 @@
 import 'package:ats_app/Core/network/services.dart';
 import 'package:ats_app/Domain/entities/slider_entity.dart';
 import 'package:ats_app/Domain/repositories/slider_repository.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
+
 
 import '../../Core/network/api_services.dart';
-import '../../Presentation/screens/ip_config/ip_address_provider.dart';
+
 import '../model/response_model/slider_res_model.dart';
 
 class SliderRepoImpl implements SliderRepository{

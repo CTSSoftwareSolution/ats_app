@@ -1,11 +1,10 @@
 import 'package:ats_app/Data/model/response_model/inspection_type_res_model.dart';
 import 'package:ats_app/Domain/entities/inspection_type_entity.dart';
 import 'package:ats_app/Domain/repositories/inspection_type_repository.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
+
 import '../../Core/network/api_services.dart';
 import '../../Core/network/services.dart';
-import '../../Presentation/screens/ip_config/ip_address_provider.dart';
+
 
 class InspectionTypeImpl implements InspectionTypeRepository{
 

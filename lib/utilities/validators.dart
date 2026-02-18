@@ -128,26 +128,42 @@ class Validators {
 
     String input = value.trim();
 
+    // Match IPv4 + Port (example: 192.168.1.1:8080)
+    final ipv4WithPortPattern =
+    RegExp(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}):(\d{1,5})$');
 
-    final ipv4Pattern = RegExp(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$');
-    final match = ipv4Pattern.firstMatch(input);
+    final match = ipv4WithPortPattern.firstMatch(input);
 
     if (match == null) {
-      return 'Enter a valid IPv4 address';
+      return 'Enter a valid IPv4 address with port (e.g., 192.168.1.1:8080)';
     }
 
-
+    // Validate IP octets
     for (int i = 1; i <= 4; i++) {
       String octet = match.group(i)!;
       int? octetValue = int.tryParse(octet);
 
       if (octetValue == null) return 'Invalid IP address';
-      if (octetValue < 0 || octetValue > 255) return 'IP octets must be 0-255 (found $octetValue)';
-      if (octet.length > 1 && octet.startsWith('0')) return 'Remove leading zeros from IP';
+      if (octetValue < 0 || octetValue > 255) {
+        return 'IP octets must be between 0-255';
+      }
+      if (octet.length > 1 && octet.startsWith('0')) {
+        return 'Remove leading zeros from IP';
+      }
+    }
+
+    // Validate Port
+    String portStr = match.group(5)!;
+    int? port = int.tryParse(portStr);
+
+    if (port == null) return 'Invalid port number';
+    if (port < 1 || port > 65535) {
+      return 'Port must be between 1 and 65535';
     }
 
     return null;
   }
+
 
 
 }

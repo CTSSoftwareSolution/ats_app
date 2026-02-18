@@ -26,7 +26,7 @@ class PreInsDetailsProvider extends ChangeNotifier{
 
       );
 
-      preInsDetailsEntity = await preInsDetailsUseCases.execute(detailsReqModel, context);
+      preInsDetailsEntity = await preInsDetailsUseCases.execute(detailsReqModel);
       return preInsDetailsEntity;
     } catch (e) {
       preInsDetailsEntity = null;

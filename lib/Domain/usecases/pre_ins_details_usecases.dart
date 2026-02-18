@@ -8,7 +8,7 @@ class PreInsDetailsUseCases {
 
   PreInsDetailsUseCases({required this.preInsDetailsRepository});
 
-  Future<PreInsDetailsEntity> execute(PreInsDetailsReqModel preInsDetailsReqModel, BuildContext context){
-    return preInsDetailsRepository.preInspectionDetails(preInsDetailsReqModel,context);
+  Future<PreInsDetailsEntity> execute(PreInsDetailsReqModel preInsDetailsReqModel){
+    return preInsDetailsRepository.preInspectionDetails(preInsDetailsReqModel);
   }
 }

@@ -5,14 +5,14 @@ import 'package:ats_app/Domain/repositories/pre_ins_details_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../Core/network/api_services.dart';
-import '../../Presentation/screens/ip_config/ip_address_provider.dart';
+
 import '../model/response_model/pre_ins_details_res_model.dart';
 
 class PreInsDetailsImpl implements PreInsDetailsRepository{
 
   @override
-  Future<PreInsDetailsEntity> preInspectionDetails(PreInsDetailsReqModel preInsDetailsReqModel, BuildContext context) async{
-    final baseUrl = context.read<IpAddressProvider>().baseUrl;
+  Future<PreInsDetailsEntity> preInspectionDetails(PreInsDetailsReqModel preInsDetailsReqModel) async{
+
     try{
       final response = await ApiService.post(preInsDetailsReqModel, getPreInspectionDetailsUrl);
       final model = PreInsDetailsResModel.fromJson(response);

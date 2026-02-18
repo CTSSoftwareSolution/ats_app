@@ -228,11 +228,11 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                   validator: (value) => Validators.validateIpAddress(value!),
                                     inputFormatters: [
                                       FilteringTextInputFormatter.deny(RegExp(r" ")),
-                                      IpInputFormatter(),
+                                      IpPortInputFormatter(),
                                     ],
                                     controller:ipController,
                                     keyboardType: TextInputType.number,
-                                    hint: "192.168.1.100",
+                                    hint: "192.168.1.100:8080",
                                     hintStyle: TextStyle(
                                       color: Colors.grey[400],
                                       fontSize: 13,
@@ -317,7 +317,7 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: Text(
-                                        'Format: IPv4 (e.g., 192.168.1.1)',
+                                        'Format: IPv4:PORT (e.g., 192.168.1.1:8080)',
                                         style: TextStyle(
                                           fontSize: 11,
                                           color: Colors.amber[900],
