@@ -29,7 +29,7 @@ class PreInspectionResultProvider extends ChangeNotifier{
         questionId: int.tryParse(value.questionId.toString()),
         remarks: "",
         severityLevel: "",
-        evidenceUrl: ""
+        evidenceUrl: value.imagePath
       );
     }).toList();
     try {

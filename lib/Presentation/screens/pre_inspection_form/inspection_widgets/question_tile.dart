@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../Core/network/services.dart';
+import '../../../../aws_images/aws_signedurl_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 import 'image_picker_prompt.dart';
 import 'image_preview.dart';
@@ -28,6 +30,9 @@ class QuestionTile extends StatelessWidget {
 
   Future<void> _pickImage(BuildContext context, InspectionFormProvider provider,
       ImageSource source) async {
+    final awsProvider =
+    Provider.of<AwsSignedUrlProvider>(context, listen: false);
+
     try {
       final picker = ImagePicker();
       final picked = await picker.pickImage(
@@ -36,12 +41,22 @@ class QuestionTile extends StatelessWidget {
         maxWidth: 1200,
       );
       if (picked != null) {
+        final file = File(picked.path);
+
+        final imagePath = file.path.split(Platform.pathSeparator).last;
+
+        await awsProvider.awsUploadedFile(imagePath, file, context,);
+
+        final fileImagePath = awsImagePathUrl + awsProvider.stringRandomNumber + imagePath;
+
         provider.setQuestionImage(
           sectionIndex: sectionIndex,
           categoryIndex: categoryIndex,
           questionIndex: questionIndex,
-          image: File(picked.path),
+          image: file,
+            uploadedUrl: fileImagePath
         );
+
       }
     } catch (e) {
       if (context.mounted) {

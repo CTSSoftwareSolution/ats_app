@@ -28,6 +28,9 @@ import 'package:ats_app/Presentation/provider/splash_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_type_provider.dart';
+import 'package:ats_app/aws_images/aws_repository_impl.dart';
+import 'package:ats_app/aws_images/aws_signedurl_provider.dart';
+import 'package:ats_app/aws_images/aws_usecase.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -69,6 +72,7 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => InspectionTypeProvider(inspectionTypeUseCases: InspectionTypeUseCases(inspectionTypeRepository: InspectionTypeImpl()))),
         ChangeNotifierProvider(create: (_) => PreInsManualStatusProvider(preInsManualStatusUseCases: PreInsManualStatusUseCases(preInsManualStatusRepository: PreInsManualStatusImpl()))),
         ChangeNotifierProvider(create: (_) => PreInsDetailsProvider(preInsDetailsUseCases: PreInsDetailsUseCases(preInsDetailsRepository: PreInsDetailsImpl()))),
+        ChangeNotifierProvider(create: (_) => AwsSignedUrlProvider(awsUseCase: AwsUseCase(repository: AwsRepositoryImpl())))
 
       ],
       child: const MyApp(),

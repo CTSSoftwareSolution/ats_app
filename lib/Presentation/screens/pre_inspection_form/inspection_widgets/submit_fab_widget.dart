@@ -77,9 +77,6 @@ class SubmitFAB extends StatelessWidget {
       isComplete: isComplete,
       unanswered: unanswered,
     );
-
-
-
   }
 
   List<String> _validateQuestionsWithNoAnswer() {

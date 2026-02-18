@@ -22,6 +22,7 @@ class QuestionAnswer {
   final CarData carData;
   AnswerState answer;
   File? imagePath;
+  String? uploadedImageUrl;
 
   QuestionAnswer({required this.carData, this.answer = AnswerState.unanswered});
 }
@@ -211,9 +212,15 @@ class InspectionFormProvider extends ChangeNotifier {
     required int categoryIndex,
     required int questionIndex,
     required File? image,
+    required String? uploadedUrl,
   }) {
     _sections[sectionIndex].categories[categoryIndex]
         .questions[questionIndex].imagePath = image;
+
+    _sections[sectionIndex].categories[categoryIndex]
+        .questions[questionIndex].uploadedImageUrl = uploadedUrl;
+
+
     notifyListeners();
   }
 
@@ -256,7 +263,7 @@ class InspectionFormProvider extends ChangeNotifier {
               questionId: q.carData.questionId?.toString() ?? '',
               questionText: q.carData.questionText ?? '',
               answer: q.answer.name,
-              imagePath: q.imagePath?.path ?? '',
+              imagePath: q.uploadedImageUrl ?? '',
             ));
           }
         }

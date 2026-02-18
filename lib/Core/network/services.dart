@@ -54,3 +54,7 @@ String get savePreInspectionResultsUrl => "$baseUrl/savePreInspectionResults";
 String get getInspectionTypeUrl        => "$baseUrl/getInspectionType";
 String get getPreInspectionDetailsUrl  => "$baseUrl/getPreInspectionDetailsByVehicleID";
 String get checkManualInsStatusUrl     => "$baseUrl/checkManualInspectionStatus";
+//String get awsSignedUrl                =>'$baseUrl/File_upload/getsignedurlsgb';
+
+const String awsSignedUrl = "https://erpapi.sgbregistration.in/v1/File_upload/getsignedurlsgb";
+const awsImagePathUrl = 'https://eticket-docs.s3.ap-south-1.amazonaws.com/';
