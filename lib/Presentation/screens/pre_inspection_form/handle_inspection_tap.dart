@@ -84,7 +84,7 @@ void openMachineInspection(BuildContext context, BuildContext parentContext){
               Navigator.pop(parentContext);
               Navigator.push(
                 parentContext,
-                MaterialPageRoute(builder: (_) => VehiclePartsScreen()),
+                MaterialPageRoute(builder: (_) => InspectionPage()),
               );
             },
           ),
