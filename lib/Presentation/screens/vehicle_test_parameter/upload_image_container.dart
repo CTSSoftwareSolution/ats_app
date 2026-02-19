@@ -51,7 +51,6 @@ class UploadImageContainer extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20.0),
           child: image != null
-          // ── Uploaded image view ──────────────────────────
               ? Stack(
             fit: StackFit.expand,
             children: [
@@ -61,7 +60,6 @@ class UploadImageContainer extends StatelessWidget {
                 width: double.infinity,
                 height: height,
               ),
-              // Overlay gradient at bottom
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -80,7 +78,6 @@ class UploadImageContainer extends StatelessWidget {
                   ),
                 ),
               ),
-              // Re-upload chip
               Positioned(
                 bottom: 10,
                 right: 10,
@@ -119,16 +116,13 @@ class UploadImageContainer extends StatelessWidget {
               ),
             ],
           )
-          // ── Empty / upload state ─────────────────────────
               : Stack(
             children: [
-              // Dashed border effect via custom painter
               Positioned.fill(
                 child: CustomPaint(
                   painter: _DashedBorderPainter(color: appColor),
                 ),
               ),
-              // Subtle gradient background
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -217,7 +211,6 @@ class UploadImageContainer extends StatelessWidget {
   }
 }
 
-// Dashed border painter
 class _DashedBorderPainter extends CustomPainter {
   final Color color;
   _DashedBorderPainter({required this.color});

@@ -28,6 +28,7 @@ import 'package:ats_app/Presentation/provider/splash_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_type_provider.dart';
+import 'package:ats_app/Presentation/provider/verify_hsrp_provider.dart';
 import 'package:ats_app/aws_images/aws_repository_impl.dart';
 import 'package:ats_app/aws_images/aws_signedurl_provider.dart';
 import 'package:ats_app/aws_images/aws_usecase.dart';
@@ -59,6 +60,7 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => permissionProvider),
         ChangeNotifierProvider(create: (_) => BottomNavigationProvider()),
         ChangeNotifierProvider(create: (_) => SplashProvider()),
+        ChangeNotifierProvider(create: (_) => VerifyHRSPProvider()),
         ChangeNotifierProvider(create: (_) => LoginProvider(loginUseCases: LoginUseCases(loginRepository: LoginRepoImpl()))),
         ChangeNotifierProvider(create: (_) => FileProvider()),
         ChangeNotifierProvider(create: (_) => VehiclePartsProvider(vehiclePartsUseCases: VehiclePartsUseCases(vehiclePartsRepository: VehiclePartsRepoImpl()))),
