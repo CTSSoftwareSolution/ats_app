@@ -1,4 +1,3 @@
-
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/section_summary_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

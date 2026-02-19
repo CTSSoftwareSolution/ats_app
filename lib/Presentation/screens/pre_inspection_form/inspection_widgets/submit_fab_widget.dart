@@ -1,7 +1,3 @@
-// ─────────────────────────────────────────────
-//  FILE: lib/widgets/submit_fab_widget.dart
-// ─────────────────────────────────────────────
-
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/confirmation_dialog.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/validation_dialog.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +5,6 @@ import 'package:provider/provider.dart';
 
 import '../../../provider/inspection_form_provider.dart';
 import '../../../provider/pre_inspection_result_provider.dart';
-
 
 class SubmitFAB extends StatelessWidget {
   final InspectionFormProvider provider;
@@ -55,10 +50,8 @@ class SubmitFAB extends StatelessWidget {
   }
 
   Future<void> _handleSubmit(BuildContext context) async {
-    // First check for unanswered questions with "No" but no image
     final typeProvider = Provider.of<PreInspectionResultProvider>(context,listen: false);
     final questionsWithNoButNoImage = _validateQuestionsWithNoAnswer();
-    // If there are "No" answers without images, show warning
     if (questionsWithNoButNoImage.isNotEmpty) {
       ValidationDialog.show(
         context: context,
@@ -69,8 +62,6 @@ class SubmitFAB extends StatelessWidget {
     // Show confirmation dialog if validation passes
     final isComplete = provider.isFullyComplete;
     final unanswered = provider.grandTotalQuestions - provider.grandTotalAnswered;
-
-
     ConfirmationDialog.show(
       context: context,
       provider: provider,
@@ -81,33 +72,29 @@ class SubmitFAB extends StatelessWidget {
 
   List<String> _validateQuestionsWithNoAnswer() {
     final questionsWithNoButNoImage = <String>[];
-
-    for (var sectionIndex = 0;
-    sectionIndex < provider.sections.length;
-    sectionIndex++) {
+    for (var sectionIndex = 0; sectionIndex < provider.sections.length; sectionIndex++) {
       final section = provider.sections[sectionIndex];
 
-      for (var categoryIndex = 0;
-      categoryIndex < section.categories.length;
-      categoryIndex++) {
+      for (var categoryIndex = 0; categoryIndex < section.categories.length; categoryIndex++) {
         final category = section.categories[categoryIndex];
 
-        for (var questionIndex = 0;
-        questionIndex < category.questions.length;
-        questionIndex++) {
+        for (var questionIndex = 0; questionIndex < category.questions.length; questionIndex++) {
           final question = category.questions[questionIndex];
 
-          // Check if answer is "No" but no image is attached
-          if (question.answer == AnswerState.Fail &&
-              (question.imagePath == null || question.imagePath!.path.isEmpty)) {
-            questionsWithNoButNoImage.add(
-                '${section.label} → ${category.title} → Q${questionIndex + 1}'
-            );
+          if (question.answer == AnswerState.Fail) {
+            final hasLocalImage = question.imagePath != null;
+            final hasUploadedUrl = question.uploadedImageUrl != null && question.uploadedImageUrl!.isNotEmpty;
+            final hasExistingUrl = question.existingEvidenceUrl != null && question.existingEvidenceUrl!.isNotEmpty;
+            if (!hasLocalImage && !hasUploadedUrl && !hasExistingUrl) {
+              questionsWithNoButNoImage.add(
+                  '${section.label} → ${category.title} → Q${questionIndex + 1}'
+              );
+            }
           }
         }
       }
     }
-
     return questionsWithNoButNoImage;
   }
+
 }

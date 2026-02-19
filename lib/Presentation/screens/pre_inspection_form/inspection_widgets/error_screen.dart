@@ -5,7 +5,7 @@ import '../../../provider/inspection_form_provider.dart';
 
 class ErrorScreen extends StatelessWidget {
   final InspectionFormProvider provider;
-  const ErrorScreen({required this.provider});
+  const ErrorScreen({super.key, required this.provider});
 
   @override
   Widget build(BuildContext context) {
