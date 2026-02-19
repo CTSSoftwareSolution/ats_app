@@ -74,15 +74,9 @@ class SectionState {
 ///  PROVIDER
 class InspectionFormProvider extends ChangeNotifier {
   InspectionQueUseCases inspectionQueUseCases;
-
   InspectionFormProvider({required this.inspectionQueUseCases});
 
-  static const String _apiUrl =
-      'https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getPreInspectionQuestions';
-
-  // ← ADDED
-  static const String _editApiUrl =
-      'https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getPreInspectionDetailsByVehicleID';
+  static const String _editApiUrl = 'https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getPreInspectionDetailsByVehicleID';
 
   bool _isLoading = false;
   bool _hasError = false;
@@ -107,13 +101,12 @@ class InspectionFormProvider extends ChangeNotifier {
     _isLoading = true;
     _hasError = false;
     _errorMessage = '';
-    _isEditMode = false; // ← ADDED
+    _isEditMode = false;
     _sections = [];
     notifyListeners();
 
     try {
       debugPrint('→ Fetching inspection data from usecase');
-
       final response = await inspectionQueUseCases.execute();
 
       _model = response;
@@ -139,7 +132,7 @@ class InspectionFormProvider extends ChangeNotifier {
     }
   }
 
-  // ← ADDED: Edit mode fetch
+  //Edit mode fetch
   Future<void> fetchAndPrefill(String vehicleNo) async {
     _isLoading = true;
     _hasError = false;
@@ -218,16 +211,13 @@ class InspectionFormProvider extends ChangeNotifier {
     ];
   }
 
-  // ← ADDED: Edit mode section builder
-  // Classes: PreInspectionDetail, InspectionDetail, PostInspectionDetails, CarDataDetails
+  // Edit mode section builder
   void _buildSectionsFromDetailsModel(PreInspectionDetailsData data) {
     AnswerState parseAnswer(String? r) {
       if (r == 'Pass') return AnswerState.Pass;
       if (r == 'Fail') return AnswerState.Fail;
       return AnswerState.unanswered;
     }
-
-    // CarDataDetails → QuestionAnswer
     QuestionAnswer fromCarDataDetails(CarDataDetails q) {
       final cd = CarData(
         questionId: q.questionId?.toInt(),
@@ -235,9 +225,9 @@ class InspectionFormProvider extends ChangeNotifier {
       );
       final qa = QuestionAnswer(
         carData: cd,
-        answer: parseAnswer(q.inspectionResult), // ← pre-fill
+        answer: parseAnswer(q.inspectionResult)
       );
-      qa.existingEvidenceUrl = q.evidenceUrl; // ← purana image URL
+      qa.existingEvidenceUrl = q.evidenceUrl;
       return qa;
     }
 
@@ -367,8 +357,7 @@ class InspectionFormProvider extends ChangeNotifier {
               questionId: q.carData.questionId?.toString() ?? '',
               questionText: q.carData.questionText ?? '',
               answer: q.answer.name,
-              // naya image → uploadedImageUrl, warna purana evidenceUrl
-              imagePath: q.uploadedImageUrl ?? q.existingEvidenceUrl ?? '', // ← CHANGED
+              imagePath: q.uploadedImageUrl ?? q.existingEvidenceUrl ?? '',
             ));
           }
         }

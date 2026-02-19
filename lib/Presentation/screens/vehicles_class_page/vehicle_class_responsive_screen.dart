@@ -63,8 +63,7 @@ class _VehicleClassResponsiveLayoutState extends State<VehicleClassResponsiveLay
                       width: constraints.isTablet ? constraints.maxWidth/1.5 : double.infinity,
                       child: CustomSearchTextField(
                         onChanged: (String value) {
-                          context.read<VehicleClassProvider>()
-                              .onSearchChanged(context, value);
+                          context.read<VehicleClassProvider>().onSearchChanged(context, value);
                         },
                         onCloseClick: () {
                           context.read<VehicleClassProvider>().searchController.clear();

@@ -1,8 +1,6 @@
 import 'package:extensions_pro/extensions_pro.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../utilities/color_data.dart';
 import '../../../utilities/custom_confirmation_dialog_box.dart';
 import '../../provider/MediaPicker/file_provider.dart';
