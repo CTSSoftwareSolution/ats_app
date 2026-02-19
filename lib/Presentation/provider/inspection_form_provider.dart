@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -15,12 +14,15 @@ import '../screens/pre_inspection_form/answer_models.dart';
 /// Answer State
 enum AnswerState { unanswered, Pass, Fail }
 
+/// Filter State
+enum QuestionFilter { all, answered, unanswered, no }
+
 class QuestionAnswer {
   final CarData carData;
   AnswerState answer;
   File? imagePath;
   String? uploadedImageUrl;
-  String? existingEvidenceUrl; // ← ADDED: edit mode ka purana image URL
+  String? existingEvidenceUrl;
 
   QuestionAnswer({required this.carData, this.answer = AnswerState.unanswered});
 }
@@ -76,32 +78,95 @@ class InspectionFormProvider extends ChangeNotifier {
   InspectionQueUseCases inspectionQueUseCases;
   InspectionFormProvider({required this.inspectionQueUseCases});
 
-  static const String _editApiUrl = 'https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getPreInspectionDetailsByVehicleID';
+  static const String _editApiUrl =
+      'https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getPreInspectionDetailsByVehicleID';
 
   bool _isLoading = false;
   bool _hasError = false;
   String _errorMessage = '';
   InspectionQueEntity? _model;
   List<SectionState> _sections = [];
-  bool _isEditMode = false; // ← ADDED
+  bool _isEditMode = false;
+  QuestionFilter _filter = QuestionFilter.all;
 
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
   String get errorMessage => _errorMessage;
-  InspectionQueEntity?  get model => _model;
+  InspectionQueEntity? get model => _model;
   List<SectionState> get sections => _sections;
-  bool get isEditMode => _isEditMode; // ← ADDED
+  bool get isEditMode => _isEditMode;
+  QuestionFilter get filter => _filter;
 
-  int get grandTotalAnswered => _sections.fold(0, (sum, s) => sum + s.totalAnswered);
-  int get grandTotalQuestions => _sections.fold(0, (sum, s) => sum + s.totalQuestions);
-  bool get isFullyComplete => grandTotalQuestions > 0 && grandTotalAnswered == grandTotalQuestions;
+  int get grandTotalAnswered =>
+      _sections.fold(0, (sum, s) => sum + s.totalAnswered);
+  int get grandTotalQuestions =>
+      _sections.fold(0, (sum, s) => sum + s.totalQuestions);
+  bool get isFullyComplete =>
+      grandTotalQuestions > 0 && grandTotalAnswered == grandTotalQuestions;
 
-  /// Fetch API (unchanged)
+  int get grandTotalNo => _sections.fold(
+      0,
+          (sum, s) =>
+      sum +
+          s.categories.fold(
+              0,
+                  (cSum, c) => cSum +
+                  c.questions
+                      .where((q) => q.answer == AnswerState.Fail)
+                      .length));
+
+  // ─────────────────────────────────────────────
+  //  FILTER
+  // ─────────────────────────────────────────────
+  void setFilter(QuestionFilter f) {
+    _filter = f;
+    notifyListeners();
+  }
+
+  List<SectionState> get filteredSections {
+    if (_filter == QuestionFilter.all) return _sections;
+
+    return _sections.map((section) {
+      final filteredCats = section.categories.map((cat) {
+        final filteredQs = cat.questions.where((q) {
+          switch (_filter) {
+            case QuestionFilter.answered:
+              return q.answer != AnswerState.unanswered;
+            case QuestionFilter.unanswered:
+              return q.answer == AnswerState.unanswered;
+            case QuestionFilter.no:
+              return q.answer == AnswerState.Fail;
+            case QuestionFilter.all:
+              return true;
+          }
+        }).toList();
+
+        return CategoryState(
+          title: cat.title,
+          questions: filteredQs,
+          isExpanded: cat.isExpanded,
+        );
+      }).where((cat) => cat.questions.isNotEmpty).toList();
+
+      return SectionState(
+        label: section.label,
+        subtitle: section.subtitle,
+        color: section.color,
+        icon: section.icon,
+        categories: filteredCats,
+      );
+    }).toList();
+  }
+
+  // ─────────────────────────────────────────────
+  //  FETCH: New Inspection
+  // ─────────────────────────────────────────────
   Future<void> fetchInspectionData() async {
     _isLoading = true;
     _hasError = false;
     _errorMessage = '';
     _isEditMode = false;
+    _filter = QuestionFilter.all;
     _sections = [];
     notifyListeners();
 
@@ -115,7 +180,8 @@ class InspectionFormProvider extends ChangeNotifier {
         _buildSections(_model!.data!);
         debugPrint('→ Sections built: ${_sections.length}');
       } else {
-        _setError('API Error: ${_model?.message ?? 'status=false or data=null'}');
+        _setError(
+            'API Error: ${_model?.message ?? 'status=false or data=null'}');
       }
     } on TimeoutException {
       _setError('Request timed out. Check internet connection.');
@@ -132,19 +198,23 @@ class InspectionFormProvider extends ChangeNotifier {
     }
   }
 
-  //Edit mode fetch
+  // ─────────────────────────────────────────────
+  //  FETCH: Edit Mode
+  // ─────────────────────────────────────────────
   Future<void> fetchAndPrefill(String vehicleNo) async {
     _isLoading = true;
     _hasError = false;
     _errorMessage = '';
     _isEditMode = true;
+    _filter = QuestionFilter.all;
     _sections = [];
     notifyListeners();
 
     try {
       debugPrint('→ [EditMode] Fetching for vehicle: $vehicleNo');
 
-      final response = await http.post(Uri.parse(_editApiUrl),
+      final response = await http.post(
+        Uri.parse(_editApiUrl),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -153,7 +223,8 @@ class InspectionFormProvider extends ChangeNotifier {
       ).timeout(const Duration(seconds: 30));
 
       if (kDebugMode) {
-        alice.onHttpResponse(response, body: jsonEncode({'vehicle_no': vehicleNo}));
+        alice.onHttpResponse(
+            response, body: jsonEncode({'vehicle_no': vehicleNo}));
       }
 
       if (response.statusCode == 200) {
@@ -184,7 +255,9 @@ class InspectionFormProvider extends ChangeNotifier {
     }
   }
 
-  /// Build Sections (unchanged)
+  // ─────────────────────────────────────────────
+  //  BUILD SECTIONS: New mode
+  // ─────────────────────────────────────────────
   void _buildSections(InspectorData data) {
     _sections = [
       SectionState(
@@ -211,13 +284,16 @@ class InspectionFormProvider extends ChangeNotifier {
     ];
   }
 
-  // Edit mode section builder
+  // ─────────────────────────────────────────────
+  //  BUILD SECTIONS: Edit mode
+  // ─────────────────────────────────────────────
   void _buildSectionsFromDetailsModel(PreInspectionDetailsData data) {
     AnswerState parseAnswer(String? r) {
       if (r == 'Pass') return AnswerState.Pass;
       if (r == 'Fail') return AnswerState.Fail;
       return AnswerState.unanswered;
     }
+
     QuestionAnswer fromCarDataDetails(CarDataDetails q) {
       final cd = CarData(
         questionId: q.questionId?.toInt(),
@@ -225,7 +301,7 @@ class InspectionFormProvider extends ChangeNotifier {
       );
       final qa = QuestionAnswer(
         carData: cd,
-        answer: parseAnswer(q.inspectionResult)
+        answer: parseAnswer(q.inspectionResult),
       );
       qa.existingEvidenceUrl = q.evidenceUrl;
       return qa;
@@ -237,75 +313,93 @@ class InspectionFormProvider extends ChangeNotifier {
         subtitle: 'Before vehicle enters',
         color: const Color(0xFF0D7377),
         icon: Icons.assignment_turned_in_outlined,
-        categories: (data.preInspection ?? []).map((cat) => CategoryState(
+        categories: (data.preInspection ?? [])
+            .map((cat) => CategoryState(
           title: cat.title ?? 'Unknown',
-          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
-        )).toList(),
+          questions:
+          (cat.carData ?? []).map(fromCarDataDetails).toList(),
+        ))
+            .toList(),
       ),
       SectionState(
         label: 'Inspection',
         subtitle: 'Main vehicle check',
         color: const Color(0xFF1A3C6E),
         icon: Icons.directions_car_outlined,
-        categories: (data.inspection ?? []).map((cat) => CategoryState(
+        categories: (data.inspection ?? [])
+            .map((cat) => CategoryState(
           title: cat.title ?? 'Unknown',
-          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
-        )).toList(),
+          questions:
+          (cat.carData ?? []).map(fromCarDataDetails).toList(),
+        ))
+            .toList(),
       ),
       SectionState(
         label: 'Post-Inspection',
         subtitle: 'After vehicle exits',
         color: const Color(0xFF7B2D8B),
         icon: Icons.task_alt_outlined,
-        categories: (data.postInspection ?? []).map((cat) => CategoryState(
+        categories: (data.postInspection ?? [])
+            .map((cat) => CategoryState(
           title: cat.title ?? 'Unknown',
-          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
-        )).toList(),
+          questions:
+          (cat.carData ?? []).map(fromCarDataDetails).toList(),
+        ))
+            .toList(),
       ),
     ];
   }
 
   List<CategoryState> _buildFromPreInspection(List<PreInspection> raw) =>
-      raw.map((cat) => CategoryState(
+      raw
+          .map((cat) => CategoryState(
         title: cat.title ?? 'Unknown',
         questions: (cat.carData ?? [])
             .map((q) => QuestionAnswer(carData: q))
             .toList(),
-      )).toList();
-
-
-
-
+      ))
+          .toList();
 
   List<CategoryState> _buildFromInspection(List<Inspection> raw) =>
-      raw.map((cat) => CategoryState(
+      raw
+          .map((cat) => CategoryState(
         title: cat.title ?? 'Unknown',
         questions: (cat.carData ?? [])
             .map((q) => QuestionAnswer(carData: q))
             .toList(),
-      )).toList();
+      ))
+          .toList();
 
   List<CategoryState> _buildFromPostInspection(List<PostInspection> raw) =>
-      raw.map((cat) => CategoryState(
+      raw
+          .map((cat) => CategoryState(
         title: cat.title ?? 'Unknown',
         questions: (cat.carData ?? [])
             .map((q) => QuestionAnswer(carData: q))
             .toList(),
-      )).toList();
+      ))
+          .toList();
 
-  /// Answer (unchanged)
+  // ─────────────────────────────────────────────
+  //  ANSWER
+  // ─────────────────────────────────────────────
   void answerQuestion({
     required int sectionIndex,
     required int categoryIndex,
     required int questionIndex,
     required AnswerState answer,
   }) {
-    final q = _sections[sectionIndex].categories[categoryIndex].questions[questionIndex];
+    final q = _sections[sectionIndex]
+        .categories[categoryIndex]
+        .questions[questionIndex];
     q.answer = q.answer == answer ? AnswerState.unanswered : answer;
     if (q.answer != AnswerState.Fail) q.imagePath = null;
     notifyListeners();
   }
 
+  // ─────────────────────────────────────────────
+  //  IMAGE
+  // ─────────────────────────────────────────────
   void setQuestionImage({
     required int sectionIndex,
     required int categoryIndex,
@@ -313,43 +407,43 @@ class InspectionFormProvider extends ChangeNotifier {
     required File? image,
     required String? uploadedUrl,
   }) {
-    _sections[sectionIndex].categories[categoryIndex]
-        .questions[questionIndex].imagePath = image;
-
-    _sections[sectionIndex].categories[categoryIndex]
-        .questions[questionIndex].uploadedImageUrl = uploadedUrl;
-
+    _sections[sectionIndex]
+        .categories[categoryIndex]
+        .questions[questionIndex]
+        .imagePath = image;
+    _sections[sectionIndex]
+        .categories[categoryIndex]
+        .questions[questionIndex]
+        .uploadedImageUrl = uploadedUrl;
     notifyListeners();
   }
-
-  // void removeQuestionImage({
-  //   required int sectionIndex,
-  //   required int categoryIndex,
-  //   required int questionIndex,
-  // }) {
-  //   _sections[sectionIndex].categories[categoryIndex]
-  //       .questions[questionIndex].imagePath = null;
-  //   notifyListeners();
-  // }
 
   void removeQuestionImage({
     required int sectionIndex,
     required int categoryIndex,
     required int questionIndex,
   }) {
-    final q = _sections[sectionIndex].categories[categoryIndex].questions[questionIndex];
+    final q = _sections[sectionIndex]
+        .categories[categoryIndex]
+        .questions[questionIndex];
     q.imagePath = null;
     q.uploadedImageUrl = null;
-    q.existingEvidenceUrl = null; // ← ADD THIS
+    q.existingEvidenceUrl = null;
     notifyListeners();
   }
 
+  // ─────────────────────────────────────────────
+  //  TOGGLE CATEGORY
+  // ─────────────────────────────────────────────
   void toggleCategory(int sectionIndex, int categoryIndex) {
     _sections[sectionIndex].categories[categoryIndex].isExpanded =
     !_sections[sectionIndex].categories[categoryIndex].isExpanded;
     notifyListeners();
   }
 
+  // ─────────────────────────────────────────────
+  //  RESET ALL
+  // ─────────────────────────────────────────────
   void resetAll() {
     for (final s in _sections) {
       for (final c in s.categories) {
@@ -360,9 +454,39 @@ class InspectionFormProvider extends ChangeNotifier {
         c.isExpanded = false;
       }
     }
+    _filter = QuestionFilter.all;
     notifyListeners();
   }
 
+  // Original section index dhundho filtered index se
+  int originalSectionIndex(int filteredSectionIdx) {
+    final filteredSection = filteredSections[filteredSectionIdx];
+    return _sections.indexWhere((s) => s.label == filteredSection.label);
+  }
+
+// Original category index dhundho
+  int originalCategoryIndex(int filteredSectionIdx, int filteredCatIdx) {
+    final filteredSection = filteredSections[filteredSectionIdx];
+    final filteredCat = filteredSection.categories[filteredCatIdx];
+    final origSectionIdx = originalSectionIndex(filteredSectionIdx);
+    return _sections[origSectionIdx].categories
+        .indexWhere((c) => c.title == filteredCat.title);
+  }
+
+// Original question index dhundho
+  int originalQuestionIndex(int filteredSectionIdx, int filteredCatIdx, int filteredQueIdx) {
+    final filteredSection = filteredSections[filteredSectionIdx];
+    final filteredCat = filteredSection.categories[filteredCatIdx];
+    final filteredQ = filteredCat.questions[filteredQueIdx];
+    final origSectionIdx = originalSectionIndex(filteredSectionIdx);
+    final origCatIdx = originalCategoryIndex(filteredSectionIdx, filteredCatIdx);
+    return _sections[origSectionIdx].categories[origCatIdx].questions
+        .indexWhere((q) => q.carData.questionId == filteredQ.carData.questionId);
+  }
+
+  // ─────────────────────────────────────────────
+  //  COLLECT ANSWERS
+  // ─────────────────────────────────────────────
   List<QuestionAnswerModel> collectAnswers() {
     final result = <QuestionAnswerModel>[];
     for (final section in _sections) {
@@ -382,6 +506,9 @@ class InspectionFormProvider extends ChangeNotifier {
     return result;
   }
 
+  // ─────────────────────────────────────────────
+  //  ERROR
+  // ─────────────────────────────────────────────
   void _setError(String message) {
     _hasError = true;
     _errorMessage = message;

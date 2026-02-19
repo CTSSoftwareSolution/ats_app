@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/answer_button.dart';
@@ -11,7 +10,7 @@ import '../../../../aws_images/aws_signedurl_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 import 'image_picker_prompt.dart';
 import 'image_preview.dart';
-import 'image_source_option.dart';
+
 
 class QuestionTile extends StatelessWidget {
   final int sectionIndex;
@@ -20,7 +19,8 @@ class QuestionTile extends StatelessWidget {
   final Color accentColor;
   final bool isLast;
 
-  const QuestionTile({super.key,
+  const QuestionTile({
+    super.key,
     required this.sectionIndex,
     required this.categoryIndex,
     required this.questionIndex,
@@ -28,10 +28,15 @@ class QuestionTile extends StatelessWidget {
     required this.isLast,
   });
 
-  Future<void> _pickImage(BuildContext context, InspectionFormProvider provider,
-      ImageSource source) async {
-    final awsProvider =
-    Provider.of<AwsSignedUrlProvider>(context, listen: false);
+  Future<void> _pickImage(
+      BuildContext context,
+      InspectionFormProvider provider,
+      ImageSource source,
+      int origSec,
+      int origCat,
+      int origQue,
+      ) async {
+    final awsProvider = Provider.of<AwsSignedUrlProvider>(context, listen: false);
 
     try {
       final picker = ImagePicker();
@@ -42,21 +47,20 @@ class QuestionTile extends StatelessWidget {
       );
       if (picked != null) {
         final file = File(picked.path);
-
         final imagePath = file.path.split(Platform.pathSeparator).last;
 
-        await awsProvider.awsUploadedFile(imagePath, file, context,);
+        await awsProvider.awsUploadedFile(imagePath, file, context);
 
-        final fileImagePath = awsImagePathUrl + awsProvider.stringRandomNumber + imagePath;
+        final fileImagePath =
+            awsImagePathUrl + awsProvider.stringRandomNumber + imagePath;
 
         provider.setQuestionImage(
-          sectionIndex: sectionIndex,
-          categoryIndex: categoryIndex,
-          questionIndex: questionIndex,
+          sectionIndex: origSec,
+          categoryIndex: origCat,
+          questionIndex: origQue,
           image: file,
-            uploadedUrl: fileImagePath
+          uploadedUrl: fileImagePath,
         );
-
       }
     } catch (e) {
       if (context.mounted) {
@@ -75,13 +79,15 @@ class QuestionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<InspectionFormProvider>(
       builder: (context, provider, _) {
+        final origSec = provider.originalSectionIndex(sectionIndex);
+        final origCat = provider.originalCategoryIndex(sectionIndex, categoryIndex);
+        final origQue = provider.originalQuestionIndex(sectionIndex, categoryIndex, questionIndex);
         final question = provider
-            .sections[sectionIndex]
-            .categories[categoryIndex]
-            .questions[questionIndex];
+            .sections[origSec]
+            .categories[origCat]
+            .questions[origQue];
 
         final isNo = question.answer == AnswerState.Fail;
-        final hasImage = question.imagePath != null;
 
         return AnimatedContainer(
           duration: const Duration(milliseconds: 200),
@@ -97,7 +103,6 @@ class QuestionTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Question label + text ──
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -140,9 +145,9 @@ class QuestionTile extends StatelessWidget {
                     selected: question.answer == AnswerState.Pass,
                     selectedColor: Colors.green,
                     onTap: () => provider.answerQuestion(
-                      sectionIndex: sectionIndex,
-                      categoryIndex: categoryIndex,
-                      questionIndex: questionIndex,
+                      sectionIndex: origSec,
+                      categoryIndex: origCat,
+                      questionIndex: origQue,
                       answer: AnswerState.Pass,
                     ),
                   ),
@@ -152,9 +157,9 @@ class QuestionTile extends StatelessWidget {
                     selected: isNo,
                     selectedColor: Colors.red,
                     onTap: () => provider.answerQuestion(
-                      sectionIndex: sectionIndex,
-                      categoryIndex: categoryIndex,
-                      questionIndex: questionIndex,
+                      sectionIndex: origSec,
+                      categoryIndex: origCat,
+                      questionIndex: origQue,
                       answer: AnswerState.Fail,
                     ),
                   ),
@@ -162,43 +167,61 @@ class QuestionTile extends StatelessWidget {
               ),
               AnimatedCrossFade(
                 duration: const Duration(milliseconds: 300),
-                crossFadeState: isNo
-                    ? CrossFadeState.showSecond
-                    : CrossFadeState.showFirst,
+                crossFadeState:
+                isNo ? CrossFadeState.showSecond : CrossFadeState.showFirst,
                 firstChild: const SizedBox.shrink(),
                 secondChild: Padding(
                   padding: const EdgeInsets.only(top: 12),
                   child: () {
                     final hasLocalImage = question.imagePath != null;
-                    final hasExistingUrl = question.existingEvidenceUrl != null &&
-                        question.existingEvidenceUrl!.isNotEmpty;
+                    final hasExistingUrl =
+                        question.existingEvidenceUrl != null &&
+                            question.existingEvidenceUrl!.isNotEmpty;
 
                     if (hasLocalImage) {
                       return ImagePreview(
                         imageFile: question.imagePath,
                         onRemove: () => provider.removeQuestionImage(
-                          sectionIndex: sectionIndex,
-                          categoryIndex: categoryIndex,
-                          questionIndex: questionIndex,
+                          sectionIndex: origSec,
+                          categoryIndex: origCat,
+                          questionIndex: origQue,
                         ),
-                        onReplace: () =>
-                            _pickImage(context, provider, ImageSource.camera),
+                        onReplace: () => _pickImage(
+                          context,
+                          provider,
+                          ImageSource.camera,
+                          origSec,
+                          origCat,
+                          origQue,
+                        ),
                       );
                     } else if (hasExistingUrl) {
                       return ImagePreview(
                         imageUrl: question.existingEvidenceUrl,
                         onRemove: () => provider.removeQuestionImage(
-                          sectionIndex: sectionIndex,
-                          categoryIndex: categoryIndex,
-                          questionIndex: questionIndex,
+                          sectionIndex: origSec,
+                          categoryIndex: origCat,
+                          questionIndex: origQue,
                         ),
-                        onReplace: () =>
-                            _pickImage(context, provider, ImageSource.camera),
+                        onReplace: () => _pickImage(
+                          context,
+                          provider,
+                          ImageSource.camera,
+                          origSec,
+                          origCat,
+                          origQue,
+                        ),
                       );
                     } else {
                       return ImagePickerPrompt(
-                        onTap: () =>
-                            _pickImage(context, provider, ImageSource.camera),
+                        onTap: () => _pickImage(
+                          context,
+                          provider,
+                          ImageSource.camera,
+                          origSec,
+                          origCat,
+                          origQue,
+                        ),
                       );
                     }
                   }(),
