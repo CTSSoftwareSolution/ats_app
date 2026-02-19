@@ -5,7 +5,6 @@ import 'package:camera/camera.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../Presentation/provider/MediaPicker/file_provider.dart';
 import '../Presentation/provider/verify_hsrp_provider.dart';
 import '../Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
@@ -120,39 +119,26 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
       context.showErrorSnackBar("Please enter expected plate number");
       return;
     }
-
     fileProvider.setCurrentIndex(_frontIndex);
     await fileProvider.initCamera();
     if (!context.mounted) return;
-
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => CameraScreen()),
-    );
-
+    await context.push(CameraScreen());
     if (!context.mounted) return;
-
     final XFile? xFile = fileProvider.getImage(_frontIndex);
     if (xFile == null) return;
-
     await verifyProvider.verifyPlate(
       imageFile: File(xFile.path),
       expectedPlate: expectedPlate,
     );
-
     if (!context.mounted) return;
-
     if (verifyProvider.error != null) {
       context.showErrorSnackBar(verifyProvider.error!);
     }
   }
 }
 
-// ─── Inline Widgets ──────────────────────────────────────────────────────────
-
 class _LoadingResult extends StatelessWidget {
   const _LoadingResult();
-
   @override
   Widget build(BuildContext context) {
     return const Center(
@@ -175,9 +161,7 @@ class _VerificationResult extends StatelessWidget {
     final decision = analysis?.decision ?? "UNKNOWN";
     final plate = analysis?.ocrPlateText ?? "-";
     final reason = analysis?.reason ?? "No reason";
-
     final bool isApproved = decision.toUpperCase() == "APPROVED";
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
