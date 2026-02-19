@@ -173,6 +173,10 @@ class InspectionFormProvider extends ChangeNotifier {
             .toList(),
       )).toList();
 
+
+
+
+
   List<CategoryState> _buildFromInspection(List<Inspection> raw) =>
       raw.map((cat) => CategoryState(
         title: cat.title ?? 'Unknown',

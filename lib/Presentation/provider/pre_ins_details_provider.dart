@@ -21,9 +21,11 @@ class PreInsDetailsProvider extends ChangeNotifier{
 
     final classProvider = Provider.of<VehicleClassProvider>(context,listen: false);
     try {
+      isLoading = true;
+      notifyListeners();
+
       PreInsDetailsReqModel detailsReqModel = PreInsDetailsReqModel(
           vehicleNo: classProvider.selectedClass?.regNo,
-
       );
 
       preInsDetailsEntity = await preInsDetailsUseCases.execute(detailsReqModel);
