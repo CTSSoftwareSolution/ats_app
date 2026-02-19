@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-
 import '../../../provider/inspection_form_provider.dart';
 
 class SectionSummaryCard extends StatelessWidget {

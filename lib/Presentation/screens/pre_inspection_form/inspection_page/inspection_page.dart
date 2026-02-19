@@ -119,8 +119,7 @@ class _InspectionPageState extends State<InspectionPage> with SingleTickerProvid
                   ),
                   text: s.label.split('-').last,
                 ),
-              )
-                  .toList(),
+              ).toList(),
             ),
           ),
         ),

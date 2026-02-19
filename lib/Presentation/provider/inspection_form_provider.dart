@@ -322,13 +322,25 @@ class InspectionFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // void removeQuestionImage({
+  //   required int sectionIndex,
+  //   required int categoryIndex,
+  //   required int questionIndex,
+  // }) {
+  //   _sections[sectionIndex].categories[categoryIndex]
+  //       .questions[questionIndex].imagePath = null;
+  //   notifyListeners();
+  // }
+
   void removeQuestionImage({
     required int sectionIndex,
     required int categoryIndex,
     required int questionIndex,
   }) {
-    _sections[sectionIndex].categories[categoryIndex]
-        .questions[questionIndex].imagePath = null;
+    final q = _sections[sectionIndex].categories[categoryIndex].questions[questionIndex];
+    q.imagePath = null;
+    q.uploadedImageUrl = null;
+    q.existingEvidenceUrl = null; // ← ADD THIS
     notifyListeners();
   }
 

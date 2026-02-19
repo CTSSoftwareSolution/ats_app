@@ -1,8 +1,3 @@
-
-// ─────────────────────────────────────────────
-//  FILE: lib/widgets/confirmation_dialog.dart
-// ─────────────────────────────────────────────
-
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
