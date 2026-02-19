@@ -40,7 +40,7 @@ class PreInspectionResultProvider extends ChangeNotifier{
         results: resultList
       );
       preInspectionResultEntity = await preInspectionResultUseCases.execute(resultReqModel);
-     context.push(VehicleClassScreen());
+     context.pushAndRemoveUntil(VehicleClassScreen());
       return preInspectionResultEntity;
     } catch (e) {
       preInspectionResultEntity = null;
