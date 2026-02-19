@@ -1,3 +1,4 @@
+import 'package:ats_app/Presentation/screens/vehicles_class_page/vehicle_class_screen.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
