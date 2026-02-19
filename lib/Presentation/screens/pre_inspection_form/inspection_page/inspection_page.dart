@@ -20,15 +20,13 @@ class InspectionPage extends StatefulWidget {
   State<InspectionPage> createState() => _InspectionPageState();
 }
 
-class _InspectionPageState extends State<InspectionPage>
-    with SingleTickerProviderStateMixin {
+class _InspectionPageState extends State<InspectionPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   // @override
   // void initState() {
   //   super.initState();
   //   _tabController = TabController(length: 3, vsync: this);
-  //
   //   WidgetsBinding.instance.addPostFrameCallback((_) {
   //     context.read<InspectionFormProvider>().fetchInspectionData();
   //   });
@@ -77,9 +75,7 @@ class _InspectionPageState extends State<InspectionPage>
   Widget _buildBody(InspectionFormProvider provider) {
     if (provider.isLoading) return const LoadingScreen();
     if (provider.hasError) return ErrorScreen(provider: provider);
-
     final sections = provider.sections;
-
     return Column(
       children: [
         PreferredSize(
@@ -128,8 +124,6 @@ class _InspectionPageState extends State<InspectionPage>
             ),
           ),
         ),
-
-        /// 🔥 IMPORTANT: Wrap TabBarView with Expanded
         Expanded(
           child: TabBarView(
             controller: _tabController,

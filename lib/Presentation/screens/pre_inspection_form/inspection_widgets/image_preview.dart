@@ -21,7 +21,6 @@ class ImagePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // ── Image (File or Network) ──
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: imageFile != null
@@ -75,8 +74,6 @@ class ImagePreview extends StatelessWidget {
             ),
           ),
         ),
-
-        // ── Bottom overlay: Replace + Remove ──
         Positioned(
           bottom: 0,
           left: 0,
