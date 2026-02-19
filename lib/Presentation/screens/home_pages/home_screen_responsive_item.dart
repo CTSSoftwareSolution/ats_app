@@ -1,4 +1,5 @@
 import 'package:ats_app/Presentation/screens/home_pages/select_vehicle.dart';
+import 'package:ats_app/Presentation/screens/home_pages/vehicle_registration_screen.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 
@@ -62,6 +63,8 @@ class _HomeScreenResponsiveItemState extends State<HomeScreenResponsiveItem> {
             // ImageSlider(),
             // isTablet ? 35.height :30.height,
             SelectVehicle(),
+            isTablet ? 35.height :30.height,
+            VehicleRegistrationScreen(),
             isTablet ? 70.height :60.height,
             CustomText(text: "Scan, Detect", fontFamily: "Heavy", fontSize:  isTablet ? 56.0 : 46.0,textColor: scanTextColor,),
             Row(

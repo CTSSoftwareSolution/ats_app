@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 const appColor = Color(0xff345afa);
+const appGradientColor = Color(0xff19162e);
 const stepperInactiveColor = Color(0x4a345afa);
 const bottomIconColor = Color(0xffa29c9c);
 const scanTextColor = Color(0xff4f4f4f);
