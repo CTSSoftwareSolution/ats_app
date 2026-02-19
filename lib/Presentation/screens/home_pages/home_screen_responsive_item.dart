@@ -1,9 +1,11 @@
 import 'package:ats_app/Presentation/screens/home_pages/select_vehicle.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utilities/color_data.dart';
 import '../../../utilities/extension.dart';
 import '../../../utilities/image_data.dart';
+import '../../../vehicle_number_plate/vehicle_number_plate_screen.dart';
 import '../../../widgets/custom_image.dart';
 import '../../../widgets/custom_text.dart';
 import 'image_slider.dart';
@@ -31,15 +33,34 @@ class _HomeScreenResponsiveItemState extends State<HomeScreenResponsiveItem> {
             isTablet ?
             CustomText(text: "ATS Corporation", fontSize: isTablet ? 34.0 : 24.0, fontFamily: "Black") :
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomImage(image: logoImage,height: 28.0,width: 28.0,),
-                15.width,
-                CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",)
+                Row(
+                  children: [
+                    CustomImage(image: logoImage,height: 28.0,width: 28.0,),
+                    15.width,
+                    CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",)
+                  ],
+                ),
+                InkWell(
+                  onTap: (){
+                    context.push(VehicleNumberPlateScreen());
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: appColor,
+                      borderRadius: BorderRadius.circular(40.0)
+                    ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: CustomImage(image: photoCaptureIcon,height: 15.0,width: 15.0,color: whiteColor,),
+                      )),
+                ),
               ],
             ),
             isTablet ? 20.height :25.height,
-            ImageSlider(),
-            isTablet ? 35.height :30.height,
+            // ImageSlider(),
+            // isTablet ? 35.height :30.height,
             SelectVehicle(),
             isTablet ? 70.height :60.height,
             CustomText(text: "Scan, Detect", fontFamily: "Heavy", fontSize:  isTablet ? 56.0 : 46.0,textColor: scanTextColor,),

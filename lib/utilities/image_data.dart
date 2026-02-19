@@ -38,6 +38,7 @@ const termsIcon = "assets/terms-conditions.png";
 const privacyIcon = "assets/privacy-policy.png";
 const notificationIcon = "assets/notification.png";
 const noDataIcon = "assets/no-data.png";
+const photoCaptureIcon = "assets/photo-capture.png";
 
 const manualInspectionIcon = "assets/manual-inspection.png";
 const machineInspectionIcon = "assets/machine-inspection.png";

@@ -9,6 +9,7 @@ import '../Presentation/provider/permission_provider.dart';
 
 const String defaultBaseUrl = "https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev";
 
+
 class AppConfig {
 
   static final AppConfig _instance = AppConfig._internal();
@@ -16,16 +17,27 @@ class AppConfig {
   AppConfig._internal();
 
   String baseUrl = defaultBaseUrl;
+  String? backupUrl;
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
     baseUrl = prefs.getString('base_url') ?? defaultBaseUrl;
+    backupUrl = prefs.getString('backup_url');
   }
 
-  Future<void> updateBaseUrl({required BuildContext context, required String newUrl}) async {
+  Future<void> updateBaseUrl({required BuildContext context, required String newUrl,  String? secondaryUrl,}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('base_url', newUrl);
     baseUrl = newUrl;
+
+    if (secondaryUrl != null && secondaryUrl.isNotEmpty) {
+      await prefs.setString('backup_url', secondaryUrl);
+      backupUrl = secondaryUrl;
+    } else {
+      await prefs.remove('backup_url');
+      backupUrl = null;
+    }
+
     final permissionProvider = PermissionProvider();
     await permissionProvider.checkAndRequestPermissions();
     runApp(MultipleProvider(permissionProvider: permissionProvider));

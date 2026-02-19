@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import 'build_server_page.dart';
+
 
 
 class IpAddressBottomSheetScreen extends StatefulWidget {
@@ -24,8 +26,9 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
   late Animation<Offset> slideAnimation;
   late AnimationController animationController;
   late Animation<double> fadeAnimation;
-  final TextEditingController ipController = TextEditingController();
-
+  final TextEditingController mainIPController = TextEditingController();
+  final TextEditingController secondaryIPController = TextEditingController();
+  bool enableBackup = false;
 
   @override
   void initState(){
@@ -45,9 +48,9 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
     );
     animationController.forward();
 
-    ipController.text = appConfig.baseUrl;
+    mainIPController.text = appConfig.baseUrl;
 
-    ipController.addListener((){
+    mainIPController.addListener((){
       setState(() {});
     });
   }
@@ -55,7 +58,7 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
   @override
   void dispose() {
     animationController.dispose();
-    ipController.dispose();
+    mainIPController.dispose();
     super.dispose();
   }
 
@@ -195,139 +198,62 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.storage_rounded,
-                                    size: 16,
-                                    color: appColor,
-                                    //color: Colors.blue[700],
+                              buildServerField(
+                                title: "Main Server IPv4 Address",
+                                controller: mainIPController,
+                                suffixIcon: mainIPController.text.isNotEmpty
+                                    ? IconButton(
+                                  icon: Icon(
+                                    Icons.cancel_rounded,
+                                    size: 20,
+                                    color: Colors.grey[400],
                                   ),
-                                  const SizedBox(width: 6),
-                                  CustomText(text: "Server IPv4 Address", fontSize: 13,
-                                  textColor: Colors.grey[800],
-                                    fontFamily: "Bold",)
-                                ],
+                                  onPressed: () {
+                                    setState(() {
+                                      mainIPController.clear();
+                                    });
+                                  },
+                                )
+                                    : Icon(
+                                  Icons.lan_rounded,
+                                  size: 20,
+                                  color: Colors.grey[300],
+                                ),
                               ),
-                              const SizedBox(height: 10),
 
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: appColor.withOpacity(0.06),
-                                     //color: Colors.blue.withOpacity(0.06),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 3),
-                                      spreadRadius: 0,
-                                    ),
-                                  ],
-                                ),
-                                child: CustomTextField(
-                                  validator: (value) => Validators.validateIpAddress(value!),
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.deny(RegExp(r" ")),
-                                      IpPortInputFormatter(),
-                                    ],
-                                    controller:ipController,
-                                    keyboardType: TextInputType.number,
-                                    hint: "192.168.1.100:8080",
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey[400],
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w400,
-                                      fontFamily: 'Medium',
-                                    ),
-                                    prefixIcon: Container(
-                                      margin: const EdgeInsets.all(10),
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            appColor.withOpacity(0.75),
-                                            appColor.withOpacity(0.95),
-                                            // Colors.blue[400]!,
-                                            // Colors.blue[600]!,
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.blue.withOpacity(0.25),
-                                            blurRadius: 6,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: const Icon(
-                                        Icons.settings_ethernet_rounded,
-                                        color: Colors.white,
-                                        size: 18,
-                                      ),
-                                    ),
-                                    suffixIcon: ipController.text.isNotEmpty
-                                        ? IconButton(
-                                      icon: Icon(
-                                        Icons.cancel_rounded,
-                                        size: 20,
-                                        color: Colors.grey[400],
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          ipController.clear();
-                                        });
-                                      },
-                                    )
-                                        : Icon(
-                                      Icons.lan_rounded,
+                              SwitchListTile(
+                                activeThumbColor: appColor,
+                                title: const Text("Enable Backup Server"),
+                                value: enableBackup,
+                                onChanged: (val) {
+                                  setState(() => enableBackup = val);
+                                },
+                              ),
+
+                              if (enableBackup)
+                                buildServerField(
+                                  title: "Secondary Server IPv4 Address",
+                                  controller: secondaryIPController,
+                                  suffixIcon: secondaryIPController.text.isNotEmpty
+                                      ? IconButton(
+                                    icon: Icon(
+                                      Icons.cancel_rounded,
                                       size: 20,
-                                      color: Colors.grey[300],
+                                      color: Colors.grey[400],
                                     ),
-                                    fillColor: Colors.white,
-                                    readOnly: false,
-                                    textCapitalization: TextCapitalization.none,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
+                                    onPressed: () {
+                                      setState(() {
+                                        secondaryIPController.clear();
+                                      });
+                                    },
+                                  )
+                                      : Icon(
+                                    Icons.lan_rounded,
+                                    size: 20,
+                                    color: Colors.grey[300],
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 12),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.amber[50],
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: Colors.amber[200]!,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.lightbulb_outline_rounded,
-                                      color: Colors.amber[700],
-                                      size: 16,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Text(
-                                        'Format: IPv4:PORT (e.g., 192.168.1.1:8080)',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.amber[900],
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+
                               const SizedBox(height: 20),
                               Row(
                                 children: [
@@ -358,9 +284,27 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                         ],
                                       ),
                                       child: ElevatedButton(
+                                        //onPressed:
+                                        //     () async {
+                                        //   mainIPController.text=defaultBaseUrl;
+                                        //   if (enableBackup) {
+                                        //     secondaryIPController.clear();
+                                        //   }
+                                        //   appConfig.updateBaseUrl(context: context, newUrl: defaultBaseUrl,
+                                        //     secondaryUrl: enableBackup ? secondaryIPController.text : null);
+                                        // },
                                         onPressed: () async {
-                                          ipController.text=defaultBaseUrl;
-                                          appConfig.updateBaseUrl(context: context, newUrl: defaultBaseUrl);
+                                          setState(() {
+                                            enableBackup = false;
+                                            mainIPController.text = defaultBaseUrl;
+                                            secondaryIPController.clear();
+                                          });
+
+                                          await appConfig.updateBaseUrl(
+                                            context: context,
+                                            newUrl: defaultBaseUrl,
+                                            secondaryUrl: null,
+                                          );
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.transparent,
@@ -413,7 +357,10 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                       child: ElevatedButton(
                                         onPressed: () async {
                                           if(formKey.currentState!.validate()){
-                                            appConfig.updateBaseUrl(context: context, newUrl: ipController.text);
+                                            appConfig.updateBaseUrl(
+                                                context: context,
+                                                newUrl: mainIPController.text,
+                                                secondaryUrl:  enableBackup ? secondaryIPController.text : null);
                                           }
 
                                         },
