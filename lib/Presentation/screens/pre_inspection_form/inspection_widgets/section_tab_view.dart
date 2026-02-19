@@ -13,8 +13,16 @@ class SectionTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<InspectionFormProvider>(
       builder: (context, provider, _) {
-        if (provider.sections.isEmpty) return const SizedBox.shrink();
-        final section = provider.sections[sectionIndex];
+        if (provider.filteredSections.isEmpty ||
+            sectionIndex >= provider.filteredSections.length) {
+          return _buildEmptyState(provider);
+        }
+
+        final section = provider.filteredSections[sectionIndex];
+
+        if (section.categories.isEmpty) {
+          return _buildEmptyState(provider);
+        }
 
         return CustomScrollView(
           slivers: [
@@ -34,6 +42,41 @@ class SectionTabView extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildEmptyState(InspectionFormProvider provider) {
+    final isAnsweredFilter = provider.filter == QuestionFilter.answered;
+    final isPendingFilter = provider.filter == QuestionFilter.unanswered;
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            isAnsweredFilter
+                ? Icons.check_circle_outline
+                : isPendingFilter
+                ? Icons.pending_outlined
+                : Icons.inbox_outlined,
+            size: 56,
+            color: Colors.grey.shade300,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            isAnsweredFilter
+                ? 'No answered questions in this section'
+                : isPendingFilter
+                ? 'All questions answered in this section!'
+                : 'No questions found',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

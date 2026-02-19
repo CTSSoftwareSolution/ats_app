@@ -19,7 +19,10 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<InspectionFormProvider>(
       builder: (context, provider, _) {
-        final section = provider.sections[sectionIndex];
+
+        // final section = provider.sections[sectionIndex];
+        // final cat = section.categories[categoryIndex];
+        final section = provider.filteredSections[sectionIndex];
         final cat = section.categories[categoryIndex];
 
         Color statusColor;
@@ -56,8 +59,13 @@ class CategoryCard extends StatelessWidget {
             children: [
               // ── Header ──
               InkWell(
-                onTap: () =>
-                    provider.toggleCategory(sectionIndex, categoryIndex),
+                onTap: () {
+                  final origSec = provider.originalSectionIndex(sectionIndex);
+                  final origCat = provider.originalCategoryIndex(sectionIndex, categoryIndex);
+                  provider.toggleCategory(origSec, origCat);
+                },
+                // onTap: () =>
+                //     provider.toggleCategory(sectionIndex, categoryIndex),
                 borderRadius: BorderRadius.circular(14),
                 child: Padding(
                   padding:
@@ -128,8 +136,6 @@ class CategoryCard extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // ── Questions (Animated) ──
               AnimatedCrossFade(
                 firstChild: const SizedBox.shrink(),
                 secondChild: Column(
