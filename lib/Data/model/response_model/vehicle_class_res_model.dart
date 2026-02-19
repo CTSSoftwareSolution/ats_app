@@ -1,18 +1,19 @@
-import 'package:ats_app/Domain/entities/vehicle_class_entity.dart';
-
-class VehicleClassResModel extends VehicleClassEntity{
+class VehicleClassResModel {
   VehicleClassResModel({
       bool? status, 
       String? message, 
+      Meta? meta, 
       List<ClassDataModel>? data,}){
     _status = status;
     _message = message;
+    _meta = meta;
     _data = data;
 }
 
   VehicleClassResModel.fromJson(dynamic json) {
     _status = json['status'];
     _message = json['message'];
+    _meta = json['meta'] != null ? Meta.fromJson(json['meta']) : null;
     if (json['data'] != null) {
       _data = [];
       json['data'].forEach((v) {
@@ -22,22 +23,29 @@ class VehicleClassResModel extends VehicleClassEntity{
   }
   bool? _status;
   String? _message;
+  Meta? _meta;
   List<ClassDataModel>? _data;
 VehicleClassResModel copyWith({  bool? status,
   String? message,
+  Meta? meta,
   List<ClassDataModel>? data,
 }) => VehicleClassResModel(  status: status ?? _status,
   message: message ?? _message,
+  meta: meta ?? _meta,
   data: data ?? _data,
 );
   bool? get status => _status;
   String? get message => _message;
+  Meta? get meta => _meta;
   List<ClassDataModel>? get data => _data;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['status'] = _status;
     map['message'] = _message;
+    if (_meta != null) {
+      map['meta'] = _meta?.toJson();
+    }
     if (_data != null) {
       map['data'] = _data?.map((v) => v.toJson()).toList();
     }
@@ -64,7 +72,9 @@ class ClassDataModel {
       String? ownerType, 
       String? activeFrom, 
       dynamic activeTo, 
-      bool? isCurrent,}){
+      bool? isCurrent, 
+      dynamic manualPreInspectionStatus, 
+      String? machineInspectonStatus,}){
     _vehicleKey = vehicleKey;
     _regNo = regNo;
     _vin = vin;
@@ -82,6 +92,8 @@ class ClassDataModel {
     _activeFrom = activeFrom;
     _activeTo = activeTo;
     _isCurrent = isCurrent;
+    _manualPreInspectionStatus = manualPreInspectionStatus;
+    _machineInspectonStatus = machineInspectonStatus;
 }
 
   ClassDataModel.fromJson(dynamic json) {
@@ -102,6 +114,8 @@ class ClassDataModel {
     _activeFrom = json['active_from'];
     _activeTo = json['active_to'];
     _isCurrent = json['is_current'];
+    _manualPreInspectionStatus = json['manual_pre_inspection_status'];
+    _machineInspectonStatus = json['machine_inspecton_status'];
   }
   num? _vehicleKey;
   String? _regNo;
@@ -120,6 +134,8 @@ class ClassDataModel {
   String? _activeFrom;
   dynamic _activeTo;
   bool? _isCurrent;
+  dynamic _manualPreInspectionStatus;
+  String? _machineInspectonStatus;
   ClassDataModel copyWith({  num? vehicleKey,
   String? regNo,
   String? vin,
@@ -137,6 +153,8 @@ class ClassDataModel {
   String? activeFrom,
   dynamic activeTo,
   bool? isCurrent,
+  dynamic manualPreInspectionStatus,
+  String? machineInspectonStatus,
 }) => ClassDataModel(  vehicleKey: vehicleKey ?? _vehicleKey,
   regNo: regNo ?? _regNo,
   vin: vin ?? _vin,
@@ -154,6 +172,8 @@ class ClassDataModel {
   activeFrom: activeFrom ?? _activeFrom,
   activeTo: activeTo ?? _activeTo,
   isCurrent: isCurrent ?? _isCurrent,
+  manualPreInspectionStatus: manualPreInspectionStatus ?? _manualPreInspectionStatus,
+  machineInspectonStatus: machineInspectonStatus ?? _machineInspectonStatus,
 );
   num? get vehicleKey => _vehicleKey;
   String? get regNo => _regNo;
@@ -172,6 +192,8 @@ class ClassDataModel {
   String? get activeFrom => _activeFrom;
   dynamic get activeTo => _activeTo;
   bool? get isCurrent => _isCurrent;
+  dynamic get manualPreInspectionStatus => _manualPreInspectionStatus;
+  String? get machineInspectonStatus => _machineInspectonStatus;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -192,6 +214,55 @@ class ClassDataModel {
     map['active_from'] = _activeFrom;
     map['active_to'] = _activeTo;
     map['is_current'] = _isCurrent;
+    map['manual_pre_inspection_status'] = _manualPreInspectionStatus;
+    map['machine_inspecton_status'] = _machineInspectonStatus;
+    return map;
+  }
+
+}
+
+class Meta {
+  Meta({
+      num? page, 
+      num? pageSize, 
+      num? totalRecords, 
+      num? totalPages,}){
+    _page = page;
+    _pageSize = pageSize;
+    _totalRecords = totalRecords;
+    _totalPages = totalPages;
+}
+
+  Meta.fromJson(dynamic json) {
+    _page = json['page'];
+    _pageSize = json['pageSize'];
+    _totalRecords = json['totalRecords'];
+    _totalPages = json['totalPages'];
+  }
+  num? _page;
+  num? _pageSize;
+  num? _totalRecords;
+  num? _totalPages;
+Meta copyWith({  num? page,
+  num? pageSize,
+  num? totalRecords,
+  num? totalPages,
+}) => Meta(  page: page ?? _page,
+  pageSize: pageSize ?? _pageSize,
+  totalRecords: totalRecords ?? _totalRecords,
+  totalPages: totalPages ?? _totalPages,
+);
+  num? get page => _page;
+  num? get pageSize => _pageSize;
+  num? get totalRecords => _totalRecords;
+  num? get totalPages => _totalPages;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['page'] = _page;
+    map['pageSize'] = _pageSize;
+    map['totalRecords'] = _totalRecords;
+    map['totalPages'] = _totalPages;
     return map;
   }
 

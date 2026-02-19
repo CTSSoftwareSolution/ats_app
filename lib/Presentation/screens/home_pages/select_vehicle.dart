@@ -47,15 +47,11 @@ class _SelectVehicleState extends State<SelectVehicle> {
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   return buildVehicleCard(
-                    title: typeProvider[index]
-                        .vehicleType
-                        .toString(),
+                    title: typeProvider[index].vehicleType.toString(),
                     imagePath: vehicleGridImages[index],
                     onTap: () {
                       context.read<VehicleTypeProvider>().setSelectedType(typeProvider[index]);
-                      final isLandscape =
-                          MediaQuery.of(context).orientation == Orientation.landscape;
-
+                      final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
                       if (!isLandscape) {
                         context.push(VehicleClassScreen());
                       }

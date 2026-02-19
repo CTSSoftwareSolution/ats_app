@@ -29,11 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
         context.watch<SliderProvider>().isLoading || context.watch<VehicleTypeProvider>().isLoading;
     return Scaffold(
      body: SafeArea(
-         child:
-         isHomeLoading ?
-         const HomeShimmerResponsive()
-             :
-         HomeScreenResponsive()
+         child: isHomeLoading ?
+         const HomeShimmerResponsive(): HomeScreenResponsive()
      ),
 
     );

@@ -168,20 +168,40 @@ class QuestionTile extends StatelessWidget {
                 firstChild: const SizedBox.shrink(),
                 secondChild: Padding(
                   padding: const EdgeInsets.only(top: 12),
-                  child: hasImage
-                      ? ImagePreview(
-                    imageFile: question.imagePath!,
-                    onRemove: () => provider.removeQuestionImage(
-                      sectionIndex: sectionIndex,
-                      categoryIndex: categoryIndex,
-                      questionIndex: questionIndex,
-                    ),
-                    onReplace: () =>_pickImage(context, provider, ImageSource.camera),
-                  )
-                      : ImagePickerPrompt(
-                    onTap: () =>
-                        _pickImage(context, provider, ImageSource.camera),
-                  ),
+                  child: () {
+                    final hasLocalImage = question.imagePath != null;
+                    final hasExistingUrl = question.existingEvidenceUrl != null &&
+                        question.existingEvidenceUrl!.isNotEmpty;
+
+                    if (hasLocalImage) {
+                      return ImagePreview(
+                        imageFile: question.imagePath,
+                        onRemove: () => provider.removeQuestionImage(
+                          sectionIndex: sectionIndex,
+                          categoryIndex: categoryIndex,
+                          questionIndex: questionIndex,
+                        ),
+                        onReplace: () =>
+                            _pickImage(context, provider, ImageSource.camera),
+                      );
+                    } else if (hasExistingUrl) {
+                      return ImagePreview(
+                        imageUrl: question.existingEvidenceUrl,
+                        onRemove: () => provider.removeQuestionImage(
+                          sectionIndex: sectionIndex,
+                          categoryIndex: categoryIndex,
+                          questionIndex: questionIndex,
+                        ),
+                        onReplace: () =>
+                            _pickImage(context, provider, ImageSource.camera),
+                      );
+                    } else {
+                      return ImagePickerPrompt(
+                        onTap: () =>
+                            _pickImage(context, provider, ImageSource.camera),
+                      );
+                    }
+                  }(),
                 ),
               ),
             ],
