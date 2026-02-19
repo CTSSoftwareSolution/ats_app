@@ -72,7 +72,7 @@ class _InspectionPageState extends State<InspectionPage>
 
     return Column(
       children: [
-        // ── Tab bar ──
+
         Container(
           color: appColor,
           child: TabBar(
@@ -113,10 +113,8 @@ class _InspectionPageState extends State<InspectionPage>
           ),
         ),
 
-        // ── Filter chips ──
         _buildFilterBar(provider),
 
-        // ── Content ──
         Expanded(
           child: sections.isEmpty
               ? _buildEmptyFilter(provider)
@@ -169,7 +167,7 @@ class _InspectionPageState extends State<InspectionPage>
               onTap: () => provider.setFilter(QuestionFilter.unanswered),
             ),
             const SizedBox(width: 8),
-            _FilterChip(              // ← NEW
+            _FilterChip(
               label: 'No',
               count: no,
               selected: provider.filter == QuestionFilter.no,
@@ -190,7 +188,7 @@ class _InspectionPageState extends State<InspectionPage>
         : filter == QuestionFilter.unanswered
         ? Icons.pending_outlined
         : filter == QuestionFilter.no
-        ? Icons.cancel_outlined          // ← NEW
+        ? Icons.cancel_outlined
         : Icons.inbox_outlined;
 
     final message = filter == QuestionFilter.answered
@@ -198,11 +196,11 @@ class _InspectionPageState extends State<InspectionPage>
         : filter == QuestionFilter.unanswered
         ? 'All questions answered!'
         : filter == QuestionFilter.no
-        ? 'No failed questions found ✓'  // ← NEW
+        ? 'No failed questions found ✓'
         : 'No questions found';
 
     final iconColor = filter == QuestionFilter.no
-        ? Colors.red.shade200                    // ← NEW
+        ? Colors.red.shade200
         : Colors.grey.shade300;
 
     return Center(
