@@ -211,6 +211,8 @@ class _VerificationResult extends StatelessWidget {
           _ResultRow(label: "Detected Plate", value: plate),
           8.height,
           _ResultRow(label: "Reason", value: reason),
+          8.height,
+          _ResultRow(label: "Reason", value: reason),
         ],
       ),
     );
@@ -219,10 +221,8 @@ class _VerificationResult extends StatelessWidget {
 
 class _ResultRow extends StatelessWidget {
   const _ResultRow({required this.label, required this.value});
-
   final String label;
   final String value;
-
   @override
   Widget build(BuildContext context) {
     return Row(
