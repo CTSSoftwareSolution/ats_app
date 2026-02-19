@@ -201,6 +201,13 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                               buildServerField(
                                 title: "Main Server IPv4 Address",
                                 controller: mainIPController,
+                                validator: (value){
+                                  if ((value == null || value.isEmpty) &&
+                                      (!enableBackup || secondaryIPController.text.isEmpty)) {
+                                    return 'Please enter an IP address';
+                                  }
+                                  return null;
+                                  },
                                 suffixIcon: mainIPController.text.isNotEmpty
                                     ? IconButton(
                                   icon: Icon(
@@ -234,6 +241,7 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                 buildServerField(
                                   title: "Secondary Server IPv4 Address",
                                   controller: secondaryIPController,
+                                  validator: (value) => Validators.validateIpAddress(value!),
                                   suffixIcon: secondaryIPController.text.isNotEmpty
                                       ? IconButton(
                                     icon: Icon(
@@ -284,27 +292,13 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                         ],
                                       ),
                                       child: ElevatedButton(
-                                        //onPressed:
-                                        //     () async {
-                                        //   mainIPController.text=defaultBaseUrl;
-                                        //   if (enableBackup) {
-                                        //     secondaryIPController.clear();
-                                        //   }
-                                        //   appConfig.updateBaseUrl(context: context, newUrl: defaultBaseUrl,
-                                        //     secondaryUrl: enableBackup ? secondaryIPController.text : null);
-                                        // },
-                                        onPressed: () async {
-                                          setState(() {
-                                            enableBackup = false;
-                                            mainIPController.text = defaultBaseUrl;
+                                        onPressed:
+                                            () async {
+                                          mainIPController.text=defaultBaseUrl;
+                                          if (enableBackup) {
                                             secondaryIPController.clear();
-                                          });
-
-                                          await appConfig.updateBaseUrl(
-                                            context: context,
-                                            newUrl: defaultBaseUrl,
-                                            secondaryUrl: null,
-                                          );
+                                          }
+                                          appConfig.updateBaseUrl(context: context, newUrl: defaultBaseUrl);
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.transparent,
@@ -356,13 +350,19 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                       ),
                                       child: ElevatedButton(
                                         onPressed: () async {
-                                          if(formKey.currentState!.validate()){
-                                            appConfig.updateBaseUrl(
-                                                context: context,
-                                                newUrl: mainIPController.text,
-                                                secondaryUrl:  enableBackup ? secondaryIPController.text : null);
-                                          }
+                                          if (formKey.currentState!.validate()) {
 
+                                            String newUrl = mainIPController.text.isNotEmpty
+                                                ? mainIPController.text
+                                                : (enableBackup && secondaryIPController.text.isNotEmpty
+                                                ? secondaryIPController.text
+                                                : defaultBaseUrl);
+
+                                            await appConfig.updateBaseUrl(
+                                              context: context,
+                                              newUrl: newUrl,
+                                            );
+                                          }
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.transparent,

@@ -10,7 +10,8 @@ import '../widgets/custom_text_field.dart';
 Widget buildServerField({
   required String title,
   required TextEditingController controller,
-  final Widget? suffixIcon
+  final Widget? suffixIcon,
+  final String? Function(String?)? validator
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +46,8 @@ Widget buildServerField({
           ],
         ),
         child: CustomTextField(
-          validator: (value) => Validators.validateIpAddress(value!),
+          validator: validator,
+             // (value) => Validators.validateIpAddress(value!),
           inputFormatters: [
             FilteringTextInputFormatter.deny(RegExp(r" ")),
             IpPortInputFormatter(),
