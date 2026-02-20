@@ -52,14 +52,14 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: appColor.withOpacity(0.06),
+        color: status == "Pass" ? greenColor.withOpacity(0.06) : status == "Fail" ? redColor.withOpacity(0.06) :appColor.withOpacity(0.06),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: appColor.withOpacity(0.18), width: 1),
+        border: Border.all(color: status == "Pass" ? greenColor : status == "Fail" ? redColor : appColor.withOpacity(0.18), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(leadIcon, size: 11, color: appColor.withOpacity(0.65)),
+          Icon(leadIcon, size: 11, color: status == "Pass" ? greenColor : status == "Fail" ? redColor : Color(0xFFADB8CE),),
           5.width,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,11 +67,11 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
             children: [
               Text(
                 label.toUpperCase(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 8.0,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.9,
-                  color: Color(0xFFADB8CE),
+                  color: status == "Pass" ? greenColor : status == "Fail" ? redColor : Color(0xFFADB8CE),
                 ),
               ),
               2.height,
@@ -80,7 +80,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                 style: TextStyle(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w700,
-                  color: appColor,
+                  color: status == "Pass" ? greenColor : status == "Fail" ? redColor : Color(0xFFADB8CE),
                   letterSpacing: 0.2,
                 ),
               ),

@@ -77,7 +77,6 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-
                     Colors.blue[50]!,
                     Colors.white,
                     Colors.white,
@@ -97,7 +96,8 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
               ),
               child: Padding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  bottom: MediaQuery.of(context).viewInsets.bottom +
+                      MediaQuery.of(context).padding.bottom
                 ),
                 child: SingleChildScrollView(
                   child: Column(
@@ -428,7 +428,8 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                     )
                                   ],
                                 ),
-                              )
+                              ),
+
                             ],
                           ),
                         ),
