@@ -161,15 +161,17 @@ class _VerificationResult extends StatelessWidget {
     final decision = analysis?.decision ?? "UNKNOWN";
     final plate = analysis?.ocrPlateText ?? "-";
     final reason = analysis?.reason ?? "No reason";
-    final bool isApproved = decision.toUpperCase() == "APPROVED";
+    final expecedPlate = analysis?.expecedPlate ?? "No reason";
+    final bool isApproved = decision == "ACCEPT";
+    final bool isRejected = decision == "REJECT";
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isApproved ? Colors.green.shade50 : Colors.red.shade50,
+        color: isApproved ? Colors.green.shade50 : isRejected ? Colors.red.shade50 : Colors.yellow.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isApproved ? Colors.green.shade300 : Colors.red.shade300,
+          color: isApproved ? Colors.green.shade300 : isRejected ? Colors.red.shade300 : Colors.yellow.shade300,
         ),
       ),
       child: Column(
@@ -178,8 +180,8 @@ class _VerificationResult extends StatelessWidget {
           Row(
             children: [
               Icon(
-                isApproved ? Icons.check_circle : Icons.cancel,
-                color: isApproved ? Colors.green : Colors.red,
+                isApproved ? Icons.check_circle : isRejected ? Icons.cancel : Icons.check_circle ,
+                color:  isApproved ? Colors.green : isRejected ? Colors.red : Colors.yellow,
               ),
               8.width,
               const CustomText(
@@ -190,11 +192,11 @@ class _VerificationResult extends StatelessWidget {
             ],
           ),
           const Divider(height: 20),
-          _ResultRow(label: "Decision", value: decision),
+          _ResultRow(label: "Expected Plate", value: expecedPlate),
           8.height,
           _ResultRow(label: "Detected Plate", value: plate),
           8.height,
-          _ResultRow(label: "Reason", value: reason),
+          _ResultRow(label: "Decision", value: decision),
           8.height,
           _ResultRow(label: "Reason", value: reason),
         ],
