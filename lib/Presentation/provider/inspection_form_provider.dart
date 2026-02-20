@@ -23,6 +23,7 @@ class QuestionAnswer {
   File? imagePath;
   String? uploadedImageUrl;
   String? existingEvidenceUrl;
+  String? remark;
 
   QuestionAnswer({required this.carData, this.answer = AnswerState.unanswered});
 }
@@ -418,6 +419,20 @@ class InspectionFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setQuestionRemark({
+    required int sectionIndex,
+    required int categoryIndex,
+    required int questionIndex,
+    required String remark,
+  }) {
+    _sections[sectionIndex]
+        .categories[categoryIndex]
+        .questions[questionIndex]
+        .remark = remark;
+
+    notifyListeners();
+  }
+
   void removeQuestionImage({
     required int sectionIndex,
     required int categoryIndex,
@@ -493,12 +508,15 @@ class InspectionFormProvider extends ChangeNotifier {
       for (final cat in section.categories) {
         for (final q in cat.questions) {
           if (q.answer != AnswerState.unanswered) {
-            result.add(QuestionAnswerModel(
+            result.add(
+                QuestionAnswerModel(
               questionId: q.carData.questionId?.toString() ?? '',
               questionText: q.carData.questionText ?? '',
               answer: q.answer.name,
               imagePath: q.uploadedImageUrl ?? q.existingEvidenceUrl ?? '',
+                  remark: q.remark ?? '',
             ));
+
           }
         }
       }

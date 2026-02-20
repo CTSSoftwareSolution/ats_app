@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/answer_button.dart';
+import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +14,7 @@ import 'image_picker_prompt.dart';
 import 'image_preview.dart';
 
 
-class QuestionTile extends StatelessWidget {
+class QuestionTile extends StatefulWidget {
   final int sectionIndex;
   final int categoryIndex;
   final int questionIndex;
@@ -27,6 +29,14 @@ class QuestionTile extends StatelessWidget {
     required this.accentColor,
     required this.isLast,
   });
+
+  @override
+  State<QuestionTile> createState() => _QuestionTileState();
+}
+
+class _QuestionTileState extends State<QuestionTile> {
+
+  TextEditingController controller = TextEditingController();
 
   Future<void> _pickImage(
       BuildContext context,
@@ -77,11 +87,14 @@ class QuestionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return Consumer<InspectionFormProvider>(
       builder: (context, provider, _) {
-        final origSec = provider.originalSectionIndex(sectionIndex);
-        final origCat = provider.originalCategoryIndex(sectionIndex, categoryIndex);
-        final origQue = provider.originalQuestionIndex(sectionIndex, categoryIndex, questionIndex);
+        final origSec = provider.originalSectionIndex(widget.sectionIndex);
+        final origCat = provider.originalCategoryIndex(widget.sectionIndex, widget.categoryIndex);
+        final origQue = provider.originalQuestionIndex(widget.sectionIndex, widget.categoryIndex, widget.questionIndex);
         final question = provider
             .sections[origSec]
             .categories[origCat]
@@ -93,7 +106,7 @@ class QuestionTile extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
             color: isNo ? Colors.red.shade50 : Colors.transparent,
-            border: isLast
+            border: widget.isLast
                 ? null
                 : Border(
               bottom: BorderSide(color: Colors.grey.shade100),
@@ -111,14 +124,14 @@ class QuestionTile extends StatelessWidget {
                     width: 26,
                     height: 22,
                     decoration: BoxDecoration(
-                      color: accentColor.withOpacity(0.1),
+                      color: widget.accentColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Center(
                       child: Text(
-                        'Q${questionIndex + 1}',
+                        'Q${widget.questionIndex + 1}',
                         style: TextStyle(
-                          color: accentColor,
+                          color: widget.accentColor,
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                         ),
@@ -171,60 +184,90 @@ class QuestionTile extends StatelessWidget {
                 isNo ? CrossFadeState.showSecond : CrossFadeState.showFirst,
                 firstChild: const SizedBox.shrink(),
                 secondChild: Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: () {
-                    final hasLocalImage = question.imagePath != null;
-                    final hasExistingUrl =
-                        question.existingEvidenceUrl != null &&
-                            question.existingEvidenceUrl!.isNotEmpty;
+                  padding: const EdgeInsets.only(top: 12,),
+                  child: Column(
+                    children: [
+                          () {
+                        final hasLocalImage = question.imagePath != null;
+                        final hasExistingUrl =
+                            question.existingEvidenceUrl != null &&
+                                question.existingEvidenceUrl!.isNotEmpty;
 
-                    if (hasLocalImage) {
-                      return ImagePreview(
-                        imageFile: question.imagePath,
-                        onRemove: () => provider.removeQuestionImage(
-                          sectionIndex: origSec,
-                          categoryIndex: origCat,
-                          questionIndex: origQue,
-                        ),
-                        onReplace: () => _pickImage(
-                          context,
-                          provider,
-                          ImageSource.camera,
-                          origSec,
-                          origCat,
-                          origQue,
-                        ),
-                      );
-                    } else if (hasExistingUrl) {
-                      return ImagePreview(
-                        imageUrl: question.existingEvidenceUrl,
-                        onRemove: () => provider.removeQuestionImage(
-                          sectionIndex: origSec,
-                          categoryIndex: origCat,
-                          questionIndex: origQue,
-                        ),
-                        onReplace: () => _pickImage(
-                          context,
-                          provider,
-                          ImageSource.camera,
-                          origSec,
-                          origCat,
-                          origQue,
-                        ),
-                      );
-                    } else {
-                      return ImagePickerPrompt(
-                        onTap: () => _pickImage(
-                          context,
-                          provider,
-                          ImageSource.camera,
-                          origSec,
-                          origCat,
-                          origQue,
-                        ),
-                      );
-                    }
-                  }(),
+                        if (hasLocalImage) {
+                          return ImagePreview(
+                            imageFile: question.imagePath,
+                            onRemove: () => provider.removeQuestionImage(
+                              sectionIndex: origSec,
+                              categoryIndex: origCat,
+                              questionIndex: origQue,
+                            ),
+                            onReplace: () => _pickImage(
+                              context,
+                              provider,
+                              ImageSource.camera,
+                              origSec,
+                              origCat,
+                              origQue,
+                            ),
+                          );
+                        } else if (hasExistingUrl) {
+                          return ImagePreview(
+                            imageUrl: question.existingEvidenceUrl,
+                            onRemove: () => provider.removeQuestionImage(
+                              sectionIndex: origSec,
+                              categoryIndex: origCat,
+                              questionIndex: origQue,
+                            ),
+                            onReplace: () => _pickImage(
+                              context,
+                              provider,
+                              ImageSource.camera,
+                              origSec,
+                              origCat,
+                              origQue,
+                            ),
+                          );
+                        } else {
+                          return ImagePickerPrompt(
+                            onTap: () => _pickImage(
+                              context,
+                              provider,
+                              ImageSource.camera,
+                              origSec,
+                              origCat,
+                              origQue,
+                            ),
+
+                          );
+                        }
+                      }(),
+                      const SizedBox(height: 12),
+                      CustomTextField(
+                          cursorColor: redColor,
+                        contentPadding: EdgeInsets.only(left: 10.0),
+                        borderColor: Colors.red.shade200,
+                          borderWidth: 1.5,
+                          fillColor: Colors.red.shade50,
+                          hint: "Remark here...",
+                          controller: controller,
+                          onChanged: (value) {
+                            provider.setQuestionRemark(
+                              sectionIndex: origSec,
+                              categoryIndex: origCat,
+                              questionIndex: origQue,
+                              remark: value,
+                            );
+                          },
+                          hintStyle: TextStyle(
+                            color: Colors.red.shade300,
+                            fontSize: 11,
+                          ),
+                          readOnly: false,
+                          textCapitalization: TextCapitalization.sentences
+                      )
+                    ],
+                  )
+
                 ),
               ),
             ],

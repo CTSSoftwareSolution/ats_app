@@ -15,50 +15,110 @@ class ConfirmationDialog {
   }) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (_) => Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
         ),
-        title: Row(
-          children: [
-            Icon(
-              isComplete ? Icons.check_circle : Icons.warning_amber_rounded,
-              color: isComplete ? Colors.green : Colors.orange,
-            ),
-            const SizedBox(width: 10),
-            Text(isComplete ? 'Submit Inspection?' : 'Incomplete!'),
-          ],
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.85,
         ),
-        content: Text(
-          isComplete
-              ? 'All ${provider.grandTotalQuestions} questions answered. Ready to submit?'
-              : '$unanswered question(s) still unanswered. Submit anyway?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: unanswered==0? Text("Cancel"):Text("Got it"),
-          ),
-          unanswered==0?
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: isComplete ? Colors.green : const Color(0xFF1A3C6E),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+              Row(
+                children: [
+                  Icon(
+                    isComplete ? Icons.check_circle : Icons.warning_amber_rounded,
+                    color: isComplete ? Colors.green : Colors.orange,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(isComplete ? 'Submit Inspection?' : 'Incomplete!',style: TextStyle(fontSize: 20,fontFamily: "Medium"),),
+                ],
               ),
+                const SizedBox(height: 15),
+          Text(
+              isComplete
+                  ? 'All ${provider.grandTotalQuestions} questions answered. Ready to submit?'
+                  : '$unanswered question(s) still unanswered.',
+            style: TextStyle(fontSize: 16,fontFamily: "Regular"),
             ),
-            onPressed: () async {
-              final typeProvider = Provider.of<PreInspectionResultProvider>(context,listen: false);
-              Navigator.pop(context);
-              if (isComplete) {
-                await typeProvider.saveResultApi(context);
-              }
-              // _submitInspection(context, provider);
-            },
-            child: const Text('Submit'),
-          ):SizedBox.shrink(),
-        ],
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: unanswered==0? Text("Cancel",style: TextStyle(fontSize: 14,fontFamily: "Bold"),):Text("Got it",style: TextStyle(fontSize: 16,fontFamily: "Bold"),),
+                      ),
+                      unanswered==0?
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isComplete ? Colors.green : const Color(0xFF1A3C6E),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () async {
+                          final typeProvider = Provider.of<PreInspectionResultProvider>(context,listen: false);
+                          Navigator.pop(context);
+                          if (isComplete) {
+                            await typeProvider.saveResultApi(context);
+                          }
+                          // _submitInspection(context, provider);
+                        },
+                        child: const Text('Submit'),
+                      ):SizedBox.shrink(),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+        // title: Row(
+        //   children: [
+        //     Icon(
+        //       isComplete ? Icons.check_circle : Icons.warning_amber_rounded,
+        //       color: isComplete ? Colors.green : Colors.orange,
+        //     ),
+        //     const SizedBox(width: 10),
+        //     Text(isComplete ? 'Submit Inspection?' : 'Incomplete!'),
+        //   ],
+        // ),
+        // content: Text(
+        //   isComplete
+        //       ? 'All ${provider.grandTotalQuestions} questions answered. Ready to submit?'
+        //       : '$unanswered question(s) still unanswered.',
+        // ),
+        // actions: [
+        //   TextButton(
+        //     onPressed: () => Navigator.pop(context),
+        //     child: unanswered==0? Text("Cancel"):Text("Got it"),
+        //   ),
+        //   unanswered==0?
+        //   ElevatedButton(
+        //     style: ElevatedButton.styleFrom(
+        //       backgroundColor: isComplete ? Colors.green : const Color(0xFF1A3C6E),
+        //       foregroundColor: Colors.white,
+        //       shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.circular(10),
+        //       ),
+        //     ),
+        //     onPressed: () async {
+        //       final typeProvider = Provider.of<PreInspectionResultProvider>(context,listen: false);
+        //       Navigator.pop(context);
+        //       if (isComplete) {
+        //         await typeProvider.saveResultApi(context);
+        //       }
+        //       // _submitInspection(context, provider);
+        //     },
+        //     child: const Text('Submit'),
+        //   ):SizedBox.shrink(),
+        // ],
       ),
     );
   }

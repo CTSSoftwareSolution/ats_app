@@ -14,6 +14,7 @@ class CustomTextField extends StatelessWidget {
   final double? height;
   final double? width;
   final double? borderWidth;
+  final Color? borderColor;
   final int? minLines;
   final int? maxLines;
   final Widget? suffixIcon;
@@ -24,6 +25,7 @@ class CustomTextField extends StatelessWidget {
   final bool? obscureText;
   final Color? fillColor;
   final Color? errorColor;
+  final Color? cursorColor;
   final EdgeInsetsGeometry? contentPadding;
   final List<TextInputFormatter>? inputFormatters;
   final String? Function(String?)? validator;
@@ -59,8 +61,10 @@ class CustomTextField extends StatelessWidget {
     this.disabledBorder,
     this.textAlign,
     this.borderWidth,
+    this.borderColor,
     this.errorColor,
-    this.focusedErrorBorder
+    this.focusedErrorBorder,
+    this.cursorColor
 
   });
 
@@ -88,7 +92,7 @@ class CustomTextField extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
         textAlign: textAlign ?? TextAlign.start,
-        cursorColor: appColor,
+        cursorColor: cursorColor ?? appColor,
         decoration: InputDecoration(
           contentPadding: contentPadding,
           fillColor: fillColor,
@@ -97,21 +101,21 @@ class CustomTextField extends StatelessWidget {
           hintStyle: hintStyle,
           focusColor: appColor,
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: appColor, width: borderWidth ?? 1),
+            borderSide: BorderSide(color: borderColor ?? appColor, width: borderWidth ?? 1),
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
           ),
           disabledBorder: disabledBorder,
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: appColor, width: borderWidth ?? 1),
+            borderSide: BorderSide(color: borderColor ?? appColor, width: borderWidth ?? 1),
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
           ),
           focusedErrorBorder: focusedErrorBorder,
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: appColor, width: borderWidth ?? 1),
+            borderSide: BorderSide(color: borderColor ?? appColor, width: borderWidth ?? 1),
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
           ),
          errorBorder: OutlineInputBorder(
-           borderSide: BorderSide(color: appColor, width: borderWidth ?? 1),
+           borderSide: BorderSide(color: borderColor ?? appColor, width: borderWidth ?? 1),
            borderRadius: BorderRadius.all(Radius.circular(5.0)),
          ),
          errorStyle: TextStyle(color: errorColor ),

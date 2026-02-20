@@ -28,7 +28,7 @@ class PreInspectionResultProvider extends ChangeNotifier{
       return Results(
         inspectionResult: value.answer,
         questionId: int.tryParse(value.questionId.toString()),
-        remarks: "",
+        remarks: value.remark,
         severityLevel: "",
         evidenceUrl: value.imagePath
       );
