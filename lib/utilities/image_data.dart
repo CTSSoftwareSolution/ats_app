@@ -4,6 +4,9 @@ import '../Data/model/bottom_nav_model.dart';
 import '../Data/model/list_model.dart';
 import '../Data/model/profile_model.dart';
 
+const atsLogo = "assets/ats_logo.png";
+const gvtLogo = "assets/gvm_maharashtra.png";
+const ceriseLogo = "assets/cerise_logo.png";
 const logoImage = "assets/logo.png";
 const appLogoImage = "assets/app-logo.png";
 const homeIcon = "assets/home.png";
@@ -39,6 +42,8 @@ const privacyIcon = "assets/privacy-policy.png";
 const notificationIcon = "assets/notification.png";
 const noDataIcon = "assets/no-data.png";
 const photoCaptureIcon = "assets/photo-capture.png";
+const vehicleNumberPlateImage = "assets/vehicle_number_plate.png";
+const carNumberPlateImage = "assets/car_number_plate.png";
 
 const manualInspectionIcon = "assets/manual-inspection.png";
 const machineInspectionIcon = "assets/machine-inspection.png";

@@ -36,47 +36,29 @@ class _HomeScreenResponsiveItemState extends State<HomeScreenResponsiveItem> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    CustomImage(image: logoImage,height: 28.0,width: 28.0,),
-                    15.width,
-                    CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",)
-                  ],
-                ),
-                InkWell(
-                  onTap: (){
-                    context.push(VehicleNumberPlateScreen());
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: appColor,
-                      borderRadius: BorderRadius.circular(40.0)
-                    ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: CustomImage(image: photoCaptureIcon,height: 15.0,width: 15.0,color: whiteColor,),
-                      )),
-                ),
+                CustomImage(image: gvtLogo,height: 50.0,width: 50.0),
+                CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",),
+                CustomImage(image: ceriseLogo,height: 50.0,width: 50.0),
               ],
             ),
-            isTablet ? 20.height :25.height,
+           // isTablet ? 20.height :25.height,
             // ImageSlider(),
-            // isTablet ? 35.height :30.height,
+             isTablet ? 35.height :30.height,
             SelectVehicle(),
             isTablet ? 35.height :30.height,
             VehicleRegistrationScreen(),
             isTablet ? 70.height :60.height,
-            CustomText(text: "Scan, Detect", fontFamily: "Heavy", fontSize:  isTablet ? 56.0 : 46.0,textColor: scanTextColor,),
+            CustomText(text: "Scan, Detect", fontFamily: "Heavy", fontSize:  isTablet ? 56.0 : 40.0,textColor: scanTextColor,),
             Row(
               children: [
-                CustomText(text: "Drive Safe", fontFamily: "Heavy", fontSize:  isTablet ? 56.0 :46.0,textColor: scanTextColor,),
+                CustomText(text: "Drive Safe", fontFamily: "Heavy", fontSize:  isTablet ? 56.0 :40.0,textColor: scanTextColor,),
                 10.width,
-                CustomImage(image: heartIcon,scale:  isTablet ? 2.5 : 4),
+                CustomImage(image: heartIcon,scale:  isTablet ? 2.5 : 4.5),
               ],
             ),
-            20.height,
+            10.height,
             CustomImage(scale: isTablet ? 2.5 : 4, image: dividerImage,),
-            20.height,
+            10.height,
             Row(
               children: [
                 CustomImage(image: logoImage,height: 18.0,width: 18.0,),

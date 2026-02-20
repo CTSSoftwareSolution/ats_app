@@ -29,7 +29,7 @@ class _SelectVehicleState extends State<SelectVehicle> {
             children: [
               CustomText(
                 text: "Select Vehicle",
-                fontSize: 20.0,
+                fontSize: 18.0,
                 fontFamily: "ExtraBold",
               ),
               10.height,
