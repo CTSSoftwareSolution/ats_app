@@ -14,11 +14,23 @@ class UploadImageContainer extends StatelessWidget {
   final VoidCallback onTap;
   final int index;
   final bool isTablet;
+  final double borderRadius;
+  final double iconSize;
+  final double iconScale;
+  final double buttonHeight;
+  final double buttonWidth;
+
+
   const UploadImageContainer({
     super.key,
     required this.onTap,
     required this.index,
     required this.isTablet,
+    this.borderRadius = 20.0,
+    this.iconSize = 52,
+    this.iconScale = 5.5,
+    this.buttonHeight = 32.0,
+    this.buttonWidth = 110
   });
 
   @override
@@ -32,7 +44,7 @@ class UploadImageContainer extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(borderRadius),
           boxShadow: [
             BoxShadow(
               color: appColor.withOpacity(0.08),
@@ -49,7 +61,7 @@ class UploadImageContainer extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(borderRadius),
           child: image != null
               ? Stack(
             fit: StackFit.expand,
@@ -119,7 +131,7 @@ class UploadImageContainer extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: CustomPaint(
-                  painter: _DashedBorderPainter(color: appColor),
+                  painter: _DashedBorderPainter(color: appColor,radius: borderRadius),
                 ),
               ),
               Container(
@@ -141,8 +153,8 @@ class UploadImageContainer extends StatelessWidget {
                   children: [
                     // Icon circle
                     Container(
-                      width: 52,
-                      height: 52,
+                      width: iconSize,
+                      height: iconSize,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
@@ -155,7 +167,7 @@ class UploadImageContainer extends StatelessWidget {
                         ),
                       ),
                       child: Center(
-                        child: CustomImage(image: uploadIcon, scale: 5.5),
+                        child: CustomImage(image: uploadIcon, scale: iconScale),
                       ),
                     ),
                     12.height,
@@ -168,7 +180,7 @@ class UploadImageContainer extends StatelessWidget {
                     8.height,
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(borderRadius),
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -186,14 +198,14 @@ class UploadImageContainer extends StatelessWidget {
                         ],
                       ),
                       child: CustomButton(
-                        height: 32.0,
-                        width: 110.0,
+                        height: buttonHeight,
+                        width: buttonWidth,
                         buttonText: "Upload",
                         onPress: onTap,
                         backgroundColor: Colors.transparent,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(borderRadius),
                         ),
                         fontSize: 13.0,
                         fontFamily: "Bold",
@@ -212,7 +224,8 @@ class UploadImageContainer extends StatelessWidget {
 
 class _DashedBorderPainter extends CustomPainter {
   final Color color;
-  _DashedBorderPainter({required this.color});
+  final double radius;
+  _DashedBorderPainter({required this.color, required this.radius});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -223,12 +236,12 @@ class _DashedBorderPainter extends CustomPainter {
 
     const double dashWidth = 6;
     const double dashSpace = 5;
-    const double radius = 20;
+    //const double radius = 20;
 
     final path = Path()
       ..addRRect(RRect.fromRectAndRadius(
         Rect.fromLTWH(1, 1, size.width - 2, size.height - 2),
-        const Radius.circular(radius),
+        Radius.circular(radius),
       ));
 
     final PathMetrics pathMetrics = path.computeMetrics();
@@ -245,5 +258,5 @@ class _DashedBorderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_DashedBorderPainter oldDelegate) =>
-      oldDelegate.color != color;
+      oldDelegate.color != color || oldDelegate.radius != radius ;
 }
