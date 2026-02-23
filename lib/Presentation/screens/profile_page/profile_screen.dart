@@ -13,6 +13,7 @@ import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
 import '../../provider/login_provider.dart';
 import '../login_page/login_screen.dart';
+import '../manual_inspection_images/manual_inspection_image_screen.dart';
 import '../profile_view_details_page/profile_view_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -112,6 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context.push(InspectionPage());
         break;
       case 3:
+        context.push(ManualInspectionImageScreen());
         break;
       case 4:
         break;

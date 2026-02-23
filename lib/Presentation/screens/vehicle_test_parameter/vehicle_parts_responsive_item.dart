@@ -40,6 +40,7 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
         ),
         isTablet ? 15.height : 10.height,
        UploadImageContainer(
+
                 index: allIndex,
                 onTap: () {
                   context.read<FileProvider>().setCurrentIndex(allIndex);

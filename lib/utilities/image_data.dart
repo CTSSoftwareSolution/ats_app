@@ -93,3 +93,15 @@ List<BottomNavModel> bottomNavValue = [
   BottomNavModel(2, "Type", vehicleIcon),
   BottomNavModel(3, "Profile", profileIcon),
 ];
+
+List<String> labels = [
+  "Front Photo",
+  "Rear Photo",
+  "Left Side Photo",
+  "Right Side Photo",
+  "Engine",
+  "Dashboard Photo",
+  "Bottom Photo",
+  "Chassis Number Photo",
+
+];
