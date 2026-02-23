@@ -112,8 +112,7 @@ class UploadImageContainer extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.edit_rounded,
-                            size: 12, color: appColor),
+                        Icon(Icons.edit_rounded, size: 12, color: appColor),
                         4.width,
                         CustomText(
                           text: "Change",
