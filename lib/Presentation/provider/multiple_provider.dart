@@ -1,6 +1,3 @@
-
-
-
 import 'package:ats_app/Data/repositories_impl/login_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/pre_ins_manual_status_impl.dart';
 import 'package:ats_app/Data/repositories_impl/profile_details_repo_impl.dart';

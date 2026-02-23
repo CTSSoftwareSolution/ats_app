@@ -1,10 +1,8 @@
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/confirmation_dialog.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/validation_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../../../provider/inspection_form_provider.dart';
-import '../../../provider/pre_inspection_result_provider.dart';
+
 
 class SubmitFAB extends StatelessWidget {
   final InspectionFormProvider provider;
@@ -50,7 +48,6 @@ class SubmitFAB extends StatelessWidget {
   }
 
   Future<void> _handleSubmit(BuildContext context) async {
-    final typeProvider = Provider.of<PreInspectionResultProvider>(context,listen: false);
     final questionsWithNoButNoImage = _validateQuestionsWithNoAnswer();
     if (questionsWithNoButNoImage.isNotEmpty) {
       ValidationDialog.show(

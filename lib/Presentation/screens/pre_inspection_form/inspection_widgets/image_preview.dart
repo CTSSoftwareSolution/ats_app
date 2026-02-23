@@ -86,7 +86,7 @@ class ImagePreview extends StatelessWidget {
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
                 colors: [
-                  Colors.black.withOpacity(0.7),
+                  Colors.black.withValues(alpha:0.7),
                   Colors.transparent,
                 ],
               ),

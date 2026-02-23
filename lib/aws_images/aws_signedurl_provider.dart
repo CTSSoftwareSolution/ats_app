@@ -2,14 +2,10 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-
 import '../widgets/custom_loader.dart';
 import 'aws_entity.dart';
 import 'aws_request.dart';
 import 'aws_usecase.dart';
-
-
-
 
 
 class AwsSignedUrlProvider extends ChangeNotifier {

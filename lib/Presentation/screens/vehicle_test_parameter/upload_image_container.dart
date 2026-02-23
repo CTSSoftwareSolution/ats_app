@@ -47,13 +47,13 @@ class UploadImageContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(borderRadius),
           boxShadow: [
             BoxShadow(
-              color: appColor.withOpacity(0.08),
+              color: appColor.withValues(alpha:0.08),
               blurRadius: 20,
               spreadRadius: 0,
               offset: const Offset(0, 6),
             ),
             BoxShadow(
-              color: const Color(0xFF9BA8C3).withOpacity(0.10),
+              color: const Color(0xFF9BA8C3).withValues(alpha:0.10),
               blurRadius: 8,
               spreadRadius: 0,
               offset: const Offset(0, 2),
@@ -83,7 +83,7 @@ class UploadImageContainer extends StatelessWidget {
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
                       colors: [
-                        Colors.black.withOpacity(0.45),
+                        Colors.black.withValues(alpha:0.45),
                         Colors.transparent,
                       ],
                     ),
@@ -99,11 +99,11 @@ class UploadImageContainer extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.90),
+                      color: Colors.white.withValues(alpha:0.90),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.12),
+                          color: Colors.black.withValues(alpha:0.12),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -140,8 +140,8 @@ class UploadImageContainer extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      appColor.withOpacity(0.05),
-                      appColor.withOpacity(0.02),
+                      appColor.withValues(alpha:0.05),
+                      appColor.withValues(alpha:0.02),
                     ],
                   ),
                 ),
@@ -161,8 +161,8 @@ class UploadImageContainer extends StatelessWidget {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            appColor.withOpacity(0.16),
-                            appColor.withOpacity(0.07),
+                            appColor.withValues(alpha:0.16),
+                            appColor.withValues(alpha:0.07),
                           ],
                         ),
                       ),
@@ -186,12 +186,12 @@ class UploadImageContainer extends StatelessWidget {
                           end: Alignment.bottomRight,
                           colors: [
                             appColor,
-                            appColor.withOpacity(0.78),
+                            appColor.withValues(alpha:0.78),
                           ],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: appColor.withOpacity(0.28),
+                            color: appColor.withValues(alpha:0.28),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -230,7 +230,7 @@ class _DashedBorderPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(0.30)
+      ..color = color.withValues(alpha:0.30)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 

@@ -22,7 +22,7 @@ customConfirmationDialogBox({
 }) {
   showDialog(
     context: context,
-    barrierColor: appColor.withOpacity(0.15),
+    barrierColor: appColor.withValues(alpha: 0.15),
     builder: (BuildContext context) {
       return Dialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 20),
@@ -46,7 +46,7 @@ customConfirmationDialogBox({
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: appColor.withOpacity(0.1),
+                          color: appColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
@@ -89,7 +89,7 @@ customConfirmationDialogBox({
               const SizedBox(height: 16),
               Container(
                 height: 1,
-                color: appColor.withOpacity(0.1),
+                color: appColor.withValues(alpha: 0.1),
               ),
               const SizedBox(height: 16),
               Text(
@@ -154,7 +154,7 @@ class _ActionButtonState extends State<_ActionButton> {
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: bg.withOpacity(0.3),
+                color: bg.withValues(alpha: 0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),

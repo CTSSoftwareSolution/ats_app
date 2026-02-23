@@ -11,7 +11,7 @@ import 'color_data.dart';
 import 'image_data.dart';
 
 Widget mediaPickerTiles({required BuildContext context}) {
- // final fileProvider = Provider.of<FileProvider>(context, listen: false);
+
   int selectedIndex = -1;
   return SafeArea(
     bottom: true,

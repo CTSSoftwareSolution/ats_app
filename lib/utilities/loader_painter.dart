@@ -2,8 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-
-class LoaderPainter extends CustomPainter{
+class LoaderPainter extends CustomPainter {
   final double progress;
   final int dotCount;
   final Color activeColor;
@@ -33,8 +32,7 @@ class LoaderPainter extends CustomPainter{
       final paint = Paint()
         ..color = i == activeIndex ? activeColor : inactiveColor
         ..strokeWidth = 1
-      ..style = i == activeIndex ? PaintingStyle.fill : PaintingStyle.stroke;
-
+        ..style = i == activeIndex ? PaintingStyle.fill : PaintingStyle.stroke;
 
       canvas.drawCircle(position, dotRadius, paint);
     }
@@ -44,4 +42,3 @@ class LoaderPainter extends CustomPainter{
   bool shouldRepaint(covariant LoaderPainter oldDelegate) =>
       oldDelegate.progress != progress;
 }
-

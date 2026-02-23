@@ -103,14 +103,14 @@ class Validators {
   }
 
 
-  static String? userNameEmailValidation(String value)
-  {
+  static String? userNameEmailValidation(String value) {
     if (value.isEmpty) {
       return "Please Enter your username or email";
     }
     if (!RegExp(r'^[a-z0-9._]+@[a-z]+\.[a-z]').hasMatch(value)) {
       return "Enter valid email id !";
     }
+    return null;
   }
 
   static String? globalValidation(String value) {

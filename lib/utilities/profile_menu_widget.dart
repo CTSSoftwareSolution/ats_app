@@ -10,7 +10,7 @@ Widget buildSection(List<Widget> tiles) {
       borderRadius: BorderRadius.circular(20.0),
       boxShadow: [
         BoxShadow(
-          color: const Color(0xFFC5CAD8).withOpacity(0.28),
+          color: const Color(0xFFC5CAD8).withValues(alpha: 0.28),
           blurRadius: 18,
           spreadRadius: 0,
           offset: const Offset(0, 6),
@@ -27,10 +27,7 @@ Widget buildSection(List<Widget> tiles) {
               if (index < tiles.length - 1)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Container(
-                    height: 1,
-                    color: const Color(0xFFF0F2F7),
-                  ),
+                  child: Container(height: 1, color: const Color(0xFFF0F2F7)),
                 ),
             ],
           );
@@ -41,11 +38,11 @@ Widget buildSection(List<Widget> tiles) {
 }
 
 Widget buildTile(
-    String leadingImage,
-    String title,
-    String subtitle,
-    Widget child,
-    ) {
+  String leadingImage,
+  String title,
+  String subtitle,
+  Widget child,
+) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 13.0),
     child: Row(
@@ -57,7 +54,7 @@ Widget buildTile(
           height: 44,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(13.0),
-            color: appColor.withOpacity(0.10),
+            color: appColor.withValues(alpha: 0.10),
           ),
           child: Center(
             child: Image(
@@ -73,30 +70,30 @@ Widget buildTile(
         Expanded(
           child: subtitle.isEmpty
               ? CustomText(
-            text: title,
-            fontSize: 15.5,
-            fontFamily: "Bold",
-            textColor: const Color(0xFF1C2A45),
-          )
+                  text: title,
+                  fontSize: 15.5,
+                  fontFamily: "Bold",
+                  textColor: const Color(0xFF1C2A45),
+                )
               : Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomText(
-                text: title,
-                fontSize: 15.5,
-                fontFamily: "Bold",
-                textColor: const Color(0xFF1C2A45),
-              ),
-              3.height,
-              CustomText(
-                text: subtitle,
-                fontSize: 12,
-                fontFamily: "Medium",
-                textColor: const Color(0xFF9AA3BB),
-              ),
-            ],
-          ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomText(
+                      text: title,
+                      fontSize: 15.5,
+                      fontFamily: "Bold",
+                      textColor: const Color(0xFF1C2A45),
+                    ),
+                    3.height,
+                    CustomText(
+                      text: subtitle,
+                      fontSize: 12,
+                      fontFamily: "Medium",
+                      textColor: const Color(0xFF9AA3BB),
+                    ),
+                  ],
+                ),
         ),
         // Trailing widget
         child,

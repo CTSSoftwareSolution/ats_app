@@ -10,8 +10,6 @@ class InspectionQueImpl implements InspectionQueRepository{
 
   @override
   Future<InspectionQueEntity> questionApi() async{
-    //final baseUrl = context.read<IpAddressProvider>().baseUrl;
-
     try{
       final response = await ApiService.post("", inspectionQueUrl);
       final model = InspectionModel.fromJson(response);

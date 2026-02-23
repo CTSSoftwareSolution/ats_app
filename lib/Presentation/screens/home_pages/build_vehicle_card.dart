@@ -25,7 +25,7 @@ Widget buildVehicleCard({
       child: ClipRRect(
         borderRadius: BorderRadius.circular(5.0),
         child: Center(
-          child: CustomText(text: title, fontSize: 16,fontFamily: "Bold", textColor: whiteColor,)
+          child: CustomText(text: title, fontSize: 16,fontFamily: "Bold", textColor: whiteColor)
         ),
       ),
     ),

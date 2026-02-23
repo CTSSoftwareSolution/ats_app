@@ -3,9 +3,6 @@ import 'package:flutter/services.dart';
 
 import '../utilities/color_data.dart';
 
-
-
-
 class CustomTextField extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
@@ -64,8 +61,7 @@ class CustomTextField extends StatelessWidget {
     this.borderColor,
     this.errorColor,
     this.focusedErrorBorder,
-    this.cursorColor
-
+    this.cursorColor,
   });
 
   @override
@@ -101,24 +97,36 @@ class CustomTextField extends StatelessWidget {
           hintStyle: hintStyle,
           focusColor: appColor,
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: borderColor ?? appColor, width: borderWidth ?? 1),
+            borderSide: BorderSide(
+              color: borderColor ?? appColor,
+              width: borderWidth ?? 1,
+            ),
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
           ),
           disabledBorder: disabledBorder,
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: borderColor ?? appColor, width: borderWidth ?? 1),
+            borderSide: BorderSide(
+              color: borderColor ?? appColor,
+              width: borderWidth ?? 1,
+            ),
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
           ),
           focusedErrorBorder: focusedErrorBorder,
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: borderColor ?? appColor, width: borderWidth ?? 1),
+            borderSide: BorderSide(
+              color: borderColor ?? appColor,
+              width: borderWidth ?? 1,
+            ),
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
           ),
-         errorBorder: OutlineInputBorder(
-           borderSide: BorderSide(color: borderColor ?? appColor, width: borderWidth ?? 1),
-           borderRadius: BorderRadius.all(Radius.circular(5.0)),
-         ),
-         errorStyle: TextStyle(color: errorColor ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: borderColor ?? appColor,
+              width: borderWidth ?? 1,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          ),
+          errorStyle: TextStyle(color: errorColor),
           hintText: hint,
           suffixIcon: suffixIcon,
           prefixIcon: prefixIcon,

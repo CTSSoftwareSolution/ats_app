@@ -77,14 +77,10 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
               ),
               10.height,
               UploadImageContainer(
-
                 index: _frontIndex,
                 isTablet: false,
-                onTap: () => _openCameraAndVerify(
-                  context,
-                  fileProvider,
-                  verifyProvider,
-                ),
+                onTap: () =>
+                    _openCameraAndVerify(context, fileProvider, verifyProvider),
               ),
               20.height,
               if (verifyProvider.isLoading) const _LoadingResult(),
@@ -111,10 +107,10 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
   }
 
   Future<void> _openCameraAndVerify(
-      BuildContext context,
-      FileProvider fileProvider,
-      VerifyHRSPProvider verifyProvider,
-      ) async {
+    BuildContext context,
+    FileProvider fileProvider,
+    VerifyHRSPProvider verifyProvider,
+  ) async {
     final expectedPlate = _plateController.text.trim();
     if (expectedPlate.isEmpty) {
       context.showErrorSnackBar("Please enter expected plate number");
@@ -169,10 +165,18 @@ class _VerificationResult extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isApproved ? Colors.green.shade50 : isRejected ? Colors.red.shade50 : Colors.yellow.shade50,
+        color: isApproved
+            ? Colors.green.shade50
+            : isRejected
+            ? Colors.red.shade50
+            : Colors.yellow.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isApproved ? Colors.green.shade300 : isRejected ? Colors.red.shade300 : Colors.yellow.shade300,
+          color: isApproved
+              ? Colors.green.shade300
+              : isRejected
+              ? Colors.red.shade300
+              : Colors.yellow.shade300,
         ),
       ),
       child: Column(
@@ -181,8 +185,16 @@ class _VerificationResult extends StatelessWidget {
           Row(
             children: [
               Icon(
-                isApproved ? Icons.check_circle : isRejected ? Icons.cancel : Icons.check_circle ,
-                color:  isApproved ? Colors.green : isRejected ? Colors.red : Colors.yellow,
+                isApproved
+                    ? Icons.check_circle
+                    : isRejected
+                    ? Icons.cancel
+                    : Icons.check_circle,
+                color: isApproved
+                    ? Colors.green
+                    : isRejected
+                    ? Colors.red
+                    : Colors.yellow,
               ),
               8.width,
               const CustomText(
@@ -215,17 +227,9 @@ class _ResultRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(
-          text: "$label: ",
-          fontSize: 14,
-          fontFamily: "SemiBold",
-        ),
+        CustomText(text: "$label: ", fontSize: 14, fontFamily: "SemiBold"),
         Expanded(
-          child: CustomText(
-            text: value,
-            fontSize: 14,
-            fontFamily: "Regular",
-          ),
+          child: CustomText(text: value, fontSize: 14, fontFamily: "Regular"),
         ),
       ],
     );

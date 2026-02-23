@@ -3,9 +3,7 @@ import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widg
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../provider/inspection_form_provider.dart';
-import '../../../provider/vehicle_type_provider.dart';
 import '../inspection_widgets/error_screen.dart';
 import '../inspection_widgets/loading_screen.dart';
 import '../inspection_widgets/section_tab_view.dart';
@@ -246,7 +244,7 @@ class _FilterChip extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: selected ? color.withOpacity(0.12) : Colors.grey.shade100,
+          color: selected ? color.withValues(alpha:0.12) : Colors.grey.shade100,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected ? color : Colors.grey.shade300,

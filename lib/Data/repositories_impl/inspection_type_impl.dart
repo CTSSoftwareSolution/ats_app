@@ -10,8 +10,6 @@ class InspectionTypeImpl implements InspectionTypeRepository{
 
   @override
   Future<InspectionTypeEntity> getInspectionType() async{
-    //final baseUrl = context.read<IpAddressProvider>().baseUrl;
-
     try{
       final response = await ApiService.post("", getInspectionTypeUrl);
       final model = InspectionTypeResModel.fromJson(response);

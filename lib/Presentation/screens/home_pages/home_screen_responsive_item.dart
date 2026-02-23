@@ -1,15 +1,12 @@
 import 'package:ats_app/Presentation/screens/home_pages/select_vehicle.dart';
 import 'package:ats_app/Presentation/screens/home_pages/vehicle_registration_screen.dart';
-import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
-
 import '../../../utilities/color_data.dart';
 import '../../../utilities/extension.dart';
 import '../../../utilities/image_data.dart';
-import '../../../vehicle_number_plate/vehicle_number_plate_screen.dart';
 import '../../../widgets/custom_image.dart';
 import '../../../widgets/custom_text.dart';
-import 'image_slider.dart';
+
 
 class HomeScreenResponsiveItem extends StatefulWidget {
   const HomeScreenResponsiveItem({super.key});

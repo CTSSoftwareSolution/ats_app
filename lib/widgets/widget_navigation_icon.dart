@@ -1,7 +1,6 @@
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
-
 import 'custom_text.dart';
 
 Widget navigationIcon(
@@ -10,7 +9,6 @@ Widget navigationIcon(
   String title,
   int currentIndex,
   ValueChanged<int> onTabSelected,
-
 ) {
   final bool isActive = currentIndex == index;
 
@@ -22,8 +20,7 @@ Widget navigationIcon(
         duration: const Duration(milliseconds: 200),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-          child:
-          Column(
+          child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -31,17 +28,17 @@ Widget navigationIcon(
                 duration: const Duration(milliseconds: 50),
                 decoration: BoxDecoration(
                   color: isActive
-                      ? Colors.white.withOpacity(0.0)
+                      ? Colors.white.withValues(alpha: 0.0)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: isActive
                       ? [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.9),
-                      blurRadius: 12,
-                      spreadRadius: 2,
-                    ),
-                  ]
+                          BoxShadow(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            blurRadius: 12,
+                            spreadRadius: 2,
+                          ),
+                        ]
                       : [],
                 ),
                 child: ImageIcon(
@@ -56,10 +53,9 @@ Widget navigationIcon(
                 fontSize: 12,
                 fontFamily: "Bold",
                 textColor: isActive ? whiteColor : bottomIconColor,
-              )
+              ),
             ],
-          )
-
+          ),
         ),
       ),
     ),
