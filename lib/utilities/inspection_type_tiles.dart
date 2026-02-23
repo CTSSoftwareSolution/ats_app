@@ -11,7 +11,6 @@ import 'image_data.dart';
 
 Widget inspectionTypeTiles({required BuildContext context,required BuildContext parentContext, }) {
   final typeProvider = Provider.of<InspectionTypeProvider>(context,listen: false);
-  //final statusProvider = Provider.of<PreInsManualStatusProvider>(context,listen: false);
   int selectedIndex = -1;
   return SafeArea(
     bottom: true,

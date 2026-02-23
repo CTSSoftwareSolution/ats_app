@@ -9,9 +9,7 @@ class SliderProvider extends ChangeNotifier {
   SliderUseCases sliderUseCases;
 
   SliderProvider({required this.sliderUseCases});
-  // {
-  //   sliderApi();
-  // }
+
 
   SliderEntity? sliderEntity;
   bool isLoading = true;

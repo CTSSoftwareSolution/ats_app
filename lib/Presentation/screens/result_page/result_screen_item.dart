@@ -1,10 +1,7 @@
 import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 
 class ResultScreenItem extends StatelessWidget {
@@ -19,13 +16,13 @@ class ResultScreenItem extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFC5CAD8).withOpacity(0.35),
+            color: const Color(0xFFC5CAD8).withValues(alpha:0.35),
             blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, 6),
           ),
           BoxShadow(
-            color: Colors.white.withOpacity(0.9),
+            color: Colors.white.withValues(alpha:0.9),
             blurRadius: 6,
             spreadRadius: 0,
             offset: const Offset(0, -2),

@@ -1,7 +1,5 @@
 import '../../../Domain/entities/inspection_que_entity.dart';
 
-// InspectionQueEntity
-
 class InspectionModel extends InspectionQueEntity{
   InspectionModel({
     bool? status,

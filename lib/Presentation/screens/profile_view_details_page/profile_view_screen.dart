@@ -1,8 +1,6 @@
 import 'package:ats_app/utilities/extension.dart';
-import 'package:ats_app/utilities/profile_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_image.dart';
@@ -37,7 +35,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [appColor, appColor.withOpacity(0.78)],
+              colors: [appColor, appColor.withValues(alpha:0.78)],
             ),
           ),
         ),
@@ -60,7 +58,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [appColor, appColor.withOpacity(0.78)],
+                  colors: [appColor, appColor.withValues(alpha:0.78)],
                 ),
               ),
               child: Stack(
@@ -74,7 +72,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                       height: 90,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.06),
+                        color: Colors.white.withValues(alpha:0.06),
                       ),
                     ),
                   ),
@@ -86,7 +84,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                       height: 64,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha:0.05),
                       ),
                     ),
                   ),
@@ -106,7 +104,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                 height: 74,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.white.withOpacity(0.18),
+                                  color: Colors.white.withValues(alpha:0.18),
                                 ),
                               ),
                               Container(
@@ -117,7 +115,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                   color: Colors.white,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.13),
+                                      color: Colors.black.withValues(alpha:0.13),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),
@@ -170,7 +168,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                               : "your@email.com",
                           fontSize: 12,
                           fontFamily: "Medium",
-                          textColor: Colors.white.withOpacity(0.72),
+                          textColor: Colors.white.withValues(alpha:0.72),
                         ),
                       ],
                     ),
@@ -255,7 +253,7 @@ Widget _sectionLabel({required IconData icon, required String label}) {
       Container(
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: appColor.withOpacity(0.10),
+          color: appColor.withValues(alpha:0.10),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, size: 15, color: appColor),
@@ -278,7 +276,7 @@ Widget _infoCard({required List<Widget> children}) {
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
-          color: const Color(0xFF9BA8C3).withOpacity(0.14),
+          color: const Color(0xFF9BA8C3).withValues(alpha:0.14),
           blurRadius: 18,
           spreadRadius: 0,
           offset: const Offset(0, 5),
@@ -310,8 +308,8 @@ Widget _infoRow({
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                appColor.withOpacity(0.13),
-                appColor.withOpacity(0.05),
+                appColor.withValues(alpha:0.13),
+                appColor.withValues(alpha:0.05),
               ],
             ),
           ),

@@ -1,9 +1,6 @@
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Core/network/services.dart';
 import '../Presentation/provider/multiple_provider.dart';
 import '../Presentation/provider/permission_provider.dart';
 
@@ -30,7 +27,6 @@ class AppConfig {
     await permissionProvider.checkAndRequestPermissions();
     runApp(MultipleProvider(permissionProvider: permissionProvider));
     context.pop();
-
   }
 }
 

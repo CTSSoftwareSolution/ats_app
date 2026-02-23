@@ -65,7 +65,7 @@ class TabletNavigationRail extends StatelessWidget {
                 image: item.image,
                 height: 22,
                 width: 22,
-                color: whiteColor.withOpacity(0.6),
+                color: whiteColor.withValues(alpha:0.6),
               ),
               selectedIcon: AnimatedRailIcon(icon: item.image, isActive: true),
               label: const SizedBox.shrink(),

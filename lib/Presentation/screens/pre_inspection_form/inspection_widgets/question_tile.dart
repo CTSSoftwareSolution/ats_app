@@ -124,7 +124,7 @@ class _QuestionTileState extends State<QuestionTile> {
                     width: 26,
                     height: 22,
                     decoration: BoxDecoration(
-                      color: widget.accentColor.withOpacity(0.1),
+                      color: widget.accentColor.withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Center(

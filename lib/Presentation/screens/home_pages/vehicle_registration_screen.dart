@@ -32,13 +32,13 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFC5CAD8).withOpacity(0.35),
+                  color: const Color(0xFFC5CAD8).withValues(alpha:0.35),
                   blurRadius: 20,
                   spreadRadius: 0,
                   offset: const Offset(0, 6),
                 ),
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha:0.9),
                   blurRadius: 6,
                   spreadRadius: 0,
                   offset: const Offset(0, -2),

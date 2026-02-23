@@ -1,8 +1,7 @@
 import 'package:ats_app/utilities/extension.dart';
+import 'package:ats_app/widgets/custom_image.dart';
+import 'package:ats_app/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
-
-import '../widgets/custom_image.dart';
-import '../widgets/custom_text.dart';
 import 'color_data.dart';
 import 'image_data.dart';
 

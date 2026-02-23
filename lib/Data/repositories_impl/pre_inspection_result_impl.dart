@@ -10,7 +10,6 @@ class PreInspectionResultImpl implements PreInspectionResultRepository{
 
   @override
   Future<PreInspectionResultEntity> saveResult(PreInspectionResultReqModel resultReqModel) async{
-    //final baseUrl = context.read<IpAddressProvider>().baseUrl;
     try{
       final response = await ApiService.post(resultReqModel, savePreInspectionResultsUrl);
       final model = PreInspectionResultModel.fromJson(response);

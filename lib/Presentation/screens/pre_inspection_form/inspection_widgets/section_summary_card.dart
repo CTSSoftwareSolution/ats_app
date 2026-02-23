@@ -13,14 +13,14 @@ class SectionSummaryCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [section.color, section.color.withOpacity(0.75)],
+          colors: [section.color, section.color.withValues(alpha:0.75)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: section.color.withOpacity(0.35),
+            color: section.color.withValues(alpha:0.35),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -34,7 +34,7 @@ class SectionSummaryCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(section.icon, color: Colors.white, size: 24),
@@ -55,7 +55,7 @@ class SectionSummaryCard extends StatelessWidget {
                     Text(
                       section.subtitle,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.75),
+                        color: Colors.white.withValues(alpha:0.75),
                         fontSize: 12,
                       ),
                     ),
@@ -76,7 +76,7 @@ class SectionSummaryCard extends StatelessWidget {
                   Text(
                     'Completed',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha:0.7),
                       fontSize: 11,
                     ),
                   ),
@@ -89,7 +89,7 @@ class SectionSummaryCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
               value: section.overallProgress,
-              backgroundColor: Colors.white.withOpacity(0.25),
+              backgroundColor: Colors.white.withValues(alpha:0.25),
               valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
               minHeight: 7,
             ),
@@ -101,14 +101,14 @@ class SectionSummaryCard extends StatelessWidget {
               Text(
                 '${section.categories.length} categories',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha:0.7),
                   fontSize: 11,
                 ),
               ),
               Text(
                 '${(section.overallProgress * 100).toStringAsFixed(0)}% done',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha:0.9),
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),

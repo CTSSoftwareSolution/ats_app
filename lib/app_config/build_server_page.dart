@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import '../utilities/color_data.dart';
 import '../utilities/input_formatters.dart';
-import '../utilities/validators.dart';
 import '../widgets/custom_text.dart';
 import '../widgets/custom_text_field.dart';
 
@@ -37,8 +35,7 @@ Widget buildServerField({
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: appColor.withOpacity(0.06),
-              //color: Colors.blue.withOpacity(0.06),
+              color: appColor.withValues(alpha: 0.06),
               blurRadius: 12,
               offset: const Offset(0, 3),
               spreadRadius: 0,
@@ -47,7 +44,6 @@ Widget buildServerField({
         ),
         child: CustomTextField(
           validator: validator,
-             // (value) => Validators.validateIpAddress(value!),
           inputFormatters: [
             FilteringTextInputFormatter.deny(RegExp(r" ")),
             IpPortInputFormatter(),
@@ -67,16 +63,14 @@ Widget buildServerField({
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  appColor.withOpacity(0.75),
-                  appColor.withOpacity(0.95),
-                  // Colors.blue[400]!,
-                  // Colors.blue[600]!,
+                  appColor.withValues(alpha: 0.75),
+                  appColor.withValues(alpha: 0.95),
                 ],
               ),
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.blue.withOpacity(0.25),
+                  color: Colors.blue.withValues(alpha:0.25),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),

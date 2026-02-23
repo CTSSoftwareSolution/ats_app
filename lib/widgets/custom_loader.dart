@@ -4,19 +4,20 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../utilities/color_data.dart';
 
-
-
 class CustomLoader {
-  static showToast(String? message,
-      {EasyLoadingToastPosition position = EasyLoadingToastPosition.center}) {
+  static showToast(
+    String? message, {
+    EasyLoadingToastPosition position = EasyLoadingToastPosition.center,
+  }) {
     EasyLoading.showToast(message!, toastPosition: position);
   }
 
   static showLoader(String message) {
     EasyLoading.show(
-        status: message,
-        dismissOnTap: false,
-        maskType: EasyLoadingMaskType.black);
+      status: message,
+      dismissOnTap: false,
+      maskType: EasyLoadingMaskType.black,
+    );
   }
 
   static closeLoader() {
@@ -25,13 +26,14 @@ class CustomLoader {
 
   static message(String msg) {
     Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: appColor,
-        textColor: whiteColor,
-        fontSize: 16.0);
+      msg: msg,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: appColor,
+      textColor: whiteColor,
+      fontSize: 16.0,
+    );
     Future.delayed(Duration(milliseconds: 750), () {
       Fluttertoast.cancel();
     });
@@ -39,26 +41,28 @@ class CustomLoader {
 
   static errorMessage(String msg) {
     Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: redColor,
-        textColor: whiteColor,
-        fontSize: 14.0);
+      msg: msg,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: redColor,
+      textColor: whiteColor,
+      fontSize: 14.0,
+    );
     Future.delayed(Duration(milliseconds: 1000), () {
       Fluttertoast.cancel();
     });
   }
 
   static internetMessage({required String msg, required BuildContext context}) {
-    context.showCustomSnackBar(message: "No Internet", backgroundColor: redColor);
+    context.showCustomSnackBar(
+      message: "No Internet",
+      backgroundColor: redColor,
+    );
   }
 
   static Widget loader() {
-    return const Center(
-      child: CircularProgressIndicator(color: appColor),
-    );
+    return const Center(child: CircularProgressIndicator(color: appColor));
   }
 
   static showSuccessSnackBar(BuildContext context) {
@@ -71,7 +75,7 @@ class CustomLoader {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: const Icon(
@@ -106,9 +110,7 @@ class CustomLoader {
         ),
         backgroundColor: const Color(0xFF10B981),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
         elevation: 6,
         duration: const Duration(seconds: 3),
@@ -126,7 +128,7 @@ class CustomLoader {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: const Icon(
@@ -161,9 +163,7 @@ class CustomLoader {
         ),
         backgroundColor: const Color(0xFFEF4444),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
         elevation: 6,
         duration: const Duration(seconds: 3),
@@ -171,6 +171,3 @@ class CustomLoader {
     );
   }
 }
-
-
-

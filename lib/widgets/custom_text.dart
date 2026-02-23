@@ -36,32 +36,37 @@ class CustomText extends StatelessWidget {
     this.decoration,
     this.click,
     this.letterSpacing,
-    this.softWrap, this.decorationColor
+    this.softWrap,
+    this.decorationColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-          left: leftPadding!,
-          right: rightPadding!,
-          top: topPadding!,
-          bottom: bottomPadding!),
+        left: leftPadding!,
+        right: rightPadding!,
+        top: topPadding!,
+        bottom: bottomPadding!,
+      ),
       child: InkWell(
         onTap: click,
-        child: Text(text,
-            maxLines: maxLine,
-            textAlign: textAlign,
-            softWrap: softWrap,
-            style: TextStyle(
-              letterSpacing: letterSpacing,
-                decoration: decoration,
-                decorationColor: decorationColor,
-                overflow: overflow,
-                fontFamily: fontFamily,
-                fontSize: fontSize,
-                fontWeight: fontWeight,
-                color: textColor)),
+        child: Text(
+          text,
+          maxLines: maxLine,
+          textAlign: textAlign,
+          softWrap: softWrap,
+          style: TextStyle(
+            letterSpacing: letterSpacing,
+            decoration: decoration,
+            decorationColor: decorationColor,
+            overflow: overflow,
+            fontFamily: fontFamily,
+            fontSize: fontSize,
+            fontWeight: fontWeight,
+            color: textColor,
+          ),
+        ),
       ),
     );
   }

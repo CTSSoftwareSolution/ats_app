@@ -1,6 +1,5 @@
 import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
-
 import '../../../utilities/color_data.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text.dart';
@@ -18,7 +17,7 @@ class InspectionResultScreenItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF9BA8C3).withOpacity(0.18),
+            color: const Color(0xFF9BA8C3).withValues(alpha:0.18),
             blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, 6),
@@ -44,8 +43,8 @@ class InspectionResultScreenItem extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        appColor.withOpacity(0.18),
-                        appColor.withOpacity(0.07),
+                        appColor.withValues(alpha:0.18),
+                        appColor.withValues(alpha:0.07),
                       ],
                     ),
                   ),
@@ -110,12 +109,12 @@ class InspectionResultScreenItem extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     appColor,
-                    appColor.withOpacity(0.80),
+                    appColor.withValues(alpha:0.80),
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: appColor.withOpacity(0.32),
+                    color: appColor.withValues(alpha:0.32),
                     blurRadius: 12,
                     offset: const Offset(0, 5),
                   ),

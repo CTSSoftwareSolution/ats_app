@@ -8,8 +8,7 @@ import '../model/response_model/vehicle_parts_res_model.dart';
 class VehiclePartsRepoImpl implements VehiclePartsRepository{
   @override
   Future<VehiclePartsEntity> vehiclePartsApi(VehiclePartsReqModel vehiclePartsReqModel) async{
-   // final baseUrl = context.read<IpAddressProvider>().baseUrl;
-      try{
+     try{
         final response = await ApiService.post(vehiclePartsReqModel, vehiclePartsUrl);
         final model = VehiclePartsResModel.fromJson(response);
         return VehiclePartsEntity(message: model.message, status: model.status, data: model.data);

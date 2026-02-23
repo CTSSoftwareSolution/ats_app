@@ -1,5 +1,3 @@
-
-
 import '../Data/model/bottom_nav_model.dart';
 import '../Data/model/list_model.dart';
 import '../Data/model/profile_model.dart';
@@ -48,13 +46,7 @@ const carNumberPlateImage = "assets/car_number_plate.png";
 const manualInspectionIcon = "assets/manual-inspection.png";
 const machineInspectionIcon = "assets/machine-inspection.png";
 
-
-final List<String> vehicleGridTitles = <String>[
-  "LCV",
-  "LMV",
-  "EV",
-  "HCV",
-];
+final List<String> vehicleGridTitles = <String>["LCV", "LMV", "EV", "HCV"];
 
 final List<String> inspectionTypeImage = <String>[
   manualInspectionIcon,
@@ -70,22 +62,61 @@ final List<String> vehicleGridImages = <String>[
 
 List<ListModel> mediaSource = [
   const ListModel(0, 'Camera', cameraIcon),
-  const ListModel(1, 'Gallery',galleryIcon),
+  const ListModel(1, 'Gallery', galleryIcon),
 ];
-
 
 List<ProfileModel> profileGridValues = [
-  const ProfileModel(0, 'Personal Details','View your personal details',editProfileIcon,ProfileTrailingType.arrow),
-  const ProfileModel(1, 'Notification','Manage your alerts and notifications',notificationIcon,ProfileTrailingType.switchButton),
-  const ProfileModel(2, 'Privacy Policy','Learn how we protect your data',privacyIcon,ProfileTrailingType.arrow),
-  const ProfileModel(3, 'Terms & Conditions','Our rules, explained simply',termsIcon,ProfileTrailingType.arrow),
-  const ProfileModel(4, 'Contact Us','We are here, if you need any help',contactUsIcon,ProfileTrailingType.arrow),
-  const ProfileModel(5, 'Ip Config','Change Ip Address to access',logoutIcon,ProfileTrailingType.none),
-  const ProfileModel(6, 'Logout','Sign out safely and easily',logoutIcon,ProfileTrailingType.none),
-  const ProfileModel(7, '','',versionControlIcon,ProfileTrailingType.none),
+  const ProfileModel(
+    0,
+    'Personal Details',
+    'View your personal details',
+    editProfileIcon,
+    ProfileTrailingType.arrow,
+  ),
+  const ProfileModel(
+    1,
+    'Notification',
+    'Manage your alerts and notifications',
+    notificationIcon,
+    ProfileTrailingType.switchButton,
+  ),
+  const ProfileModel(
+    2,
+    'Privacy Policy',
+    'Learn how we protect your data',
+    privacyIcon,
+    ProfileTrailingType.arrow,
+  ),
+  const ProfileModel(
+    3,
+    'Terms & Conditions',
+    'Our rules, explained simply',
+    termsIcon,
+    ProfileTrailingType.arrow,
+  ),
+  const ProfileModel(
+    4,
+    'Contact Us',
+    'We are here, if you need any help',
+    contactUsIcon,
+    ProfileTrailingType.arrow,
+  ),
+  const ProfileModel(
+    5,
+    'Ip Config',
+    'Change Ip Address to access',
+    logoutIcon,
+    ProfileTrailingType.none,
+  ),
+  const ProfileModel(
+    6,
+    'Logout',
+    'Sign out safely and easily',
+    logoutIcon,
+    ProfileTrailingType.none,
+  ),
+  const ProfileModel(7, '', '', versionControlIcon, ProfileTrailingType.none),
 ];
-
-
 
 List<BottomNavModel> bottomNavValue = [
   BottomNavModel(0, "Home", homeIcon),
@@ -103,5 +134,4 @@ List<String> labels = [
   "Dashboard Photo",
   "Bottom Photo",
   "Chassis Number Photo",
-
 ];

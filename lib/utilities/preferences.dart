@@ -1,5 +1,3 @@
-
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Preferences {
@@ -11,7 +9,6 @@ class Preferences {
   static String email = 'email';
   static String image = 'image';
   static String ipAddress = 'ipAddress';
-
 
   static Future<void> setPreferences() async {
     instance = await SharedPreferences.getInstance();
@@ -27,13 +24,12 @@ class Preferences {
     return instance!.get(key) ?? "";
   }
 
-  static Future<bool> setUserId(String value) =>setString(userId, value);
-  static Future<bool> setToken(String value) =>setString(token, value);
-  static Future<bool> setName(String value) =>setString(name, value);
-  static Future<bool> setEmail(String value) =>setString(email, value);
-  static Future<bool> setImage(String value) =>setString(image, value);
-  static Future<bool> setIPAddress(String value) =>setString(ipAddress, value);
-
+  static Future<bool> setUserId(String value) => setString(userId, value);
+  static Future<bool> setToken(String value) => setString(token, value);
+  static Future<bool> setName(String value) => setString(name, value);
+  static Future<bool> setEmail(String value) => setString(email, value);
+  static Future<bool> setImage(String value) => setString(image, value);
+  static Future<bool> setIPAddress(String value) => setString(ipAddress, value);
 
   static dynamic getUserId() => getString(userId);
   static dynamic getToken() => getString(token);
@@ -41,6 +37,4 @@ class Preferences {
   static dynamic getEmail() => getString(email);
   static dynamic getImage() => getString(image);
   static dynamic getIPAddress() => getString(ipAddress);
-
-
 }

@@ -20,12 +20,12 @@ class ProfileDetailsContainer extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             appColor,
-            appColor.withOpacity(0.75),
+            appColor.withValues(alpha:0.75),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: appColor.withOpacity(0.38),
+            color: appColor.withValues(alpha:0.38),
             blurRadius: 24,
             spreadRadius: 0,
             offset: const Offset(0, 8),
@@ -42,7 +42,7 @@ class ProfileDetailsContainer extends StatelessWidget {
               height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.06),
+                color: Colors.white.withValues(alpha:0.06),
               ),
             ),
           ),
@@ -60,13 +60,13 @@ class ProfileDetailsContainer extends StatelessWidget {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.14),
+                        color: Colors.black.withValues(alpha:0.14),
                         blurRadius: 14,
                         offset: const Offset(0, 5),
                       ),
                     ],
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha:0.9),
                       width: 2.5,
                     ),
                   ),
@@ -99,7 +99,7 @@ class ProfileDetailsContainer extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(4.0),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.18),
+                              color: Colors.white.withValues(alpha:0.18),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Icon(
@@ -114,7 +114,7 @@ class ProfileDetailsContainer extends StatelessWidget {
                               text: Preferences.getEmail(),
                               fontSize: 13,
                               fontFamily: "Medium",
-                              textColor: Colors.white.withOpacity(0.85),
+                              textColor: Colors.white.withValues(alpha:0.85),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),

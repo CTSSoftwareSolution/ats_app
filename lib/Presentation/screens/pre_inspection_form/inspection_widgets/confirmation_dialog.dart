@@ -1,8 +1,5 @@
-import 'package:ats_app/Presentation/screens/vehicles_class_page/vehicle_class_screen.dart';
-import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../provider/inspection_form_provider.dart';
 import '../../../provider/pre_inspection_result_provider.dart';
 
@@ -69,7 +66,7 @@ class ConfirmationDialog {
                           if (isComplete) {
                             await typeProvider.saveResultApi(context);
                           }
-                          // _submitInspection(context, provider);
+                          // submitInspection(context, provider);
                         },
                         child: const Text('Submit'),
                       ):SizedBox.shrink(),
@@ -123,7 +120,7 @@ class ConfirmationDialog {
     );
   }
 
-  static void _submitInspection(BuildContext context, InspectionFormProvider provider) {
+  static void submitInspection(BuildContext context, InspectionFormProvider provider) {
     final answers = provider.collectAnswers();
     debugPrint('Submitting: $answers');
     ScaffoldMessenger.of(context).showSnackBar(

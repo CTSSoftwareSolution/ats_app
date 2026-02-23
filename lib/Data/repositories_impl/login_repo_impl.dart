@@ -9,7 +9,6 @@ class LoginRepoImpl implements LoginRepository{
 
 @override
   Future<LoginEntity> loginApi(LoginReqModel loginReqModel) async{
-  //final baseUrl = context.read<IpAddressProvider>().baseUrl;
   try{
     final response = await ApiService.post(loginReqModel, loginUrl);
     final model = LoginResModel.fromJson(response);

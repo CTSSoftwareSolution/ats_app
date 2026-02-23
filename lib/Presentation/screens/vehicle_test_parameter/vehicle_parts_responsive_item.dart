@@ -2,11 +2,7 @@ import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utilities/color_data.dart';
 import '../../../utilities/extension.dart';
-import '../../../utilities/media_picker_tiles.dart';
-import '../../../widgets/custom_bottomsheet.dart';
-import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text.dart';
 import '../../provider/MediaPicker/file_provider.dart';
 import '../camera_page/camera_screen.dart';
@@ -24,7 +20,6 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final image = context.watch<FileProvider>().getImage(allIndex);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -45,16 +40,7 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
                 onTap: () {
                   context.read<FileProvider>().setCurrentIndex(allIndex);
                   context.push(CameraScreen());
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => CameraScreen()),
-                  // );
 
-                  // customBottomSheet(
-                  //   context: context,
-                  //   title: "Select Media",
-                  //   child: mediaPickerTiles(context: context),
-                  // );
                 },
                 isTablet: isTablet,
               ),
