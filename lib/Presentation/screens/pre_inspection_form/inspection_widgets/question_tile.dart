@@ -47,7 +47,6 @@ class _QuestionTileState extends State<QuestionTile> {
       int origQue,
       ) async {
     final awsProvider = Provider.of<AwsSignedUrlProvider>(context, listen: false);
-
     try {
       final picker = ImagePicker();
       final picked = await picker.pickImage(
@@ -60,9 +59,7 @@ class _QuestionTileState extends State<QuestionTile> {
         final imagePath = file.path.split(Platform.pathSeparator).last;
 
         await awsProvider.awsUploadedFile(imagePath, file, context);
-
-        final fileImagePath =
-            awsImagePathUrl + awsProvider.stringRandomNumber + imagePath;
+        final fileImagePath = awsImagePathUrl + awsProvider.stringRandomNumber + imagePath;
 
         provider.setQuestionImage(
           sectionIndex: origSec,
@@ -184,89 +181,89 @@ class _QuestionTileState extends State<QuestionTile> {
                 isNo ? CrossFadeState.showSecond : CrossFadeState.showFirst,
                 firstChild: const SizedBox.shrink(),
                 secondChild: Padding(
-                  padding: const EdgeInsets.only(top: 12,),
-                  child: Column(
-                    children: [
-                          () {
-                        final hasLocalImage = question.imagePath != null;
-                        final hasExistingUrl =
-                            question.existingEvidenceUrl != null &&
-                                question.existingEvidenceUrl!.isNotEmpty;
+                    padding: const EdgeInsets.only(top: 12,),
+                    child: Column(
+                      children: [
+                            () {
+                          final hasLocalImage = question.imagePath != null;
+                          final hasExistingUrl =
+                              question.existingEvidenceUrl != null &&
+                                  question.existingEvidenceUrl!.isNotEmpty;
 
-                        if (hasLocalImage) {
-                          return ImagePreview(
-                            imageFile: question.imagePath,
-                            onRemove: () => provider.removeQuestionImage(
-                              sectionIndex: origSec,
-                              categoryIndex: origCat,
-                              questionIndex: origQue,
-                            ),
-                            onReplace: () => _pickImage(
-                              context,
-                              provider,
-                              ImageSource.camera,
-                              origSec,
-                              origCat,
-                              origQue,
-                            ),
-                          );
-                        } else if (hasExistingUrl) {
-                          return ImagePreview(
-                            imageUrl: question.existingEvidenceUrl,
-                            onRemove: () => provider.removeQuestionImage(
-                              sectionIndex: origSec,
-                              categoryIndex: origCat,
-                              questionIndex: origQue,
-                            ),
-                            onReplace: () => _pickImage(
-                              context,
-                              provider,
-                              ImageSource.camera,
-                              origSec,
-                              origCat,
-                              origQue,
-                            ),
-                          );
-                        } else {
-                          return ImagePickerPrompt(
-                            onTap: () => _pickImage(
-                              context,
-                              provider,
-                              ImageSource.camera,
-                              origSec,
-                              origCat,
-                              origQue,
-                            ),
-
-                          );
-                        }
-                      }(),
-                      const SizedBox(height: 12),
-                      CustomTextField(
-                          cursorColor: redColor,
-                        contentPadding: EdgeInsets.only(left: 10.0),
-                        borderColor: Colors.red.shade200,
-                          borderWidth: 1.5,
-                          fillColor: Colors.red.shade50,
-                          hint: "Remark here...",
-                          controller: controller,
-                          onChanged: (value) {
-                            provider.setQuestionRemark(
-                              sectionIndex: origSec,
-                              categoryIndex: origCat,
-                              questionIndex: origQue,
-                              remark: value,
+                          if (hasLocalImage) {
+                            return ImagePreview(
+                              imageFile: question.imagePath,
+                              onRemove: () => provider.removeQuestionImage(
+                                sectionIndex: origSec,
+                                categoryIndex: origCat,
+                                questionIndex: origQue,
+                              ),
+                              onReplace: () => _pickImage(
+                                context,
+                                provider,
+                                ImageSource.camera,
+                                origSec,
+                                origCat,
+                                origQue,
+                              ),
                             );
-                          },
-                          hintStyle: TextStyle(
-                            color: Colors.red.shade300,
-                            fontSize: 11,
-                          ),
-                          readOnly: false,
-                          textCapitalization: TextCapitalization.sentences
-                      )
-                    ],
-                  )
+                          } else if (hasExistingUrl) {
+                            return ImagePreview(
+                              imageUrl: question.existingEvidenceUrl,
+                              onRemove: () => provider.removeQuestionImage(
+                                sectionIndex: origSec,
+                                categoryIndex: origCat,
+                                questionIndex: origQue,
+                              ),
+                              onReplace: () => _pickImage(
+                                context,
+                                provider,
+                                ImageSource.camera,
+                                origSec,
+                                origCat,
+                                origQue,
+                              ),
+                            );
+                          } else {
+                            return ImagePickerPrompt(
+                              onTap: () => _pickImage(
+                                context,
+                                provider,
+                                ImageSource.camera,
+                                origSec,
+                                origCat,
+                                origQue,
+                              ),
+
+                            );
+                          }
+                        }(),
+                        const SizedBox(height: 12),
+                        CustomTextField(
+                            cursorColor: redColor,
+                            contentPadding: EdgeInsets.only(left: 10.0),
+                            borderColor: Colors.red.shade200,
+                            borderWidth: 1.5,
+                            fillColor: Colors.red.shade50,
+                            hint: "Remark here...",
+                            controller: controller,
+                            onChanged: (value) {
+                              provider.setQuestionRemark(
+                                sectionIndex: origSec,
+                                categoryIndex: origCat,
+                                questionIndex: origQue,
+                                remark: value,
+                              );
+                            },
+                            hintStyle: TextStyle(
+                              color: Colors.red.shade300,
+                              fontSize: 11,
+                            ),
+                            readOnly: false,
+                            textCapitalization: TextCapitalization.sentences
+                        )
+                      ],
+                    )
 
                 ),
               ),

@@ -10,7 +10,6 @@ import 'Presentation/provider/permission_provider.dart';
 import 'Presentation/screens/splash_page/splash_screen.dart';
 import 'app_config/app_config.dart';
 
-
 List<CameraDescription>? cameras;
 
 void main() async {
