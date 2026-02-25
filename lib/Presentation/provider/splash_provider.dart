@@ -10,7 +10,8 @@ class SplashProvider extends ChangeNotifier{
   final loginFormKey= GlobalKey<FormState>();
 
   void startTimer(BuildContext context){
-    Timer(Duration(seconds: 2), (){ checkLoginStatus(context); });
+    Timer(Duration(seconds: 2), (){
+      checkLoginStatus(context); });
   }
 
   void checkLoginStatus(BuildContext context)async{

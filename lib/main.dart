@@ -1,4 +1,5 @@
 import 'package:ats_app/Presentation/provider/multiple_provider.dart';
+import 'package:ats_app/location/location_provider.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+
 
   @override
   Widget build(BuildContext context) {

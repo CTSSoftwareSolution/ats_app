@@ -1,10 +1,13 @@
 import 'dart:io';
 import 'package:ats_app/Presentation/provider/bottom_navigation_provider.dart';
 import 'package:ats_app/Presentation/screens/bottom_navigation/navigation_bar_responsive.dart';
+import 'package:ats_app/location/location_provider.dart';
 import 'package:ats_app/widgets/custom_dialog_box.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+
 
 class BottomNavigationBarScreen extends StatefulWidget {
   const BottomNavigationBarScreen({super.key});
@@ -15,6 +18,21 @@ class BottomNavigationBarScreen extends StatefulWidget {
 }
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    requestLocation();
+  }
+
+  void requestLocation() async {
+    final locationProvider = context.read<LocationProvider>();
+     locationProvider.serviceListener(context);
+    await locationProvider.getCurrentLocation(context);
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     final navigationProvider = context.watch<BottomNavigationProvider>();
