@@ -44,6 +44,7 @@ import '../../Domain/usecases/pre_ins_details_usecases.dart';
 import '../../Domain/usecases/pre_ins_manual_status_usecases.dart';
 import '../../Domain/usecases/vehicle_class_usecases.dart';
 import '../../main.dart';
+
 import 'MediaPicker/file_provider.dart';
 import 'bottom_navigation_provider.dart';
 
@@ -73,7 +74,8 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PreInsManualStatusProvider(preInsManualStatusUseCases: PreInsManualStatusUseCases(preInsManualStatusRepository: PreInsManualStatusImpl()))),
         ChangeNotifierProvider(create: (_) => PreInsDetailsProvider(preInsDetailsUseCases: PreInsDetailsUseCases(preInsDetailsRepository: PreInsDetailsImpl()))),
         ChangeNotifierProvider(create: (_) => AwsSignedUrlProvider(awsUseCase: AwsUseCase(repository: AwsRepositoryImpl()))),
-        ChangeNotifierProvider(create: (_) => ManualInsImageProvider())
+        ChangeNotifierProvider(create: (_) => ManualInsImageProvider()),
+
       ],
       child: const MyApp(),
     );

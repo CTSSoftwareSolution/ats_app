@@ -17,6 +17,14 @@ class VehiclePartsProvider extends ChangeNotifier {
   VehiclePartsEntity? vehiclePartsEntity;
   List<PartsDataModel> currentPageData = [];
 
+
+  // String? vehiclePart;
+  // String? get selectedParts => vehiclePart;
+  // void setSelectedParts(String parts){
+  //   vehiclePart = parts;
+  // }
+
+
   int currentPage = 0;
   int itemsPerPage = 2;
   int currentStep = 0;
@@ -33,6 +41,8 @@ class VehiclePartsProvider extends ChangeNotifier {
   int get itemsPerPageForTablet => _itemsPerPageForTablet;
   int get totalPagesForTablet =>
       (vehiclePartsEntity!.data!.length / _itemsPerPageForTablet).ceil();
+
+
 
   void resetPage() {
     currentPage = 0;

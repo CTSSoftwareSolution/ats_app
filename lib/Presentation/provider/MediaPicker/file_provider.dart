@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import '../../../Core/network/services.dart';
+import '../../../aws_images/aws_signedurl_provider.dart';
 import '../../../main.dart';
 import 'file_service.dart';
 
@@ -18,6 +23,7 @@ class FileProvider with ChangeNotifier {
   int? currentIndex;
 
   final List<XFile?> images = [];
+ //  String? fileImagePath;
 
   void setCurrentIndex(int value){
     currentIndex = value;
@@ -74,12 +80,19 @@ class FileProvider with ChangeNotifier {
 
   /// In-app camera_page
   Future<void> takePicture(BuildContext context) async {
-
+   // final awsProvider = Provider.of<AwsSignedUrlProvider>(context, listen: false);
     _setLoading(true);
     try {
       final XFile picture = await controller!.takePicture();
       images[currentIndex!] = picture;
       debugPrint("taking picture : ${images[currentIndex!]!.name}");
+      // final imagePath = picture.path.split(Platform.pathSeparator).last;
+      //
+      // final File file = File(picture.path);
+
+      // await awsProvider.awsUploadedFile(imagePath, file, context);
+      //
+      // fileImagePath = awsImagePathUrl + awsProvider.stringRandomNumber + imagePath;
       notifyListeners();
     } catch (e) {
       debugPrint("Error taking picture : $e");

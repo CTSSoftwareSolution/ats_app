@@ -17,6 +17,8 @@ class AwsSignedUrlProvider extends ChangeNotifier {
   AwsEntity? awsEntity;
   dynamic stringRandomNumber;
 
+  //List<AwsEntity> uploadedImages = [];
+
   Future<AwsEntity?> awsUpload(
       String imagePath, File file, BuildContext context) async {
     isLoading = true;
@@ -27,6 +29,12 @@ class AwsSignedUrlProvider extends ChangeNotifier {
           contentType: 'img/jpeg',
           filePath: "inspectorApp/$imagePath");
       awsEntity = await awsUseCase.execute(request);
+
+
+      // if (awsEntity != null) {
+      //   uploadedImages.add(awsEntity!);
+      // }
+
 
       await awsUploadFinal(awsEntity!.url, file, context);
 
@@ -52,6 +60,7 @@ class AwsSignedUrlProvider extends ChangeNotifier {
 
     if (response.statusCode == 200) {
       CustomLoader.closeLoader();
+
       //  CustomLoader.message("Successfully upload!");
     } else {
       CustomLoader.closeLoader();
