@@ -3,6 +3,8 @@ import 'package:ats_app/Presentation/screens/splash_page/splash_screen_responsiv
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../location/location_provider.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -17,6 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     context.read<SplashProvider>().startTimer(context);
   }
+
 
   @override
   Widget build(BuildContext context) {

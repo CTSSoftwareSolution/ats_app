@@ -30,6 +30,7 @@ import 'package:ats_app/Presentation/screens/manual_inspection_images/manual_ins
 import 'package:ats_app/aws_images/aws_repository_impl.dart';
 import 'package:ats_app/aws_images/aws_signedurl_provider.dart';
 import 'package:ats_app/aws_images/aws_usecase.dart';
+import 'package:ats_app/location/location_provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -75,6 +76,7 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PreInsDetailsProvider(preInsDetailsUseCases: PreInsDetailsUseCases(preInsDetailsRepository: PreInsDetailsImpl()))),
         ChangeNotifierProvider(create: (_) => AwsSignedUrlProvider(awsUseCase: AwsUseCase(repository: AwsRepositoryImpl()))),
         ChangeNotifierProvider(create: (_) => ManualInsImageProvider()),
+        ChangeNotifierProvider(create: (_) => LocationProvider())
 
       ],
       child: const MyApp(),

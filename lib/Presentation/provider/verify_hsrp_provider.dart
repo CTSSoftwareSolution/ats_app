@@ -16,7 +16,7 @@ class VerifyHRSPProvider extends ChangeNotifier {
 
    VehicleNumberPlateModels? _vehicleResponse;
 
-   //List<VehicleNumberPlateModels> response = [];
+   List<VehicleNumberPlateModels> response = [];
 
   String? _error;
 
@@ -24,7 +24,7 @@ class VerifyHRSPProvider extends ChangeNotifier {
    VehicleNumberPlateModels? get vehicleResponse => _vehicleResponse;
    String? get error => _error;
 
- //  List<VehicleNumberPlateModels>? get totalResponse => response;
+   List<VehicleNumberPlateModels>? get totalResponse => response;
 
   Future<void> verifyPlate({
     required File imageFile,
@@ -44,7 +44,7 @@ class VerifyHRSPProvider extends ChangeNotifier {
       );
       _vehicleResponse = VehicleNumberPlateModels.fromJson(result);
 
-    //  totalResponse?.add(_vehicleResponse!);
+      totalResponse?.add(_vehicleResponse!);
 
     } catch (e) {
       _error = e.toString();

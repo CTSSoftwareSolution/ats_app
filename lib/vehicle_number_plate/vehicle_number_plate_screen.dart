@@ -131,7 +131,12 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
       imageFile: File(xFile.path),
       expectedPlate: expectedPlate,
     );
-    //debugPrint("Total Response: ${verifyProvider.totalResponse![_frontIndex].analysis}");
+    debugPrint(
+     "Response Value: ${ verifyProvider.totalResponse!
+         .map((e) => e.toJson())
+         .toList()
+         .toString() }"
+    );
     if (!context.mounted) return;
     if (verifyProvider.error != null) {
       context.showErrorSnackBar(verifyProvider.error!);

@@ -1,6 +1,8 @@
 import 'package:ats_app/Presentation/screens/home_pages/select_vehicle.dart';
 import 'package:ats_app/Presentation/screens/home_pages/vehicle_registration_screen.dart';
+import 'package:ats_app/location/location_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/extension.dart';
 import '../../../utilities/image_data.dart';
@@ -18,6 +20,7 @@ class HomeScreenResponsiveItem extends StatefulWidget {
 class _HomeScreenResponsiveItemState extends State<HomeScreenResponsiveItem> {
   @override
   Widget build(BuildContext context) {
+    final locationProvider = Provider.of<LocationProvider>(context);
     final isTablet = MediaQuery.of(context).size.width >= 600;
     return SingleChildScrollView(
       padding: EdgeInsets.only(bottom: 40.0),
@@ -63,7 +66,10 @@ class _HomeScreenResponsiveItemState extends State<HomeScreenResponsiveItem> {
                 CustomText(text: "ATS Corporation", fontSize: 15.0, fontFamily: "Black",)
               ],
             ),
-            40.height
+            40.height,
+            CustomText(text:"Lat-Long: ${locationProvider.currentPosition?.latitude}  ${locationProvider.currentPosition?.longitude} " , fontSize: 15.0, fontFamily: "Black",),
+            CustomText(text:"Time: ${locationProvider.currentPosition?.timestamp}", fontSize: 15.0, fontFamily: "Black",),
+
           ],
         ),
       ),
