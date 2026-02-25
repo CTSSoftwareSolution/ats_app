@@ -23,11 +23,14 @@ class VehicleNumberPlateScreen extends StatefulWidget {
 class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
   static const int _frontIndex = 0;
 
-  final TextEditingController _plateController = TextEditingController();
+
+  final TextEditingController _frontController = TextEditingController();
+
 
   @override
   void dispose() {
-    _plateController.dispose();
+    _frontController.dispose();
+
     super.dispose();
   }
 
@@ -52,7 +55,7 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
               ),
               8.height,
               TextField(
-                controller: _plateController,
+                controller: _frontController,
                 textCapitalization: TextCapitalization.characters,
                 decoration: InputDecoration(
                   hintText: "e.g. MH40BE2665",
@@ -110,8 +113,9 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
     BuildContext context,
     FileProvider fileProvider,
     VerifyHRSPProvider verifyProvider,
+
   ) async {
-    final expectedPlate = _plateController.text.trim();
+    final expectedPlate = _frontController.text.trim();
     if (expectedPlate.isEmpty) {
       context.showErrorSnackBar("Please enter expected plate number");
       return;
@@ -127,6 +131,7 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
       imageFile: File(xFile.path),
       expectedPlate: expectedPlate,
     );
+    //debugPrint("Total Response: ${verifyProvider.totalResponse![_frontIndex].analysis}");
     if (!context.mounted) return;
     if (verifyProvider.error != null) {
       context.showErrorSnackBar(verifyProvider.error!);
