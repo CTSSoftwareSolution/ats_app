@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:native_exif/native_exif.dart';
 import 'package:saver_gallery/saver_gallery.dart';
 import 'package:image/image.dart' as img;
 import '../../../main.dart';
@@ -17,6 +20,8 @@ class FileProvider with ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  XFile? originalImage;
+  XFile? overlayImage;
 
   CameraController? controller;
   int? currentIndex;
@@ -85,47 +90,6 @@ class FileProvider with ChangeNotifier {
   //     }
   // }
 
-  // Future<void> takePictureWithRender(BuildContext context) async {
-  //   _setLoading(true);
-  //
-  //   try {
-  //     if (controller == null || !controller!.value.isInitialized) {
-  //       throw Exception("Camera not initialized");
-  //     }
-  //
-  //     final XFile picture = await controller!.takePicture();
-  //     debugPrint("taking picture : ${picture.name}");
-  //     final file = File(picture.path);
-  //     notifyListeners();
-  //     await Future.delayed(const Duration(milliseconds: 200));
-  //     final boundary = repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
-  //     if (boundary == null) {
-  //       _setLoading(false);
-  //       return;
-  //     }
-  //     ui.Image image = await boundary.toImage(pixelRatio: 3);
-  //     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-  //     if (byteData == null) {
-  //       _setLoading(false);
-  //       return;
-  //     }
-  //     Uint8List pngBytes = byteData.buffer.asUint8List();
-  //     final directory = file.parent.path;
-  //     final fileName = 'overlay_${DateTime.now().millisecondsSinceEpoch}.png';
-  //     final overlayFilePath = '$directory/$fileName';
-  //     final overlayFile = await File(overlayFilePath).writeAsBytes(pngBytes);
-  //     if (currentIndex != null) {
-  //       images[currentIndex!] = XFile(overlayFile.path);
-  //     }
-  //     debugPrint("Overlay file path : ${overlayFile.path}");
-  //   } catch (e) {
-  //     if (context.mounted) {
-  //       context.showErrorSnackBar("Could not capture image: $e");
-  //     }
-  //   }
-  //   _setLoading(false);
-  // }
-
   void removeImage(BuildContext context) {
     images.remove(currentIndex);
       notifyListeners();
@@ -135,44 +99,60 @@ class FileProvider with ChangeNotifier {
     images.clear();
   }
 
-
-  XFile? originalImage;
-  XFile? overlayImage;
-
   Future<void> takePicture(BuildContext context) async {
-    _setLoading(true);
+    //_setLoading(true);
+    HapticFeedback.heavyImpact();
+    CustomLoader.showLoader("Image Processing...");
     try {
       if (controller == null || !controller!.value.isInitialized) {
         throw Exception("Camera not initialized");
       }
       final XFile picture = await controller!.takePicture();
-      //Original Image
+      // Original Image
       originalImage = picture;
       final file = File(picture.path);
-      //Overlay Image
-      final overlayText = "Vehicle No: MH20DC1761\nAddress: Navi Mumbai\nLat: 23.45, Lng: 72.11\nDate: ${DateTime.now()}";
+      final overlayData = {
+        'vehicleNo': 'MH20DC1761',
+        'address': 'Navi Mumbai',
+        'lat': 23.45,
+        'lng': 72.11,
+        'date': DateTime.now().toString(),
+      };
+      final overlayText = jsonEncode(overlayData);
+      final displayText = "Vehicle No: MH20DC1761\nAddress: Navi Mumbai\nLat: 23.45, Lng: 72.11\nDate: ${DateTime.now()}";
       final bytes = await file.readAsBytes();
       final src = img.decodeImage(bytes)!;
-      img.drawString(src, overlayText, font: img.arial24, x: 16, y: src.height - 120, color: img.ColorRgba8(255, 255, 255, 255));
+      img.drawString(src, displayText, font: img.arial24, x: 16, y: src.height - 120, color: img.ColorRgba8(255, 255, 255, 255));
       final overlayFile = File(picture.path.replaceFirst('.jpg', '_overlay.jpg'));
       await overlayFile.writeAsBytes(img.encodeJpg(src, quality: 92));
+      // Meta Data
+      final exif = await Exif.fromPath(overlayFile.path);
+      await exif.writeAttributes({
+        'GPSLatitude': '23.45',
+        'GPSLongitude': '72.11',
+        'UserComment': overlayText,
+        'ImageDescription': overlayText,
+      });
+      await exif.close();
       overlayImage = XFile(overlayFile.path);
       if (currentIndex != null) {
         images[currentIndex!] = overlayImage;
       }
-      if(kDebugMode){
-        final result = await SaverGallery.saveFile(
-          filePath: overlayImage!.path,
-          androidRelativePath: 'Pictures/MyApp Images',
-          fileName: picture.name,
-          skipIfExists: false,
-        );
-        if (result.isSuccess) {
-          CustomLoader.message('Saved Image in gallery');
-        } else {
-          CustomLoader.message('Not saved: ${result.errorMessage}');
-        }
-      }
+      HapticFeedback.heavyImpact();
+      CustomLoader.closeLoader();
+      // if (kDebugMode) {
+      //   final result = await SaverGallery.saveFile(
+      //     filePath: overlayImage!.path,
+      //     androidRelativePath: 'Pictures/MyApp Images',
+      //     fileName: picture.name,
+      //     skipIfExists: false,
+      //   );
+      //   if (result.isSuccess) {
+      //     CustomLoader.message('Saved Image in gallery');
+      //   } else {
+      //     CustomLoader.message('Not saved: ${result.errorMessage}');
+      //   }
+      // }
       notifyListeners();
     } catch (e) {
       debugPrint("Error taking picture : $e");
@@ -180,8 +160,5 @@ class FileProvider with ChangeNotifier {
       _setLoading(false);
     }
   }
-
-
-
 
 }

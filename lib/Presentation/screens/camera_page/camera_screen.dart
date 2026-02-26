@@ -18,11 +18,11 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen> {
 
-  @override
-  void initState() {
-    super.initState();
-     context.read<FileProvider>().initCamera();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //    context.read<FileProvider>().initCamera();
+  // }
   @override
   Widget build(BuildContext context) {
     final cameraController = context.watch<FileProvider>().controller;
@@ -65,6 +65,7 @@ class _CameraScreenState extends State<CameraScreen> {
             child: Center(
               child: GestureDetector(
                 onTap: () async {
+                // await context.read<FileProvider>().takePicture(context);
                   await context.read<FileProvider>().takePicture(context);
                   if (!context.mounted) return;
                  context.pop();

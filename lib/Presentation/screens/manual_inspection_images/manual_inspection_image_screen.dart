@@ -24,7 +24,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_)async{
-      cameraApi();
+     // cameraApi();
     });
   }
 
@@ -35,9 +35,8 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
   }
 
   void cameraApi()async{
-    await context.watch<FileProvider>().initCamera();
+   // await context.watch<FileProvider>().initCamera();
   }
-
 
   @override
   Widget build(BuildContext context) {

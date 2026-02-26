@@ -51,6 +51,7 @@ dependencies:
   flutter_phoenix: ^1.1.1
   image: ^4.8.0
   saver_gallery: ^4.1.0
+  native_exif: ^0.7.0
 
 
 dev_dependencies:
