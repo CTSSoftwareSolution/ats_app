@@ -53,19 +53,11 @@ class _QuestionTileState extends State<QuestionTile> {
     final fileProvider = Provider.of<FileProvider>(context, listen: false);
     await context.push(CameraScreen());
     try {
-      // final picker = ImagePicker();
-      // final picked = await picker.pickImage(
-      //   source: source,
-      //   imageQuality: 80,
-      //   maxWidth: 1200,
-      // );
       if (fileProvider.overlayImage!=null) {
         final file = File(fileProvider.overlayImage!.path);
         final imagePath = file.path.split(Platform.pathSeparator).last;
-
         await awsProvider.awsUploadedFile(imagePath, file, context);
         final fileImagePath = awsImagePathUrl + awsProvider.stringRandomNumber + imagePath;
-
         provider.setQuestionImage(
           sectionIndex: origSec,
           categoryIndex: origCat,
@@ -75,9 +67,7 @@ class _QuestionTileState extends State<QuestionTile> {
         );
       }
     } catch (e) {
-      if (context.mounted) {
-        context.showErrorSnackBar('Could not pick image: $e');
-      }
+      if (!context.mounted) return;context.showErrorSnackBar('Could not pick image: $e');
     }
   }
 
