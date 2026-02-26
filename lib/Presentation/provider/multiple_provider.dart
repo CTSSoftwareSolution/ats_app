@@ -77,7 +77,6 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AwsSignedUrlProvider(awsUseCase: AwsUseCase(repository: AwsRepositoryImpl()))),
         ChangeNotifierProvider(create: (_) => ManualInsImageProvider()),
         ChangeNotifierProvider(create: (_) => LocationProvider())
-
       ],
       child: const MyApp(),
     );

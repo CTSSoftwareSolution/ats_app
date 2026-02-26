@@ -22,14 +22,11 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   @override
   void initState() {
     super.initState();
-    requestLocation();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      context.read<LocationProvider>().initialize(context);
+    });
   }
 
-  void requestLocation() async {
-    final locationProvider = context.read<LocationProvider>();
-     locationProvider.serviceListener(context);
-    await locationProvider.getCurrentLocation(context);
-  }
 
 
 

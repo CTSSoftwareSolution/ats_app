@@ -4,14 +4,27 @@ import 'package:geolocator/geolocator.dart';
 import 'location_service_dialog.dart';
 
 class LocationProvider extends ChangeNotifier {
-  String? errorMessage;
-  bool isLocationServiceDisabled = false;
-  StreamSubscription<ServiceStatus>? streamSubscription;
 
+  bool isLocationServiceDisabled = false;
+
+  StreamSubscription<ServiceStatus>? streamSubscription;
+  StreamSubscription<Position>? positionSubscription;
+
+  String? errorMessage;
   String? get getErrorMsg => errorMessage;
 
   Position? _currentPosition;
   Position? get currentPosition => _currentPosition;
+
+  bool _isDialogShowing = false;
+  bool get isDialogShowing => _isDialogShowing;
+
+  BuildContext? dialogContext;
+
+  void initialize(BuildContext context) async{
+    serviceListener(context);
+    await checkLocationAndPermission(context);
+  }
 
   void serviceListener(BuildContext context){
     streamSubscription?.cancel();
@@ -20,36 +33,51 @@ class LocationProvider extends ChangeNotifier {
         isLocationServiceDisabled = true;
         errorMessage = "Location services are disabled on your device.";
         notifyListeners();
-        await showLocationServiceDialog(context);
+        showLocationDialog(context);
       }else if(status == ServiceStatus.enabled){
         isLocationServiceDisabled = false;
         errorMessage = null;
         notifyListeners();
+        cancelLocationDialog();
+        await getCurrentLocation(context);
       }
     });
   }
 
-  Future<void> getCurrentLocation(BuildContext context) async {
+
+  Future<void> checkLocationAndPermission(BuildContext context) async {
     bool serviceEnable = await Geolocator.isLocationServiceEnabled();
-    LocationPermission permission;
+
 
     // Location services disabled
     if (!serviceEnable) {
       isLocationServiceDisabled = true;
       errorMessage = "Location services are disabled on your device.";
       notifyListeners();
-      await showLocationServiceDialog(context);
+      showLocationDialog(context);
+
       return;
     }
+    isLocationServiceDisabled = false;
+    errorMessage = null;
+    notifyListeners();
 
-    // Check permissions
+    await getCurrentLocation(context);
+  }
+
+  Future<void> getCurrentLocation(BuildContext context) async {
+
+     LocationPermission permission;
+
+     // Check permissions
     permission = await Geolocator.checkPermission();
+
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         errorMessage = "Location permissions are denied.";
         notifyListeners();
-        await showLocationServiceDialog(context);
+        showLocationDialog(context);
         return;
       }
     }
@@ -59,19 +87,53 @@ class LocationProvider extends ChangeNotifier {
       errorMessage =
       "Location permission permanently denied. Please enable it from app settings.";
       notifyListeners();
-      await showLocationServiceDialog(context);
+      showLocationDialog(context);
       return;
     }
 
-    // Get current location
-    _currentPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    notifyListeners();
+    startLiveLocation();
+  }
+
+  void startLiveLocation(){
+    positionSubscription?.cancel();
+    positionSubscription = Geolocator.getPositionStream(
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: 10,
+      )
+    ).listen((Position position){
+      _currentPosition = position;
+      notifyListeners();
+    });
+  }
+
+
+  void showLocationDialog(BuildContext context){
+    if(_isDialogShowing) return;
+     _isDialogShowing = true;
+
+     showLocationServiceDialog(context,
+         onDialogCreated: (context){
+       dialogContext = context;
+    }).then((_){
+      _isDialogShowing = false;
+      dialogContext = null;
+
+     });
+  }
+
+  void cancelLocationDialog(){
+    if(_isDialogShowing && dialogContext != null){
+      Navigator.of(dialogContext!).pop();
+      _isDialogShowing = false;
+      dialogContext = null;
+    }
   }
 
   @override
   void dispose() {
     streamSubscription?.cancel();
+    positionSubscription?.cancel();
     super.dispose();
   }
 }
