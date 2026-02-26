@@ -62,8 +62,7 @@ class UploadImageContainer extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(borderRadius),
-          child: image != null
-              ? Stack(
+          child: image != null ? Stack(
             fit: StackFit.expand,
             children: [
               Image.file(
@@ -126,8 +125,7 @@ class UploadImageContainer extends StatelessWidget {
                 ),
               ),
             ],
-          )
-              : Stack(
+          ) : Stack(
             children: [
               Positioned.fill(
                 child: CustomPaint(
