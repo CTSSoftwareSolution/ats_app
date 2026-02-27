@@ -48,7 +48,6 @@ dependencies:
   shimmer: ^3.0.0
   package_info_plus:
   intl:
-  flutter_phoenix: ^1.1.1
   geolocator: ^14.0.2
   lottie:
   image: ^4.8.0
