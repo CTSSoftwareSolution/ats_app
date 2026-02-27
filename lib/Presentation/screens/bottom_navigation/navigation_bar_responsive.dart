@@ -9,12 +9,10 @@ class NavigationBarResponsiveLayout extends StatefulWidget {
   const NavigationBarResponsiveLayout({super.key});
 
   @override
-  State<NavigationBarResponsiveLayout> createState() =>
-      _NavigationBarResponsiveLayoutState();
+  State<NavigationBarResponsiveLayout> createState() => _NavigationBarResponsiveLayoutState();
 }
 
-class _NavigationBarResponsiveLayoutState
-    extends State<NavigationBarResponsiveLayout> {
+class _NavigationBarResponsiveLayoutState extends State<NavigationBarResponsiveLayout> {
   @override
   Widget build(BuildContext context) {
     final navigationProvider = context.watch<BottomNavigationProvider>();
