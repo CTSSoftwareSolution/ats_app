@@ -19,7 +19,7 @@ class LocationProvider extends ChangeNotifier {
   bool _isDialogShowing = false;
   bool get isDialogShowing => _isDialogShowing;
 
-  BuildContext? dialogContext;
+  //BuildContext? dialogContext;
 
   void initialize(BuildContext context) async{
     serviceListener(context);
@@ -38,7 +38,7 @@ class LocationProvider extends ChangeNotifier {
         isLocationServiceDisabled = false;
         errorMessage = null;
         notifyListeners();
-        cancelLocationDialog();
+       // cancelLocationDialog();
         await getCurrentLocation(context);
       }
     });
@@ -67,38 +67,29 @@ class LocationProvider extends ChangeNotifier {
 
   Future<void> getCurrentLocation(BuildContext context) async {
 
-     LocationPermission permission;
+
 
      // Check permissions
-    permission = await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
+    }
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
         errorMessage = "Location permissions are denied.";
         notifyListeners();
         showLocationDialog(context);
         return;
       }
-    }
 
-    // Permission denied forever
-    if (permission == LocationPermission.deniedForever) {
-      errorMessage =
-      "Location permission permanently denied. Please enable it from app settings.";
-      notifyListeners();
-      showLocationDialog(context);
-      return;
-    }
-
-    startLiveLocation();
+      startLiveLocation();
   }
 
   void startLiveLocation(){
     positionSubscription?.cancel();
     positionSubscription = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
-        accuracy: LocationAccuracy.bestForNavigation,
+        accuracy: LocationAccuracy.high,
         distanceFilter: 10,
       )
     ).listen((Position position){
@@ -112,23 +103,21 @@ class LocationProvider extends ChangeNotifier {
     if(_isDialogShowing) return;
      _isDialogShowing = true;
 
-     showLocationServiceDialog(context,
-         onDialogCreated: (context){
-       dialogContext = context;
-    }).then((_){
+     showLocationServiceDialog(context).then((_){
+
       _isDialogShowing = false;
-      dialogContext = null;
+
 
      });
   }
 
-  void cancelLocationDialog(){
-    if(_isDialogShowing && dialogContext != null){
-      Navigator.of(dialogContext!).pop();
-      _isDialogShowing = false;
-      dialogContext = null;
-    }
-  }
+  // void cancelLocationDialog(){
+  //   if(_isDialogShowing && dialogContext != null){
+  //     Navigator.of(dialogContext!).pop();
+  //     _isDialogShowing = false;
+  //     dialogContext = null;
+  //   }
+  // }
 
   @override
   void dispose() {

@@ -5,6 +5,7 @@ import 'package:ats_app/location/location_provider.dart';
 import 'package:ats_app/widgets/custom_dialog_box.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/generated/i18n.dart';
 import 'package:provider/provider.dart';
 
 
@@ -17,17 +18,28 @@ class BottomNavigationBarScreen extends StatefulWidget {
       _BottomNavigationBarScreenState();
 }
 
-class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
+class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> with WidgetsBindingObserver{
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_){
       context.read<LocationProvider>().initialize(context);
     });
   }
 
+  @override
+  void dispose(){
+    WidgetsBinding.instance.addObserver(this);
+    super.dispose();
+  }
 
+  void didChangeAppLifecycleState(AppLifecycleState state){
+    if(state == AppLifecycleState.resumed){
+      context.read<LocationProvider>().checkLocationAndPermission(context);
+    }
+  }
 
 
   @override

@@ -9,9 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
-Future<bool?> showLocationServiceDialog(BuildContext context,
-    {required Function(BuildContext dialogContext) onDialogCreated}
-    ) async {
+Future<bool?> showLocationServiceDialog(BuildContext context) async {
   final locationProvider = Provider.of<LocationProvider>(
     context,
     listen: false,
@@ -19,8 +17,8 @@ Future<bool?> showLocationServiceDialog(BuildContext context,
   return await showDialog<bool>(
     barrierDismissible: false,
     context: context,
-    builder: (dialogContext) {
-      onDialogCreated(dialogContext);
+    builder: (context) {
+
       return Dialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 15),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
@@ -55,12 +53,13 @@ Future<bool?> showLocationServiceDialog(BuildContext context,
                 height: 40.0,
                 buttonText: "Enable",
                 onPress: () async {
+                  context.pop();
                   if (locationProvider.isLocationServiceDisabled) {
                     await Geolocator.openLocationSettings();
                   } else {
                     await Geolocator.openAppSettings();
                   }
-                  context.pop();
+
                 },
                 backgroundColor: appColor,
                 foregroundColor: whiteColor,
