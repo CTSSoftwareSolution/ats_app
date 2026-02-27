@@ -53,14 +53,12 @@ Future<bool?> showLocationServiceDialog(BuildContext context) async {
                 height: 40.0,
                 buttonText: "Enable",
                 onPress: () async {
-                  context.pop();
                   if (locationProvider.isLocationServiceDisabled) {
                     await Geolocator.openLocationSettings();
                   } else {
                     await Geolocator.openAppSettings();
                   }
-
-                },
+                  },
                 backgroundColor: appColor,
                 foregroundColor: whiteColor,
                 shape: RoundedRectangleBorder(

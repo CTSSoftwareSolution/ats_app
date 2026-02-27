@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'location_service_dialog.dart';
 
-class LocationProvider extends ChangeNotifier {
+class LocationProvider extends ChangeNotifier with WidgetsBindingObserver{
 
   bool isLocationServiceDisabled = false;
 
@@ -19,9 +19,10 @@ class LocationProvider extends ChangeNotifier {
   bool _isDialogShowing = false;
   bool get isDialogShowing => _isDialogShowing;
 
-  //BuildContext? dialogContext;
+
 
   void initialize(BuildContext context) async{
+    WidgetsBinding.instance.addObserver(this);
     serviceListener(context);
     await checkLocationAndPermission(context);
   }
@@ -38,7 +39,7 @@ class LocationProvider extends ChangeNotifier {
         isLocationServiceDisabled = false;
         errorMessage = null;
         notifyListeners();
-       // cancelLocationDialog();
+        cancelLocationDialog(context);
         await getCurrentLocation(context);
       }
     });
@@ -65,6 +66,17 @@ class LocationProvider extends ChangeNotifier {
     await getCurrentLocation(context);
   }
 
+  Future<void> checkPermissionAfterSettings(BuildContext context) async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
+      errorMessage = null;
+      cancelLocationDialog(context);
+      startLiveLocation();
+    }
+  }
+
   Future<void> getCurrentLocation(BuildContext context) async {
 
 
@@ -74,16 +86,26 @@ class LocationProvider extends ChangeNotifier {
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-    }
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied) {
         errorMessage = "Location permissions are denied.";
         notifyListeners();
         showLocationDialog(context);
         return;
       }
+    }
 
-      startLiveLocation();
+    // Permission denied forever
+    if (permission == LocationPermission.deniedForever) {
+      errorMessage = "Location permission permanently denied. Please enable it from app settings.";
+      notifyListeners();
+
+      showLocationDialog(context);
+      return;
+    }
+
+    startLiveLocation();
   }
+
 
   void startLiveLocation(){
     positionSubscription?.cancel();
@@ -101,6 +123,7 @@ class LocationProvider extends ChangeNotifier {
 
   void showLocationDialog(BuildContext context){
     if(_isDialogShowing) return;
+
      _isDialogShowing = true;
 
      showLocationServiceDialog(context).then((_){
@@ -111,13 +134,12 @@ class LocationProvider extends ChangeNotifier {
      });
   }
 
-  // void cancelLocationDialog(){
-  //   if(_isDialogShowing && dialogContext != null){
-  //     Navigator.of(dialogContext!).pop();
-  //     _isDialogShowing = false;
-  //     dialogContext = null;
-  //   }
-  // }
+  void cancelLocationDialog(BuildContext context){
+    if (_isDialogShowing) {
+      Navigator.of(context, rootNavigator: true).pop();
+      _isDialogShowing = false;
+    }
+  }
 
   @override
   void dispose() {
