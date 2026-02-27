@@ -2,17 +2,12 @@ import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/image_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../widgets/widget_navigation_icon.dart';
 import '../../provider/bottom_navigation_provider.dart';
 
 class CustomBottomNavigation extends StatelessWidget {
 
-
-  const CustomBottomNavigation({
-    super.key,
-
-  });
+  const CustomBottomNavigation({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +27,5 @@ class CustomBottomNavigation extends StatelessWidget {
         ],
       ),
     );
-
   }
-
-
-
 }
