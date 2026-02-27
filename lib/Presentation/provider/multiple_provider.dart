@@ -62,7 +62,7 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SplashProvider()),
         ChangeNotifierProvider(create: (_) => VerifyHRSPProvider()),
         ChangeNotifierProvider(create: (_) => LoginProvider(loginUseCases: LoginUseCases(loginRepository: LoginRepoImpl()))),
-        ChangeNotifierProvider(create: (_) => FileProvider()),
+        ChangeNotifierProvider(create: (_) => FileProvider()..initCamera()),
         ChangeNotifierProvider(create: (_) => VehiclePartsProvider(vehiclePartsUseCases: VehiclePartsUseCases(vehiclePartsRepository: VehiclePartsRepoImpl()))),
         ChangeNotifierProvider(create: (_) => VehicleTypeProvider(vehicleTypeUseCases: VehicleTypeUseCases(vehicleTypeRepository: VehicleTypeRepoImpl()))),
         ChangeNotifierProvider(create: (_) => VehicleClassProvider(vehicleClassUseCases: VehicleClassUseCases(vehicleClassRepository: VehicleClassRepoImpl()))),

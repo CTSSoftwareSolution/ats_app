@@ -43,6 +43,17 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> w
 
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      context.read<LocationProvider>().initialize(context);
+    });
+  }
+
+
+
+
+  @override
   Widget build(BuildContext context) {
     final navigationProvider = context.watch<BottomNavigationProvider>();
     return PopScope(

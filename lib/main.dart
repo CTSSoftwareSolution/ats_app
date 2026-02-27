@@ -11,7 +11,6 @@ import 'Presentation/provider/permission_provider.dart';
 import 'Presentation/screens/splash_page/splash_screen.dart';
 import 'app_config/app_config.dart';
 
-
 List<CameraDescription>? cameras;
 
 void main() async {
@@ -44,8 +43,7 @@ class _MyAppState extends State<MyApp> {
         title: 'Flutter Demo',
         theme: ThemeData(
             scaffoldBackgroundColor: whiteColor,
-            colorScheme:
-            ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: false,
             appBarTheme: const AppBarTheme(
                 systemOverlayStyle: SystemUiOverlayStyle(

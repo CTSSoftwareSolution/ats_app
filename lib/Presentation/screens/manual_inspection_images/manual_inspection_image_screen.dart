@@ -24,25 +24,19 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_)async{
-      cameraApi();
+     // cameraApi();
     });
-
   }
-
 
   @override
   void dispose() {
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
-
-
   }
 
   void cameraApi()async{
-    await context.watch<FileProvider>().initCamera();
-
+   // await context.watch<FileProvider>().initCamera();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +88,6 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
                             index: index,
                             isTablet: false,
                           borderRadius: 5.0,
-
                         ))
                       ],
                     ),
@@ -109,7 +102,9 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: FloatingActionButton.extended(
             backgroundColor: appColor,
-              onPressed: (){},
+              onPressed: (){
+
+              },
               label: CustomText(text: "Next", fontSize: 18.0, fontFamily: "Bold",)),
         ),
       ),
