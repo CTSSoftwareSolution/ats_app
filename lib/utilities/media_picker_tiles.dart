@@ -2,8 +2,8 @@
 import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../Presentation/provider/MediaPicker/file_provider.dart';
 import '../Presentation/screens/camera_page/camera_screen.dart';
+import '../image_processing/MediaPicker/file_provider.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_image.dart';
 import '../widgets/custom_text.dart';

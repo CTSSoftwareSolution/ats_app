@@ -1,9 +1,9 @@
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/custom_confirmation_dialog_box.dart';
-import '../../provider/MediaPicker/file_provider.dart';
 import '../../provider/pre_ins_manual_status_provider.dart';
 import '../vehicle_test_parameter/vehicle_parts_screen.dart';
 import 'inspection_page/inspection_page.dart';
