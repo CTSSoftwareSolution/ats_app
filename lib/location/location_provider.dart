@@ -27,6 +27,15 @@ class LocationProvider extends ChangeNotifier {
   bool get isLocationServiceDisabled => _isLocationServiceDisabled;
   bool get isPermissionDenied => _isPermissionDenied;
 
+
+  String getLatitudeDirection(double latitude) {
+    return latitude >= 0 ? "North" : "South";
+  }
+
+  String getLongitudeDirection(double longitude) {
+    return longitude >= 0 ? "East" : "West";
+  }
+
   LocationProvider(BuildContext context) {
     _initializeLocation(context);
   }

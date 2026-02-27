@@ -3,7 +3,9 @@ import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../main.dart';
+import '../../location/location_provider.dart';
 import 'file_service.dart';
 
 class FileProvider with ChangeNotifier {
@@ -17,6 +19,7 @@ class FileProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   XFile? originalImage;
   XFile? overlayImage;
+  LocationProvider? locationProvider;
 
   CameraController? controller;
   int? currentIndex;
@@ -157,6 +160,7 @@ class FileProvider with ChangeNotifier {
   // }
 
   Future<void> takePicture(BuildContext context) async {
+    final location = Provider.of<LocationProvider>(context, listen: false);
     HapticFeedback.heavyImpact();
     CustomLoader.showLoader("Image Processing...");
     try {
@@ -165,18 +169,19 @@ class FileProvider with ChangeNotifier {
       }
       final XFile picture = await controller!.takePicture();
       originalImage = picture;
-
-      final overlayPath = await ImageProcessingService.processOverlayImage(picture);
+      final overlayPath = await ImageProcessingService.processOverlayImage(picture: picture,context: context);
+      final lat = location.currentPosition?.latitude ?? 0.0;
+      final lng = location.currentPosition?.longitude ?? 0.0;
 
       await ImageProcessingService.writeExifMetadata(
         overlayPath,
-        lat: 23.45,
-        lng: 72.11,
+        lat: lat,
+        lng: lng,
         overlayData: {
           'vehicleNo': 'MH20DC1761',
           'address': 'Navi Mumbai',
-          'lat': 23.45,
-          'lng': 72.11,
+          'lat': lat,
+          'lng': lng,
           'date': DateTime.now().toString(),
         },
       );
