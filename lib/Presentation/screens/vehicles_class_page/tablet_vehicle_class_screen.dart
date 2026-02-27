@@ -3,13 +3,13 @@ import 'package:ats_app/utilities/color_data.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../utilities/extension.dart';
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_image.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/custom_search_bar.dart';
 import '../../../widgets/custom_text.dart';
-import '../../provider/MediaPicker/file_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../vehicle_test_parameter/vehicle_parts_screen.dart';
 

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:ats_app/Presentation/provider/MediaPicker/file_provider.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/image_data.dart';
@@ -9,6 +8,8 @@ import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../../image_processing/MediaPicker/file_provider.dart';
 
 class UploadImageContainer extends StatelessWidget {
   final VoidCallback onTap;

@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:ats_app/Presentation/provider/MediaPicker/file_provider.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/answer_button.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/widgets/custom_text_field.dart';
@@ -8,9 +6,9 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../Core/network/services.dart';
 import '../../../../aws_images/aws_signedurl_provider.dart';
+import '../../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../camera_page/camera_screen.dart';
 import 'image_picker_prompt.dart';

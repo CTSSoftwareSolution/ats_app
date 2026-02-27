@@ -31,10 +31,8 @@ import 'package:ats_app/aws_images/aws_repository_impl.dart';
 import 'package:ats_app/aws_images/aws_signedurl_provider.dart';
 import 'package:ats_app/aws_images/aws_usecase.dart';
 import 'package:ats_app/location/location_provider.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../Data/repositories_impl/inspection_que_impl.dart';
 import '../../Data/repositories_impl/inspection_type_impl.dart';
 import '../../Data/repositories_impl/pre_ins_details_impl.dart';
@@ -44,9 +42,8 @@ import '../../Domain/usecases/inspection_type_usecases.dart';
 import '../../Domain/usecases/pre_ins_details_usecases.dart';
 import '../../Domain/usecases/pre_ins_manual_status_usecases.dart';
 import '../../Domain/usecases/vehicle_class_usecases.dart';
+import '../../image_processing/MediaPicker/file_provider.dart';
 import '../../main.dart';
-
-import 'MediaPicker/file_provider.dart';
 import 'bottom_navigation_provider.dart';
 
 class MultipleProvider extends StatelessWidget {

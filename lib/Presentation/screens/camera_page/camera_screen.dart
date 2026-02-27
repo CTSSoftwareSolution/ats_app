@@ -4,9 +4,9 @@ import 'package:camera/camera.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_loader.dart';
-import '../../provider/MediaPicker/file_provider.dart';
 
 class CameraScreen extends StatefulWidget {
 

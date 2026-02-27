@@ -1,12 +1,10 @@
-import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
-import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../utilities/extension.dart';
 import '../../../widgets/custom_text.dart';
-import '../../provider/MediaPicker/file_provider.dart';
 import '../camera_page/camera_screen.dart';
 
 class VehiclePartsResponsiveItem extends StatelessWidget {
@@ -39,10 +37,8 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
        UploadImageContainer(
                index: allIndex,
                 onTap: () {
-
                   context.read<FileProvider>().setCurrentIndex(allIndex);
                   context.push(CameraScreen());
-
                 },
                 isTablet: isTablet,
               ),
