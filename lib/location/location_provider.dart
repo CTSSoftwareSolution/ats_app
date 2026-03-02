@@ -21,6 +21,8 @@ class LocationProvider extends ChangeNotifier with WidgetsBindingObserver{
 
 
 
+
+
   void initialize(BuildContext context) async{
     WidgetsBinding.instance.addObserver(this);
     serviceListener(context);
@@ -34,11 +36,18 @@ class LocationProvider extends ChangeNotifier with WidgetsBindingObserver{
         isLocationServiceDisabled = true;
         errorMessage = "Location services are disabled on your device.";
         notifyListeners();
-        showLocationDialog(context);
+
+        // await Future.delayed(Duration(milliseconds: 800));
+        //
+        // bool stillDisable = !(await Geolocator.isLocationServiceEnabled());
+        // if(stillDisable && !_isDialogShowing){
+        //   showLocationDialog(context);
+        // }
       }else if(status == ServiceStatus.enabled){
         isLocationServiceDisabled = false;
         errorMessage = null;
         notifyListeners();
+
         cancelLocationDialog(context);
         await getCurrentLocation(context);
       }
@@ -55,7 +64,7 @@ class LocationProvider extends ChangeNotifier with WidgetsBindingObserver{
       isLocationServiceDisabled = true;
       errorMessage = "Location services are disabled on your device.";
       notifyListeners();
-      showLocationDialog(context);
+     showLocationDialog(context);
 
       return;
     }
