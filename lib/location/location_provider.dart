@@ -1,9 +1,8 @@
-
+import 'dart:async';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
-
 import '../utilities/extension.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text.dart';
@@ -26,6 +25,7 @@ class LocationProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isLocationServiceDisabled => _isLocationServiceDisabled;
   bool get isPermissionDenied => _isPermissionDenied;
+  StreamSubscription<ServiceStatus>? streamSubscription;
 
 
   String getLatitudeDirection(double latitude) {
@@ -38,11 +38,30 @@ class LocationProvider extends ChangeNotifier {
 
   LocationProvider(BuildContext context) {
     _initializeLocation(context);
+
   }
 
   Future<void> _initializeLocation(BuildContext context) async {
     await _getLastKnownPosition(context);
     await getCurrentLocation(context);
+  }
+
+  void _listenToLocationService(BuildContext context){
+    streamSubscription?.cancel();
+    streamSubscription = Geolocator.getServiceStatusStream().listen((ServiceStatus status) async{
+      if(status == ServiceStatus.enabled){
+        _isLocationServiceDisabled = false;
+        _errorMessage = null;
+
+
+        if (Navigator.canPop(context)) {
+          Navigator.of(context, rootNavigator: true).pop();
+        }
+
+        await getCurrentLocation(context);
+      }
+
+    });
   }
 
   Future<void> _getLastKnownPosition(BuildContext context) async {
@@ -187,6 +206,7 @@ class LocationProvider extends ChangeNotifier {
 
 
   Future<bool> _showLocationServiceDialog(BuildContext context) async {
+    _listenToLocationService(context);
     return await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -251,4 +271,6 @@ class LocationProvider extends ChangeNotifier {
       ),
     );
   }
+
+
 }
