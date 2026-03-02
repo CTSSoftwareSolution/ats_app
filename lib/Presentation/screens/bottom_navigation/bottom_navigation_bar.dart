@@ -13,40 +13,49 @@ class BottomNavigationBarScreen extends StatefulWidget {
   const BottomNavigationBarScreen({super.key});
 
   @override
-  State<BottomNavigationBarScreen> createState() =>
-      _BottomNavigationBarScreenState();
+  State<BottomNavigationBarScreen> createState() => _BottomNavigationBarScreenState();
 }
 
-class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> with WidgetsBindingObserver{
+class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> with WidgetsBindingObserver {
+
+
+  bool _openedSettings = false; // ✅ track karo ki settings gaye the ya nahi
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      context.read<LocationProvider>().initialize(context);
-    });
   }
 
   @override
-  void dispose(){
+  void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    final locationProvider = Provider.of<LocationProvider>(context, listen: false);
     if (state == AppLifecycleState.resumed) {
-      context.read<LocationProvider>().checkPermissionAfterSettings(context);
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await locationProvider.getCurrentLocation(context);
+      });
+    } else if (state == AppLifecycleState.paused) {
+    } else if (state == AppLifecycleState.inactive) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await locationProvider.getCurrentLocation(context);
+      });
+    } else if (state == AppLifecycleState.detached) {
+    } else if (state == AppLifecycleState.hidden) {
     }
   }
 
-
-
-
-
-
-
+  Future<void> locationPermission() async {
+    final locationProvider = Provider.of<LocationProvider>(context,listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await locationProvider.getCurrentLocation(context);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final navigationProvider = context.watch<BottomNavigationProvider>();

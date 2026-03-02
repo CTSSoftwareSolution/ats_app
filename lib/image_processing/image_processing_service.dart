@@ -2,18 +2,27 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:native_exif/native_exif.dart';
+import 'package:provider/provider.dart';
 import 'package:saver_gallery/saver_gallery.dart';
 import 'package:image/image.dart' as img;
 
+import '../location/location_provider.dart';
+
 class ImageProcessingService {
+
   const ImageProcessingService._();
 
-  static Future<String> processOverlayImage(XFile picture) async {
+  static Future<String> processOverlayImage({required XFile picture, required BuildContext context}) async {
+    final location = Provider.of<LocationProvider>(context, listen: false);
+    final lat = location.currentPosition?.latitude ?? 0.0;
+    final lng = location.currentPosition?.longitude ?? 0.0;
+
     final file = File(picture.path);
     final now = DateTime.now();
-    final rawText = "Vehicle No: MH20DC1761\nAddress: Navi Mumbai\nLat: 23.45, Lng: 72.11\nDate: $now";
+    final rawText = "Vehicle No: MH20DC1761\nAddress: Navi Mumbai\nLat: $lat, Lng: $lng\nDate: $now";
     final displayText = rawText.split('\n').map((line) => _wrapText(line, 32)).join('\n');
 
     final bytes = await file.readAsBytes();
@@ -70,9 +79,7 @@ class ImageProcessingService {
     final exif = await Exif.fromPath(overlayPath);
     await exif.writeAttributes({
       'GPSLatitude': '$lat',
-      'GPSLatitudeRef': 'N',
       'GPSLongitude': '$lng',
-      'GPSLongitudeRef': 'E',
       'UserComment': overlayText,
       'ImageDescription': overlayText,
     });
@@ -105,4 +112,5 @@ class ImageProcessingService {
     }
     return buffer.toString().trimRight();
   }
+
 }
