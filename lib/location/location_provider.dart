@@ -36,12 +36,12 @@ class LocationProvider extends ChangeNotifier {
     return longitude >= 0 ? "East" : "West";
   }
 
-  LocationProvider(BuildContext context) {
-    _initializeLocation(context);
+  // LocationProvider(BuildContext context) {
+  //   _initializeLocation(context);
+  //
+  // }
 
-  }
-
-  Future<void> _initializeLocation(BuildContext context) async {
+  Future<void> initializeLocation(BuildContext context) async {
     await _getLastKnownPosition(context);
     await getCurrentLocation(context);
   }
@@ -53,7 +53,6 @@ class LocationProvider extends ChangeNotifier {
         _isLocationServiceDisabled = false;
         _errorMessage = null;
 
-
         if (Navigator.canPop(context)) {
           Navigator.of(context, rootNavigator: true).pop();
         }
@@ -63,6 +62,8 @@ class LocationProvider extends ChangeNotifier {
 
     });
   }
+
+
 
   Future<void> _getLastKnownPosition(BuildContext context) async {
     try {
@@ -182,7 +183,11 @@ class LocationProvider extends ChangeNotifier {
               SizedBox(
                 width: double.infinity,
                 child: CustomButton(buttonText: "Open Settings",
-                    onPress: ()=>Navigator.pop(context, true),
+                    onPress: () async {
+                      Navigator.pop(context);
+                      await Future.delayed(const Duration(milliseconds: 200));
+                      await Geolocator.openAppSettings();
+                    },
                     fontWeight: FontWeight.w600,
                     backgroundColor: appColor,
                     foregroundColor: Colors.white,
@@ -195,9 +200,11 @@ class LocationProvider extends ChangeNotifier {
           ),
         ),
       );
-      if (openSettings == true) {
-        await Geolocator.openAppSettings();
-      }
+      // if (openSettings == true) {
+      //   WidgetsBinding.instance.addPostFrameCallback((_) async {
+      //     await Geolocator.openAppSettings();
+      //   });
+      // }
       return false;
     }
     _isPermissionDenied = false;
@@ -234,8 +241,8 @@ class LocationProvider extends ChangeNotifier {
               width: double.infinity,
               child: CustomButton(buttonText: "Enable",
                   onPress: ()async{
+                    Navigator.pop(context);
                     await Geolocator.openLocationSettings();
-                    Navigator.pop(context, true);
                   },
                   fontWeight: FontWeight.w600,
                   backgroundColor: appColor,
@@ -259,10 +266,10 @@ class LocationProvider extends ChangeNotifier {
         title: const Text('Location Permission'),
         content: const Text('This app needs location permission to work properly'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Deny'),
-          ),
+          // TextButton(
+          //   onPressed: () => Navigator.pop(context, false),
+          //   child: const Text('Deny'),
+          // ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Allow'),
@@ -270,6 +277,12 @@ class LocationProvider extends ChangeNotifier {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    streamSubscription?.cancel();
+    super.dispose();
   }
 
 

@@ -1,36 +1,44 @@
 class VehicleNumberPlateModels {
   VehicleNumberPlateModels({
-      String? status, 
+      bool? status, 
       String? requestId, 
+      String? analysisMsg, 
       Analysis? analysis,}){
     _status = status;
     _requestId = requestId;
+    _analysisMsg = analysisMsg;
     _analysis = analysis;
 }
 
   VehicleNumberPlateModels.fromJson(dynamic json) {
     _status = json['status'];
     _requestId = json['request_id'];
+    _analysisMsg = json['analysisMsg'];
     _analysis = json['analysis'] != null ? Analysis.fromJson(json['analysis']) : null;
   }
-  String? _status;
+  bool? _status;
   String? _requestId;
+  String? _analysisMsg;
   Analysis? _analysis;
-VehicleNumberPlateModels copyWith({  String? status,
+VehicleNumberPlateModels copyWith({  bool? status,
   String? requestId,
+  String? analysisMsg,
   Analysis? analysis,
 }) => VehicleNumberPlateModels(  status: status ?? _status,
   requestId: requestId ?? _requestId,
+  analysisMsg: analysisMsg ?? _analysisMsg,
   analysis: analysis ?? _analysis,
 );
-  String? get status => _status;
+  bool? get status => _status;
   String? get requestId => _requestId;
+  String? get analysisMsg => _analysisMsg;
   Analysis? get analysis => _analysis;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['status'] = _status;
     map['request_id'] = _requestId;
+    map['analysisMsg'] = _analysisMsg;
     if (_analysis != null) {
       map['analysis'] = _analysis?.toJson();
     }
@@ -46,7 +54,7 @@ class Analysis {
       bool? platePresence, 
       bool? symbolPresent, 
       bool? laserIdPresent, 
-      String? expecedPlate, 
+      String? expectedPlate, 
       String? ocrPlateText, 
       num? score, 
       String? decision, 
@@ -56,7 +64,7 @@ class Analysis {
     _platePresence = platePresence;
     _symbolPresent = symbolPresent;
     _laserIdPresent = laserIdPresent;
-    _expecedPlate = expecedPlate;
+    _expectedPlate = expectedPlate;
     _ocrPlateText = ocrPlateText;
     _score = score;
     _decision = decision;
@@ -69,7 +77,7 @@ class Analysis {
     _platePresence = json['plate_presence'];
     _symbolPresent = json['symbol_present'];
     _laserIdPresent = json['laser_id_present'];
-    _expecedPlate = json['expeced_plate'];
+    _expectedPlate = json['expected_plate'];
     _ocrPlateText = json['ocr_plate_text'];
     _score = json['score'];
     _decision = json['decision'];
@@ -80,7 +88,7 @@ class Analysis {
   bool? _platePresence;
   bool? _symbolPresent;
   bool? _laserIdPresent;
-  String? _expecedPlate;
+  String? _expectedPlate;
   String? _ocrPlateText;
   num? _score;
   String? _decision;
@@ -90,7 +98,7 @@ Analysis copyWith({  String? requestId,
   bool? platePresence,
   bool? symbolPresent,
   bool? laserIdPresent,
-  String? expecedPlate,
+  String? expectedPlate,
   String? ocrPlateText,
   num? score,
   String? decision,
@@ -100,7 +108,7 @@ Analysis copyWith({  String? requestId,
   platePresence: platePresence ?? _platePresence,
   symbolPresent: symbolPresent ?? _symbolPresent,
   laserIdPresent: laserIdPresent ?? _laserIdPresent,
-  expecedPlate: expecedPlate ?? _expecedPlate,
+  expectedPlate: expectedPlate ?? _expectedPlate,
   ocrPlateText: ocrPlateText ?? _ocrPlateText,
   score: score ?? _score,
   decision: decision ?? _decision,
@@ -111,7 +119,7 @@ Analysis copyWith({  String? requestId,
   bool? get platePresence => _platePresence;
   bool? get symbolPresent => _symbolPresent;
   bool? get laserIdPresent => _laserIdPresent;
-  String? get expecedPlate => _expecedPlate;
+  String? get expectedPlate => _expectedPlate;
   String? get ocrPlateText => _ocrPlateText;
   num? get score => _score;
   String? get decision => _decision;
@@ -124,7 +132,7 @@ Analysis copyWith({  String? requestId,
     map['plate_presence'] = _platePresence;
     map['symbol_present'] = _symbolPresent;
     map['laser_id_present'] = _laserIdPresent;
-    map['expeced_plate'] = _expecedPlate;
+    map['expected_plate'] = _expectedPlate;
     map['ocr_plate_text'] = _ocrPlateText;
     map['score'] = _score;
     map['decision'] = _decision;
