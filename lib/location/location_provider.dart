@@ -26,7 +26,7 @@ class LocationProvider extends ChangeNotifier {
   bool get isLocationServiceDisabled => _isLocationServiceDisabled;
   bool get isPermissionDenied => _isPermissionDenied;
   StreamSubscription<ServiceStatus>? streamSubscription;
-
+  bool _isLocationDialogOpen = false;
 
   String getLatitudeDirection(double latitude) {
     return latitude >= 0 ? "North" : "South";
@@ -42,8 +42,9 @@ class LocationProvider extends ChangeNotifier {
   // }
 
   Future<void> initializeLocation(BuildContext context) async {
-    await _getLastKnownPosition(context);
-    await getCurrentLocation(context);
+    //await _getLastKnownPosition(context);
+     await getCurrentLocation(context);
+     _listenToLocationService(context);
   }
 
   void _listenToLocationService(BuildContext context){
@@ -53,11 +54,17 @@ class LocationProvider extends ChangeNotifier {
         _isLocationServiceDisabled = false;
         _errorMessage = null;
 
-        if (Navigator.canPop(context)) {
-          Navigator.of(context, rootNavigator: true).pop();
+        if (_isLocationDialogOpen && Navigator.canPop(context)) {
+          Navigator.pop(context);
         }
 
+
         await getCurrentLocation(context);
+
+      }else if(status == ServiceStatus.disabled){
+        _isLocationServiceDisabled = true;
+        _errorMessage = "Location services are disabled on your device.";
+        notifyListeners();
       }
 
     });
@@ -213,8 +220,9 @@ class LocationProvider extends ChangeNotifier {
 
 
   Future<bool> _showLocationServiceDialog(BuildContext context) async {
-    _listenToLocationService(context);
-    return await showDialog<bool>(
+    _isLocationDialogOpen = true;
+
+    final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
@@ -255,7 +263,9 @@ class LocationProvider extends ChangeNotifier {
           ],
         ),
       ),
-    ) ?? false;
+    );
+    _isLocationDialogOpen = false;
+    return result ?? false;
   }
 
   Future<bool?> _showPermissionDialog(BuildContext context) async {
