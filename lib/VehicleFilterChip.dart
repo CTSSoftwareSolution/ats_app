@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../../../utilities/color_data.dart';
 
@@ -13,22 +12,6 @@ class VehicleFilterChip extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
   });
-  IconData _iconFor(String label) {
-    switch (label) {
-      case 'All':
-        return Icons.dashboard_rounded;
-      case 'LMV':
-        return Icons.directions_car_rounded;
-      case 'HMV':
-        return Icons.local_shipping_rounded;
-      case 'MCWG':
-        return Icons.two_wheeler_rounded;
-      case 'EV':
-        return Icons.electric_bolt_rounded;
-      default:
-        return Icons.filter_list_rounded;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +20,7 @@ class VehicleFilterChip extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeInOut,
-        padding:
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected ? appColor : Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -53,7 +35,8 @@ class VehicleFilterChip extends StatelessWidget {
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
-          ] : [
+          ]
+              : [
             BoxShadow(
               color: Colors.black.withOpacity(0.06),
               blurRadius: 4,
@@ -61,29 +44,14 @@ class VehicleFilterChip extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: Icon(
-                _iconFor(label),
-                key: ValueKey(isSelected),
-                size: 16,
-                color: isSelected ? Colors.white : Colors.grey.shade600,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: isSelected ? Colors.white : Colors.black87,
-                letterSpacing: 0.4,
-              ),
-            ),
-          ],
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: isSelected ? Colors.white : Colors.black87,
+            letterSpacing: 0.4,
+          ),
         ),
       ),
     );

@@ -9,16 +9,13 @@ class BottomNavigationProvider extends ChangeNotifier{
 
   int pageIndex = 0;
   bool isSelected = false;
-
   bool isTablet = false;
-
   bool get isTabletMode => isTablet;
 
   void setTabletMode(bool value) {
     isTablet = value;
     notifyListeners();
   }
-
 
   final pages = [
     HomeScreen(),

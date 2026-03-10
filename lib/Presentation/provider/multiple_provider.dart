@@ -1,15 +1,14 @@
+import 'package:ats_app/Data/repositories_impl/lane_list_impl.dart';
 import 'package:ats_app/Data/repositories_impl/login_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/pre_save_inspection_impl.dart';
-import 'package:ats_app/Data/repositories_impl/profile_details_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/vehicle_class_repo_impl.dart';
+import 'package:ats_app/Domain/usecases/lane_list_usecase.dart';
 import 'package:ats_app/Domain/usecases/login_usecases.dart';
 import 'package:ats_app/Domain/usecases/pre_save_inspection_usecase.dart';
-import 'package:ats_app/Domain/usecases/profile_details_usecases.dart';
 import 'package:ats_app/Presentation/provider/inspection_form_provider.dart';
 import 'package:ats_app/Presentation/provider/inspection_result_provider.dart';
 import 'package:ats_app/Presentation/provider/login_provider.dart';
 import 'package:ats_app/Presentation/provider/permission_provider.dart';
-import 'package:ats_app/Presentation/provider/profile_details_provider.dart';
 import 'package:ats_app/Presentation/provider/splash_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/Presentation/provider/verify_hsrp_provider.dart';
@@ -29,6 +28,7 @@ import '../../image_processing/MediaPicker/file_provider.dart';
 import '../../main.dart';
 import '../screens/pre_inspection_form/pre_save_inspection_provider.dart';
 import 'bottom_navigation_provider.dart';
+import 'lane_list_provider.dart';
 
 class MultipleProvider extends StatelessWidget {
   final PermissionProvider permissionProvider;
@@ -45,12 +45,12 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginProvider(loginUseCases: LoginUseCases(loginRepository: LoginRepoImpl()))),
         ChangeNotifierProvider(create: (_) => FileProvider()..initCamera()),
         ChangeNotifierProvider(create: (_) => VehicleClassProvider(vehicleClassUseCases: VehicleClassUseCases(vehicleClassRepository: VehicleClassRepoImpl()))),
-        ChangeNotifierProvider(create: (_) => ProfileDetailsProvider(profileDetailsUseCases: ProfileDetailsUseCases(profileDetailsRepository: ProfileDetailsRepoImpl()))),
         ChangeNotifierProvider(create: (_) => InspectionResultProvider()),
         ChangeNotifierProvider(create: (_) => InspectionFormProvider(inspectionQueUseCases: InspectionQueUseCases(inspectionQueRepository: InspectionQueImpl()))),
         ChangeNotifierProvider(create: (_) => AwsSignedUrlProvider(awsUseCase: AwsUseCase(repository: AwsRepositoryImpl()))),
         ChangeNotifierProvider(create: (_) => ManualInsImageProvider(useCase: DocumentManualDocUseCase(repository: DocumentManualDocImpl()))),
         ChangeNotifierProvider(create: (_) => PreSaveInspectionProvider(useCase: PreSaveInspectionUseCase(repository: PreSaveInspectionImpl()))),
+        ChangeNotifierProvider(create: (_) => LaneListProvider(laneListUseCase: LaneListUseCase(laneListRepository: LaneListImpl()))),
         ChangeNotifierProvider(create: (_) => LocationProvider())
       ],
       child: const MyApp(),

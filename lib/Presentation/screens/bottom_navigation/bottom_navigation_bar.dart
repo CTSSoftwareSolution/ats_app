@@ -18,9 +18,6 @@ class BottomNavigationBarScreen extends StatefulWidget {
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> with WidgetsBindingObserver {
 
-
-  bool _openedSettings = false; // ✅ track karo ki settings gaye the ya nahi
-
   @override
   void initState() {
     super.initState();
@@ -85,7 +82,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> w
           context.read<BottomNavigationProvider>().updateIndex(0);
         }
       },
-      child: Scaffold(body: NavigationBarResponsiveLayout()),
+      child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: NavigationBarResponsiveLayout()),
     );
   }
 }

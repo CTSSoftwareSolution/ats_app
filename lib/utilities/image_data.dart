@@ -66,56 +66,50 @@ List<ListModel> mediaSource = [
 ];
 
 List<ProfileModel> profileGridValues = [
+
   const ProfileModel(
     0,
-    'Personal Details',
-    'View your personal details',
-    editProfileIcon,
-    ProfileTrailingType.arrow,
-  ),
-  const ProfileModel(
-    1,
     'Notification',
     'Manage your alerts and notifications',
     notificationIcon,
     ProfileTrailingType.switchButton,
   ),
   const ProfileModel(
-    2,
+    1,
     'Privacy Policy',
     'Learn how we protect your data',
     privacyIcon,
     ProfileTrailingType.arrow,
   ),
   const ProfileModel(
-    3,
+    2,
     'Terms & Conditions',
     'Our rules, explained simply',
     termsIcon,
     ProfileTrailingType.arrow,
   ),
   const ProfileModel(
-    4,
+    3,
     'Contact Us',
     'We are here, if you need any help',
     contactUsIcon,
     ProfileTrailingType.arrow,
   ),
   const ProfileModel(
-    5,
+    4,
     'Ip Config',
     'Change Ip Address to access',
     logoutIcon,
     ProfileTrailingType.none,
   ),
   const ProfileModel(
-    6,
+    5,
     'Logout',
     'Sign out safely and easily',
     logoutIcon,
     ProfileTrailingType.none,
   ),
-  const ProfileModel(7, '', '', versionControlIcon, ProfileTrailingType.none),
+  const ProfileModel(6, 'Version', 'Check your version', versionControlIcon, ProfileTrailingType.none),
 ];
 
 List<BottomNavModel> bottomNavValue = [

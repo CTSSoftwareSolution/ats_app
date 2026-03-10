@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -41,34 +42,28 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<VehicleClassProvider>();
-
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF4F6FB),
-        body: Column(
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4F6FB),
+      body: SafeArea(
+        child: Column(
           children: [
             BuildHeaderHome(),
             SearchFilterBarHome(provider: provider),
             Expanded(
-              child: provider.isLoading
-                  ? ListView.builder(
+              child: provider.isLoading ? ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: 6,
                 itemBuilder: (_, __) => const HomeShimmer(),
-              ) : (provider.vehicleClassEntity?.data?.appointments?.isEmpty ??
-                  true)
+              ) : (provider.vehicleClassEntity?.data?.appointments?.isEmpty ?? true)
                   ? const EmptyStateWidget(
                 icon: Icons.search_off_rounded,
                 title: 'No Appointments Found',
                 subtitle: 'Try changing the filter or search term',
-              )
-                  : ListView.builder(
+              ) : ListView.builder(
                 padding: EdgeInsets.only(bottom: 100),
                 controller: _scrollController,
                 physics: const BouncingScrollPhysics(),
-                itemCount: provider.vehicleClassEntity!.data!
-                    .appointments!.length +
-                    (provider.isLoadMore ? 1 : 0),
+                itemCount: provider.vehicleClassEntity!.data!.appointments!.length + (provider.isLoadMore ? 1 : 0),
                 itemBuilder: (context, index) {
                   final appointments = provider.vehicleClassEntity!.data!.appointments!;
                   if (index == appointments.length) {

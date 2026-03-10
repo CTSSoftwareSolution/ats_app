@@ -37,12 +37,12 @@ Widget buildSection(List<Widget> tiles) {
   );
 }
 
-Widget buildTile(
-  String leadingImage,
-  String title,
-  String subtitle,
-  Widget child,
-) {
+Widget buildTile({
+  String? leadingImage,
+  String? title,
+  String? subtitle,
+  Widget? child,
+}) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 13.0),
     child: Row(
@@ -58,7 +58,7 @@ Widget buildTile(
           ),
           child: Center(
             child: Image(
-              image: AssetImage(leadingImage),
+              image: AssetImage(leadingImage!),
               width: 22,
               height: 22,
               color: appColor,
@@ -68,9 +68,9 @@ Widget buildTile(
         12.width,
         // Text
         Expanded(
-          child: subtitle.isEmpty
+          child: subtitle!.isEmpty
               ? CustomText(
-                  text: title,
+                  text: title!,
                   fontSize: 15.5,
                   fontFamily: "Bold",
                   textColor: const Color(0xFF1C2A45),
@@ -80,7 +80,7 @@ Widget buildTile(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomText(
-                      text: title,
+                      text: title!,
                       fontSize: 15.5,
                       fontFamily: "Bold",
                       textColor: const Color(0xFF1C2A45),
@@ -96,7 +96,7 @@ Widget buildTile(
                 ),
         ),
         // Trailing widget
-        child,
+        child!,
       ],
     ),
   );
@@ -132,3 +132,5 @@ Widget buildProfileView({required String title, required String value}) {
     ),
   );
 }
+
+

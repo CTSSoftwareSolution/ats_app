@@ -1,4 +1,3 @@
-import 'package:ats_app/Presentation/provider/profile_details_provider.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_page/inspection_page.dart';
 import 'package:ats_app/Presentation/screens/profile_page/profile_details_container.dart';
 import 'package:ats_app/utilities/profile_menu_widget.dart';
@@ -14,7 +13,6 @@ import '../../../widgets/custom_dialog_box.dart';
 import '../../provider/login_provider.dart';
 import '../login_page/login_screen.dart';
 import '../manual_inspection_images/manual_inspection_image_screen.dart';
-import '../profile_view_details_page/profile_view_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -28,7 +26,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ProfileDetailsProvider>().getAppVersion();
+
+
+    // Future<void> getAppVersion() async {
+    //   try {
+    //     PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    //
+    //     appVersion = 'Version: ${packageInfo.version}';
+    //
+    //   } catch (e) {
+    //
+    //     appVersion = 'Error';
+    //   }
+    //   notifyListeners();
+    // }
   }
 
   @override
@@ -81,10 +92,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                           children: [
                             buildTile(
-                              profileGridValues[index].image,
-                              index == 7 ? context.watch<ProfileDetailsProvider>().appVersion : profileGridValues[index].title,
-                              profileGridValues[index].subtitle,
-                              getTrailingWidget(profileGridValues[index]),
+                              leadingImage: profileGridValues[index].image,
+                             title: profileGridValues[index].title,
+                             subtitle: profileGridValues[index].subtitle,
+                             child: Text("")
                             ),
                           ],
                         ),
@@ -103,7 +114,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void click(int index, BuildContext context) {
     switch (index) {
       case 0:
-        context.push(ProfileViewScreen());
         break;
       case 1:
         break;
@@ -114,11 +124,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context.push(ManualInspectionImageScreen());
         break;
       case 4:
-        break;
-      case 5:
         showIpAddressBottomSheet(context);
         break;
-      case 6:
+      case 5:
         customShowDialog(
           context: context,
           title: "Log out",
@@ -134,29 +142,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         );
         break;
-      case 7:
+      case 6:
         break;
       default:
         break;
-    }
-  }
-
-  Widget getTrailingWidget(ProfileModel item) {
-    switch (item.trailingType) {
-      case ProfileTrailingType.arrow:
-        return Image.asset(forwardIcon, height: 12);
-      case ProfileTrailingType.switchButton:
-        return Switch(
-          activeThumbColor: appColor,
-          value:  context.watch<ProfileDetailsProvider>().switchValue,
-          onChanged: (value) {
-            setState(() {
-              context.read<ProfileDetailsProvider>().switchValue = value;
-            });
-          },
-        );
-      case ProfileTrailingType.none:
-        return SizedBox.shrink();
     }
   }
 }
