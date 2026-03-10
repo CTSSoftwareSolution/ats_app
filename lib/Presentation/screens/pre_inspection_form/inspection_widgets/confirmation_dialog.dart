@@ -36,7 +36,7 @@ class ConfirmationDialog {
               Row(
                 children: [
                   Icon(
-                    isComplete ? Icons.check_circle : Icons.warning_amber_rounded,
+                    isComplete ? Icons.check_circle : Icons.warning_amber_rounded,///242424
                     color: isComplete ? Colors.green : Colors.orange,
                   ),
                   const SizedBox(width: 10),
@@ -68,7 +68,6 @@ class ConfirmationDialog {
                           ),
                         ),
                         onPressed: () async {
-                          final typeProvider = Provider.of<PreInspectionResultProvider>(context,listen: false);
                           Navigator.pop(context);
                           if (isComplete) {
                             preInspectionSaveAPI(context: context);
@@ -84,52 +83,11 @@ class ConfirmationDialog {
             ),
           ),
         ),
-        // title: Row(
-        //   children: [
-        //     Icon(
-        //       isComplete ? Icons.check_circle : Icons.warning_amber_rounded,
-        //       color: isComplete ? Colors.green : Colors.orange,
-        //     ),
-        //     const SizedBox(width: 10),
-        //     Text(isComplete ? 'Submit Inspection?' : 'Incomplete!'),
-        //   ],
-        // ),
-        // content: Text(
-        //   isComplete
-        //       ? 'All ${provider.grandTotalQuestions} questions answered. Ready to submit?'
-        //       : '$unanswered question(s) still unanswered.',
-        // ),
-        // actions: [
-        //   TextButton(
-        //     onPressed: () => Navigator.pop(context),
-        //     child: unanswered==0? Text("Cancel"):Text("Got it"),
-        //   ),
-        //   unanswered==0?
-        //   ElevatedButton(
-        //     style: ElevatedButton.styleFrom(
-        //       backgroundColor: isComplete ? Colors.green : const Color(0xFF1A3C6E),
-        //       foregroundColor: Colors.white,
-        //       shape: RoundedRectangleBorder(
-        //         borderRadius: BorderRadius.circular(10),
-        //       ),
-        //     ),
-        //     onPressed: () async {
-        //       final typeProvider = Provider.of<PreInspectionResultProvider>(context,listen: false);
-        //       Navigator.pop(context);
-        //       if (isComplete) {
-        //         await typeProvider.saveResultApi(context);
-        //       }
-        //       // _submitInspection(context, provider);
-        //     },
-        //     child: const Text('Submit'),
-        //   ):SizedBox.shrink(),
-        // ],
       ),
     );
   }
 
   static Future<void> preInspectionSaveAPI({required BuildContext context}) async {
-
     final provider = Provider.of<PreSaveInspectionProvider>(context, listen: false);
     final inspectionProvider = Provider.of<InspectionFormProvider>(context, listen: false);
     final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
@@ -172,20 +130,5 @@ class ConfirmationDialog {
       inspections: inspections,
     );
     context.pushAndRemoveUntil(BottomNavigationBarScreen());
-  }
-
-  static void submitInspection(BuildContext context, InspectionFormProvider provider) {
-    final answers = provider.collectAnswers();
-    debugPrint('Submitting: $answers');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Inspection submitted successfully!'),
-        backgroundColor: Colors.green.shade700,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
   }
 }
