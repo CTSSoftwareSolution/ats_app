@@ -1,7 +1,6 @@
 
 
 import '../../Presentation/screens/manual_inspection_images/DocumentManualDocModels.dart';
-import '../../Presentation/screens/manual_inspection_images/DocumentManualDocResModels.dart';
 import '../entities/document_manual_doc_entity.dart';
 
 

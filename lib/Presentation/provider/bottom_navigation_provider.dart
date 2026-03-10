@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 
 import '../../vehicle_number_plate/vehicle_number_plate_screen.dart';
 import '../screens/home_pages/home_screen.dart';
-import '../screens/home_pages/vehicle_registration_screen.dart';
 import '../screens/profile_page/profile_screen.dart';
 import '../screens/result_page/result_screen.dart';
 

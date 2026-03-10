@@ -26,16 +26,8 @@ final alice = Alice(
 
 /// OLD Node.js
 String get loginUrl                    => "$baseUrl/login";
-String get vehicleTypeUrl              => "$baseUrl/getVehicleTypes";
-String get vehicleClassUrl             => "$baseUrl/getVehicleClass";
-String get vehiclePartsUrl             => "$baseUrl/getVehicleParts";
-String get sliderUrl                   => "$baseUrl/getSlider";
+String get vehiclePartsUrl             => "$baseUrl/getVehicleParts"; //// Machine
 String get profileDetailsUrl           => "$baseUrl/getProfile";
-String get inspectionQueUrl            => "$baseUrl/getPreInspectionQuestions";
-String get savePreInspectionResultsUrl => "$baseUrl/savePreInspectionResults";
-String get getInspectionTypeUrl        => "$baseUrl/getInspectionType";
-String get getPreInspectionDetailsUrl  => "$baseUrl/getPreInspectionDetailsByVehicleID";
-String get checkManualInsStatusUrl     => "$baseUrl/checkManualInspectionStatus";
 
 
 /// New API

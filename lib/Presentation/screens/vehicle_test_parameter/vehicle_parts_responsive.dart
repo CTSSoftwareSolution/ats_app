@@ -1,14 +1,11 @@
-import 'dart:io';
 
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/responsive_button.dart';
 
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_responsive_item.dart';
 import 'package:ats_app/Responsive/responsive_ext.dart';
-import 'package:ats_app/aws_images/aws_signedurl_provider.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../aws_images/aws_repository_impl.dart';
 import '../../../utilities/custom_stepper.dart';
 import '../../../utilities/extension.dart';
 import '../../../widgets/custom_loader.dart';

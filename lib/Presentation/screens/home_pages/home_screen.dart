@@ -4,7 +4,6 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
-import '../../provider/inspection_type_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../manual_inspection_images/manual_inspection_image_screen.dart';
 import '../vehicles_class_page/vehicle_class_screen_item.dart';
@@ -25,8 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     context.read<VehicleClassProvider>().vehicleClassApi(context: context);
-    context.read<InspectionTypeProvider>().getInspectionType();
-
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {

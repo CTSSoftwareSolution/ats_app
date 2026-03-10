@@ -1,18 +1,13 @@
-import 'dart:io';
 
-import 'package:ats_app/Presentation/screens/bottom_navigation/custom_bottom_navigation.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Data/model/response_model/inspection_pre_save_req_model.dart';
-import '../../../../image_processing/MediaPicker/file_provider.dart';
-import '../../../../location/location_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../../provider/pre_inspection_result_provider.dart';
 import '../../../provider/vehicle_class_provider.dart';
 import '../../bottom_navigation/bottom_navigation_bar.dart';
-import '../../manual_inspection_images/manual_ins_image_provider.dart';
 import '../pre_save_inspection_provider.dart';
 
 class ConfirmationDialog {
