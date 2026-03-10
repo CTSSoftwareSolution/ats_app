@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:saver_gallery/saver_gallery.dart';
 import 'package:image/image.dart' as img;
 
+import '../Presentation/provider/vehicle_class_provider.dart';
 import '../location/location_provider.dart';
 
 class ImageProcessingService {
@@ -17,12 +18,14 @@ class ImageProcessingService {
 
   static Future<String> processOverlayImage({required XFile picture, required BuildContext context}) async {
     final location = Provider.of<LocationProvider>(context, listen: false);
+    final vehicleClass = Provider.of<VehicleClassProvider>(context, listen: false);
     final lat = location.currentPosition?.latitude ?? 0.0;
     final lng = location.currentPosition?.longitude ?? 0.0;
+    final vehicleNo = vehicleClass.selectedClass!.registrationNo;
 
     final file = File(picture.path);
     final now = DateTime.now();
-    final rawText = "Vehicle No: MH20DC1761\nAddress: Navi Mumbai\nLat: $lat, Lng: $lng\nDate: $now";
+    final rawText = "Vehicle No: $vehicleNo\nLat: $lat, Lng: $lng\nDate: $now";
     final displayText = rawText.split('\n').map((line) => _wrapText(line, 32)).join('\n');
 
     final bytes = await file.readAsBytes();
