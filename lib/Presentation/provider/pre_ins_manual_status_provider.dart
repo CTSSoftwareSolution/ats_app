@@ -20,7 +20,7 @@ class PreInsManualStatusProvider extends ChangeNotifier{
 
     final classProvider = Provider.of<VehicleClassProvider>(context,listen: false);
     try {
-      PreInsManualStatusReqModel statusReqModel = PreInsManualStatusReqModel(vehicleNo: classProvider.selectedClass?.regNo);
+      PreInsManualStatusReqModel statusReqModel = PreInsManualStatusReqModel(vehicleNo: classProvider.selectedClass?.registrationNo);
       preInsManualStatusEntity = await preInsManualStatusUseCases.execute(statusReqModel);
       notifyListeners();
       return preInsManualStatusEntity;

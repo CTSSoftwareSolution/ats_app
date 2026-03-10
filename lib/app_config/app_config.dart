@@ -5,6 +5,7 @@ import '../Presentation/provider/multiple_provider.dart';
 import '../Presentation/provider/permission_provider.dart';
 
 const String defaultBaseUrl = "https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev";
+const String newDefaultBaseUrl = "http://65.2.53.173/api/api/";
 
 class AppConfig {
 
@@ -12,11 +13,11 @@ class AppConfig {
   factory AppConfig() => _instance;
   AppConfig._internal();
 
-  String baseUrl = defaultBaseUrl;
+  String baseUrl = newDefaultBaseUrl;
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
-    baseUrl = prefs.getString('base_url') ?? defaultBaseUrl;
+    baseUrl = prefs.getString('base_url') ?? newDefaultBaseUrl;
   }
 
   Future<void> updateBaseUrl({required BuildContext context, required String newUrl}) async {

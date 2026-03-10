@@ -98,23 +98,12 @@ class InspectionFormProvider extends ChangeNotifier {
   bool get isEditMode => _isEditMode;
   QuestionFilter get filter => _filter;
 
-  int get grandTotalAnswered =>
-      _sections.fold(0, (sum, s) => sum + s.totalAnswered);
-  int get grandTotalQuestions =>
-      _sections.fold(0, (sum, s) => sum + s.totalQuestions);
-  bool get isFullyComplete =>
-      grandTotalQuestions > 0 && grandTotalAnswered == grandTotalQuestions;
-
+  int get grandTotalAnswered => _sections.fold(0, (sum, s) => sum + s.totalAnswered);
+  int get grandTotalQuestions => _sections.fold(0, (sum, s) => sum + s.totalQuestions);
+  bool get isFullyComplete => grandTotalQuestions > 0 && grandTotalAnswered == grandTotalQuestions;
   int get grandTotalNo => _sections.fold(
-      0,
-          (sum, s) =>
-      sum +
-          s.categories.fold(
-              0,
-                  (cSum, c) => cSum +
-                  c.questions
-                      .where((q) => q.answer == AnswerState.Fail)
-                      .length));
+      0, (sum, s) =>
+      sum + s.categories.fold(0, (cSum, c) => cSum + c.questions.where((q) => q.answer == AnswerState.Fail).length));
 
   // ─────────────────────────────────────────────
   //  FILTER
@@ -202,7 +191,7 @@ class InspectionFormProvider extends ChangeNotifier {
   // ─────────────────────────────────────────────
   //  FETCH: Edit Mode
   // ─────────────────────────────────────────────
-  Future<void> fetchAndPrefill(String vehicleNo) async {
+  Future<void> fetchAndPrefill({required String vehicleNo,required String appointmentID}) async {
     _isLoading = true;
     _hasError = false;
     _errorMessage = '';
@@ -215,12 +204,15 @@ class InspectionFormProvider extends ChangeNotifier {
       debugPrint('→ [EditMode] Fetching for vehicle: $vehicleNo');
 
       final response = await http.post(
-        Uri.parse(_editApiUrl),
+        Uri.parse(preInspectionDetails),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: jsonEncode({'vehicle_no': vehicleNo}),
+        body: jsonEncode({
+          'vehicle_id': vehicleNo,
+          'appointment_id': appointmentID,
+        }),
       ).timeout(const Duration(seconds: 30));
 
       if (kDebugMode) {

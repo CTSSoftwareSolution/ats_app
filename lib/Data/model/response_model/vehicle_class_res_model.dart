@@ -1,53 +1,38 @@
 class VehicleClassResModel {
   VehicleClassResModel({
       bool? status, 
-      String? message, 
-      Meta? meta, 
-      List<ClassDataModel>? data,}){
+      String? message,
+    ClassDataModel? data,}){
     _status = status;
     _message = message;
-    _meta = meta;
     _data = data;
 }
 
   VehicleClassResModel.fromJson(dynamic json) {
     _status = json['status'];
     _message = json['message'];
-    _meta = json['meta'] != null ? Meta.fromJson(json['meta']) : null;
-    if (json['data'] != null) {
-      _data = [];
-      json['data'].forEach((v) {
-        _data?.add(ClassDataModel.fromJson(v));
-      });
-    }
+    _data = json['data'] != null ? ClassDataModel.fromJson(json['data']) : null;
   }
   bool? _status;
   String? _message;
-  Meta? _meta;
-  List<ClassDataModel>? _data;
+  ClassDataModel? _data;
 VehicleClassResModel copyWith({  bool? status,
   String? message,
-  Meta? meta,
-  List<ClassDataModel>? data,
+  ClassDataModel? data,
 }) => VehicleClassResModel(  status: status ?? _status,
   message: message ?? _message,
-  meta: meta ?? _meta,
   data: data ?? _data,
 );
   bool? get status => _status;
   String? get message => _message;
-  Meta? get meta => _meta;
-  List<ClassDataModel>? get data => _data;
+  ClassDataModel? get data => _data;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['status'] = _status;
     map['message'] = _message;
-    if (_meta != null) {
-      map['meta'] = _meta?.toJson();
-    }
     if (_data != null) {
-      map['data'] = _data?.map((v) => v.toJson()).toList();
+      map['data'] = _data?.toJson();
     }
     return map;
   }
@@ -56,213 +41,235 @@ VehicleClassResModel copyWith({  bool? status,
 
 class ClassDataModel {
   ClassDataModel({
-      num? vehicleKey, 
-      String? regNo, 
-      String? vin, 
-      String? engineNo, 
-      String? vehicleClass, 
-      String? vehicleCategory, 
-      String? make, 
-      String? model, 
-      String? fuelType, 
-      num? mfgMonth, 
-      num? mfgYear, 
-      num? gvw, 
-      String? speedGovSn, 
-      String? ownerType, 
-      String? activeFrom, 
-      dynamic activeTo, 
-      bool? isCurrent, 
-      dynamic manualPreInspectionStatus, 
-      String? machineInspectonStatus,}){
-    _vehicleKey = vehicleKey;
-    _regNo = regNo;
-    _vin = vin;
-    _engineNo = engineNo;
-    _vehicleClass = vehicleClass;
-    _vehicleCategory = vehicleCategory;
-    _make = make;
-    _model = model;
-    _fuelType = fuelType;
-    _mfgMonth = mfgMonth;
-    _mfgYear = mfgYear;
-    _gvw = gvw;
-    _speedGovSn = speedGovSn;
-    _ownerType = ownerType;
-    _activeFrom = activeFrom;
-    _activeTo = activeTo;
-    _isCurrent = isCurrent;
-    _manualPreInspectionStatus = manualPreInspectionStatus;
-    _machineInspectonStatus = machineInspectonStatus;
+      num? totalRecords, 
+      num? pageNo, 
+      num? pageSize, 
+      List<Appointments>? appointments,}){
+    _totalRecords = totalRecords;
+    _pageNo = pageNo;
+    _pageSize = pageSize;
+    _appointments = appointments;
 }
 
   ClassDataModel.fromJson(dynamic json) {
+    _totalRecords = json['total_records'];
+    _pageNo = json['page_no'];
+    _pageSize = json['page_size'];
+    if (json['appointments'] != null) {
+      _appointments = [];
+      json['appointments'].forEach((v) {
+        _appointments?.add(Appointments.fromJson(v));
+      });
+    }
+  }
+  num? _totalRecords;
+  num? _pageNo;
+  num? _pageSize;
+  List<Appointments>? _appointments;
+  ClassDataModel copyWith({  num? totalRecords,
+  num? pageNo,
+  num? pageSize,
+  List<Appointments>? appointments,
+}) => ClassDataModel(  totalRecords: totalRecords ?? _totalRecords,
+  pageNo: pageNo ?? _pageNo,
+  pageSize: pageSize ?? _pageSize,
+  appointments: appointments ?? _appointments,
+);
+  num? get totalRecords => _totalRecords;
+  num? get pageNo => _pageNo;
+  num? get pageSize => _pageSize;
+  List<Appointments>? get appointments => _appointments;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['total_records'] = _totalRecords;
+    map['page_no'] = _pageNo;
+    map['page_size'] = _pageSize;
+    if (_appointments != null) {
+      map['appointments'] = _appointments?.map((v) => v.toJson()).toList();
+    }
+    return map;
+  }
+}
+
+class Appointments {
+  Appointments({
+      String? vehicleKey, 
+      num? appointmentId, 
+      String? registrationNo, 
+      num? status, 
+      String? vehicleClass, 
+      String? vehicleCategory, 
+      String? fuelType, 
+      String? ownerType, 
+      String? activeFrom, 
+      bool? speedGovSn, 
+      String? vin, 
+      String? mfgYear, 
+      String? isCurrent, 
+      String? activeTo, 
+      String? manualPreInspectionStatus, 
+      String? machineInspectonStatus, 
+      String? engineNo, 
+      String? make, 
+      String? model, 
+      String? mfgMonth, 
+      num? gvw,}){
+    _vehicleKey = vehicleKey;
+    _appointmentId = appointmentId;
+    _registrationNo = registrationNo;
+    _status = status;
+    _vehicleClass = vehicleClass;
+    _vehicleCategory = vehicleCategory;
+    _fuelType = fuelType;
+    _ownerType = ownerType;
+    _activeFrom = activeFrom;
+    _speedGovSn = speedGovSn;
+    _vin = vin;
+    _mfgYear = mfgYear;
+    _isCurrent = isCurrent;
+    _activeTo = activeTo;
+    _manualPreInspectionStatus = manualPreInspectionStatus;
+    _machineInspectonStatus = machineInspectonStatus;
+    _engineNo = engineNo;
+    _make = make;
+    _model = model;
+    _mfgMonth = mfgMonth;
+    _gvw = gvw;
+}
+
+  Appointments.fromJson(dynamic json) {
     _vehicleKey = json['vehicle_key'];
-    _regNo = json['reg_no'];
-    _vin = json['vin'];
-    _engineNo = json['engine_no'];
+    _appointmentId = json['appointment_id'];
+    _registrationNo = json['registration_no'];
+    _status = json['status'];
     _vehicleClass = json['vehicle_class'];
     _vehicleCategory = json['vehicle_category'];
-    _make = json['make'];
-    _model = json['model'];
     _fuelType = json['fuel_type'];
-    _mfgMonth = json['mfg_month'];
-    _mfgYear = json['mfg_year'];
-    _gvw = json['gvw'];
-    _speedGovSn = json['speed_gov_sn'];
     _ownerType = json['owner_type'];
     _activeFrom = json['active_from'];
-    _activeTo = json['active_to'];
+    _speedGovSn = json['speed_gov_sn'];
+    _vin = json['vin'];
+    _mfgYear = json['mfg_year'];
     _isCurrent = json['is_current'];
+    _activeTo = json['active_to'];
     _manualPreInspectionStatus = json['manual_pre_inspection_status'];
     _machineInspectonStatus = json['machine_inspecton_status'];
+    _engineNo = json['engine_no'];
+    _make = json['make'];
+    _model = json['model'];
+    _mfgMonth = json['mfg_month'];
+    _gvw = json['gvw'];
   }
-  num? _vehicleKey;
-  String? _regNo;
-  String? _vin;
-  String? _engineNo;
+  String? _vehicleKey;
+  num? _appointmentId;
+  String? _registrationNo;
+  num? _status;
   String? _vehicleClass;
   String? _vehicleCategory;
-  String? _make;
-  String? _model;
   String? _fuelType;
-  num? _mfgMonth;
-  num? _mfgYear;
-  num? _gvw;
-  String? _speedGovSn;
   String? _ownerType;
   String? _activeFrom;
-  dynamic _activeTo;
-  bool? _isCurrent;
-  dynamic _manualPreInspectionStatus;
+  bool? _speedGovSn;
+  String? _vin;
+  String? _mfgYear;
+  String? _isCurrent;
+  String? _activeTo;
+  String? _manualPreInspectionStatus;
   String? _machineInspectonStatus;
-  ClassDataModel copyWith({  num? vehicleKey,
-  String? regNo,
-  String? vin,
-  String? engineNo,
+  String? _engineNo;
+  String? _make;
+  String? _model;
+  String? _mfgMonth;
+  num? _gvw;
+Appointments copyWith({  String? vehicleKey,
+  num? appointmentId,
+  String? registrationNo,
+  num? status,
   String? vehicleClass,
   String? vehicleCategory,
-  String? make,
-  String? model,
   String? fuelType,
-  num? mfgMonth,
-  num? mfgYear,
-  num? gvw,
-  String? speedGovSn,
   String? ownerType,
   String? activeFrom,
-  dynamic activeTo,
-  bool? isCurrent,
-  dynamic manualPreInspectionStatus,
+  bool? speedGovSn,
+  String? vin,
+  String? mfgYear,
+  String? isCurrent,
+  String? activeTo,
+  String? manualPreInspectionStatus,
   String? machineInspectonStatus,
-}) => ClassDataModel(  vehicleKey: vehicleKey ?? _vehicleKey,
-  regNo: regNo ?? _regNo,
-  vin: vin ?? _vin,
-  engineNo: engineNo ?? _engineNo,
+  String? engineNo,
+  String? make,
+  String? model,
+  String? mfgMonth,
+  num? gvw,
+}) => Appointments(  vehicleKey: vehicleKey ?? _vehicleKey,
+  appointmentId: appointmentId ?? _appointmentId,
+  registrationNo: registrationNo ?? _registrationNo,
+  status: status ?? _status,
   vehicleClass: vehicleClass ?? _vehicleClass,
   vehicleCategory: vehicleCategory ?? _vehicleCategory,
-  make: make ?? _make,
-  model: model ?? _model,
   fuelType: fuelType ?? _fuelType,
-  mfgMonth: mfgMonth ?? _mfgMonth,
-  mfgYear: mfgYear ?? _mfgYear,
-  gvw: gvw ?? _gvw,
-  speedGovSn: speedGovSn ?? _speedGovSn,
   ownerType: ownerType ?? _ownerType,
   activeFrom: activeFrom ?? _activeFrom,
-  activeTo: activeTo ?? _activeTo,
+  speedGovSn: speedGovSn ?? _speedGovSn,
+  vin: vin ?? _vin,
+  mfgYear: mfgYear ?? _mfgYear,
   isCurrent: isCurrent ?? _isCurrent,
+  activeTo: activeTo ?? _activeTo,
   manualPreInspectionStatus: manualPreInspectionStatus ?? _manualPreInspectionStatus,
   machineInspectonStatus: machineInspectonStatus ?? _machineInspectonStatus,
+  engineNo: engineNo ?? _engineNo,
+  make: make ?? _make,
+  model: model ?? _model,
+  mfgMonth: mfgMonth ?? _mfgMonth,
+  gvw: gvw ?? _gvw,
 );
-  num? get vehicleKey => _vehicleKey;
-  String? get regNo => _regNo;
-  String? get vin => _vin;
-  String? get engineNo => _engineNo;
+  String? get vehicleKey => _vehicleKey;
+  num? get appointmentId => _appointmentId;
+  String? get registrationNo => _registrationNo;
+  num? get status => _status;
   String? get vehicleClass => _vehicleClass;
   String? get vehicleCategory => _vehicleCategory;
-  String? get make => _make;
-  String? get model => _model;
   String? get fuelType => _fuelType;
-  num? get mfgMonth => _mfgMonth;
-  num? get mfgYear => _mfgYear;
-  num? get gvw => _gvw;
-  String? get speedGovSn => _speedGovSn;
   String? get ownerType => _ownerType;
   String? get activeFrom => _activeFrom;
-  dynamic get activeTo => _activeTo;
-  bool? get isCurrent => _isCurrent;
-  dynamic get manualPreInspectionStatus => _manualPreInspectionStatus;
+  bool? get speedGovSn => _speedGovSn;
+  String? get vin => _vin;
+  String? get mfgYear => _mfgYear;
+  String? get isCurrent => _isCurrent;
+  String? get activeTo => _activeTo;
+  String? get manualPreInspectionStatus => _manualPreInspectionStatus;
   String? get machineInspectonStatus => _machineInspectonStatus;
+  String? get engineNo => _engineNo;
+  String? get make => _make;
+  String? get model => _model;
+  String? get mfgMonth => _mfgMonth;
+  num? get gvw => _gvw;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['vehicle_key'] = _vehicleKey;
-    map['reg_no'] = _regNo;
-    map['vin'] = _vin;
-    map['engine_no'] = _engineNo;
+    map['appointment_id'] = _appointmentId;
+    map['registration_no'] = _registrationNo;
+    map['status'] = _status;
     map['vehicle_class'] = _vehicleClass;
     map['vehicle_category'] = _vehicleCategory;
-    map['make'] = _make;
-    map['model'] = _model;
     map['fuel_type'] = _fuelType;
-    map['mfg_month'] = _mfgMonth;
-    map['mfg_year'] = _mfgYear;
-    map['gvw'] = _gvw;
-    map['speed_gov_sn'] = _speedGovSn;
     map['owner_type'] = _ownerType;
     map['active_from'] = _activeFrom;
-    map['active_to'] = _activeTo;
+    map['speed_gov_sn'] = _speedGovSn;
+    map['vin'] = _vin;
+    map['mfg_year'] = _mfgYear;
     map['is_current'] = _isCurrent;
+    map['active_to'] = _activeTo;
     map['manual_pre_inspection_status'] = _manualPreInspectionStatus;
     map['machine_inspecton_status'] = _machineInspectonStatus;
-    return map;
-  }
-
-}
-
-class Meta {
-  Meta({
-      num? page, 
-      num? pageSize, 
-      num? totalRecords, 
-      num? totalPages,}){
-    _page = page;
-    _pageSize = pageSize;
-    _totalRecords = totalRecords;
-    _totalPages = totalPages;
-}
-
-  Meta.fromJson(dynamic json) {
-    _page = json['page'];
-    _pageSize = json['pageSize'];
-    _totalRecords = json['totalRecords'];
-    _totalPages = json['totalPages'];
-  }
-  num? _page;
-  num? _pageSize;
-  num? _totalRecords;
-  num? _totalPages;
-Meta copyWith({  num? page,
-  num? pageSize,
-  num? totalRecords,
-  num? totalPages,
-}) => Meta(  page: page ?? _page,
-  pageSize: pageSize ?? _pageSize,
-  totalRecords: totalRecords ?? _totalRecords,
-  totalPages: totalPages ?? _totalPages,
-);
-  num? get page => _page;
-  num? get pageSize => _pageSize;
-  num? get totalRecords => _totalRecords;
-  num? get totalPages => _totalPages;
-
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['page'] = _page;
-    map['pageSize'] = _pageSize;
-    map['totalRecords'] = _totalRecords;
-    map['totalPages'] = _totalPages;
+    map['engine_no'] = _engineNo;
+    map['make'] = _make;
+    map['model'] = _model;
+    map['mfg_month'] = _mfgMonth;
+    map['gvw'] = _gvw;
     return map;
   }
 

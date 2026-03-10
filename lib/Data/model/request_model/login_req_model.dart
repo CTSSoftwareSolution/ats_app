@@ -1,28 +1,28 @@
 class LoginReqModel {
   LoginReqModel({
-      String? email, 
+      String? username, 
       String? password,}){
-    _email = email;
+    _username = username;
     _password = password;
 }
 
   LoginReqModel.fromJson(dynamic json) {
-    _email = json['email'];
+    _username = json['username'];
     _password = json['password'];
   }
-  String? _email;
+  String? _username;
   String? _password;
-  LoginReqModel copyWith({  String? email,
+LoginReqModel copyWith({  String? username,
   String? password,
-}) => LoginReqModel(  email: email ?? _email,
+}) => LoginReqModel(  username: username ?? _username,
   password: password ?? _password,
 );
-  String? get email => _email;
+  String? get username => _username;
   String? get password => _password;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['email'] = _email;
+    map['username'] = _username;
     map['password'] = _password;
     return map;
   }

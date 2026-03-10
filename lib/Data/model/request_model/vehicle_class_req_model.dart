@@ -1,45 +1,45 @@
 class VehicleClassReqModel {
   VehicleClassReqModel({
-      String? vehicleClass, 
-      String? search, 
-      num? page, 
-      num? pageSize,}){
-    _vehicleClass = vehicleClass;
-    _search = search;
-    _page = page;
+      num? pageNo, 
+      num? pageSize, 
+      String? searchText, 
+      String? vehicleCategory,}){
+    _pageNo = pageNo;
     _pageSize = pageSize;
+    _searchText = searchText;
+    _vehicleCategory = vehicleCategory;
 }
 
   VehicleClassReqModel.fromJson(dynamic json) {
-    _vehicleClass = json['vehicle_class'];
-    _search = json['search'];
-    _page = json['page'];
-    _pageSize = json['pageSize'];
+    _pageNo = json['page_no'];
+    _pageSize = json['page_size'];
+    _searchText = json['search_text'];
+    _vehicleCategory = json['vehicle_category'];
   }
-  String? _vehicleClass;
-  String? _search;
-  num? _page;
+  num? _pageNo;
   num? _pageSize;
-VehicleClassReqModel copyWith({  String? vehicleClass,
-  String? search,
-  num? page,
+  String? _searchText;
+  String? _vehicleCategory;
+VehicleClassReqModel copyWith({  num? pageNo,
   num? pageSize,
-}) => VehicleClassReqModel(  vehicleClass: vehicleClass ?? _vehicleClass,
-  search: search ?? _search,
-  page: page ?? _page,
+  String? searchText,
+  String? vehicleCategory,
+}) => VehicleClassReqModel(  pageNo: pageNo ?? _pageNo,
   pageSize: pageSize ?? _pageSize,
+  searchText: searchText ?? _searchText,
+  vehicleCategory: vehicleCategory ?? _vehicleCategory,
 );
-  String? get vehicleClass => _vehicleClass;
-  String? get search => _search;
-  num? get page => _page;
+  num? get pageNo => _pageNo;
   num? get pageSize => _pageSize;
+  String? get searchText => _searchText;
+  String? get vehicleCategory => _vehicleCategory;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['vehicle_class'] = _vehicleClass;
-    map['search'] = _search;
-    map['page'] = _page;
-    map['pageSize'] = _pageSize;
+    map['page_no'] = _pageNo;
+    map['page_size'] = _pageSize;
+    map['search_text'] = _searchText;
+    map['vehicle_category'] = _vehicleCategory;
     return map;
   }
 

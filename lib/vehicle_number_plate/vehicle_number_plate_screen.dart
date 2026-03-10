@@ -6,6 +6,7 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Presentation/provider/verify_hsrp_provider.dart';
+import '../Presentation/screens/vehicle_number_plate/vehicle_number_plate_models.dart';
 import '../Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
 import '../image_processing/MediaPicker/file_provider.dart';
 import '../utilities/color_data.dart';
@@ -16,8 +17,7 @@ class VehicleNumberPlateScreen extends StatefulWidget {
   const VehicleNumberPlateScreen({super.key});
 
   @override
-  State<VehicleNumberPlateScreen> createState() =>
-      _VehicleNumberPlateScreenState();
+  State<VehicleNumberPlateScreen> createState() => _VehicleNumberPlateScreenState();
 }
 
 class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
@@ -41,7 +41,11 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
 
     return Scaffold(
       backgroundColor: background,
-      appBar: _buildAppBar(),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: appColor,
+        title: Text("Detect number plate"),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -87,24 +91,11 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
               ),
               20.height,
               if (verifyProvider.isLoading) const _LoadingResult(),
-              if (!verifyProvider.isLoading &&
-                  verifyProvider.vehicleResponse != null)
-                _VerificationResult(response: verifyProvider.vehicleResponse),
+              if (!verifyProvider.isLoading && verifyProvider.vehicleResponse != null)
+                _VerificationResult(response: verifyProvider.vehicleResponse!),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: appColor,
-      titleSpacing: 0,
-      title: const CustomText(
-        text: "Detect Vehicle Number Plate",
-        fontFamily: "SemiBold",
-        fontSize: 20,
       ),
     );
   }
@@ -160,15 +151,15 @@ class _LoadingResult extends StatelessWidget {
 class _VerificationResult extends StatelessWidget {
   const _VerificationResult({required this.response});
 
-  final dynamic response;
+  final VehicleNumberPlateModels response;
 
   @override
   Widget build(BuildContext context) {
-    final analysis = response?.analysis;
+    final analysis = response.analysis;
     final decision = analysis?.decision ?? "UNKNOWN";
     final plate = analysis?.ocrPlateText ?? "-";
     final reason = analysis?.reason ?? "No reason";
-    final expecedPlate = analysis?.expecedPlate ?? "No reason";
+    final expecedPlate = analysis?.expectedPlate ?? "No reason";
     final bool isApproved = decision == "ACCEPT";
     final bool isRejected = decision == "REJECT";
     return Container(

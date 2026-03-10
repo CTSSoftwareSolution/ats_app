@@ -1,9 +1,9 @@
 import '../../Data/model/response_model/login_res_model.dart';
 
 class LoginEntity {
-  bool? status;
+  bool? success;
   String? message;
-  List<LoginDataModel>? data;
+  LoginDataModel? data;
 
-  LoginEntity({this.data, this.message, this.status});
+  LoginEntity({this.data, this.message, this.success});
 }

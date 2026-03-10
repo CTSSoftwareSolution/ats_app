@@ -71,9 +71,6 @@ class _QuestionTileState extends State<QuestionTile> {
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return Consumer<InspectionFormProvider>(
       builder: (context, provider, _) {
         final origSec = provider.originalSectionIndex(widget.sectionIndex);

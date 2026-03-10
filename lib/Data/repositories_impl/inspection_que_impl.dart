@@ -11,7 +11,7 @@ class InspectionQueImpl implements InspectionQueRepository{
   @override
   Future<InspectionQueEntity> questionApi() async{
     try{
-      final response = await ApiService.post("", inspectionQueUrl);
+      final response = await ApiService.post("", inspectionQuestionsList);
       final model = InspectionModel.fromJson(response);
       return InspectionQueEntity(message: model.message, status: model.status, data: model.data);
     }catch (e){

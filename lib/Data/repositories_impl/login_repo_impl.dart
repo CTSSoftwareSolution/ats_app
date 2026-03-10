@@ -10,9 +10,9 @@ class LoginRepoImpl implements LoginRepository{
 @override
   Future<LoginEntity> loginApi(LoginReqModel loginReqModel) async{
   try{
-    final response = await ApiService.post(loginReqModel, loginUrl);
+    final response = await ApiService.post(loginReqModel, newLoginUrl);
     final model = LoginResModel.fromJson(response);
-    return LoginEntity(message: model.message, status: model.status, data: model.data);
+    return LoginEntity(message: model.message, success: model.success, data: model.data);
   }catch (e){
     throw Exception(e);
   }

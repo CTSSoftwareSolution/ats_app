@@ -33,6 +33,14 @@ class FileProvider with ChangeNotifier {
     }
   }
 
+
+  XFile? get getOverlayImage {
+    if (currentIndex != null && currentIndex! < images.length) {
+      return images[currentIndex!];
+    }
+    return null;
+  }
+
   XFile? getImage(int index) {
     if (index < images.length) {
       return images[index];

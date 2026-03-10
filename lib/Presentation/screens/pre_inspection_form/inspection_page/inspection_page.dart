@@ -27,9 +27,12 @@ class _InspectionPageState extends State<InspectionPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<InspectionFormProvider>();
       final vehicleClass = context.read<VehicleClassProvider>();
+      final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
+
       if (widget.isEditMode == true) {
         provider.fetchAndPrefill(
-            vehicleClass.selectedClass!.regNo.toString());
+            vehicleNo: vehicleClass.selectedClass!.registrationNo.toString(),
+            appointmentID: vehicleClassProvider.selectedClass!.appointmentId.toString());
       } else {
         provider.fetchInspectionData();
       }

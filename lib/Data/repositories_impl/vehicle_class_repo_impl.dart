@@ -9,7 +9,7 @@ class VehicleClassRepoImpl implements VehicleClassRepository{
   @override
   Future<VehicleClassEntity> vehicleClassApi(VehicleClassReqModel vehicleClassReqModel) async {
     try{
-      final response = await ApiService.post(vehicleClassReqModel, vehicleClassUrl);
+      final response = await ApiService.post(vehicleClassReqModel, preInspectionAppointmentList);
       final model = VehicleClassResModel.fromJson(response);
       return VehicleClassEntity(message: model.message, status: model.status, data: model.data);
     }catch (e){

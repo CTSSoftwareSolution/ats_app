@@ -16,8 +16,8 @@ class LoginProvider extends ChangeNotifier {
 
   LoginProvider({required this.loginUseCases});
 
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final emailController = TextEditingController(text: "ctsadmin");
+  final passwordController = TextEditingController(text: "P\u0040\$\$w0rd990");
   bool passwordVisible = true;
   LoginEntity? loginEntity;
   bool isLoading = false;
@@ -32,7 +32,7 @@ class LoginProvider extends ChangeNotifier {
     CustomLoader.showLoader("Please wait...");
     try {
       LoginReqModel loginReqModel = LoginReqModel(
-        email: emailController.text,
+        username: emailController.text,
         password: passwordController.text,
       );
       notifyListeners();
@@ -53,13 +53,13 @@ class LoginProvider extends ChangeNotifier {
       final navigationProvider = Provider.of<BottomNavigationProvider>(context,listen: false);
       if (!context.mounted) return;
       if (value != null) {
-        if (value.status == true) {
+        if (value.success == true) {
           await Preferences.setPreferences();
-          Preferences.setUserId(value.data![0].userId.toString());
-          Preferences.setToken(value.data![0].token.toString());
-          Preferences.setName(value.data![0].fullName.toString());
-          Preferences.setEmail(value.data![0].email.toString());
-          Preferences.setImage(value.data![0].imageUpload.toString());
+          Preferences.setUserId(value.data!.userId.toString());
+          Preferences.setToken(value.data!.accessToken.toString());
+          Preferences.setName(value.data!.userFullName.toString());
+          // Preferences.setEmail(value.data![0].email.toString());
+          // Preferences.setImage(value.data![0].imageUpload.toString());
           navigationProvider.updateIndex(0);
           context.push(BottomNavigationBarScreen());
         } else {

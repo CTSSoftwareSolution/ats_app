@@ -25,7 +25,7 @@ class PreInsDetailsProvider extends ChangeNotifier{
       notifyListeners();
 
       PreInsDetailsReqModel detailsReqModel = PreInsDetailsReqModel(
-          vehicleNo: classProvider.selectedClass?.regNo,
+          vehicleNo: classProvider.selectedClass!.registrationNo.toString(),
       );
 
       preInsDetailsEntity = await preInsDetailsUseCases.execute(detailsReqModel);

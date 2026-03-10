@@ -1,45 +1,53 @@
-import 'package:ats_app/Domain/entities/login_entity.dart';
-
-class LoginResModel extends LoginEntity{
+class LoginResModel {
   LoginResModel({
-      bool? status, 
-      String? message, 
-      List<LoginDataModel>? data,}){
-    _status = status;
+      bool? success, 
+      String? message,
+    LoginDataModel? data,
+      List<dynamic>? errors,}){
+    _success = success;
     _message = message;
     _data = data;
+    _errors = errors;
 }
 
   LoginResModel.fromJson(dynamic json) {
-    _status = json['status'];
+    _success = json['success'];
     _message = json['message'];
-    if (json['data'] != null) {
-      _data = [];
-      json['data'].forEach((v) {
-        _data?.add(LoginDataModel.fromJson(v));
+    _data = json['data'] != null ? LoginDataModel.fromJson(json['data']) : null;
+    if (json['errors'] != null) {
+      _errors = [];
+      json['errors'].forEach((v) {
+       // _errors?.add(Dynamic.fromJson(v));
       });
     }
   }
-  bool? _status;
+  bool? _success;
   String? _message;
-  List<LoginDataModel>? _data;
-  LoginResModel copyWith({  bool? status,
+  LoginDataModel? _data;
+  List<dynamic>? _errors;
+LoginResModel copyWith({  bool? success,
   String? message,
-  List<LoginDataModel>? data,
-}) => LoginResModel(  status: status ?? _status,
+  LoginDataModel? data,
+  List<dynamic>? errors,
+}) => LoginResModel(  success: success ?? _success,
   message: message ?? _message,
   data: data ?? _data,
+  errors: errors ?? _errors,
 );
-  bool? get status => _status;
+  bool? get success => _success;
   String? get message => _message;
-  List<LoginDataModel>? get data => _data;
+  LoginDataModel? get data => _data;
+  List<dynamic>? get errors => _errors;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['status'] = _status;
+    map['success'] = _success;
     map['message'] = _message;
     if (_data != null) {
-      map['data'] = _data?.map((v) => v.toJson()).toList();
+      map['data'] = _data?.toJson();
+    }
+    if (_errors != null) {
+      map['errors'] = _errors?.map((v) => v.toJson()).toList();
     }
     return map;
   }
@@ -48,94 +56,54 @@ class LoginResModel extends LoginEntity{
 
 class LoginDataModel {
   LoginDataModel({
-      num? userId, 
-      String? fullName, 
-      String? email, 
-      String? address, 
-      String? mobileNumber, 
-      String? carName, 
-      String? carBrand, 
-      String? carModel, 
-      String? imageUpload, 
-      String? token,}){
+      String? accessToken, 
+      bool? mustChangePassword, 
+      List<String>? roles, 
+      String? userFullName, 
+      String? userId,}){
+    _accessToken = accessToken;
+    _mustChangePassword = mustChangePassword;
+    _roles = roles;
+    _userFullName = userFullName;
     _userId = userId;
-    _fullName = fullName;
-    _email = email;
-    _address = address;
-    _mobileNumber = mobileNumber;
-    _carName = carName;
-    _carBrand = carBrand;
-    _carModel = carModel;
-    _imageUpload = imageUpload;
-    _token = token;
 }
 
   LoginDataModel.fromJson(dynamic json) {
+    _accessToken = json['access_token'];
+    _mustChangePassword = json['must_change_password'];
+    _roles = json['roles'] != null ? json['roles'].cast<String>() : [];
+    _userFullName = json['user_full_name'];
     _userId = json['user_id'];
-    _fullName = json['full_name'];
-    _email = json['email'];
-    _address = json['address'];
-    _mobileNumber = json['mobile_number'];
-    _carName = json['car_name'];
-    _carBrand = json['car_brand'];
-    _carModel = json['car_model'];
-    _imageUpload = json['image_upload'];
-    _token = json['token'];
   }
-  num? _userId;
-  String? _fullName;
-  String? _email;
-  String? _address;
-  String? _mobileNumber;
-  String? _carName;
-  String? _carBrand;
-  String? _carModel;
-  String? _imageUpload;
-  String? _token;
-  LoginDataModel copyWith({  num? userId,
-  String? fullName,
-  String? email,
-  String? address,
-  String? mobileNumber,
-  String? carName,
-  String? carBrand,
-  String? carModel,
-  String? imageUpload,
-  String? token,
-}) => LoginDataModel(  userId: userId ?? _userId,
-  fullName: fullName ?? _fullName,
-  email: email ?? _email,
-  address: address ?? _address,
-  mobileNumber: mobileNumber ?? _mobileNumber,
-  carName: carName ?? _carName,
-  carBrand: carBrand ?? _carBrand,
-  carModel: carModel ?? _carModel,
-  imageUpload: imageUpload ?? _imageUpload,
-  token: token ?? _token,
+  String? _accessToken;
+  bool? _mustChangePassword;
+  List<String>? _roles;
+  String? _userFullName;
+  String? _userId;
+  LoginDataModel copyWith({  String? accessToken,
+  bool? mustChangePassword,
+  List<String>? roles,
+  String? userFullName,
+  String? userId,
+}) => LoginDataModel(  accessToken: accessToken ?? _accessToken,
+  mustChangePassword: mustChangePassword ?? _mustChangePassword,
+  roles: roles ?? _roles,
+  userFullName: userFullName ?? _userFullName,
+  userId: userId ?? _userId,
 );
-  num? get userId => _userId;
-  String? get fullName => _fullName;
-  String? get email => _email;
-  String? get address => _address;
-  String? get mobileNumber => _mobileNumber;
-  String? get carName => _carName;
-  String? get carBrand => _carBrand;
-  String? get carModel => _carModel;
-  String? get imageUpload => _imageUpload;
-  String? get token => _token;
+  String? get accessToken => _accessToken;
+  bool? get mustChangePassword => _mustChangePassword;
+  List<String>? get roles => _roles;
+  String? get userFullName => _userFullName;
+  String? get userId => _userId;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
+    map['access_token'] = _accessToken;
+    map['must_change_password'] = _mustChangePassword;
+    map['roles'] = _roles;
+    map['user_full_name'] = _userFullName;
     map['user_id'] = _userId;
-    map['full_name'] = _fullName;
-    map['email'] = _email;
-    map['address'] = _address;
-    map['mobile_number'] = _mobileNumber;
-    map['car_name'] = _carName;
-    map['car_brand'] = _carBrand;
-    map['car_model'] = _carModel;
-    map['image_upload'] = _imageUpload;
-    map['token'] = _token;
     return map;
   }
 

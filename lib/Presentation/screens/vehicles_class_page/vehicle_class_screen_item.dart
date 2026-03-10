@@ -8,7 +8,7 @@ import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 
 class VehicleClassScreenItem extends StatefulWidget {
-  final ClassDataModel classDataModel;
+  final Appointments classDataModel;
   final VoidCallback onTap;
 
   const VehicleClassScreenItem({
@@ -44,52 +44,6 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
     super.dispose();
   }
 
-  Widget _statusChip({
-    required IconData leadIcon,
-    required String label,
-    required String? status,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: status == "Pass" ? greenColor.withValues(alpha: 0.06) : status == "Fail" ? redColor.withValues(alpha: 0.06) :appColor.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: status == "Pass" ? greenColor : status == "Fail" ? redColor : appColor.withValues(alpha: 0.18), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(leadIcon, size: 11, color: status == "Pass" ? greenColor : status == "Fail" ? redColor : Color(0xFFADB8CE),),
-          5.width,
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 8.0,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.9,
-                  color: status == "Pass" ? greenColor : status == "Fail" ? redColor : Color(0xFFADB8CE),
-                ),
-              ),
-              2.height,
-              Text(
-                status ?? 'N/A',
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: status == "Pass" ? greenColor : status == "Fail" ? redColor : Color(0xFFADB8CE),
-                  letterSpacing: 0.2,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +56,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
       onTapCancel: () => _controller.reverse(),
       child: AnimatedBuilder(
         animation: _scaleAnim,
-        builder: (context, child) =>
-            Transform.scale(scale: _scaleAnim.value, child: child),
+        builder: (context, child) => Transform.scale(scale: _scaleAnim.value, child: child),
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -267,7 +220,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                                               color: Color(0xFF6B7BA4)),
                                           4.width,
                                           CustomText(
-                                            text: widget.classDataModel.regNo
+                                            text: widget.classDataModel.registrationNo
                                                 .toString(),
                                             fontFamily: "Bold",
                                             fontSize: 11.0,
@@ -297,63 +250,6 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                                   ],
                                 ),
                               ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      14.height,
-                      Container(
-                        height: 1,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.transparent,
-                              const Color(0xFFE2E8F4).withValues(alpha: 0.9),
-                              const Color(0xFFE2E8F4).withValues(alpha: 0.9),
-                              Colors.transparent,
-                            ],
-                            stops: const [0.0, 0.15, 0.85, 1.0],
-                          ),
-                        ),
-                      ),
-                      12.height,
-                      Row(
-                        children: [
-                          _statusChip(
-                            leadIcon: Icons.memory_rounded,
-                            label: "Machine",
-                            status:
-                            widget.classDataModel.machineInspectonStatus,
-                          ),
-                          10.width,
-                          _statusChip(
-                            leadIcon: Icons.person_outline_rounded,
-                            label: "Manual",
-                            status: widget
-                                .classDataModel.manualPreInspectionStatus,
-                          ),
-                          const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  appColor.withValues(alpha: 0.16),
-                                  appColor.withValues(alpha: 0.07),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: appColor.withValues(alpha: 0.20),
-                                width: 1,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              size: 12,
-                              color: appColor,
                             ),
                           ),
                         ],

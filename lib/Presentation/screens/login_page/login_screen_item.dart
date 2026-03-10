@@ -18,7 +18,7 @@ class LoginScreenItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomText(text: "EMAIL",fontFamily: "Regular",fontSize: 16,textColor: whiteColor,),
+          CustomText(text: "Username",fontFamily: "Regular",fontSize: 16,textColor: whiteColor,),
           5.height,
           CustomTextField(
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -29,12 +29,12 @@ class LoginScreenItem extends StatelessWidget {
               borderSide: BorderSide(color: appColor, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
-            hint: "Enter your email",
+            hint: "Enter your username",
             controller: context.watch<LoginProvider>().emailController,
             hintStyle: TextStyle(fontSize: 16, fontFamily: "Regular"),
             readOnly: false,
             textCapitalization: TextCapitalization.none,
-            validator: (value) => Validators.emailValidation(value!, context),
+            validator: (value) => Validators.userNameValidation(value!, context),
             inputFormatters: InputFormatters.specialRestrictions,
           ),
         20.height,
@@ -61,7 +61,6 @@ class LoginScreenItem extends StatelessWidget {
               color: appColor,
                 onPressed: (){
                 context.read<LoginProvider>().passwordVisibility();
-
                 },
                 icon: Icon(
                     context.watch<LoginProvider>().passwordVisible == true ? Icons.visibility_off_rounded : Icons.visibility_rounded)),
