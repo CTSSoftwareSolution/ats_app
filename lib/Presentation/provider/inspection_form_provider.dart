@@ -36,7 +36,7 @@ class CategoryState {
   CategoryState({
     required this.title,
     required this.questions,
-    this.isExpanded = false,
+    this.isExpanded = true,
   });
 
   int get answeredCount =>
@@ -90,6 +90,9 @@ class InspectionFormProvider extends ChangeNotifier {
   bool _isEditMode = false;
   QuestionFilter _filter = QuestionFilter.all;
 
+  // ── Auto-scroll: GlobalKey registry ──────────
+  final Map<String, GlobalKey> _questionKeys = {};
+
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
   String get errorMessage => _errorMessage;
@@ -103,11 +106,38 @@ class InspectionFormProvider extends ChangeNotifier {
   bool get isFullyComplete => grandTotalQuestions > 0 && grandTotalAnswered == grandTotalQuestions;
   int get grandTotalNo => _sections.fold(
       0, (sum, s) =>
-      sum + s.categories.fold(0, (cSum, c) => cSum + c.questions.where((q) => q.answer == AnswerState.Fail).length));
+  sum + s.categories.fold(0, (cSum, c) => cSum + c.questions.where((q) => q.answer == AnswerState.Fail).length));
 
-  // ─────────────────────────────────────────────
-  //  FILTER
-  // ─────────────────────────────────────────────
+  //  Auto Scroll
+  void registerQuestionKey(int sec, int cat, int que, GlobalKey key) {
+    _questionKeys['$sec-$cat-$que'] = key;
+  }
+
+  GlobalKey? nextUnansweredKey(int sec, int cat, int que) {
+    final section = _sections[sec];
+
+    final sameCategory = section.categories[cat];
+    for (int q = que + 1; q < sameCategory.questions.length; q++) {
+      if (sameCategory.questions[q].answer == AnswerState.unanswered) {
+        return _questionKeys['$sec-$cat-$q'];
+      }
+    }
+    for (int c = cat + 1; c < section.categories.length; c++) {
+      final nextCat = section.categories[c];
+      for (int q = 0; q < nextCat.questions.length; q++) {
+        if (nextCat.questions[q].answer == AnswerState.unanswered) {
+          if (!nextCat.isExpanded) {
+            nextCat.isExpanded = true;
+          }
+          return _questionKeys['$sec-$c-$q'];
+        }
+      }
+    }
+
+    return null;
+  }
+
+ // Filter
   void setFilter(QuestionFilter f) {
     _filter = f;
     notifyListeners();
@@ -148,9 +178,6 @@ class InspectionFormProvider extends ChangeNotifier {
     }).toList();
   }
 
-  // ─────────────────────────────────────────────
-  //  FETCH: New Inspection
-  // ─────────────────────────────────────────────
   Future<void> fetchInspectionData() async {
     _isLoading = true;
     _hasError = false;
@@ -158,6 +185,7 @@ class InspectionFormProvider extends ChangeNotifier {
     _isEditMode = false;
     _filter = QuestionFilter.all;
     _sections = [];
+    _questionKeys.clear();
     notifyListeners();
 
     try {
@@ -188,16 +216,14 @@ class InspectionFormProvider extends ChangeNotifier {
     }
   }
 
-  // ─────────────────────────────────────────────
-  //  FETCH: Edit Mode
-  // ─────────────────────────────────────────────
-  Future<void> fetchAndPrefill({required String vehicleNo,required String appointmentID}) async {
+  Future<void> fetchAndPrefill({required String vehicleNo, required String appointmentID}) async {
     _isLoading = true;
     _hasError = false;
     _errorMessage = '';
     _isEditMode = true;
     _filter = QuestionFilter.all;
     _sections = [];
+    _questionKeys.clear();
     notifyListeners();
 
     try {
@@ -248,9 +274,6 @@ class InspectionFormProvider extends ChangeNotifier {
     }
   }
 
-  // ─────────────────────────────────────────────
-  //  BUILD SECTIONS: New mode
-  // ─────────────────────────────────────────────
   void _buildSections(InspectorData data) {
     _sections = [
       SectionState(
@@ -277,9 +300,6 @@ class InspectionFormProvider extends ChangeNotifier {
     ];
   }
 
-  // ─────────────────────────────────────────────
-  //  BUILD SECTIONS: Edit mode
-  // ─────────────────────────────────────────────
   void _buildSectionsFromDetailsModel(PreInspectionDetailsData data) {
     AnswerState parseAnswer(String? r) {
       if (r == 'Pass') return AnswerState.Pass;
@@ -309,8 +329,7 @@ class InspectionFormProvider extends ChangeNotifier {
         categories: (data.preInspection ?? [])
             .map((cat) => CategoryState(
           title: cat.title ?? 'Unknown',
-          questions:
-          (cat.carData ?? []).map(fromCarDataDetails).toList(),
+          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
         ))
             .toList(),
       ),
@@ -322,8 +341,7 @@ class InspectionFormProvider extends ChangeNotifier {
         categories: (data.inspection ?? [])
             .map((cat) => CategoryState(
           title: cat.title ?? 'Unknown',
-          questions:
-          (cat.carData ?? []).map(fromCarDataDetails).toList(),
+          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
         ))
             .toList(),
       ),
@@ -335,8 +353,7 @@ class InspectionFormProvider extends ChangeNotifier {
         categories: (data.postInspection ?? [])
             .map((cat) => CategoryState(
           title: cat.title ?? 'Unknown',
-          questions:
-          (cat.carData ?? []).map(fromCarDataDetails).toList(),
+          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
         ))
             .toList(),
       ),
@@ -344,55 +361,35 @@ class InspectionFormProvider extends ChangeNotifier {
   }
 
   List<CategoryState> _buildFromPreInspection(List<PreInspection> raw) =>
-      raw
-          .map((cat) => CategoryState(
+      raw.map((cat) => CategoryState(
         title: cat.title ?? 'Unknown',
-        questions: (cat.carData ?? [])
-            .map((q) => QuestionAnswer(carData: q))
-            .toList(),
-      ))
-          .toList();
+        questions: (cat.carData ?? []).map((q) => QuestionAnswer(carData: q)).toList(),
+      )).toList();
 
   List<CategoryState> _buildFromInspection(List<Inspection> raw) =>
-      raw
-          .map((cat) => CategoryState(
+      raw.map((cat) => CategoryState(
         title: cat.title ?? 'Unknown',
-        questions: (cat.carData ?? [])
-            .map((q) => QuestionAnswer(carData: q))
-            .toList(),
-      ))
-          .toList();
+        questions: (cat.carData ?? []).map((q) => QuestionAnswer(carData: q)).toList(),
+      )).toList();
 
   List<CategoryState> _buildFromPostInspection(List<PostInspection> raw) =>
-      raw
-          .map((cat) => CategoryState(
+      raw.map((cat) => CategoryState(
         title: cat.title ?? 'Unknown',
-        questions: (cat.carData ?? [])
-            .map((q) => QuestionAnswer(carData: q))
-            .toList(),
-      ))
-          .toList();
+        questions: (cat.carData ?? []).map((q) => QuestionAnswer(carData: q)).toList(),
+      )).toList();
 
-  // ─────────────────────────────────────────────
-  //  ANSWER
-  // ─────────────────────────────────────────────
   void answerQuestion({
     required int sectionIndex,
     required int categoryIndex,
     required int questionIndex,
     required AnswerState answer,
   }) {
-    final q = _sections[sectionIndex]
-        .categories[categoryIndex]
-        .questions[questionIndex];
+    final q = _sections[sectionIndex].categories[categoryIndex].questions[questionIndex];
     q.answer = q.answer == answer ? AnswerState.unanswered : answer;
     if (q.answer != AnswerState.Fail) q.imagePath = null;
     notifyListeners();
   }
 
-  // ─────────────────────────────────────────────
-  //  IMAGE
-  // ─────────────────────────────────────────────
   void setQuestionImage({
     required int sectionIndex,
     required int categoryIndex,
@@ -400,14 +397,8 @@ class InspectionFormProvider extends ChangeNotifier {
     required File? image,
     required String? uploadedUrl,
   }) {
-    _sections[sectionIndex]
-        .categories[categoryIndex]
-        .questions[questionIndex]
-        .imagePath = image;
-    _sections[sectionIndex]
-        .categories[categoryIndex]
-        .questions[questionIndex]
-        .uploadedImageUrl = uploadedUrl;
+    _sections[sectionIndex].categories[categoryIndex].questions[questionIndex].imagePath = image;
+    _sections[sectionIndex].categories[categoryIndex].questions[questionIndex].uploadedImageUrl = uploadedUrl;
     notifyListeners();
   }
 
@@ -417,11 +408,7 @@ class InspectionFormProvider extends ChangeNotifier {
     required int questionIndex,
     required String remark,
   }) {
-    _sections[sectionIndex]
-        .categories[categoryIndex]
-        .questions[questionIndex]
-        .remark = remark;
-
+    _sections[sectionIndex].categories[categoryIndex].questions[questionIndex].remark = remark;
     notifyListeners();
   }
 
@@ -430,27 +417,19 @@ class InspectionFormProvider extends ChangeNotifier {
     required int categoryIndex,
     required int questionIndex,
   }) {
-    final q = _sections[sectionIndex]
-        .categories[categoryIndex]
-        .questions[questionIndex];
+    final q = _sections[sectionIndex].categories[categoryIndex].questions[questionIndex];
     q.imagePath = null;
     q.uploadedImageUrl = null;
     q.existingEvidenceUrl = null;
     notifyListeners();
   }
 
-  // ─────────────────────────────────────────────
-  //  TOGGLE CATEGORY
-  // ─────────────────────────────────────────────
   void toggleCategory(int sectionIndex, int categoryIndex) {
     _sections[sectionIndex].categories[categoryIndex].isExpanded =
     !_sections[sectionIndex].categories[categoryIndex].isExpanded;
     notifyListeners();
   }
 
-  // ─────────────────────────────────────────────
-  //  RESET ALL
-  // ─────────────────────────────────────────────
   void resetAll() {
     for (final s in _sections) {
       for (final c in s.categories) {
@@ -462,25 +441,22 @@ class InspectionFormProvider extends ChangeNotifier {
       }
     }
     _filter = QuestionFilter.all;
+    _questionKeys.clear();
     notifyListeners();
   }
 
-  // Original section index dhundho filtered index se
   int originalSectionIndex(int filteredSectionIdx) {
     final filteredSection = filteredSections[filteredSectionIdx];
     return _sections.indexWhere((s) => s.label == filteredSection.label);
   }
 
-// Original category index dhundho
   int originalCategoryIndex(int filteredSectionIdx, int filteredCatIdx) {
     final filteredSection = filteredSections[filteredSectionIdx];
     final filteredCat = filteredSection.categories[filteredCatIdx];
     final origSectionIdx = originalSectionIndex(filteredSectionIdx);
-    return _sections[origSectionIdx].categories
-        .indexWhere((c) => c.title == filteredCat.title);
+    return _sections[origSectionIdx].categories.indexWhere((c) => c.title == filteredCat.title);
   }
 
-// Original question index dhundho
   int originalQuestionIndex(int filteredSectionIdx, int filteredCatIdx, int filteredQueIdx) {
     final filteredSection = filteredSections[filteredSectionIdx];
     final filteredCat = filteredSection.categories[filteredCatIdx];
@@ -491,24 +467,19 @@ class InspectionFormProvider extends ChangeNotifier {
         .indexWhere((q) => q.carData.questionId == filteredQ.carData.questionId);
   }
 
-  // ─────────────────────────────────────────────
-  //  COLLECT ANSWERS
-  // ─────────────────────────────────────────────
   List<QuestionAnswerModel> collectAnswers() {
     final result = <QuestionAnswerModel>[];
     for (final section in _sections) {
       for (final cat in section.categories) {
         for (final q in cat.questions) {
           if (q.answer != AnswerState.unanswered) {
-            result.add(
-                QuestionAnswerModel(
+            result.add(QuestionAnswerModel(
               questionId: q.carData.questionId?.toString() ?? '',
               questionText: q.carData.questionText ?? '',
               answer: q.answer.name,
               imagePath: q.uploadedImageUrl ?? q.existingEvidenceUrl ?? '',
-                  remark: q.remark ?? '',
+              remark: q.remark ?? '',
             ));
-
           }
         }
       }
@@ -516,9 +487,6 @@ class InspectionFormProvider extends ChangeNotifier {
     return result;
   }
 
-  // ─────────────────────────────────────────────
-  //  ERROR
-  // ─────────────────────────────────────────────
   void _setError(String message) {
     _hasError = true;
     _errorMessage = message;

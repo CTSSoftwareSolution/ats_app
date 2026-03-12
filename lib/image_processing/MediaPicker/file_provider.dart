@@ -103,6 +103,16 @@ class FileProvider with ChangeNotifier {
 
   void clearAll(BuildContext context){
     images.clear();
+    currentIndex = null;
+    notifyListeners();
+  }
+
+  void clearImages() {
+    for (int i = 0; i < images.length; i++) {
+      images[i] = null;
+    }
+    currentIndex = null;
+    notifyListeners();
   }
 
   // Future<void> takePicture(BuildContext context) async {

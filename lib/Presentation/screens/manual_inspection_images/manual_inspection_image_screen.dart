@@ -74,6 +74,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
       vehicleId: vehicleClassProvider.selectedClass!.vehicleKey.toString(),
       documents: docs,
     );
+    cameraController.clearImages();
     if(!mounted) return;
     context.push(InspectionPage(isEditMode: false,));
   }

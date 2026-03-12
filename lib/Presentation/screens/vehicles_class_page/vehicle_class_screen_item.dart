@@ -157,7 +157,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                                   children: [
                                     Expanded(
                                       child: CustomText(
-                                        text: widget.classDataModel.vehicleClass
+                                        text: widget.classDataModel.registrationNo
                                             .toString(),
                                         fontFamily: "Bold",
                                         fontSize: 16.5,
@@ -220,7 +220,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                                               color: Color(0xFF6B7BA4)),
                                           4.width,
                                           CustomText(
-                                            text: widget.classDataModel.registrationNo
+                                            text: widget.classDataModel.vehicleClass
                                                 .toString(),
                                             fontFamily: "Bold",
                                             fontSize: 11.0,

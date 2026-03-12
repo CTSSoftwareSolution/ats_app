@@ -49,8 +49,7 @@ class ConfirmationDialog {
                   ? 'All ${provider.grandTotalQuestions} questions answered. Ready to submit?'
                   : '$unanswered question(s) still unanswered.',
             style: TextStyle(fontSize: 16,fontFamily: "Regular"),
-            ),
-                const SizedBox(height: 20),
+            ), const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

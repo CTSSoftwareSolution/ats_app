@@ -48,13 +48,11 @@ class SectionTabView extends StatelessWidget {
   Widget _buildEmptyState(InspectionFormProvider provider) {
     final isAnsweredFilter = provider.filter == QuestionFilter.answered;
     final isPendingFilter = provider.filter == QuestionFilter.unanswered;
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            isAnsweredFilter
+          Icon(isAnsweredFilter
                 ? Icons.check_circle_outline
                 : isPendingFilter
                 ? Icons.pending_outlined

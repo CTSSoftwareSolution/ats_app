@@ -37,8 +37,35 @@ class QuestionTile extends StatefulWidget {
 
 class _QuestionTileState extends State<QuestionTile> {
 
+  // Each tile registers this key in the provider so other tiles can scroll to it
+  final GlobalKey _tileKey = GlobalKey();
   TextEditingController controller = TextEditingController();
 
+  // ── Auto-scroll ───────────────────────────────
+  // Called after answering Yes. Finds the next unanswered question via the
+  // provider's key registry and smoothly scrolls to it.
+  void _scrollToNext(
+      InspectionFormProvider provider,
+      int origSec,
+      int origCat,
+      int origQue,
+      ) {
+    // Small delay so notifyListeners() rebuild completes before we scroll
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (!mounted) return;
+      final key = provider.nextUnansweredKey(origSec, origCat, origQue);
+      if (key?.currentContext != null) {
+        Scrollable.ensureVisible(
+          key!.currentContext!,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+          alignment: 0.15, // bring question near the top with a little padding
+        );
+      }
+    });
+  }
+
+  // ── Image Picker ──────────────────────────────
   Future<void> _pickImage(
       BuildContext context,
       InspectionFormProvider provider,
@@ -51,7 +78,7 @@ class _QuestionTileState extends State<QuestionTile> {
     final fileProvider = Provider.of<FileProvider>(context, listen: false);
     await context.push(CameraScreen());
     try {
-      if (fileProvider.overlayImage!=null) {
+      if (fileProvider.overlayImage != null) {
         final file = File(fileProvider.overlayImage!.path);
         final imagePath = file.path.split(Platform.pathSeparator).last;
         await awsProvider.awsUploadedFile(imagePath, file, context);
@@ -65,7 +92,8 @@ class _QuestionTileState extends State<QuestionTile> {
         );
       }
     } catch (e) {
-      if (!context.mounted) return;context.showErrorSnackBar('Could not pick image: $e');
+      if (!context.mounted) return;
+      context.showErrorSnackBar('Could not pick image: $e');
     }
   }
 
@@ -81,9 +109,13 @@ class _QuestionTileState extends State<QuestionTile> {
             .categories[origCat]
             .questions[origQue];
 
+        // Register this tile's key so the provider can find it for scrolling
+        provider.registerQuestionKey(origSec, origCat, origQue, _tileKey);
+
         final isNo = question.answer == AnswerState.Fail;
 
         return AnimatedContainer(
+          key: _tileKey,
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
             color: isNo ? Colors.red.shade50 : Colors.transparent,
@@ -105,7 +137,7 @@ class _QuestionTileState extends State<QuestionTile> {
                     width: 26,
                     height: 22,
                     decoration: BoxDecoration(
-                      color: widget.accentColor.withValues(alpha:0.1),
+                      color: widget.accentColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Center(
@@ -138,24 +170,31 @@ class _QuestionTileState extends State<QuestionTile> {
                     label: '✓  Yes',
                     selected: question.answer == AnswerState.Pass,
                     selectedColor: Colors.green,
-                    onTap: () => provider.answerQuestion(
-                      sectionIndex: origSec,
-                      categoryIndex: origCat,
-                      questionIndex: origQue,
-                      answer: AnswerState.Pass,
-                    ),
+                    onTap: () {
+                      provider.answerQuestion(
+                        sectionIndex: origSec,
+                        categoryIndex: origCat,
+                        questionIndex: origQue,
+                        answer: AnswerState.Pass,
+                      );
+                      // Auto-scroll to next unanswered question
+                      _scrollToNext(provider, origSec, origCat, origQue);
+                    },
                   ),
                   const SizedBox(width: 8),
                   AnswerButton(
                     label: '✗  No',
                     selected: isNo,
                     selectedColor: Colors.red,
-                    onTap: () => provider.answerQuestion(
-                      sectionIndex: origSec,
-                      categoryIndex: origCat,
-                      questionIndex: origQue,
-                      answer: AnswerState.Fail,
-                    ),
+                    onTap: () {
+                      provider.answerQuestion(
+                        sectionIndex: origSec,
+                        categoryIndex: origCat,
+                        questionIndex: origQue,
+                        answer: AnswerState.Fail,
+                      );
+                      // No auto-scroll on Fail — user must fill remark/image
+                    },
                   ),
                 ],
               ),
@@ -165,87 +204,86 @@ class _QuestionTileState extends State<QuestionTile> {
                 isNo ? CrossFadeState.showSecond : CrossFadeState.showFirst,
                 firstChild: const SizedBox.shrink(),
                 secondChild: Padding(
-                    padding: const EdgeInsets.only(top: 12,),
-                    child: Column(
-                      children: [
-                            () {
-                          final hasLocalImage = question.imagePath != null;
-                          final hasExistingUrl = question.existingEvidenceUrl != null && question.existingEvidenceUrl!.isNotEmpty;
-                          if (hasLocalImage) {
-                            return ImagePreview(
-                              imageFile: question.imagePath,
-                              onRemove: () => provider.removeQuestionImage(
-                                sectionIndex: origSec,
-                                categoryIndex: origCat,
-                                questionIndex: origQue,
-                              ),
-                              onReplace: () => _pickImage(
-                                context,
-                                provider,
-                                ImageSource.camera,
-                                origSec,
-                                origCat,
-                                origQue,
-                              ),
-                            );
-                          } else if (hasExistingUrl) {
-                            return ImagePreview(
-                              imageUrl: question.existingEvidenceUrl,
-                              onRemove: () => provider.removeQuestionImage(
-                                sectionIndex: origSec,
-                                categoryIndex: origCat,
-                                questionIndex: origQue,
-                              ),
-                              onReplace: () => _pickImage(
-                                context,
-                                provider,
-                                ImageSource.camera,
-                                origSec,
-                                origCat,
-                                origQue,
-                              ),
-                            );
-                          } else {
-                            return ImagePickerPrompt(
-                              onTap: () => _pickImage(
-                                context,
-                                provider,
-                                ImageSource.camera,
-                                origSec,
-                                origCat,
-                                origQue,
-                              ),
-
-                            );
-                          }
-                        }(),
-                        const SizedBox(height: 12),
-                        CustomTextField(
-                            cursorColor: redColor,
-                            contentPadding: EdgeInsets.only(left: 10.0),
-                            borderColor: Colors.red.shade200,
-                            borderWidth: 1.5,
-                            fillColor: Colors.red.shade50,
-                            hint: "Remark here...",
-                            controller: controller,
-                            onChanged: (value) {
-                              provider.setQuestionRemark(
-                                sectionIndex: origSec,
-                                categoryIndex: origCat,
-                                questionIndex: origQue,
-                                remark: value,
-                              );
-                            },
-                            hintStyle: TextStyle(
-                              color: Colors.red.shade300,
-                              fontSize: 11,
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Column(
+                    children: [
+                          () {
+                        final hasLocalImage = question.imagePath != null;
+                        final hasExistingUrl = question.existingEvidenceUrl != null &&
+                            question.existingEvidenceUrl!.isNotEmpty;
+                        if (hasLocalImage) {
+                          return ImagePreview(
+                            imageFile: question.imagePath,
+                            onRemove: () => provider.removeQuestionImage(
+                              sectionIndex: origSec,
+                              categoryIndex: origCat,
+                              questionIndex: origQue,
                             ),
-                            readOnly: false,
-                            textCapitalization: TextCapitalization.sentences
-                        )
-                      ],
-                    )
-
+                            onReplace: () => _pickImage(
+                              context,
+                              provider,
+                              ImageSource.camera,
+                              origSec,
+                              origCat,
+                              origQue,
+                            ),
+                          );
+                        } else if (hasExistingUrl) {
+                          return ImagePreview(
+                            imageUrl: question.existingEvidenceUrl,
+                            onRemove: () => provider.removeQuestionImage(
+                              sectionIndex: origSec,
+                              categoryIndex: origCat,
+                              questionIndex: origQue,
+                            ),
+                            onReplace: () => _pickImage(
+                              context,
+                              provider,
+                              ImageSource.camera,
+                              origSec,
+                              origCat,
+                              origQue,
+                            ),
+                          );
+                        } else {
+                          return ImagePickerPrompt(
+                            onTap: () => _pickImage(
+                              context,
+                              provider,
+                              ImageSource.camera,
+                              origSec,
+                              origCat,
+                              origQue,
+                            ),
+                          );
+                        }
+                      }(),
+                      const SizedBox(height: 12),
+                      CustomTextField(
+                        cursorColor: redColor,
+                        contentPadding: const EdgeInsets.only(left: 10.0),
+                        borderColor: Colors.red.shade200,
+                        borderWidth: 1.5,
+                        fillColor: Colors.red.shade50,
+                        hint: "Remark here...",
+                        controller: controller,
+                        onChanged: (value) {
+                          provider.setQuestionRemark(
+                            sectionIndex: origSec,
+                            categoryIndex: origCat,
+                            questionIndex: origQue,
+                            remark: value,
+                          );
+                        },
+                        hintStyle: TextStyle(
+                          color: Colors.red.shade300,
+                          fontSize: 11,
+                        ),
+                        readOnly: false,
+                        textCapitalization: TextCapitalization.sentences,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

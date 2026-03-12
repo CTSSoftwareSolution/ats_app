@@ -109,7 +109,8 @@ class _InspectionPageState extends State<InspectionPage>
                     ),
                 ],
               ),
-              text: s.label.split('-').last,
+             // text: s.label.split('-').last,
+              text: 'Step ${provider.sections.indexOf(s) + 1}',
             )).toList(),
           ),
         ),
@@ -134,7 +135,7 @@ class _InspectionPageState extends State<InspectionPage>
   Widget _buildFilterBar(InspectionFormProvider provider) {
     final answered = provider.grandTotalAnswered;
     final unanswered = provider.grandTotalQuestions - answered;
-    final no = provider.grandTotalNo; // ← NEW
+    final no = provider.grandTotalNo;
 
     return Container(
       color: Colors.white,
