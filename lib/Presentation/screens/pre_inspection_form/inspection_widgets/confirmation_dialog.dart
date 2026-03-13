@@ -1,4 +1,5 @@
 
+import 'package:ats_app/image_processing/MediaPicker/file_provider.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
@@ -88,6 +89,8 @@ class ConfirmationDialog {
 
   static Future<void> preInspectionSaveAPI({required BuildContext context}) async {
     final provider = Provider.of<PreSaveInspectionProvider>(context, listen: false);
+    final cameraController = Provider.of<FileProvider>(context, listen: false);
+
     final inspectionProvider = Provider.of<InspectionFormProvider>(context, listen: false);
     final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
     List<InspectionPreSaveReqModel> inspections = [];
@@ -128,6 +131,8 @@ class ConfirmationDialog {
       inspectedBy: Preferences.getUserId().toString(),
       inspections: inspections,
     );
+    //cameraController.clearAll(context);
+    cameraController.clearImages();
     context.pushAndRemoveUntil(BottomNavigationBarScreen());
   }
 }

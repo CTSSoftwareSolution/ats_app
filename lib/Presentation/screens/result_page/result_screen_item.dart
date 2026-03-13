@@ -8,101 +8,144 @@ import '../../../utilities/image_data.dart';
 
 class ResultScreenItem extends StatelessWidget {
   final Appointments appointments;
-  const ResultScreenItem({super.key, required this.appointments});
+  final VoidCallback? onRetest;
+
+  const ResultScreenItem({
+    super.key,
+    required this.appointments,
+    this.onRetest,
+  });
 
   @override
   Widget build(BuildContext context) {
+
+    bool isPass = appointments.manualStatus == "Pass";
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 5),
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(14),
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFC5CAD8).withValues(alpha:0.35),
-              blurRadius: 20,
-              spreadRadius: 0,
-              offset: const Offset(0, 6),
-            ),
-            BoxShadow(
-              color: Colors.white.withValues(alpha:0.9),
-              blurRadius: 6,
-              spreadRadius: 0,
-              offset: const Offset(0, -2),
-            ),
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            )
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
+
+              /// Vehicle Info Row
               Row(
                 children: [
-                  // Icon container
                   Container(
-                    width: 52,
-                    height: 52,
+                    width: 60,
+                    height: 60,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14.0),
-                      color: const Color(0xFFF0F4FB),
+                      borderRadius: BorderRadius.circular(10),
+                      color: const Color(0xFFF3F6FC),
                     ),
                     child: Center(
-                      child: CustomImage(image: defaultImage, scale: 6.5),
+                      child: CustomImage(image: defaultImage, scale: 4),
                     ),
                   ),
-                  14.width,
+
+                  8.width,
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomText(
-                          text: appointments.registrationNo!,
+                          text: appointments.registrationNo ?? "",
                           fontFamily: "Bold",
-                          fontSize: 17.0,
+                          fontSize: 18,
                           textColor: const Color(0xFF1C2A45),
                         ),
-                        5.height,
+
+                        2.height,
+
                         CustomText(
-                          text: appointments.vehicleClass!,
+                          text: appointments.vehicleClass ?? "",
                           fontFamily: "Medium",
-                          fontSize: 12.5,
+                          fontSize: 14,
                           textColor: const Color(0xFF8F9BB8),
-                          overflow: TextOverflow.visible,
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-              14.height,
-              Container(
-                height: 1,
-                color: const Color(0xFFF0F2F7),
-              ),
-              12.height,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
+
+                  /// Status Badge
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 14.0,
-                      vertical: 7.0,
-                    ),
+                        horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
-                      color: appointments.manualStatus=="Pass"?Color(0xFFDAFFE1):const Color(0xFFFDF0F0),
+                      borderRadius: BorderRadius.circular(20),
+                      color: isPass
+                          ? const Color(0xFFDAFFE1)
+                          : const Color(0xFFFFE2E2),
                     ),
                     child: CustomText(
-                      text: appointments.manualStatus!,
+                      text: appointments.manualStatus ?? "",
                       fontFamily: "Bold",
-                      fontSize: 12.5,
-                      textColor: appointments.manualStatus=="Pass"?greenColor:redColor,
+                      fontSize: 11,
+                      textColor: isPass ? greenColor : redColor,
                     ),
                   ),
-                  10.width,
                 ],
+              ),
+
+              6.height,
+
+              Divider(
+                color: Colors.grey.shade200,
+                height: 1,
+              ),
+
+              6.height,
+
+              /// Retest Button
+              Align(
+                alignment: Alignment.centerRight,
+                child: InkWell(
+                  onTap: onRetest,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF5B8CFF),
+                          Color(0xFF3D6BFF),
+                        ],
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(Icons.refresh,
+                            color: Colors.white, size: 14),
+                        SizedBox(width: 4),
+                        Text(
+                          "Retest",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

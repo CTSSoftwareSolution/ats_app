@@ -28,7 +28,6 @@ class _InspectionPageState extends State<InspectionPage>
       final provider = context.read<InspectionFormProvider>();
       final vehicleClass = context.read<VehicleClassProvider>();
       final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
-
       if (widget.isEditMode == true) {
         provider.fetchAndPrefill(
             vehicleNo: vehicleClass.selectedClass!.registrationNo.toString(),
