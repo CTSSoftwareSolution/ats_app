@@ -1,11 +1,14 @@
+import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
+import '../../../Data/model/response_model/manual_inspection_list_model.dart';
 import '../../../utilities/image_data.dart';
 
 class ResultScreenItem extends StatelessWidget {
-  const ResultScreenItem({super.key});
+  final Appointments appointments;
+  const ResultScreenItem({super.key, required this.appointments});
 
   @override
   Widget build(BuildContext context) {
@@ -53,14 +56,14 @@ class ResultScreenItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomText(
-                        text: "Headlights",
+                        text: appointments.registrationNo!,
                         fontFamily: "Bold",
                         fontSize: 17.0,
                         textColor: const Color(0xFF1C2A45),
                       ),
                       5.height,
                       CustomText(
-                        text: "Quick diagnostic of your headlights",
+                        text: appointments.vehicleClass!,
                         fontFamily: "Medium",
                         fontSize: 12.5,
                         textColor: const Color(0xFF8F9BB8),
@@ -72,7 +75,6 @@ class ResultScreenItem extends StatelessWidget {
               ],
             ),
             14.height,
-            // Divider
             Container(
               height: 1,
               color: const Color(0xFFF0F2F7),
@@ -81,7 +83,6 @@ class ResultScreenItem extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // Pass badge
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14.0,
@@ -89,65 +90,16 @@ class ResultScreenItem extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30.0),
-                    color: const Color(0xFFEDF7EF),
+                    color: appointments.manualStatus=="Pass"?Color(0xFFDAFFE1):const Color(0xFFFDF0F0),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFF3DB85C),
-                        ),
-                      ),
-                      6.width,
-                      CustomImage(image: passImage, scale: 6.0),
-                      5.width,
-                      CustomText(
-                        text: "Pass",
-                        fontFamily: "Bold",
-                        fontSize: 12.5,
-                        textColor: const Color(0xFF2A8C44),
-                      ),
-                    ],
+                  child: CustomText(
+                    text: appointments.manualStatus!,
+                    fontFamily: "Bold",
+                    fontSize: 12.5,
+                    textColor: appointments.manualStatus=="Pass"?greenColor:redColor,
                   ),
                 ),
                 10.width,
-                // Fail badge
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14.0,
-                    vertical: 7.0,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30.0),
-                    color: const Color(0xFFFDF0F0),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFFD94040),
-                        ),
-                      ),
-                      6.width,
-                      CustomImage(image: failImage, scale: 6.0),
-                      5.width,
-                      CustomText(
-                        text: "Fail",
-                        fontFamily: "Bold",
-                        fontSize: 12.5,
-                        textColor: const Color(0xFFBF2E2E),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ],

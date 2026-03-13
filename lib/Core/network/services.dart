@@ -36,6 +36,7 @@ String get preInspectionAppointmentList   => "${newBaseUrl}Appointment/pre-inspe
 String get preInspectionDetails           => "${newBaseUrl}Inspection/preinspection-details";
 String get savePreInspection              => "${newBaseUrl}Inspection/save-pre-inspection";
 String get laneList                       => "${newBaseUrl}lane/list";
+String get manualInspectionList                       => "${newBaseUrl}Appointment/manual-inspection-appointment-list";
 
 
 const String awsSignedUrl = "https://erpapi.sgbregistration.in/v1/File_upload/getsignedurlsgb";

@@ -66,6 +66,7 @@ class Assets {
   static const String entitiesInspectionQueEntity = 'lib/Domain/entities/inspection_que_entity.dart';
   static const String entitiesLaneListEntity = 'lib/Domain/entities/lane_list_entity.dart';
   static const String entitiesLoginEntity = 'lib/Domain/entities/login_entity.dart';
+  static const String entitiesManualInspectionEntity = 'lib/Domain/entities/manual_inspection_entity.dart';
   static const String entitiesPreInsManualStatusEntity = 'lib/Domain/entities/pre_ins_manual_status_entity.dart';
   static const String entitiesPreInspectionResultEntity = 'lib/Domain/entities/pre_inspection_result_entity.dart';
   static const String entitiesPreSaveInspectionEntity = 'lib/Domain/entities/pre_save_inspection_entity.dart';
@@ -150,6 +151,7 @@ class Assets {
   static const String providerInspectionResultProvider = 'lib/Presentation/provider/inspection_result_provider.dart';
   static const String providerLaneListProvider = 'lib/Presentation/provider/lane_list_provider.dart';
   static const String providerLoginProvider = 'lib/Presentation/provider/login_provider.dart';
+  static const String providerManualInspectionListProvider = 'lib/Presentation/provider/manual_inspection_list_provider.dart';
   static const String providerMultipleProvider = 'lib/Presentation/provider/multiple_provider.dart';
   static const String providerPermissionProvider = 'lib/Presentation/provider/permission_provider.dart';
   static const String providerPreInsManualStatusProvider = 'lib/Presentation/provider/pre_ins_manual_status_provider.dart';
@@ -162,6 +164,7 @@ class Assets {
   static const String repositoriesImplInspectionQueImpl = 'lib/Data/repositories_impl/inspection_que_impl.dart';
   static const String repositoriesImplLaneListImpl = 'lib/Data/repositories_impl/lane_list_impl.dart';
   static const String repositoriesImplLoginRepoImpl = 'lib/Data/repositories_impl/login_repo_impl.dart';
+  static const String repositoriesImplManualInspectionListImpl = 'lib/Data/repositories_impl/manual_inspection_list_impl.dart';
   static const String repositoriesImplPreSaveInspectionImpl = 'lib/Data/repositories_impl/pre_save_inspection_impl.dart';
   static const String repositoriesImplVehicleClassRepoImpl = 'lib/Data/repositories_impl/vehicle_class_repo_impl.dart';
   static const String repositoriesImplVehiclePartsRepoImpl = 'lib/Data/repositories_impl/vehicle_parts_repo_impl.dart';
@@ -169,12 +172,14 @@ class Assets {
   static const String repositoriesLaneListRepository = 'lib/Domain/repositories/lane_list_repository.dart';
   static const String repositoriesLoginRepository = 'lib/Domain/repositories/login_repository.dart';
   static const String repositoriesManualDocInspectionUploadRepository = 'lib/Domain/repositories/manual_doc_inspection_upload_repository.dart';
+  static const String repositoriesManualInspectionRepository = 'lib/Domain/repositories/manual_inspection_repository.dart';
   static const String repositoriesPreInsManualStatusRepository = 'lib/Domain/repositories/pre_ins_manual_status_repository.dart';
   static const String repositoriesPreInspectionResultRepository = 'lib/Domain/repositories/pre_inspection_result_repository.dart';
   static const String repositoriesPreSaveInspectionRepository = 'lib/Domain/repositories/pre_save_inspection_repository.dart';
   static const String repositoriesVehicleClassRepository = 'lib/Domain/repositories/vehicle_class_repository.dart';
   static const String repositoriesVehiclePartsRepository = 'lib/Domain/repositories/vehicle_parts_repository.dart';
   static const String requestModelLoginReqModel = 'lib/Data/model/request_model/login_req_model.dart';
+  static const String requestModelManualInspectionRequest = 'lib/Data/model/request_model/manual_inspection_request.dart';
   static const String requestModelPreInsDetailsReqModel = 'lib/Data/model/request_model/pre_ins_details_req_model.dart';
   static const String requestModelPreInsManualStatusReqModel = 'lib/Data/model/request_model/pre_ins_manual_status_req_model.dart';
   static const String requestModelPreInspectionResultReqModel = 'lib/Data/model/request_model/pre_inspection_result_req_model.dart';
@@ -186,6 +191,7 @@ class Assets {
   static const String responseModelInspectionQueModel = 'lib/Data/model/response_model/inspection_que_model.dart';
   static const String responseModelLaneListModel = 'lib/Data/model/response_model/lane_list_model.dart';
   static const String responseModelLoginResModel = 'lib/Data/model/response_model/login_res_model.dart';
+  static const String responseModelManualInspectionListModel = 'lib/Data/model/response_model/manual_inspection_list_model.dart';
   static const String responseModelPreInspectionResultModel = 'lib/Data/model/response_model/pre_inspection_result_model.dart';
   static const String responseModelVehicleClassResModel = 'lib/Data/model/response_model/vehicle_class_res_model.dart';
   static const String responseModelVehiclePartsResModel = 'lib/Data/model/response_model/vehicle_parts_res_model.dart';
@@ -199,6 +205,7 @@ class Assets {
   static const String usecasesInspectionQueUsecases = 'lib/Domain/usecases/inspection_que_usecases.dart';
   static const String usecasesLaneListUsecase = 'lib/Domain/usecases/lane_list_usecase.dart';
   static const String usecasesLoginUsecases = 'lib/Domain/usecases/login_usecases.dart';
+  static const String usecasesManualInspectionListUsecase = 'lib/Domain/usecases/manual_inspection_list_usecase.dart';
   static const String usecasesPreInsManualStatusUsecases = 'lib/Domain/usecases/pre_ins_manual_status_usecases.dart';
   static const String usecasesPreInspectionResultUsecases = 'lib/Domain/usecases/pre_inspection_result_usecases.dart';
   static const String usecasesPreSaveInspectionUsecase = 'lib/Domain/usecases/pre_save_inspection_usecase.dart';

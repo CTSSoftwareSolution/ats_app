@@ -1,9 +1,12 @@
 import 'package:ats_app/Data/repositories_impl/lane_list_impl.dart';
 import 'package:ats_app/Data/repositories_impl/login_repo_impl.dart';
+import 'package:ats_app/Data/repositories_impl/manual_inspection_list_impl.dart';
 import 'package:ats_app/Data/repositories_impl/pre_save_inspection_impl.dart';
 import 'package:ats_app/Data/repositories_impl/vehicle_class_repo_impl.dart';
+import 'package:ats_app/Domain/repositories/manual_inspection_repository.dart';
 import 'package:ats_app/Domain/usecases/lane_list_usecase.dart';
 import 'package:ats_app/Domain/usecases/login_usecases.dart';
+import 'package:ats_app/Domain/usecases/manual_inspection_list_usecase.dart';
 import 'package:ats_app/Domain/usecases/pre_inspection_result_usecases.dart';
 import 'package:ats_app/Domain/usecases/pre_save_inspection_usecase.dart';
 import 'package:ats_app/Presentation/provider/inspection_form_provider.dart';
@@ -32,6 +35,7 @@ import '../../main.dart';
 import '../screens/pre_inspection_form/pre_save_inspection_provider.dart';
 import 'bottom_navigation_provider.dart';
 import 'lane_list_provider.dart';
+import 'manual_inspection_list_provider.dart';
 
 class MultipleProvider extends StatelessWidget {
   final PermissionProvider permissionProvider;
@@ -45,6 +49,7 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BottomNavigationProvider()),
         ChangeNotifierProvider(create: (_) => SplashProvider()),
         ChangeNotifierProvider(create: (_) => VerifyHRSPProvider()),
+        ChangeNotifierProvider(create: (_) => ManualInspectionListProvider(manualInspectionListUseCase: ManualInspectionListUseCase(manualInspectionRepository: ManualInspectionListImpl()))),
         ChangeNotifierProvider(create: (_) => LoginProvider(loginUseCases: LoginUseCases(loginRepository: LoginRepoImpl()))),
         ChangeNotifierProvider(create: (_) => FileProvider()..initCamera()),
         ChangeNotifierProvider(create: (_) => VehicleClassProvider(vehicleClassUseCases: VehicleClassUseCases(vehicleClassRepository: VehicleClassRepoImpl()))),
