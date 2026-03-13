@@ -19,8 +19,8 @@ class BottomNavigationProvider extends ChangeNotifier{
 
   final pages = [
     HomeScreen(),
-    VehicleNumberPlateScreen(),
     ResultScreen(),
+    VehicleNumberPlateScreen(),
     ProfileScreen(),
   ];
 

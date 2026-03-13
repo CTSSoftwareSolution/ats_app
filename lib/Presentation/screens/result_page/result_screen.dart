@@ -1,11 +1,11 @@
 import 'package:ats_app/Presentation/provider/manual_inspection_list_provider.dart';
+import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_shimmer.dart';
 import 'package:ats_app/Presentation/screens/result_page/result_screen_item.dart';
 import 'package:ats_app/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
 import '../../../utilities/color_data.dart';
-import '../../../utilities/home_shimmer.dart';
 import '../../../widgets/custom_search_bar.dart';
 
 class ResultScreen extends StatefulWidget {
