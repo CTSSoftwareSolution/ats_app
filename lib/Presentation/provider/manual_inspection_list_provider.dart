@@ -1,17 +1,13 @@
-
-
 import 'dart:async';
-
 import 'package:ats_app/Data/model/request_model/manual_inspection_request.dart';
-import 'package:ats_app/Data/model/request_model/vehicle_class_req_model.dart';
+import 'package:ats_app/Data/model/response_model/manual_inspection_list_model.dart';
 import 'package:ats_app/Domain/entities/manual_inspection_entity.dart';
 import 'package:ats_app/Domain/usecases/manual_inspection_list_usecase.dart';
 import 'package:flutter/cupertino.dart';
-import '../../Data/model/response_model/vehicle_class_res_model.dart';
 import '../../Domain/entities/vehicle_class_entity.dart';
-import '../../Domain/usecases/vehicle_class_usecases.dart';
 
 class ManualInspectionListProvider extends ChangeNotifier {
+
   ManualInspectionListUseCase manualInspectionListUseCase;
 
   ManualInspectionListProvider({required this.manualInspectionListUseCase});
@@ -25,6 +21,7 @@ class ManualInspectionListProvider extends ChangeNotifier {
   final searchController = TextEditingController();
   String searchValue = "";
   Timer? debounce;
+  ManualLisAppointments? manualLisAppointments;
 
   void onSearchChanged(BuildContext context, String value) {
     searchValue = value;
@@ -39,6 +36,13 @@ class ManualInspectionListProvider extends ChangeNotifier {
     manualInspectionListAPI(context: context, loadMore: false);
     notifyListeners();
   }
+
+  ManualLisAppointments? get selectedManualListData => manualLisAppointments;
+  void setSelectedManualListData(ManualLisAppointments data) {
+    manualLisAppointments = data;
+    notifyListeners();
+  }
+
 
   Future<VehicleClassEntity?> manualInspectionListAPI({
     required BuildContext context,

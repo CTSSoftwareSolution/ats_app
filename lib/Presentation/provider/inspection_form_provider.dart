@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:ats_app/Presentation/PreInspectionDetailsModelsModels.dart';
+import 'package:ats_app/utilities/preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -227,14 +228,16 @@ class InspectionFormProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      debugPrint('→ [EditMode] Fetching for vehicle: $vehicleNo');
+      debugPrint('→ [EditMode] Fetching for vehicle: $vehicleNo $appointmentID');
+
+      Map<String, String> headers = {
+        HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+        HttpHeaders.authorizationHeader: 'Bearer ${Preferences.getToken()}',
+      };
 
       final response = await http.post(
         Uri.parse(preInspectionDetails),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: headers,
         body: jsonEncode({
           'vehicle_id': vehicleNo,
           'appointment_id': appointmentID,

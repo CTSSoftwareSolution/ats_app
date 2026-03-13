@@ -4,6 +4,7 @@ import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/inspection_form_provider.dart';
+import '../../../provider/manual_inspection_list_provider.dart';
 import '../inspection_widgets/error_screen.dart';
 import '../inspection_widgets/loading_screen.dart';
 import '../inspection_widgets/section_tab_view.dart';
@@ -27,11 +28,12 @@ class _InspectionPageState extends State<InspectionPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<InspectionFormProvider>();
       final vehicleClass = context.read<VehicleClassProvider>();
-      final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
+      // final manualProvider = context.watch<ManualInspectionListProvider>();
+      final manualProvider = Provider.of<ManualInspectionListProvider>(context, listen: false);
       if (widget.isEditMode == true) {
         provider.fetchAndPrefill(
-            vehicleNo: vehicleClass.selectedClass!.registrationNo.toString(),
-            appointmentID: vehicleClassProvider.selectedClass!.appointmentId.toString());
+            vehicleNo: manualProvider.selectedManualListData!.registrationNo.toString(),
+            appointmentID: manualProvider.selectedManualListData!.appointmentId.toString());
       } else {
         provider.fetchInspectionData();
       }
@@ -72,7 +74,6 @@ class _InspectionPageState extends State<InspectionPage>
 
     return Column(
       children: [
-
         Container(
           color: appColor,
           child: TabBar(

@@ -7,7 +7,7 @@ import '../../../Data/model/response_model/manual_inspection_list_model.dart';
 import '../../../utilities/image_data.dart';
 
 class ResultScreenItem extends StatelessWidget {
-  final Appointments appointments;
+  final ManualLisAppointments appointments;
   final VoidCallback? onRetest;
 
   const ResultScreenItem({
@@ -21,134 +21,195 @@ class ResultScreenItem extends StatelessWidget {
 
     bool isPass = appointments.manualStatus == "Pass";
 
+    final Color passGreen = const Color(0xFF1DB77A);
+    final Color failRed  = const Color(0xFFE24B4A);
+    final Color statusColor = isPass ? passGreen : failRed;
+
+    final Color passBg = const Color(0xFFEAF8F1);
+    final Color failBg = const Color(0xFFFCEBEB);
+    final Color statusBg = isPass ? passBg : failBg;
+
+    final List<Color> accentGradient = isPass
+        ? [const Color(0xFF1DB77A), const Color(0xFF5DCAA5)]
+        : [const Color(0xFFE24B4A), const Color(0xFFF09595)];
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(20),
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: statusColor.withOpacity(0.08),
+              blurRadius: 16,
+              spreadRadius: 0,
+              offset: const Offset(0, 6),
+            ),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
               blurRadius: 8,
-              offset: const Offset(0, 3),
-            )
+              offset: const Offset(0, 2),
+            ),
           ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-
-              /// Vehicle Info Row
-              Row(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+              child: Column(
                 children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color(0xFFF3F6FC),
-                    ),
-                    child: Center(
-                      child: CustomImage(image: defaultImage, scale: 4),
-                    ),
-                  ),
-
-                  8.width,
-
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(
-                          text: appointments.registrationNo ?? "",
-                          fontFamily: "Bold",
-                          fontSize: 18,
-                          textColor: const Color(0xFF1C2A45),
+                  Row(
+                    children: [
+                      Container(
+                        width: 58,
+                        height: 58,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          color: const Color(0xFFF3F6FC),
+                          border: Border.all(
+                            color: const Color(0xFFE4EAF6),
+                            width: 1,
+                          ),
                         ),
+                        child: Center(
+                          child: CustomImage(image: defaultImage, scale: 4),
+                        ),
+                      ),
+                      10.width,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText(
+                              text: appointments.registrationNo ?? "",
+                              fontFamily: "Bold",
+                              fontSize: 17,
+                              textColor: const Color(0xFF1C2A45),
+                            ),
 
-                        2.height,
+                            4.height,
 
-                        CustomText(
-                          text: appointments.vehicleClass ?? "",
+                            Row(
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color(0xFF8F9BB8),
+                                  ),
+                                ),
+                                4.width,
+                                CustomText(
+                                  text: appointments.vehicleClass ?? "",
+                                  fontFamily: "Medium",
+                                  fontSize: 12,
+                                  textColor: const Color(0xFF8F9BB8),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          color: statusBg,
+                          border: Border.all(
+                            color: statusColor.withOpacity(0.25),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: statusColor,
+                              ),
+                            ),
+                            5.width,
+                            CustomText(
+                              text: appointments.manualStatus ?? "",
+                              fontFamily: "Bold",
+                              fontSize: 11,
+                              textColor: statusColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  10.height,
+                  Divider(
+                    color: const Color(0xFFF0F3FA),
+                    height: 1,
+                    thickness: 1,
+                  ),
+                  10.height,
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          color: const Color(0xFFF3F6FC),
+                          border: Border.all(
+                            color: const Color(0xFFE4EAF6),
+                            width: 1,
+                          ),
+                        ),
+                        child: CustomText(
+                          text: "Manual",
                           fontFamily: "Medium",
-                          fontSize: 14,
+                          fontSize: 11,
                           textColor: const Color(0xFF8F9BB8),
                         ),
-                      ],
-                    ),
-                  ),
-
-                  /// Status Badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: isPass
-                          ? const Color(0xFFDAFFE1)
-                          : const Color(0xFFFFE2E2),
-                    ),
-                    child: CustomText(
-                      text: appointments.manualStatus ?? "",
-                      fontFamily: "Bold",
-                      fontSize: 11,
-                      textColor: isPass ? greenColor : redColor,
-                    ),
+                      ),
+                      const Spacer(),
+                      InkWell(
+                        onTap: onRetest,
+                        borderRadius: BorderRadius.circular(100),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: const Color(0xFF1C2A45),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(Icons.refresh_rounded,
+                                  color: Colors.white, size: 13),
+                              SizedBox(width: 5),
+                              Text(
+                                "Retest",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 11,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-
-              6.height,
-
-              Divider(
-                color: Colors.grey.shade200,
-                height: 1,
-              ),
-
-              6.height,
-
-              /// Retest Button
-              Align(
-                alignment: Alignment.centerRight,
-                child: InkWell(
-                  onTap: onRetest,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFF5B8CFF),
-                          Color(0xFF3D6BFF),
-                        ],
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(Icons.refresh,
-                            color: Colors.white, size: 14),
-                        SizedBox(width: 4),
-                        Text(
-                          "Retest",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

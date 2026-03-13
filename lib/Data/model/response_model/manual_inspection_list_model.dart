@@ -44,7 +44,7 @@ class ManualInsData {
       num? totalRecords, 
       num? pageNo, 
       num? pageSize, 
-      List<Appointments>? appointments,}){
+      List<ManualLisAppointments>? appointments,}){
     _totalRecords = totalRecords;
     _pageNo = pageNo;
     _pageSize = pageSize;
@@ -58,18 +58,18 @@ class ManualInsData {
     if (json['appointments'] != null) {
       _appointments = [];
       json['appointments'].forEach((v) {
-        _appointments?.add(Appointments.fromJson(v));
+        _appointments?.add(ManualLisAppointments.fromJson(v));
       });
     }
   }
   num? _totalRecords;
   num? _pageNo;
   num? _pageSize;
-  List<Appointments>? _appointments;
+  List<ManualLisAppointments>? _appointments;
   ManualInsData copyWith({  num? totalRecords,
   num? pageNo,
   num? pageSize,
-  List<Appointments>? appointments,
+  List<ManualLisAppointments>? appointments,
 }) => ManualInsData(  totalRecords: totalRecords ?? _totalRecords,
   pageNo: pageNo ?? _pageNo,
   pageSize: pageSize ?? _pageSize,
@@ -78,7 +78,7 @@ class ManualInsData {
   num? get totalRecords => _totalRecords;
   num? get pageNo => _pageNo;
   num? get pageSize => _pageSize;
-  List<Appointments>? get appointments => _appointments;
+  List<ManualLisAppointments>? get appointments => _appointments;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -93,8 +93,8 @@ class ManualInsData {
 
 }
 
-class Appointments {
-  Appointments({
+class ManualLisAppointments {
+  ManualLisAppointments({
       String? vehicleKey, 
       num? appointmentId, 
       String? registrationNo, 
@@ -141,7 +141,7 @@ class Appointments {
     _manualStatus = manualStatus;
 }
 
-  Appointments.fromJson(dynamic json) {
+  ManualLisAppointments.fromJson(dynamic json) {
     _vehicleKey = json['vehicle_key'];
     _appointmentId = json['appointment_id'];
     _registrationNo = json['registration_no'];
@@ -187,7 +187,7 @@ class Appointments {
   String? _mfgMonth;
   num? _gvw;
   String? _manualStatus;
-Appointments copyWith({  String? vehicleKey,
+  ManualLisAppointments copyWith({  String? vehicleKey,
   num? appointmentId,
   String? registrationNo,
   num? status,
@@ -209,7 +209,7 @@ Appointments copyWith({  String? vehicleKey,
   String? mfgMonth,
   num? gvw,
   String? manualStatus,
-}) => Appointments(  vehicleKey: vehicleKey ?? _vehicleKey,
+}) => ManualLisAppointments(  vehicleKey: vehicleKey ?? _vehicleKey,
   appointmentId: appointmentId ?? _appointmentId,
   registrationNo: registrationNo ?? _registrationNo,
   status: status ?? _status,

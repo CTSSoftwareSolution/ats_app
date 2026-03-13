@@ -2,11 +2,13 @@ import 'package:ats_app/Presentation/provider/manual_inspection_list_provider.da
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_shimmer.dart';
 import 'package:ats_app/Presentation/screens/result_page/result_screen_item.dart';
 import 'package:ats_app/widgets/custom_text.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
 import '../../../utilities/color_data.dart';
 import '../../../widgets/custom_search_bar.dart';
+import '../pre_inspection_form/inspection_page/inspection_page.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -30,7 +32,6 @@ class _ResultScreenState extends State<ResultScreen> {
       }
     });
   }
-
 
   @override
   void dispose() {
@@ -89,8 +90,11 @@ class _ResultScreenState extends State<ResultScreen> {
                       ),
                     );
                   }
-                  final item = appointments[index];
-                  return ResultScreenItem(appointments: item);
+                  final item = appointments[index];// setSelectedManualListData
+                  return ResultScreenItem(appointments: item,onRetest: (){
+                    provider.setSelectedManualListData(item);
+                    context.push(InspectionPage(isEditMode: true));
+                  });
                 },
               ),
             ),
