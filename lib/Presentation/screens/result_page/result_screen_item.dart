@@ -175,6 +175,7 @@ class ResultScreenItem extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
+                      appointments.manualStatus=="Fail"?
                       InkWell(
                         onTap: onRetest,
                         borderRadius: BorderRadius.circular(100),
@@ -203,7 +204,7 @@ class ResultScreenItem extends StatelessWidget {
                             ],
                           ),
                         ),
-                      ),
+                      ):SizedBox.shrink(),
                     ],
                   ),
                 ],
