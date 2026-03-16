@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 
 class ImagePickerPrompt extends StatelessWidget {
   final VoidCallback onTap;
-  const ImagePickerPrompt({super.key, required this.onTap});
+  final Color? titleColor;
+  final Color? subtitleColor;
+  final Color? iconColor;
+  final Color? borderColor;
+  final Color? boxColor;
+  const ImagePickerPrompt({super.key, required this.onTap, this.titleColor, this.subtitleColor, this.iconColor, this.borderColor, this.boxColor});
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +18,10 @@ class ImagePickerPrompt extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.red.shade50,
+          color: boxColor,//Colors.red.shade50,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: Colors.red.shade200,
+            color: borderColor!,//Colors.red.shade200,
             width: 1.5,
           ),
         ),
@@ -24,12 +29,13 @@ class ImagePickerPrompt extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.add_a_photo_rounded,
-                color: Colors.red.shade400, size: 28),
+                color: iconColor,//Colors.red.shade400,
+                size: 28),
             const SizedBox(height: 6),
             Text(
               'Add Evidence Photo',
               style: TextStyle(
-                color: Colors.red.shade500,
+                color: titleColor,//Colors.red.shade500,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -38,7 +44,7 @@ class ImagePickerPrompt extends StatelessWidget {
             Text(
               'Tap to capture or upload from gallery',
               style: TextStyle(
-                color: Colors.red.shade300,
+                color: subtitleColor,//Colors.red.shade300,
                 fontSize: 11,
               ),
             ),

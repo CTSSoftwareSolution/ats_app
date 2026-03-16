@@ -187,7 +187,9 @@ class FileProvider with ChangeNotifier {
       }
       final XFile picture = await controller!.takePicture();
       originalImage = picture;
-      images[currentIndex!] = picture;
+      if (currentIndex != null && currentIndex! < images.length) {
+        images[currentIndex!] = picture;
+      }
       final overlayPath = await ImageProcessingService.processOverlayImage(picture: picture,context: context);
       final lat = location.currentPosition?.latitude ?? 0.0;
       final lng = location.currentPosition?.longitude ?? 0.0;
@@ -208,7 +210,7 @@ class FileProvider with ChangeNotifier {
       await ImageProcessingService.saveToGallery(overlayPath, picture.name);
 
       overlayImage = XFile(overlayPath);
-      if (currentIndex != null) {
+      if (currentIndex != null && currentIndex! < images.length) {
         images[currentIndex!] = overlayImage;
       }
 

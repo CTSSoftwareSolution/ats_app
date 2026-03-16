@@ -113,12 +113,13 @@ class _QuestionTileState extends State<QuestionTile> {
         provider.registerQuestionKey(origSec, origCat, origQue, _tileKey);
 
         final isNo = question.answer == AnswerState.Fail;
+        final isYes = question.answer == AnswerState.Pass;
 
         return AnimatedContainer(
           key: _tileKey,
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: isNo ? Colors.red.shade50 : Colors.transparent,
+            color: isNo ? Colors.red.shade50 : isYes ? Colors.green.shade50 : Colors.transparent,
             border: widget.isLast
                 ? null
                 : Border(
@@ -168,7 +169,7 @@ class _QuestionTileState extends State<QuestionTile> {
                 children: [
                   AnswerButton(
                     label: '✓  Yes',
-                    selected: question.answer == AnswerState.Pass,
+                    selected: isYes,
                     selectedColor: Colors.green,
                     onTap: () {
                       provider.answerQuestion(
@@ -201,7 +202,7 @@ class _QuestionTileState extends State<QuestionTile> {
               AnimatedCrossFade(
                 duration: const Duration(milliseconds: 300),
                 crossFadeState:
-                isNo ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                isNo || isYes ? CrossFadeState.showSecond : CrossFadeState.showFirst,
                 firstChild: const SizedBox.shrink(),
                 secondChild: Padding(
                   padding: const EdgeInsets.only(top: 12),
@@ -247,6 +248,11 @@ class _QuestionTileState extends State<QuestionTile> {
                           );
                         } else {
                           return ImagePickerPrompt(
+                            boxColor: isNo ?Colors.red.shade50 : Colors.green.shade50,
+                            borderColor: isNo ? Colors.red.shade200 : Colors.green.shade200,
+                            iconColor: isNo ? Colors.red.shade400 : Colors.green.shade400,
+                            titleColor: isNo ? Colors.red.shade500 : Colors.green.shade500,
+                            subtitleColor: isNo ?Colors.red.shade300 : Colors.green.shade300,
                             onTap: () => _pickImage(
                               context,
                               provider,
@@ -260,11 +266,11 @@ class _QuestionTileState extends State<QuestionTile> {
                       }(),
                       const SizedBox(height: 12),
                       CustomTextField(
-                        cursorColor: redColor,
+                        cursorColor: isNo ? redColor : Colors.green,
                         contentPadding: const EdgeInsets.only(left: 10.0),
-                        borderColor: Colors.red.shade200,
+                        borderColor: isNo ? Colors.red.shade200 : Colors.green.shade200,
                         borderWidth: 1.5,
-                        fillColor: Colors.red.shade50,
+                        fillColor: isNo ? Colors.red.shade50 : Colors.green.shade50,
                         hint: "Remark here...",
                         controller: controller,
                         onChanged: (value) {
@@ -276,7 +282,7 @@ class _QuestionTileState extends State<QuestionTile> {
                           );
                         },
                         hintStyle: TextStyle(
-                          color: Colors.red.shade300,
+                          color: isNo ? Colors.red.shade300 : Colors.green.shade300,
                           fontSize: 11,
                         ),
                         readOnly: false,
