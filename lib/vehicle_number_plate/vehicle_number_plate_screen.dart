@@ -17,20 +17,28 @@ class VehicleNumberPlateScreen extends StatefulWidget {
   const VehicleNumberPlateScreen({super.key});
 
   @override
-  State<VehicleNumberPlateScreen> createState() => _VehicleNumberPlateScreenState();
+  State<VehicleNumberPlateScreen> createState() =>
+      _VehicleNumberPlateScreenState();
 }
 
 class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
   static const int _frontIndex = 0;
 
-
   final TextEditingController _frontController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<VerifyHRSPProvider>().clearData();
+      context.read<FileProvider>().clearImages();
+      _frontController.clear();
+    });
+  }
 
   @override
   void dispose() {
     _frontController.dispose();
-
     super.dispose();
   }
 
@@ -44,7 +52,7 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: appColor,
-        title: Text("Detect number plate"),
+        title: const Text("Detect number plate"),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -57,16 +65,16 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
                 fontSize: 16,
                 fontFamily: "SemiBold",
               ),
+
               8.height,
+
               TextField(
                 controller: _frontController,
                 textCapitalization: TextCapitalization.characters,
                 decoration: InputDecoration(
                   hintText: "e.g. MH40BE2665",
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 14,
-                  ),
+                  contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -76,23 +84,35 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
                   ),
                 ),
               ),
+
               20.height,
+
               const CustomText(
                 text: "Capture Front Registration Plate",
                 fontSize: 16,
                 fontFamily: "SemiBold",
               ),
+
               10.height,
+
               UploadImageContainer(
                 index: _frontIndex,
                 isTablet: false,
                 onTap: () =>
                     _openCameraAndVerify(context, fileProvider, verifyProvider),
               ),
+
               20.height,
+
+              /// Loading
               if (verifyProvider.isLoading) const _LoadingResult(),
-              if (!verifyProvider.isLoading && verifyProvider.vehicleResponse != null)
-                _VerificationResult(response: verifyProvider.vehicleResponse!),
+
+              /// Result
+              if (!verifyProvider.isLoading &&
+                  verifyProvider.vehicleResponse?.analysis != null)
+                _VerificationResult(
+                  response: verifyProvider.vehicleResponse!,
+                ),
             ],
           ),
         ),
@@ -101,35 +121,38 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
   }
 
   Future<void> _openCameraAndVerify(
-    BuildContext context,
-    FileProvider fileProvider,
-    VerifyHRSPProvider verifyProvider,
-
-  ) async {
+      BuildContext context,
+      FileProvider fileProvider,
+      VerifyHRSPProvider verifyProvider,
+      ) async {
     final expectedPlate = _frontController.text.trim();
+
     if (expectedPlate.isEmpty) {
       context.showErrorSnackBar("Please enter expected plate number");
       return;
     }
+
     fileProvider.setCurrentIndex(_frontIndex);
+
     await fileProvider.initCamera();
+
     if (!context.mounted) return;
+
     await context.push(CameraScreen());
+
     if (!context.mounted) return;
+
     final XFile? xFile = fileProvider.getImage(_frontIndex);
+
     if (xFile == null) return;
+
     await verifyProvider.verifyPlate(
       imageFile: File(xFile.path),
       expectedPlate: expectedPlate,
     );
 
-    debugPrint(
-     "Response Value: ${ verifyProvider.totalResponse!
-         .map((e) => e.toJson())
-         .toList()
-         .toString() }"
-    );
     if (!context.mounted) return;
+
     if (verifyProvider.error != null) {
       context.showErrorSnackBar(verifyProvider.error!);
     }
@@ -138,6 +161,7 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
 
 class _LoadingResult extends StatelessWidget {
   const _LoadingResult();
+
   @override
   Widget build(BuildContext context) {
     return const Center(
@@ -157,12 +181,15 @@ class _VerificationResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final analysis = response.analysis;
+
     final decision = analysis?.decision ?? "UNKNOWN";
     final plate = analysis?.ocrPlateText ?? "-";
     final reason = analysis?.reason ?? "No reason";
-    final expecedPlate = analysis?.expectedPlate ?? "No reason";
+    final expectedPlate = analysis?.expectedPlate ?? "-";
+
     final bool isApproved = decision == "ACCEPT";
     final bool isRejected = decision == "REJECT";
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -191,12 +218,12 @@ class _VerificationResult extends StatelessWidget {
                     ? Icons.check_circle
                     : isRejected
                     ? Icons.cancel
-                    : Icons.check_circle,
+                    : Icons.info,
                 color: isApproved
                     ? Colors.green
                     : isRejected
                     ? Colors.red
-                    : Colors.yellow,
+                    : Colors.orange,
               ),
               8.width,
               const CustomText(
@@ -207,12 +234,19 @@ class _VerificationResult extends StatelessWidget {
             ],
           ),
           const Divider(height: 20),
-          _ResultRow(label: "Expected Plate", value: expecedPlate),
+
+          _ResultRow(label: "Expected Plate", value: expectedPlate),
+
           8.height,
+
           _ResultRow(label: "Detected Plate", value: plate),
+
           8.height,
+
           _ResultRow(label: "Decision", value: decision),
+
           8.height,
+
           _ResultRow(label: "Reason", value: reason),
         ],
       ),
@@ -222,8 +256,10 @@ class _VerificationResult extends StatelessWidget {
 
 class _ResultRow extends StatelessWidget {
   const _ResultRow({required this.label, required this.value});
+
   final String label;
   final String value;
+
   @override
   Widget build(BuildContext context) {
     return Row(

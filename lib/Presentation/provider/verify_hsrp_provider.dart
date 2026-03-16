@@ -26,6 +26,8 @@ class VerifyHRSPProvider extends ChangeNotifier {
 
    List<VehicleNumberPlateModels>? get totalResponse => response;
 
+
+
   Future<void> verifyPlate({
     required File imageFile,
     required String expectedPlate,
@@ -49,6 +51,14 @@ class VerifyHRSPProvider extends ChangeNotifier {
     } catch (e) {
       _error = e.toString();
     }
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  void clearData() {
+    _vehicleResponse = null;
+    response.clear();
+    _error = null;
     _isLoading = false;
     notifyListeners();
   }

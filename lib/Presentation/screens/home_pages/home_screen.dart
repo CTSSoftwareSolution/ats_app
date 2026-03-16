@@ -4,6 +4,7 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
+import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../manual_inspection_images/manual_inspection_image_screen.dart';
 import '../vehicles_class_page/vehicle_class_screen_item.dart';
@@ -42,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<VehicleClassProvider>();
+    final fileProvider = context.watch<FileProvider>();
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FB),
       body: SafeArea(

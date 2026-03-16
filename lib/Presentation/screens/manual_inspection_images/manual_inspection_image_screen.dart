@@ -33,9 +33,11 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_)async{
-     // cameraApi();
+      context.read<FileProvider>().clearImages();
+      context.read<FileProvider>().clearAll();
     });
   }
+
 
   @override
   void dispose() {

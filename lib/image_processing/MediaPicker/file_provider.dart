@@ -101,7 +101,7 @@ class FileProvider with ChangeNotifier {
       notifyListeners();
   }
 
-  void clearAll(BuildContext context){
+  void clearAll(){
     images.clear();
     currentIndex = null;
     notifyListeners();
@@ -187,6 +187,7 @@ class FileProvider with ChangeNotifier {
       }
       final XFile picture = await controller!.takePicture();
       originalImage = picture;
+      images[currentIndex!] = picture;
       final overlayPath = await ImageProcessingService.processOverlayImage(picture: picture,context: context);
       final lat = location.currentPosition?.latitude ?? 0.0;
       final lng = location.currentPosition?.longitude ?? 0.0;

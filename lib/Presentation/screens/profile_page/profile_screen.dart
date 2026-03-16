@@ -136,8 +136,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
           okClick: () {
             Preferences.clear();
-            context.read<LoginProvider>().emailController.clear();
-            context.read<LoginProvider>().passwordController.clear();
             context.push(LoginScreen());
           },
         );

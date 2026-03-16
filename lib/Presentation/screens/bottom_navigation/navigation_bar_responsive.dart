@@ -25,16 +25,14 @@ class _NavigationBarResponsiveLayoutState extends State<NavigationBarResponsiveL
                   children: [
                     TabletNavigationRail(),
                     Expanded(
-                      child: navigationProvider
-                          .pages[navigationProvider.pageIndex],
+                      child: navigationProvider.pages[navigationProvider.pageIndex],
                     ),
                   ],
                 )
               : Stack(
                   children: [
                     Positioned.fill(
-                      child: navigationProvider
-                          .pages[navigationProvider.pageIndex],
+                      child: navigationProvider.pages[navigationProvider.pageIndex],
                     ),
                     Positioned(
                       left: 15,

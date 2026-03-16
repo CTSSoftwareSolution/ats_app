@@ -105,7 +105,7 @@ void openMachineInspection(BuildContext context, BuildContext parentContext){
     );
   }
   else{
-    context.read<FileProvider>().clearAll(context);
+    context.read<FileProvider>().clearAll();
     context.push(VehiclePartsScreen());
   }
 }
