@@ -27,7 +27,7 @@ class LoginProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<LoginEntity?> loginApi() async {
+  Future<LoginEntity?> loginApi(BuildContext context) async {
     isLoading = true;
     CustomLoader.showLoader("Please wait...");
     try {
@@ -49,7 +49,7 @@ class LoginProvider extends ChangeNotifier {
   }
 
   void login(BuildContext context)async {
-    await loginApi().then((value) async {
+    await loginApi(context).then((value) async {
       final navigationProvider = Provider.of<BottomNavigationProvider>(context,listen: false);
       if (!context.mounted) return;
       if (value != null) {

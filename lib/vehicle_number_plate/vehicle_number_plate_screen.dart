@@ -148,7 +148,7 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
 
     await verifyProvider.verifyPlate(
       imageFile: File(xFile.path),
-      expectedPlate: expectedPlate,
+      expectedPlate: expectedPlate, context: context,
     );
 
     if (!context.mounted) return;

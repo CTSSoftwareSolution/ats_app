@@ -1,3 +1,5 @@
+import 'package:flutter/src/widgets/framework.dart';
+
 import 'aws_entity.dart';
 import 'aws_request.dart';
 

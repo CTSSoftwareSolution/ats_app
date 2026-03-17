@@ -28,7 +28,7 @@ class LaneListProvider extends ChangeNotifier {
     return map;
   }
 
-  Future<void> fetchLanes(BuildContext context) async {
+  Future<void> fetchLanes() async {
     isLoading = true;
     notifyListeners();
     try {

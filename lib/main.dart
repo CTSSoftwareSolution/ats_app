@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return OverlaySupport.global(
       child: MaterialApp(
-        navigatorKey: alice.getNavigatorKey(),
+        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         builder: EasyLoading.init(),
         title: 'ATS',

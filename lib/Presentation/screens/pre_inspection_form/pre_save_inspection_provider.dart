@@ -17,6 +17,7 @@ class PreSaveInspectionProvider extends ChangeNotifier {
     required String inspectedBy,
     required String vehicleId,
     required List<InspectionPreSaveReqModel> inspections,
+    required BuildContext context
   }) async {
     CustomLoader.showLoader("Please wait...");
     notifyListeners();

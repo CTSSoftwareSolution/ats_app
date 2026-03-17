@@ -1,4 +1,6 @@
 
+import 'package:flutter/cupertino.dart';
+
 import '../../Core/network/api_services.dart';
 import '../../Core/network/services.dart';
 import '../../Domain/entities/pre_save_inspection_entity.dart';
@@ -15,6 +17,7 @@ class PreSaveInspectionImpl implements PreSaveInspectionRepository {
     required String inspectedBy,
     required String vehicleId,
     required List<InspectionPreSaveReqModel> inspections,
+
   }) async {
 
     try {
@@ -27,7 +30,7 @@ class PreSaveInspectionImpl implements PreSaveInspectionRepository {
         apiUrl: savePreInspection,
       );
 
-      final model = InspectionPreSaveResModel.fromJson(response);
+      final model = InspectionPreSaveResModel.fromJson(response!);
 
       return PreSaveInspectionEntity(
         status: model.status,

@@ -2,6 +2,7 @@ import 'package:ats_app/Core/network/services.dart';
 import 'package:ats_app/Data/model/request_model/vehicle_class_req_model.dart';
 import 'package:ats_app/Domain/entities/vehicle_class_entity.dart';
 import 'package:ats_app/Domain/repositories/vehicle_class_repository.dart';
+import 'package:flutter/cupertino.dart';
 import '../../Core/network/api_services.dart';
 import '../model/response_model/vehicle_class_res_model.dart';
 

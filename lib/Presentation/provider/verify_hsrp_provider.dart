@@ -31,6 +31,7 @@ class VerifyHRSPProvider extends ChangeNotifier {
   Future<void> verifyPlate({
     required File imageFile,
     required String expectedPlate,
+    required BuildContext context
   }) async {
     _isLoading = true;
     _error = null;
@@ -43,6 +44,7 @@ class VerifyHRSPProvider extends ChangeNotifier {
         },
         imageFile,
         "http://43.205.221.6/hsrp/verify-hsrp",
+
       );
       _vehicleResponse = VehicleNumberPlateModels.fromJson(result);
 

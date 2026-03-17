@@ -17,6 +17,7 @@ class ManualInsImageProvider extends ChangeNotifier {
     required String createdBy,
     required String vehicleId,
     required List<DocumentManualDocModels> documents,
+
   }) async {
     CustomLoader.showLoader("Please wait...");
     notifyListeners();
@@ -26,6 +27,7 @@ class ManualInsImageProvider extends ChangeNotifier {
         createdBy: createdBy,
         vehicleId: vehicleId,
         documents: documents,
+
       );
     } catch (e) {
       CustomLoader.closeLoader();

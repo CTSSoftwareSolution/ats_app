@@ -130,6 +130,7 @@ class ConfirmationDialog {
       vehicleClassProvider.selectedClass!.vehicleKey.toString(),
       inspectedBy: Preferences.getUserId().toString(),
       inspections: inspections,
+      context: context
     );
     //cameraController.clearAll(context);
     cameraController.clearImages();

@@ -1,6 +1,7 @@
 import 'package:ats_app/Data/model/request_model/vehicle_class_req_model.dart';
 import 'package:ats_app/Domain/entities/vehicle_class_entity.dart';
 import 'package:ats_app/Domain/repositories/vehicle_class_repository.dart';
+import 'package:flutter/cupertino.dart';
 
 
 class VehicleClassUseCases {
