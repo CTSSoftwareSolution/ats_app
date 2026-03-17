@@ -30,8 +30,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-
-
   @override
   Widget build(BuildContext context) {
     return OverlaySupport.global(
@@ -39,7 +37,7 @@ class _MyAppState extends State<MyApp> {
         navigatorKey: alice.getNavigatorKey(),
         debugShowCheckedModeBanner: false,
         builder: EasyLoading.init(),
-        title: 'Flutter Demo',
+        title: 'ATS',
         theme: ThemeData(
             scaffoldBackgroundColor: whiteColor,
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
