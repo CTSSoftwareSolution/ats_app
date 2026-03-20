@@ -202,7 +202,8 @@ class _QuestionTileState extends State<QuestionTile> {
               AnimatedCrossFade(
                 duration: const Duration(milliseconds: 300),
                 crossFadeState:
-                isNo || isYes ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+               // isNo || isYes ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                isNo ? CrossFadeState.showSecond : CrossFadeState.showFirst,
                 firstChild: const SizedBox.shrink(),
                 secondChild: Padding(
                   padding: const EdgeInsets.only(top: 12),
