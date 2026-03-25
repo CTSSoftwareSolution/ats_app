@@ -118,10 +118,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 1:
         break;
       case 2:
-        context.push(InspectionPage());
+       // context.push(InspectionPage());
         break;
       case 3:
-        context.push(ManualInspectionImageScreen());
+       // context.push(ManualInspectionImageScreen());
         break;
       case 4:
         showIpAddressBottomSheet(context);

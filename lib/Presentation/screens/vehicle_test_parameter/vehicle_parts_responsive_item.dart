@@ -34,14 +34,40 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
           fontSize: 15.0,
         ),
         isTablet ? 15.height : 10.height,
-       UploadImageContainer(
+       Row(
+         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+         children: [
+           Expanded(
+             child: UploadImageContainer(
+               isVideo: false,
+                     width: 180,
+                     index: allIndex,
+                      onTap: () {
+                        context.read<FileProvider>().setCurrentIndex(allIndex);
+                        context.read<FileProvider>().setVideo(false);
+                        context.push(CameraScreen());
+                      },
+                      isTablet: isTablet,
+                    ),
+           ),
+           10.width,
+           Expanded(
+             child: UploadImageContainer(
+               isVideo: true,
+               width: 180,
                index: allIndex,
-                onTap: () {
-                  context.read<FileProvider>().setCurrentIndex(allIndex);
-                  context.push(CameraScreen());
-                },
-                isTablet: isTablet,
-              ),
+               text: "Tap to capture video",
+               onTap: () {
+                 context.read<FileProvider>().setCurrentIndex(allIndex);
+                 context.read<FileProvider>().setVideo(true);
+                 context.push(CameraScreen());
+               },
+               isTablet: isTablet,
+             ),
+           ),
+         ],
+
+       ),
       ],
     );
   }

@@ -65,8 +65,13 @@ class _CameraScreenState extends State<CameraScreen> {
             child: Center(
               child: GestureDetector(
                 onTap: () async {
-                // await context.read<FileProvider>().takePicture(context);
-                  await context.read<FileProvider>().takePicture(context);
+                  final provider = context.read<FileProvider>();
+
+                  if(provider.isVideo){
+                    await provider.recordVideo();
+                  }else {
+                    await provider.takePicture(context);
+                  }
                   if (!context.mounted) return;
                  context.pop();
                 },

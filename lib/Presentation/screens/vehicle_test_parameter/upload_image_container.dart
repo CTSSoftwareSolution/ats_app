@@ -1,13 +1,16 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:ats_app/Presentation/screens/vehicle_test_parameter/video_preview_widget.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/image_data.dart';
 import 'package:ats_app/widgets/custom_button.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../image_processing/MediaPicker/file_provider.dart';
 
@@ -20,6 +23,10 @@ class UploadImageContainer extends StatelessWidget {
   final double iconScale;
   final double buttonHeight;
   final double buttonWidth;
+  final double width;
+  final String text;
+  final bool isVideo;
+
 
 
   const UploadImageContainer({
@@ -27,21 +34,29 @@ class UploadImageContainer extends StatelessWidget {
     required this.onTap,
     required this.index,
     required this.isTablet,
+    required this.width,
+    required this.isVideo,
     this.borderRadius = 20.0,
     this.iconSize = 52,
     this.iconScale = 5.5,
     this.buttonHeight = 32.0,
-    this.buttonWidth = 110
+    this.buttonWidth = 110,
+    this.text = "Tap to capture image",
+
   });
 
   @override
   Widget build(BuildContext context) {
-    final image = context.watch<FileProvider>().getImage(index);
+    final fileProvider = context.watch<FileProvider>();
+    final file = isVideo ? (index < fileProvider.videos.length
+        ? fileProvider.videos[index]
+        : null) : fileProvider.getImage(index);
+
     final double height = isTablet ? 130.0 : 150.0;
     return GestureDetector(
-      onTap: image == null ? onTap : null,
+      onTap: file == null ? onTap : null,
       child: Container(
-        width: double.infinity,
+        width: width,
         height: height,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -74,13 +89,15 @@ class UploadImageContainer extends StatelessWidget {
             child: child,
           ),
         ),
-        child: image != null
+        child: file != null
             ? Stack(
-          key: ValueKey(image.path),
+          key: ValueKey(file.path),
           fit: StackFit.expand,
           children: [
+            isVideo ?
+            VideoPreviewWidget(path: file.path,) :
             Image.file(
-              File(image.path),
+              File(file.path),
               fit: BoxFit.cover,
               width: double.infinity,
               height: height,
@@ -183,7 +200,7 @@ class UploadImageContainer extends StatelessWidget {
                   ),
                   12.height,
                   CustomText(
-                    text: "Tap to capture image",
+                    text: text,
                     fontSize: 12,
                     fontFamily: "Medium",
                     textColor: const Color(0xFF9AA5C0),

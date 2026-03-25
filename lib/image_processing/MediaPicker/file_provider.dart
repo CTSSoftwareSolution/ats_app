@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ats_app/image_processing/image_processing_service.dart';
 import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:camera/camera.dart';
@@ -18,18 +20,33 @@ class FileProvider with ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
   XFile? originalImage;
+  XFile? originalVideo;
   XFile? overlayImage;
+  XFile? overlayVideo;
   LocationProvider? locationProvider;
 
   CameraController? controller;
   int? currentIndex;
   final List<XFile?> images = [];
+  final List<XFile?> videos = [];
+   bool _isVideo = false;
+  bool get isVideo => _isVideo;
+
+  void setVideo(bool v){
+    _isVideo = v;
+    notifyListeners();
+  }
  //  String? fileImagePath;
 
   void setCurrentIndex(int value){
     currentIndex = value;
+
     while (images.length <= currentIndex!) {
       images.add(null);
+    }
+
+    while (videos.length <= currentIndex!) {
+      videos.add(null);
     }
   }
 
@@ -61,8 +78,10 @@ class FileProvider with ChangeNotifier {
       cameras![0],
       ResolutionPreset.high,
       enableAudio: false,
+
     );
       await controller!.initialize();
+
     notifyListeners();
   }
 
@@ -187,6 +206,7 @@ class FileProvider with ChangeNotifier {
       }
       final XFile picture = await controller!.takePicture();
       originalImage = picture;
+
       if (currentIndex != null && currentIndex! < images.length) {
         images[currentIndex!] = picture;
       }
@@ -209,16 +229,62 @@ class FileProvider with ChangeNotifier {
 
       await ImageProcessingService.saveToGallery(overlayPath, picture.name);
 
+
+
       overlayImage = XFile(overlayPath);
+
+      
+
       if (currentIndex != null && currentIndex! < images.length) {
         images[currentIndex!] = overlayImage;
       }
+
+
 
       HapticFeedback.heavyImpact();
       CustomLoader.closeLoader();
       notifyListeners();
     } catch (e) {
       debugPrint("Error taking picture: $e");
+      CustomLoader.closeLoader();
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<void> recordVideo() async {
+    CustomLoader.showLoader("Video processing...");
+    try {
+      if (controller == null || !controller!.value.isInitialized) {
+        throw Exception("Camera not initialized");
+      }
+
+       await controller!.startVideoRecording();
+
+
+      await Future.delayed(Duration(seconds: 5));
+
+      final XFile video = await controller!.stopVideoRecording();
+      originalVideo = video;
+
+
+      if (currentIndex != null && currentIndex! < videos.length) {
+        videos[currentIndex!] = video;
+      }
+      debugPrint("OriginalVideo Path: ${originalVideo!.path.toString()}");
+
+      overlayVideo =  XFile(video.path);
+
+      if (currentIndex != null && currentIndex! < videos.length) {
+        videos[currentIndex!] = overlayVideo;
+      }
+
+      debugPrint("OriginalVideo Path: ${overlayVideo?.path.toString()}");
+      CustomLoader.closeLoader();
+      notifyListeners();
+
+    } catch (e) {
+      debugPrint("Video error: $e");
       CustomLoader.closeLoader();
     } finally {
       _setLoading(false);

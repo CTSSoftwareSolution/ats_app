@@ -139,11 +139,7 @@ class _VehiclePartsResponsiveLayoutState
                                         ? "Submit"
                                         : "Next",
                                     onPress: () {
-                                      context
-                                          .read<VehiclePartsProvider>()
-                                          .nextStepper(
-                                            partsProvider.totalPagesForTablet,
-                                          );
+                                      context.read<VehiclePartsProvider>().nextStepper(partsProvider.totalPagesForTablet,);
                                       if (partsProvider.currentPage <
                                           partsProvider.totalPagesForTablet -
                                               1) {
@@ -183,6 +179,7 @@ class _VehiclePartsResponsiveLayoutState
                                             partsProvider.totalPages - 1,
                                           );
                                     } else {
+
                                       context.push(InspectionResultScreen());
                                       context
                                           .read<VehiclePartsProvider>()

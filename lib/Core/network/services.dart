@@ -25,7 +25,7 @@ final alice = Alice(
 
 
 /// OLD Node.js
-String get vehiclePartsUrl                => "$baseUrl/getVehicleParts"; //// Machine
+String get vehiclePartsUrl                => "https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getVehicleParts"; //// Machine
 
 
 /// New API

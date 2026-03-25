@@ -18,6 +18,7 @@ import '../../../widgets/custom_text.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../camera_page/camera_screen.dart';
 import '../pre_inspection_form/inspection_page/inspection_page.dart';
+import '../vehicle_test_parameter/vehicle_parts_screen.dart';
 
 class ManualInspectionImageScreen extends StatefulWidget {
   const ManualInspectionImageScreen({super.key});
@@ -76,8 +77,11 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
       vehicleId: vehicleClassProvider.selectedClass!.vehicleKey.toString(),
       documents: docs,
     );
+
+    cameraController.clearAll();
     if(!mounted) return;
-    context.push(InspectionPage(isEditMode: false,));
+     //context.push(InspectionPage(isEditMode: false,));
+     context.push(VehiclePartsScreen());
   }
 
   @override
@@ -119,6 +123,8 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
                         10.height,
                         Expanded(child:
                         UploadImageContainer(
+                          isVideo: false,
+                          width: double.infinity,
                           buttonHeight: 28,
                           buttonWidth: 80,
                           iconSize: 40,

@@ -11,12 +11,12 @@ class LoginResModel {
 }
 
   LoginResModel.fromJson(dynamic json) {
-    _success = json['success'];
-    _message = json['message'];
-    _data = json['data'] != null ? LoginDataModel.fromJson(json['data']) : null;
-    if (json['errors'] != null) {
+    _success = json['Success'];
+    _message = json['Message'];
+    _data = json['Data'] != null ? LoginDataModel.fromJson(json['Data']) : null;
+    if (json['Errors'] != null) {
       _errors = [];
-      json['errors'].forEach((v) {
+      json['Errors'].forEach((v) {
        // _errors?.add(Dynamic.fromJson(v));
       });
     }
@@ -41,13 +41,13 @@ LoginResModel copyWith({  bool? success,
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['success'] = _success;
-    map['message'] = _message;
+    map['Success'] = _success;
+    map['Message'] = _message;
     if (_data != null) {
-      map['data'] = _data?.toJson();
+      map['Data'] = _data?.toJson();
     }
     if (_errors != null) {
-      map['errors'] = _errors?.map((v) => v.toJson()).toList();
+      map['Errors'] = _errors?.map((v) => v.toJson()).toList();
     }
     return map;
   }

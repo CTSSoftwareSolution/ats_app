@@ -96,6 +96,8 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
               10.height,
 
               UploadImageContainer(
+                isVideo: false,
+                width: double.infinity,
                 index: _frontIndex,
                 isTablet: false,
                 onTap: () =>
