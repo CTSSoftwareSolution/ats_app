@@ -73,16 +73,19 @@ class FileProvider with ChangeNotifier {
   }
 
   Future<void> initCamera() async {
-    if (controller != null && controller!.value.isInitialized) return;
+    if (controller != null){
+      if(controller!.value.isInitialized) return;
+      await controller!.initialize();
+      notifyListeners();
+      return;
+    }
     controller = CameraController(
       cameras![0],
       ResolutionPreset.high,
       enableAudio: false,
-
     );
       await controller!.initialize();
-
-    notifyListeners();
+      notifyListeners();
   }
 
   /// Pick single image from gallery and store as File
@@ -290,5 +293,26 @@ class FileProvider with ChangeNotifier {
       _setLoading(false);
     }
   }
+
+
+  Future<void> disposeCamera() async {
+    try {
+      if (controller != null) {
+        if (controller!.value.isRecordingVideo) {
+          await controller!.stopVideoRecording();
+        }
+
+        if (controller!.value.isStreamingImages) {
+          await controller!.stopImageStream();
+        }
+
+        await controller!.dispose();
+        controller = null;
+      }
+    } catch (e) {
+      debugPrint("Dispose error: $e");
+    }
+  }
+
 
 }

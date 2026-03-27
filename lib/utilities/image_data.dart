@@ -46,7 +46,7 @@ const carNumberPlateImage = "assets/car_number_plate.png";
 const manualInspectionIcon = "assets/manual-inspection.png";
 const machineInspectionIcon = "assets/machine-inspection.png";
 
-final List<String> vehicleGridTitles = <String>["LCV", "LMV", "EV", "HCV"];
+final List<String> inspectionTypeTitles = <String>["Manual Inspection", "Machine Inspection"];
 
 final List<String> inspectionTypeImage = <String>[
   manualInspectionIcon,

@@ -80,8 +80,8 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
 
     cameraController.clearAll();
     if(!mounted) return;
-     //context.push(InspectionPage(isEditMode: false,));
-     context.push(VehiclePartsScreen());
+    //context.push(InspectionPage(isEditMode: false,));
+      context.push(VehiclePartsScreen());
   }
 
   @override
@@ -131,7 +131,8 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
                           iconScale: 6.5,
                           onTap: () async {
                             fileProvider.setCurrentIndex(index);
-                            context.push(CameraScreen());
+                            await fileProvider.initCamera();
+                            await context.push(CameraScreen());
                           },
                             index: index,
                             isTablet: false,
@@ -151,7 +152,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
           child: FloatingActionButton.extended(
             backgroundColor: appColor,
               onPressed: (){
-                imageUpload();
+              imageUpload();
               },
               label: CustomText(text: "Next", fontSize: 18.0, fontFamily: "Bold",)),
         ),

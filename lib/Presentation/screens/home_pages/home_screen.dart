@@ -1,10 +1,13 @@
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_shimmer.dart';
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/widgets/custom_text.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
+import '../../../utilities/image_data.dart';
+import '../../../widgets/custom_bottomsheet.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../manual_inspection_images/manual_inspection_image_screen.dart';
 import '../vehicle_test_parameter/vehicle_parts_screen.dart';
@@ -87,9 +90,44 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: VehicleClassScreenItem(
                       classDataModel: item,
                       onTap: () {
-                        provider.setSelectedClass(item);
-                       // context.push(ManualInspectionImageScreen());
-                        context.push(VehiclePartsScreen());
+                        customBottomSheet(
+                            context: context,
+                            title: "Select Inspection Type",
+                            child: ListView.builder(
+                              itemCount: inspectionTypeTitles.length,
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                bool isSelected = provider.selectedIndex == index;
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? appColor.withValues(alpha: 0.05) : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    boxShadow: isSelected
+                                        ? [BoxShadow(color: Colors.black12, blurRadius: 2.0)]
+                                        : [],
+                                  ),
+                                  child: ListTile(
+                                    selected: isSelected,
+                                    dense: true,
+                                    onTap: () {
+                                      setState(() {
+                                        provider.selectedIndex = index;
+                                      });
+                                      context.pop();
+                                    },
+                                    title: CustomText(
+                                      text: inspectionTypeTitles[index],
+                                      fontSize: 16,
+                                      textColor: blackColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ));
+                        // provider.setSelectedClass(item);
+                        // context.push(ManualInspectionImageScreen());
+                        //context.push(VehiclePartsScreen());
                       },
                     ),
                   );

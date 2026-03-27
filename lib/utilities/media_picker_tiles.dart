@@ -1,5 +1,6 @@
 
 import 'package:ats_app/utilities/extension.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Presentation/screens/camera_page/camera_screen.dart';
@@ -32,12 +33,10 @@ Widget mediaPickerTiles({required BuildContext context}) {
                   onTap: () async {
                     selectedIndex = index;
                     if (mediaSource[index].id == 0) {
-                      Navigator.pop(context);
-                    //  await context.read<FileProvider>().initCamera();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => CameraScreen()),
-                      );
+                     context.pop();
+                     // await context.read<FileProvider>().initCamera();
+                      await context.push(CameraScreen());
+
                     } else if (mediaSource[index].id == 1) {
                       Navigator.pop(context);
                       context.read<FileProvider>().pickSingleImage(context);

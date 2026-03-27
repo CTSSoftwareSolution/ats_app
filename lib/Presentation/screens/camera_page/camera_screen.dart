@@ -16,13 +16,35 @@ class CameraScreen extends StatefulWidget {
   State<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen> {
+class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver{
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //    context.read<FileProvider>().initCamera();
-  // }
+  late FileProvider provider;
+
+  @override
+  void initState() {
+    super.initState();
+    provider = context.read<FileProvider>();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await provider.initCamera();
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      provider.disposeCamera();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    provider.disposeCamera();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final cameraController = context.watch<FileProvider>().controller;
@@ -72,6 +94,9 @@ class _CameraScreenState extends State<CameraScreen> {
                   }else {
                     await provider.takePicture(context);
                   }
+
+
+
                   if (!context.mounted) return;
                  context.pop();
                 },

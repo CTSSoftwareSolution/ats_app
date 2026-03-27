@@ -22,6 +22,8 @@ class VehicleClassProvider extends ChangeNotifier {
   Timer? debounce;
   Appointments? classDataModel;
 
+  int? selectedIndex;
+
   //Filter State
   final List<String> filterOptions = ['All', 'LMV', 'HMV', 'MCWG', 'EV'];
   String _selectedFilter = 'All';

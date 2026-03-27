@@ -42,10 +42,11 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
                isVideo: false,
                      width: 180,
                      index: allIndex,
-                      onTap: () {
+                      onTap: () async {
                         context.read<FileProvider>().setCurrentIndex(allIndex);
                         context.read<FileProvider>().setVideo(false);
-                        context.push(CameraScreen());
+                       // await context.read<FileProvider>().initCamera();
+                        await context.push(CameraScreen());
                       },
                       isTablet: isTablet,
                     ),
@@ -57,10 +58,11 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
                width: 180,
                index: allIndex,
                text: "Tap to capture video",
-               onTap: () {
+               onTap: () async {
                  context.read<FileProvider>().setCurrentIndex(allIndex);
                  context.read<FileProvider>().setVideo(true);
-                 context.push(CameraScreen());
+                 //await context.read<FileProvider>().initCamera();
+                 await context.push(CameraScreen());
                },
                isTablet: isTablet,
              ),

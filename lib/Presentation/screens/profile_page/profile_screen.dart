@@ -23,24 +23,24 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
 
-  @override
-  void initState() {
-    super.initState();
+  // @override
+  // void initState() {
+  //   super.initState();
+  // }
+  //
+  //   Future<void> getAppVersion() async {
+  //     try {
+  //       PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  //
+  //       appVersion = 'Version: ${packageInfo.version}';
+  //
+  //     } catch (e) {
+  //
+  //       appVersion = 'Error';
+  //     }
+  //     notifyListeners();
+  //   }
 
-
-    // Future<void> getAppVersion() async {
-    //   try {
-    //     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    //
-    //     appVersion = 'Version: ${packageInfo.version}';
-    //
-    //   } catch (e) {
-    //
-    //     appVersion = 'Error';
-    //   }
-    //   notifyListeners();
-    // }
-  }
 
   @override
   Widget build(BuildContext context) {
