@@ -10,7 +10,6 @@ import 'package:ats_app/widgets/custom_text.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../../image_processing/MediaPicker/file_provider.dart';
 
