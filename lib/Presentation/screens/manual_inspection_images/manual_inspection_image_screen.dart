@@ -18,9 +18,11 @@ import '../../../widgets/custom_text.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../camera_page/camera_screen.dart';
 import '../pre_inspection_form/inspection_page/inspection_page.dart';
+import '../vehicle_test_parameter/vehicle_parts_screen.dart';
 
 class ManualInspectionImageScreen extends StatefulWidget {
-  const ManualInspectionImageScreen({super.key});
+  final bool isMachineTest;
+  const ManualInspectionImageScreen({super.key, this.isMachineTest=false});
 
   @override
   State<ManualInspectionImageScreen> createState() => _ManualInspectionImageScreenState();
@@ -77,7 +79,12 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
       documents: docs,
     );
     if(!mounted) return;
-    context.push(InspectionPage(isEditMode: false,));
+    if(widget.isMachineTest==false){
+      context.push(InspectionPage(isEditMode: false,));
+    }else{
+      context.push(VehiclePartsScreen());
+
+    }
   }
 
   @override

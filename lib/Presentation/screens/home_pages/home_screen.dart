@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
+import '../../../widgets/custom_bottomsheet.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../manual_inspection_images/manual_inspection_image_screen.dart';
+import '../vehicle_test_parameter/vehicle_parts_screen.dart';
 import '../vehicles_class_page/vehicle_class_screen_item.dart';
 import 'home_widgets/buildHeaderHome.dart';
 import 'home_widgets/search_filter_bar_home.dart';
@@ -87,7 +89,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       classDataModel: item,
                       onTap: () {
                         provider.setSelectedClass(item);
-                        context.push(ManualInspectionImageScreen());
+                        //context.push(ManualInspectionImageScreen());
+                        showInspectionSheet(
+                          context,
+                          onSelect: (value) {
+                            if (value == 'Manual Inspection') {
+                              context.push(ManualInspectionImageScreen());
+                            } else {
+                              //context.push(VehiclePartsScreen());
+                              context.push(ManualInspectionImageScreen(isMachineTest: true,));
+                            }
+                          },
+                        );
                       },
                     ),
                   );

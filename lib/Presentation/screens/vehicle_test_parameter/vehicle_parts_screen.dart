@@ -67,7 +67,6 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
         ),
         body: SafeArea(
           child: VehiclePartsResponsiveLayout(),
-
         ),
       ),
     );

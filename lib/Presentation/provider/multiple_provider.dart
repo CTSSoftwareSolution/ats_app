@@ -3,12 +3,15 @@ import 'package:ats_app/Data/repositories_impl/login_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/manual_inspection_list_impl.dart';
 import 'package:ats_app/Data/repositories_impl/pre_save_inspection_impl.dart';
 import 'package:ats_app/Data/repositories_impl/vehicle_class_repo_impl.dart';
+import 'package:ats_app/Data/repositories_impl/vehicle_parts_repo_impl.dart';
 import 'package:ats_app/Domain/repositories/manual_inspection_repository.dart';
+import 'package:ats_app/Domain/repositories/vehicle_parts_repository.dart';
 import 'package:ats_app/Domain/usecases/lane_list_usecase.dart';
 import 'package:ats_app/Domain/usecases/login_usecases.dart';
 import 'package:ats_app/Domain/usecases/manual_inspection_list_usecase.dart';
 import 'package:ats_app/Domain/usecases/pre_inspection_result_usecases.dart';
 import 'package:ats_app/Domain/usecases/pre_save_inspection_usecase.dart';
+import 'package:ats_app/Domain/usecases/vehicle_parts_usecases.dart';
 import 'package:ats_app/Presentation/provider/inspection_form_provider.dart';
 import 'package:ats_app/Presentation/provider/inspection_result_provider.dart';
 import 'package:ats_app/Presentation/provider/login_provider.dart';
@@ -16,6 +19,7 @@ import 'package:ats_app/Presentation/provider/permission_provider.dart';
 import 'package:ats_app/Presentation/provider/pre_inspection_result_provider.dart';
 import 'package:ats_app/Presentation/provider/splash_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
+import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
 import 'package:ats_app/Presentation/provider/verify_hsrp_provider.dart';
 import 'package:ats_app/Presentation/screens/manual_inspection_images/manual_ins_image_provider.dart';
 import 'package:ats_app/aws_images/aws_repository_impl.dart';
@@ -60,7 +64,8 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PreSaveInspectionProvider(useCase: PreSaveInspectionUseCase(repository: PreSaveInspectionImpl()))),
        // ChangeNotifierProvider(create: (_) => PreInspectionResultProvider(preInspectionResultUseCases: PreInspectionResultUseCases(preInspectionResultRepository:))),
         ChangeNotifierProvider(create: (_) => LaneListProvider(laneListUseCase: LaneListUseCase(laneListRepository: LaneListImpl()))),
-        ChangeNotifierProvider(create: (_) => LocationProvider())
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
+        ChangeNotifierProvider(create: (_) => VehiclePartsProvider(vehiclePartsUseCases: VehiclePartsUseCases(vehiclePartsRepository: VehiclePartsRepoImpl())))
       ],
       child: const MyApp(),
     );
