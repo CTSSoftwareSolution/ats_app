@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// ─── Show Helper ───────────────────────────────────────────────
 void showInspectionSheet(BuildContext context, {required Function(String) onSelect}) {
   showModalBottomSheet(
     context: context,
@@ -9,11 +8,9 @@ void showInspectionSheet(BuildContext context, {required Function(String) onSele
   );
 }
 
-// ─── Bottom Sheet ───────────────────────────────────────────────
 class _InspectionSheet extends StatelessWidget {
   final Function(String) onSelect;
   const _InspectionSheet({required this.onSelect});
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,7 +22,6 @@ class _InspectionSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Drag handle
           Container(
             width: 36,
             height: 4,
@@ -35,8 +31,6 @@ class _InspectionSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-
-          // Title
           const Text(
             'Select Inspection Type',
             style: TextStyle(
@@ -46,8 +40,6 @@ class _InspectionSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-
-          // Manual Inspection
           _InspectionTile(
             icon: Icons.person_outline_rounded,
             label: 'Manual Inspection',
@@ -59,8 +51,6 @@ class _InspectionSheet extends StatelessWidget {
             },
           ),
           const SizedBox(height: 12),
-
-          // Machine Inspection
           _InspectionTile(
             icon: Icons.precision_manufacturing_outlined,
             label: 'Machine Inspection',
@@ -77,8 +67,6 @@ class _InspectionSheet extends StatelessWidget {
     );
   }
 }
-
-// ─── Tile ───────────────────────────────────────────────────────
 class _InspectionTile extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -153,10 +141,7 @@ class _InspectionTile extends StatelessWidget {
     );
   }
 }
-
-// ─── Demo ────────────────────────────────────────────────────────
 void main() => runApp(const App());
-
 class App extends StatelessWidget {
   const App({super.key});
   @override
