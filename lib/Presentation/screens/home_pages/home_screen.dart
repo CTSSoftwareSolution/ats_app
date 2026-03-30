@@ -90,41 +90,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: VehicleClassScreenItem(
                       classDataModel: item,
                       onTap: () {
-                        customBottomSheet(
-                            context: context,
-                            title: "Select Inspection Type",
-                            child: ListView.builder(
-                              itemCount: inspectionTypeTitles.length,
-                              shrinkWrap: true,
-                              itemBuilder: (BuildContext context, int index) {
-                                bool isSelected = provider.selectedIndex == index;
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? appColor.withValues(alpha: 0.05) : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    boxShadow: isSelected
-                                        ? [BoxShadow(color: Colors.black12, blurRadius: 2.0)]
-                                        : [],
-                                  ),
-                                  child: ListTile(
-                                    selected: isSelected,
-                                    dense: true,
-                                    onTap: () {
-                                      setState(() {
-                                        provider.selectedIndex = index;
-                                      });
-                                      context.pop();
-                                    },
-                                    title: CustomText(
-                                      text: inspectionTypeTitles[index],
-                                      fontSize: 16,
-                                      textColor: blackColor,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ));
+                        showInspectionSheet(
+                          context,
+                          onSelect: (value) {
+                            if (value == 'Manual Inspection') {
+                              context.push(ManualInspectionImageScreen());
+                            } else {
+                              context.push(VehiclePartsScreen());
+                            }
+                          },
+                        );
                         // provider.setSelectedClass(item);
                         // context.push(ManualInspectionImageScreen());
                         //context.push(VehiclePartsScreen());
