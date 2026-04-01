@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:ats_app/image_processing/image_processing_service.dart';
@@ -31,6 +32,40 @@ class FileProvider with ChangeNotifier {
   final List<XFile?> videos = [];
    bool _isVideo = false;
   bool get isVideo => _isVideo;
+
+  bool _isRecording = false;
+  bool get isRecording => _isRecording;
+
+  Timer? timer;
+  int _recordingSeconds = 0;
+  int get recordingSeconds => _recordingSeconds;
+
+  bool _showBlink = true;
+  bool get showBlink => _showBlink;
+
+  void timerStart(){
+    _recordingSeconds = 0;
+    _showBlink = true;
+    timer = Timer.periodic(Duration(seconds: 1), (_){
+      _recordingSeconds++;
+      _showBlink = !_showBlink;
+      notifyListeners();
+    });
+  }
+
+  void timerStop(){
+    timer?.cancel();
+    timer = null;
+    _recordingSeconds = 0;
+    _showBlink = true;
+    notifyListeners();
+  }
+
+
+  void setRecording(bool v){
+    _isRecording = v;
+    notifyListeners();
+  }
 
   void setVideo(bool v){
     _isVideo = v;
@@ -125,6 +160,7 @@ class FileProvider with ChangeNotifier {
 
   void clearAll(){
     images.clear();
+    videos.clear();
     currentIndex = null;
     notifyListeners();
   }
@@ -255,44 +291,89 @@ class FileProvider with ChangeNotifier {
     }
   }
 
-  Future<void> recordVideo() async {
-    CustomLoader.showLoader("Video processing...");
-    try {
+  Future<void> startVideoRecording()async {
+    try{
+
       if (controller == null || !controller!.value.isInitialized) {
         throw Exception("Camera not initialized");
       }
 
-       await controller!.startVideoRecording();
+      await controller!.startVideoRecording();
+      setRecording(true);
+      timerStart();
 
+    }catch (e){
+      debugPrint("Video error: $e");
+      CustomLoader.closeLoader();
+    }
+  }
 
-      await Future.delayed(Duration(seconds: 5));
+  Future<void> stopVideoRecording()async {
+    try{
+
+      if (controller == null || !controller!.value.isRecordingVideo)return;
 
       final XFile video = await controller!.stopVideoRecording();
+      setRecording(false);
+      timerStop();
       originalVideo = video;
 
-
       if (currentIndex != null && currentIndex! < videos.length) {
-        videos[currentIndex!] = video;
-      }
-      debugPrint("OriginalVideo Path: ${originalVideo!.path.toString()}");
+              videos[currentIndex!] = video;
+            }
 
       overlayVideo =  XFile(video.path);
 
       if (currentIndex != null && currentIndex! < videos.length) {
-        videos[currentIndex!] = overlayVideo;
-      }
+              videos[currentIndex!] = overlayVideo;
+            }
 
-      debugPrint("OriginalVideo Path: ${overlayVideo?.path.toString()}");
-      CustomLoader.closeLoader();
-      notifyListeners();
+      debugPrint("Video saved: ${video.path}");
 
-    } catch (e) {
+    }catch (e){
       debugPrint("Video error: $e");
       CustomLoader.closeLoader();
-    } finally {
-      _setLoading(false);
     }
   }
+
+  // Future<void> recordVideo() async {
+  //   CustomLoader.showLoader("Video processing...");
+  //   try {
+  //     if (controller == null || !controller!.value.isInitialized) {
+  //       throw Exception("Camera not initialized");
+  //     }
+  //
+  //      await controller!.startVideoRecording();
+  //
+  //
+  //     await Future.delayed(Duration(seconds: 5));
+  //
+  //     final XFile video = await controller!.stopVideoRecording();
+  //     originalVideo = video;
+  //
+  //
+  //     if (currentIndex != null && currentIndex! < videos.length) {
+  //       videos[currentIndex!] = video;
+  //     }
+  //     debugPrint("OriginalVideo Path: ${originalVideo!.path.toString()}");
+  //
+  //     overlayVideo =  XFile(video.path);
+  //
+  //     if (currentIndex != null && currentIndex! < videos.length) {
+  //       videos[currentIndex!] = overlayVideo;
+  //     }
+  //
+  //     debugPrint("OriginalVideo Path: ${overlayVideo?.path.toString()}");
+  //     CustomLoader.closeLoader();
+  //     notifyListeners();
+  //
+  //   } catch (e) {
+  //     debugPrint("Video error: $e");
+  //     CustomLoader.closeLoader();
+  //   } finally {
+  //     _setLoading(false);
+  //   }
+  // }
 
 
   Future<void> disposeCamera() async {

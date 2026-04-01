@@ -80,8 +80,8 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
 
     cameraController.clearAll();
     if(!mounted) return;
-    //context.push(InspectionPage(isEditMode: false,));
-      context.push(VehiclePartsScreen());
+    context.push(InspectionPage(isEditMode: false,));
+      //context.push(VehiclePartsScreen());
   }
 
   @override
@@ -95,6 +95,17 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
           text: "Inspection Upload",
           fontFamily: "SemiBold",
           fontSize: 20,
+        ),
+        leading: IconButton(
+          onPressed: (){
+            context.pop();
+            fileProvider.clearAll();
+          },
+          icon: ImageIcon(
+            AssetImage(backArrowIcon),
+            color: whiteColor,
+            size: 20,
+          ),
         ),
       ),
           body: SafeArea(
@@ -130,8 +141,9 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
                           iconSize: 40,
                           iconScale: 6.5,
                           onTap: () async {
+                            fileProvider.setVideo(false);
                             fileProvider.setCurrentIndex(index);
-                            await fileProvider.initCamera();
+                           // await fileProvider.initCamera();
                             await context.push(CameraScreen());
                           },
                             index: index,

@@ -125,6 +125,11 @@ mixin TimerMixin<T extends StatefulWidget> on State<T> {
   int get secondsRemaining => _secondsRemaining;
 }
 
+String formatDuration(int seconds){
+  final min = (seconds ~/ 60).toString().padLeft(2,'0');
+  final sec = (seconds % 60).toString().padLeft(2,'0');
+return "$min:$sec";
+}
 
 
 

@@ -1,5 +1,6 @@
 import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_responsive.dart';
+import 'package:ats_app/image_processing/MediaPicker/file_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
@@ -20,6 +21,7 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
   void initState() {
     super.initState();
     context.read<VehiclePartsProvider>().vehiclePartsApi(context);
+    context.read<FileProvider>().clearAll();
   }
 
   @override

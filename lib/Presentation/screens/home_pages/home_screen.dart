@@ -90,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: VehicleClassScreenItem(
                       classDataModel: item,
                       onTap: () {
+                        provider.setSelectedClass(item);
                         showInspectionSheet(
                           context,
                           onSelect: (value) {
@@ -100,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
                           },
                         );
-                        // provider.setSelectedClass(item);
+                        //
                         // context.push(ManualInspectionImageScreen());
                         //context.push(VehiclePartsScreen());
                       },

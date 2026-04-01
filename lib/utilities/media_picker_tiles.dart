@@ -35,6 +35,7 @@ Widget mediaPickerTiles({required BuildContext context}) {
                     if (mediaSource[index].id == 0) {
                      context.pop();
                      // await context.read<FileProvider>().initCamera();
+                     context.read<FileProvider>().setVideo(false);
                       await context.push(CameraScreen());
 
                     } else if (mediaSource[index].id == 1) {

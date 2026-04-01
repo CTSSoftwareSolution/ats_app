@@ -134,11 +134,14 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
       return;
     }
 
+    fileProvider.setVideo(false);
+
     fileProvider.setCurrentIndex(_frontIndex);
 
     await fileProvider.initCamera();
 
     if (!context.mounted) return;
+
 
     await context.push(CameraScreen());
 
