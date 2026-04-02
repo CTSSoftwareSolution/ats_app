@@ -147,12 +147,13 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
 
     if (!context.mounted) return;
 
-    final XFile? xFile = fileProvider.getImage(_frontIndex);
+    //final XFile? xFile = fileProvider.getImage(_frontIndex);
+    final MediaFile? xFile = fileProvider.getMedia(_frontIndex);
 
     if (xFile == null) return;
 
     await verifyProvider.verifyPlate(
-      imageFile: File(xFile.path),
+      imageFile: File(xFile.image!.path),
       expectedPlate: expectedPlate, context: context,
     );
 

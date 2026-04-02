@@ -56,126 +56,138 @@ class _CameraScreenState extends State<CameraScreen>
     }
     final size = MediaQuery.of(context).size;
     final scale = size.aspectRatio * cameraController.value.aspectRatio;
-    return Scaffold(
-      body: Stack(
-        children: [
-          Transform.scale(
-            scale: scale < 1 ? 1 / scale : scale,
-            child: Center(child: CameraPreview(cameraController)),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 50,
-            left: 16,
-            child: GestureDetector(
-              onTap: () => context.pop(),
-              child: Container(
-                height: 45.0,
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: cameraBackConColor,
-                  shape: BoxShape.circle,
-                ),
-                child: CustomImage(image: backArrowIcon, scale: 3.5),
-              ),
+    return WillPopScope(
+      onWillPop: () async {
+        if (provider.isVideo && provider.isRecording) {
+          await provider.stopVideoRecording(save: false);
+        }
+        return true;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Transform.scale(
+              scale: scale < 1 ? 1 / scale : scale,
+              child: Center(child: CameraPreview(cameraController)),
             ),
-          ),
-          Positioned(
-            bottom: 50,
-            left: 0,
-            right: 0,
-            child: Center(
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 50,
+              left: 16,
               child: GestureDetector(
                 onTap: () async {
-                  if (provider.isVideo) {
-                    if (provider.isRecording) {
-                      await provider.stopVideoRecording();
-                      if (!context.mounted) return;
-                      context.pop();
-                    } else {
-                      await provider.startVideoRecording();
-                    }
-                  } else {
-                    await provider.takePicture(context);
-                    if (!context.mounted) return;
-                    context.pop();
+                  if (provider.isVideo && provider.isRecording) {
+                    await provider.stopVideoRecording(save: false);
                   }
+                  if (!context.mounted) return;
+                  context.pop();
                 },
-                child: provider.isVideo ?
-                Container(
-                  height: 60,
-                  width: 60,
+                child: Container(
+                  height: 45.0,
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
+                    color: cameraBackConColor,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      width: 2,
-                      style: BorderStyle.solid,
-                      color: whiteColor,
-                    ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(3.0),
-                    child: CustomImage(image: provider.isRecording ? stopIconImage : circleIconImage, scale: provider.isRecording ? 18 : 10, color: Colors.red,),
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //     // shape: provider.isRecording ? BoxShape.rectangle : BoxShape.circle,
-                    //     color: Colors.red,
-                    //   ),
-                    // ),
-                  ),
-                ) :
-                CustomImage(image: cameraButtonIcon, scale: 4),
+                  child: CustomImage(image: backArrowIcon, scale: 3.5),
+                ),
               ),
-              // GestureDetector(
-              //   onTap: () async {
-              //     if(provider.isVideo){
-              //       if(provider.isRecording){
-              //         await provider.stopVideoRecording();
-              //         if (!context.mounted) return;
-              //         context.pop();
-              //       }else{
-              //         await provider.startVideoRecording();
-              //       }
-              //     }else{
-              //       await provider.takePicture(context);
-              //       if (!context.mounted) return;
-              //       context.pop();
-              //     }
-              //     },
-              //   child: provider.isVideo ?
-              //   Container(
-              //     height: 60,
-              //     width: 60,
-              //     decoration: BoxDecoration(
-              //       color: provider.isRecording ? whiteColor : Colors.red,
-              //       shape: BoxShape.circle,
-              //       border: provider.isRecording ? null : Border.all(color: whiteColor, width: 5.0, style: BorderStyle.solid)
-              //     ),
-              //     child: provider.isRecording ?
-              //        CustomImage(image: stopIconImage,scale: 22,color: Colors.red,) :
-              //         null
-              //   ) :
-              //   CustomImage(image: cameraButtonIcon, scale: 4),
-              // ),
             ),
-          ),
-          if (provider.isVideo && provider.isRecording)
             Positioned(
-              top: MediaQuery.of(context).padding.top + 120,
+              bottom: 50,
               left: 0,
               right: 0,
               child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 160.0),
+                child: GestureDetector(
+                  onTap: () async {
+                    if (provider.isVideo) {
+                      if (provider.isRecording) {
+                        await provider.stopVideoRecording();
+                        if (!context.mounted) return;
+                        context.pop();
+                      } else {
+                        await provider.startVideoRecording();
+                      }
+                    } else {
+                      await provider.takePicture(context);
+                      if (!context.mounted) return;
+                      context.pop();
+                    }
+                  },
+                  child: provider.isVideo ?
+                  Container(
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 2,
+                        style: BorderStyle.solid,
+                        color: whiteColor,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: CustomImage(image: provider.isRecording ? stopIconImage : circleIconImage, scale: provider.isRecording ? 18 : 10, color: Colors.red,),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //     // shape: provider.isRecording ? BoxShape.rectangle : BoxShape.circle,
+                      //     color: Colors.red,
+                      //   ),
+                      // ),
+                    ),
+                  ) :
+                  CustomImage(image: cameraButtonIcon, scale: 4),
+                ),
+                // GestureDetector(
+                //   onTap: () async {
+                //     if(provider.isVideo){
+                //       if(provider.isRecording){
+                //         await provider.stopVideoRecording();
+                //         if (!context.mounted) return;
+                //         context.pop();
+                //       }else{
+                //         await provider.startVideoRecording();
+                //       }
+                //     }else{
+                //       await provider.takePicture(context);
+                //       if (!context.mounted) return;
+                //       context.pop();
+                //     }
+                //     },
+                //   child: provider.isVideo ?
+                //   Container(
+                //     height: 60,
+                //     width: 60,
+                //     decoration: BoxDecoration(
+                //       color: provider.isRecording ? whiteColor : Colors.red,
+                //       shape: BoxShape.circle,
+                //       border: provider.isRecording ? null : Border.all(color: whiteColor, width: 5.0, style: BorderStyle.solid)
+                //     ),
+                //     child: provider.isRecording ?
+                //        CustomImage(image: stopIconImage,scale: 22,color: Colors.red,) :
+                //         null
+                //   ) :
+                //   CustomImage(image: cameraButtonIcon, scale: 4),
+                // ),
+              ),
+            ),
+            if (provider.isVideo && provider.isRecording)
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 120,
+                left: 0,
+                right: 0,
+                child: Center(
                   child: Container(
                     decoration: BoxDecoration(
                       color: cameraBackConColor,
                       borderRadius: BorderRadius.circular(15.0)
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 10.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           AnimatedOpacity(
                               opacity: provider.showBlink ? 1.0 : 0.2,
@@ -195,8 +207,8 @@ class _CameraScreenState extends State<CameraScreen>
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -53,15 +53,15 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     final location = Provider.of<LocationProvider>(context, listen: false);
 
     List<DocumentManualDocModels> docs = [];
-    for (int i = 0; i < cameraController.images.length; i++) {
-      final image = cameraController.images[i];
+    for (int i = 0; i < cameraController.mediaFile.length; i++) {
+      final image = cameraController.mediaFile[i];
       if(image != null){
         docs.add(
           DocumentManualDocModels(
             labelId: "${i+1}",
             latitude: location.currentPosition!.latitude.toString(),
             longitude: location.currentPosition!.longitude.toString(),
-            file: File(image.path),
+            file: File(image.image!.path),
           ),
         );
       }

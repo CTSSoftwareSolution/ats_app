@@ -47,13 +47,16 @@ class UploadImageContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fileProvider = context.watch<FileProvider>();
-    final file = isVideo ? (index < fileProvider.videos.length
-        ? fileProvider.videos[index]
-        : null) : fileProvider.getImage(index);
+    final media = fileProvider.getMedia(index);
+    final XFile? mediaFile = isVideo ? media?.video : media?.image;
+    // isVideo ? (index < fileProvider.images.length
+    //     ? fileProvider.images[index]
+    //     : null) :
+    // fileProvider.getImage(index);
 
     final double height = isTablet ? 130.0 : 150.0;
     return GestureDetector(
-      onTap: file == null ? onTap : null,
+      onTap: mediaFile == null ? onTap : null,
       child: Container(
         width: width,
         height: height,
@@ -88,15 +91,15 @@ class UploadImageContainer extends StatelessWidget {
             child: child,
           ),
         ),
-        child: file != null
+        child: mediaFile != null
             ? Stack(
-          key: ValueKey(file.path),
+          key: ValueKey(mediaFile.path),
           fit: StackFit.expand,
           children: [
             isVideo ?
-            VideoPreviewWidget(path: file.path,) :
+            VideoPreviewWidget(path: mediaFile.path) :
             Image.file(
-              File(file.path),
+              File(mediaFile.path),
               fit: BoxFit.cover,
               width: double.infinity,
               height: height,

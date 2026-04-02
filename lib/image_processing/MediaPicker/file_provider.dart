@@ -11,6 +11,14 @@ import '../../../main.dart';
 import '../../location/location_provider.dart';
 import 'file_service.dart';
 
+class MediaFile {
+   XFile? image;
+   XFile? video;
+   bool? isVideo;
+
+  MediaFile({ this.image,  this.video,  this.isVideo});
+}
+
 class FileProvider with ChangeNotifier {
   final FileService _fileService;
 
@@ -30,6 +38,9 @@ class FileProvider with ChangeNotifier {
   int? currentIndex;
   final List<XFile?> images = [];
   final List<XFile?> videos = [];
+
+final List<MediaFile?> mediaFile = [];
+
    bool _isVideo = false;
   bool get isVideo => _isVideo;
 
@@ -62,11 +73,6 @@ class FileProvider with ChangeNotifier {
   }
 
 
-  void setRecording(bool v){
-    _isRecording = v;
-    notifyListeners();
-  }
-
   void setVideo(bool v){
     _isVideo = v;
     notifyListeners();
@@ -76,13 +82,17 @@ class FileProvider with ChangeNotifier {
   void setCurrentIndex(int value){
     currentIndex = value;
 
-    while (images.length <= currentIndex!) {
-      images.add(null);
+    while (mediaFile.length <= currentIndex!){
+      mediaFile.add(MediaFile());
     }
-
-    while (videos.length <= currentIndex!) {
-      videos.add(null);
-    }
+    //
+    // while (images.length <= currentIndex!) {
+    //   images.add(null);
+    // }
+    //
+    // while (videos.length <= currentIndex!) {
+    //   videos.add(null);
+    // }
   }
 
 
@@ -96,6 +106,13 @@ class FileProvider with ChangeNotifier {
   XFile? getImage(int index) {
     if (index < images.length) {
       return images[index];
+    }
+    return null;
+  }
+
+  MediaFile? getMedia(int index) {
+    if (index < mediaFile.length) {
+      return mediaFile[index];
     }
     return null;
   }
@@ -119,6 +136,11 @@ class FileProvider with ChangeNotifier {
       ResolutionPreset.high,
       enableAudio: false,
     );
+
+    if(isRecording){
+      stopVideoRecording();
+    }
+
       await controller!.initialize();
       notifyListeners();
   }
@@ -161,6 +183,7 @@ class FileProvider with ChangeNotifier {
   void clearAll(){
     images.clear();
     videos.clear();
+    mediaFile.clear();
     currentIndex = null;
     notifyListeners();
   }
@@ -246,9 +269,9 @@ class FileProvider with ChangeNotifier {
       final XFile picture = await controller!.takePicture();
       originalImage = picture;
 
-      if (currentIndex != null && currentIndex! < images.length) {
-        images[currentIndex!] = picture;
-      }
+      // if (currentIndex != null && currentIndex! < images.length) {
+      //   images[currentIndex!] = picture;
+      // }
       final overlayPath = await ImageProcessingService.processOverlayImage(picture: picture,context: context);
       final lat = location.currentPosition?.latitude ?? 0.0;
       final lng = location.currentPosition?.longitude ?? 0.0;
@@ -270,13 +293,16 @@ class FileProvider with ChangeNotifier {
 
 
 
-      overlayImage = XFile(overlayPath);
+      final processedFile = XFile(overlayPath);
+      overlayImage = processedFile;
 
-      
-
-      if (currentIndex != null && currentIndex! < images.length) {
-        images[currentIndex!] = overlayImage;
+      if(currentIndex != null && currentIndex! < mediaFile.length){
+        mediaFile[currentIndex!]?.image = processedFile;
       }
+
+      // if (currentIndex != null && currentIndex! < images.length) {
+      //   images[currentIndex!] = overlayImage;
+      // }
 
 
 
@@ -299,7 +325,7 @@ class FileProvider with ChangeNotifier {
       }
 
       await controller!.startVideoRecording();
-      setRecording(true);
+      _isRecording = true;
       timerStart();
 
     }catch (e){
@@ -308,28 +334,34 @@ class FileProvider with ChangeNotifier {
     }
   }
 
-  Future<void> stopVideoRecording()async {
+  Future<void> stopVideoRecording({bool save = true})async {
     try{
 
       if (controller == null || !controller!.value.isRecordingVideo)return;
 
       final XFile video = await controller!.stopVideoRecording();
-      setRecording(false);
+      _isRecording = false;
       timerStop();
-      originalVideo = video;
 
-      if (currentIndex != null && currentIndex! < videos.length) {
-              videos[currentIndex!] = video;
-            }
+      if(save) {
+        originalVideo = video;
 
-      overlayVideo =  XFile(video.path);
+        // if (currentIndex != null && currentIndex! < videos.length) {
+        //         videos[currentIndex!] = video;
+        //       }
 
-      if (currentIndex != null && currentIndex! < videos.length) {
-              videos[currentIndex!] = overlayVideo;
-            }
+        final processedVideo = XFile(video.path);
+        overlayVideo = processedVideo;
 
-      debugPrint("Video saved: ${video.path}");
+        if (currentIndex != null && currentIndex! < mediaFile.length) {
+          mediaFile[currentIndex!]?.video = processedVideo;
+        }
 
+        debugPrint("Video saved: ${video.path}");
+        notifyListeners();
+      }else{
+        debugPrint("Video discarded");
+      }
     }catch (e){
       debugPrint("Video error: $e");
       CustomLoader.closeLoader();
