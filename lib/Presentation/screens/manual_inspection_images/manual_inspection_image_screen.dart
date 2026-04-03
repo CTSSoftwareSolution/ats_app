@@ -70,7 +70,11 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     }
     int remaining = 8 - docs.length;
     if (remaining > 0) {
-      CustomLoader.message("$remaining images remaining to upload");
+      String message = remaining == 1
+          ? "$remaining image remaining to upload"
+          : "$remaining images remaining to upload";
+
+      CustomLoader.message(message);
       return;
     }
     await provider.uploadDocuments(
