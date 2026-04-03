@@ -29,6 +29,8 @@ class ManualInspectionImageScreen extends StatefulWidget {
 
 class _ManualInspectionImageScreenState extends State<ManualInspectionImageScreen>  with WidgetsBindingObserver{
 
+  int missingCount = 0;
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +57,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     List<DocumentManualDocModels> docs = [];
     for (int i = 0; i < cameraController.mediaFile.length; i++) {
       final image = cameraController.mediaFile[i];
-      if(image != null){
+      if(image != null && image.image != null && image.image!.path.isNotEmpty){
         docs.add(
           DocumentManualDocModels(
             labelId: "${i+1}",
@@ -165,7 +167,6 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
             backgroundColor: appColor,
               onPressed: (){
               imageUpload();
-
               },
               label: CustomText(text: "Next", fontSize: 18.0, fontFamily: "Bold",)),
         ),
