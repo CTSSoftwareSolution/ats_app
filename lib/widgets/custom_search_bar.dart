@@ -1,5 +1,7 @@
+import 'package:ats_app/utilities/input_formatters.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../Presentation/provider/vehicle_class_provider.dart';
@@ -27,6 +29,7 @@ class CustomSearchTextField extends StatelessWidget {
     final Color scaffoldBgColor = Theme.of(context).scaffoldBackgroundColor;
     final classProvider = context.watch<VehicleClassProvider>();
     return CustomTextField(
+      inputFormatters: InputFormatters.searchFieldValidation,
       contentPadding: EdgeInsets.symmetric(vertical: 10.0),
       maxLines: 1,
       height: 43,
@@ -35,7 +38,7 @@ class CustomSearchTextField extends StatelessWidget {
       controller: controller,
       readOnly: false,
       obscureText: false,
-      textCapitalization: TextCapitalization.none,
+      textCapitalization: TextCapitalization.characters,
       suffixIcon: classProvider.searchValue.isEmpty
           ? null
           : IconButton(
@@ -50,7 +53,7 @@ class CustomSearchTextField extends StatelessWidget {
               onPressed: onCloseClick,
               color: blackColor,
             ),
-      prefixIcon: CustomImage(image: searchIcon, scale: 4),
+      prefixIcon: CustomImage(image: searchIcon, scale: 4.2),
       hint: 'Search...',
       hintStyle: const TextStyle(fontSize: 15, fontFamily: "Medium"),
       onChanged: onChanged,

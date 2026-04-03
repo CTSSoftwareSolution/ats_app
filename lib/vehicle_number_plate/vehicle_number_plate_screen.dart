@@ -4,6 +4,7 @@ import 'package:ats_app/Presentation/screens/camera_page/camera_screen.dart';
 import 'package:camera/camera.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../Presentation/provider/verify_hsrp_provider.dart';
 import '../Presentation/screens/vehicle_number_plate/vehicle_number_plate_models.dart';
@@ -69,6 +70,12 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
               8.height,
 
               TextField(
+                inputFormatters: [
+                 // FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9]')),
+                  FilteringTextInputFormatter.allow(RegExp(r'[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}')),
+                  FilteringTextInputFormatter.deny(" "),
+                 // LengthLimitingTextInputFormatter(10)
+                ],
                 controller: _frontController,
                 textCapitalization: TextCapitalization.characters,
                 decoration: InputDecoration(
@@ -150,6 +157,7 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
     //final XFile? xFile = fileProvider.getImage(_frontIndex);
     final MediaFile? xFile = fileProvider.getMedia(_frontIndex);
 
+    debugPrint("Vehicle plate image path: ${xFile?.image?.path}");
     if (xFile == null) return;
 
     await verifyProvider.verifyPlate(

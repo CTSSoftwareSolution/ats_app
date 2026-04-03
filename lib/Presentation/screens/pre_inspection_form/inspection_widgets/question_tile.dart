@@ -77,6 +77,8 @@ class _QuestionTileState extends State<QuestionTile> {
     final awsProvider = Provider.of<AwsSignedUrlProvider>(context, listen: false);
     final fileProvider = Provider.of<FileProvider>(context, listen: false);
     //await fileProvider.initCamera();
+    fileProvider.clearOverlayImage();
+
     fileProvider.setVideo(false);
     await context.push(CameraScreen());
     try {

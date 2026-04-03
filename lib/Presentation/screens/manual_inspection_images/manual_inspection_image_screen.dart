@@ -78,7 +78,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
       documents: docs,
     );
 
-    cameraController.clearAll();
+    //cameraController.clearAll();
     if(!mounted) return;
     context.push(InspectionPage(isEditMode: false,));
       //context.push(VehiclePartsScreen());
@@ -165,6 +165,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
             backgroundColor: appColor,
               onPressed: (){
               imageUpload();
+
               },
               label: CustomText(text: "Next", fontSize: 18.0, fontFamily: "Bold",)),
         ),

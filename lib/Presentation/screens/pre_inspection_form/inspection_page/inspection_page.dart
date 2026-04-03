@@ -1,8 +1,10 @@
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/submit_fab_widget.dart';
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../utilities/image_data.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../../provider/manual_inspection_list_provider.dart';
 import '../inspection_widgets/error_screen.dart';
@@ -52,9 +54,20 @@ class _InspectionPageState extends State<InspectionPage>
       builder: (context, provider, _) {
         return Scaffold(
           appBar: AppBar(
+            titleSpacing: 0.0,
             elevation: 0,
             backgroundColor: appColor,
             title: const Text("Inspection"),
+            leading: IconButton(
+              onPressed: (){
+                context.pop();
+                },
+              icon: ImageIcon(
+                AssetImage(backArrowIcon),
+                color: whiteColor,
+                size: 20,
+              ),
+            ),
           ),
           backgroundColor: const Color(0xFFF4F6FA),
           body: _buildBody(provider),

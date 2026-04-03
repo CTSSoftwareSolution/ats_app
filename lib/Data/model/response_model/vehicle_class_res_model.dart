@@ -90,6 +90,7 @@ class ClassDataModel {
     }
     return map;
   }
+
 }
 
 class Appointments {
@@ -97,7 +98,9 @@ class Appointments {
       String? vehicleKey, 
       num? appointmentId, 
       String? registrationNo, 
+      String? bookingId, 
       num? status, 
+      String? appointmentDate, 
       String? vehicleClass, 
       String? vehicleCategory, 
       String? fuelType, 
@@ -118,7 +121,9 @@ class Appointments {
     _vehicleKey = vehicleKey;
     _appointmentId = appointmentId;
     _registrationNo = registrationNo;
+    _bookingId = bookingId;
     _status = status;
+    _appointmentDate = appointmentDate;
     _vehicleClass = vehicleClass;
     _vehicleCategory = vehicleCategory;
     _fuelType = fuelType;
@@ -142,7 +147,9 @@ class Appointments {
     _vehicleKey = json['vehicle_key'];
     _appointmentId = json['appointment_id'];
     _registrationNo = json['registration_no'];
+    _bookingId = json['booking_id'];
     _status = json['status'];
+    _appointmentDate = json['appointment_date'];
     _vehicleClass = json['vehicle_class'];
     _vehicleCategory = json['vehicle_category'];
     _fuelType = json['fuel_type'];
@@ -164,7 +171,9 @@ class Appointments {
   String? _vehicleKey;
   num? _appointmentId;
   String? _registrationNo;
+  String? _bookingId;
   num? _status;
+  String? _appointmentDate;
   String? _vehicleClass;
   String? _vehicleCategory;
   String? _fuelType;
@@ -185,7 +194,9 @@ class Appointments {
 Appointments copyWith({  String? vehicleKey,
   num? appointmentId,
   String? registrationNo,
+  String? bookingId,
   num? status,
+  String? appointmentDate,
   String? vehicleClass,
   String? vehicleCategory,
   String? fuelType,
@@ -206,7 +217,9 @@ Appointments copyWith({  String? vehicleKey,
 }) => Appointments(  vehicleKey: vehicleKey ?? _vehicleKey,
   appointmentId: appointmentId ?? _appointmentId,
   registrationNo: registrationNo ?? _registrationNo,
+  bookingId: bookingId ?? _bookingId,
   status: status ?? _status,
+  appointmentDate: appointmentDate ?? _appointmentDate,
   vehicleClass: vehicleClass ?? _vehicleClass,
   vehicleCategory: vehicleCategory ?? _vehicleCategory,
   fuelType: fuelType ?? _fuelType,
@@ -228,7 +241,9 @@ Appointments copyWith({  String? vehicleKey,
   String? get vehicleKey => _vehicleKey;
   num? get appointmentId => _appointmentId;
   String? get registrationNo => _registrationNo;
+  String? get bookingId => _bookingId;
   num? get status => _status;
+  String? get appointmentDate => _appointmentDate;
   String? get vehicleClass => _vehicleClass;
   String? get vehicleCategory => _vehicleCategory;
   String? get fuelType => _fuelType;
@@ -252,7 +267,9 @@ Appointments copyWith({  String? vehicleKey,
     map['vehicle_key'] = _vehicleKey;
     map['appointment_id'] = _appointmentId;
     map['registration_no'] = _registrationNo;
+    map['booking_id'] = _bookingId;
     map['status'] = _status;
+    map['appointment_date'] = _appointmentDate;
     map['vehicle_class'] = _vehicleClass;
     map['vehicle_category'] = _vehicleCategory;
     map['fuel_type'] = _fuelType;

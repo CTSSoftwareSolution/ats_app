@@ -132,7 +132,7 @@ class ConfirmationDialog {
       inspections: inspections,
       context: context
     );
-    //cameraController.clearAll(context);
+    //cameraController.clearAll();
     cameraController.clearImages();
     context.pushAndRemoveUntil(BottomNavigationBarScreen());
   }

@@ -45,7 +45,8 @@ class VehicleClassProvider extends ChangeNotifier {
     searchValue = value;
     if (debounce?.isActive ?? false) debounce!.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () {
-      vehicleClassApi(context: context);
+      vehicleClassApi(context: context, loadMore: false);
+
     });
   }
 

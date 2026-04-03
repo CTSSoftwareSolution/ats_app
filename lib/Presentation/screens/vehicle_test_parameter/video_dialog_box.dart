@@ -58,51 +58,82 @@ class _VideoDialogState extends State<VideoDialog> {
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(10),
-      child: isInitialized ?
-      AspectRatio(
-        aspectRatio: controller.value.aspectRatio == 0
-            ? 9 / 16
-            : controller.value.aspectRatio,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            VideoPlayer(controller),
+      child:
+      isInitialized ?
+      LayoutBuilder(
+        builder: (context, constraints) {
+          // final videoAspects = controller.value.aspectRatio;
+          // final isPortrait = videoAspects < 1;
+          // double maxWidth = constraints.maxWidth;
+          // double maxHeight = constraints.maxHeight;
+          // double dialogWidth, dialogHeight;
+          // if(isPortrait){
+          //   dialogHeight = maxHeight * 0.8;
+          //   dialogWidth = dialogHeight * videoAspects;
+          // }else{
+          //   dialogWidth = maxWidth * 0.9;
+          //   dialogHeight = dialogWidth / videoAspects;
+          // }
+          return Center(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: constraints.maxWidth * 0.95,
+                maxHeight: constraints.maxHeight * 0.85,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    FittedBox(
+                      fit: BoxFit.contain,
+                      child: SizedBox(
+                        width: controller.value.size.width,
+                        height: controller.value.size.height,
+                        child: AspectRatio(
+                          aspectRatio: controller.value.aspectRatio,
+                            child: VideoPlayer(controller)),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: togglePlayPause,
+                      child: Icon(
+                        controller.value.isPlaying
+                            ? Icons.pause_circle
+                            : Icons.play_circle,
+                        size: 60,
+                        color: Colors.white,
+                      ),
+                    ),
 
-            GestureDetector(
-              onTap: togglePlayPause,
-              child: Icon(
-                controller.value.isPlaying
-                    ? Icons.pause_circle
-                    : Icons.play_circle,
-                size: 60,
-                color: Colors.white,
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: cameraBackConColor,
+                        ),
+                        child: IconButton(
+                          icon: ImageIcon(
+                            AssetImage(closeIcon),
+                            color: whiteColor,
+                            size: 10,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-
-            Positioned(
-              top: 10,
-              right: 10,
-              child: Container(
-                height: 30,
-                width: 30,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: cameraBackConColor,
-                ),
-                child: IconButton(
-                  icon: ImageIcon(
-                    AssetImage(closeIcon),
-                    color: whiteColor,
-                    size: 10,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        }
       )
           : const SizedBox(
         height: 200,

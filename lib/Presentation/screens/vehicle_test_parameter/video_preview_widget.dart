@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/video_dialog_box.dart';
+import 'package:ats_app/utilities/image_data.dart';
+import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -61,15 +63,21 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
                 fullscreenDialog: true,
                 context: context,
                 builder: (context) {
-                  return VideoDialog(path: widget.path);
+                  return OrientationBuilder(
+                    builder: (context, orientation) {
+                      return VideoDialog(path: widget.path);
+                    }
+                  );
                 },
               );
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              height: 30,
+              width: 30,
+             // padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.90),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.12),
@@ -78,19 +86,7 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
                   ),
                 ],
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.visibility, size: 12, color: appColor),
-                  4.width,
-                  CustomText(
-                    text: "View",
-                    fontSize: 11,
-                    fontFamily: "Bold",
-                    textColor: appColor,
-                  ),
-                ],
-              ),
+              child: CustomImage(image: playIconImage,scale: 38, color: appColor,)
             ),
           ),
         ),

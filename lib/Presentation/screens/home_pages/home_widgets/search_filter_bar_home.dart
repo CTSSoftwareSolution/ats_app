@@ -39,7 +39,8 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
             onChanged: (v) => widget.provider.onSearchChanged(context, v),
             onCloseClick: () {
               widget.provider.searchController.clear();
-              widget.provider.onFilterChanged(context, "");
+              widget.provider.vehicleClassApi(context: context, loadMore: false);
+              //widget.provider.onFilterChanged(context,"");
             },
             controller: widget.provider.searchController,
           ),

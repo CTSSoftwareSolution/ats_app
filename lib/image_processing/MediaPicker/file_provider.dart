@@ -427,5 +427,9 @@ final List<MediaFile?> mediaFile = [];
     }
   }
 
+  void clearOverlayImage() {
+    overlayImage = null;
+    notifyListeners();
+  }
 
 }

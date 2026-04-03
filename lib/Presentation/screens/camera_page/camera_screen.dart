@@ -18,36 +18,38 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
-  late FileProvider provider;
+   // FileProvider? provider;
 
-  @override
-  void initState() {
-    super.initState();
-    provider = context.read<FileProvider>();
-    WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await provider.initCamera();
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   final provider = context.read<FileProvider>();
+  //   WidgetsBinding.instance.addObserver(this);
+  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
+  //     await provider.initCamera();
+  //   });
+  // }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
-      provider.disposeCamera();
+      context.read<FileProvider>().disposeCamera();
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    final provider = Provider.of<FileProvider>(context,listen: false);
     provider.disposeCamera();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final cameraController = context.watch<FileProvider>().controller;
+    final fileProvider = context.watch<FileProvider>();
+    final cameraController = fileProvider.controller;
     if (cameraController == null || !cameraController.value.isInitialized) {
       return Scaffold(
         backgroundColor: Colors.black,
@@ -58,8 +60,8 @@ class _CameraScreenState extends State<CameraScreen>
     final scale = size.aspectRatio * cameraController.value.aspectRatio;
     return WillPopScope(
       onWillPop: () async {
-        if (provider.isVideo && provider.isRecording) {
-          await provider.stopVideoRecording(save: false);
+        if ( fileProvider.isVideo && fileProvider.isRecording) {
+          await fileProvider.stopVideoRecording(save: false);
         }
         return true;
       },
@@ -75,12 +77,12 @@ class _CameraScreenState extends State<CameraScreen>
               left: 16,
               child: GestureDetector(
                 onTap: () async {
-                  if (provider.isVideo && provider.isRecording) {
-                    await provider.stopVideoRecording(save: false);
+                  if (fileProvider.isVideo && fileProvider.isRecording) {
+                    await fileProvider.stopVideoRecording(save: false);
                   }
                   if (!context.mounted) return;
                   context.pop();
-                },
+                  },
                 child: Container(
                   height: 45.0,
                   padding: const EdgeInsets.all(8),
@@ -99,21 +101,21 @@ class _CameraScreenState extends State<CameraScreen>
               child: Center(
                 child: GestureDetector(
                   onTap: () async {
-                    if (provider.isVideo) {
-                      if (provider.isRecording) {
-                        await provider.stopVideoRecording();
+                    if (fileProvider.isVideo) {
+                      if (fileProvider.isRecording) {
+                        await fileProvider.stopVideoRecording();
                         if (!context.mounted) return;
                         context.pop();
                       } else {
-                        await provider.startVideoRecording();
+                        await fileProvider.startVideoRecording();
                       }
                     } else {
-                      await provider.takePicture(context);
+                      await fileProvider.takePicture(context);
                       if (!context.mounted) return;
                       context.pop();
                     }
                   },
-                  child: provider.isVideo ?
+                  child: fileProvider.isVideo ?
                   Container(
                     height: 60,
                     width: 60,
@@ -127,7 +129,7 @@ class _CameraScreenState extends State<CameraScreen>
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(3.0),
-                      child: CustomImage(image: provider.isRecording ? stopIconImage : circleIconImage, scale: provider.isRecording ? 18 : 10, color: Colors.red,),
+                      child: CustomImage(image: fileProvider.isRecording ? stopIconImage : circleIconImage, scale: fileProvider.isRecording ? 18 : 10, color: Colors.red,),
                       // Container(
                       //   decoration: BoxDecoration(
                       //     // shape: provider.isRecording ? BoxShape.rectangle : BoxShape.circle,
@@ -171,7 +173,7 @@ class _CameraScreenState extends State<CameraScreen>
                 // ),
               ),
             ),
-            if (provider.isVideo && provider.isRecording)
+            if (fileProvider.isVideo && fileProvider.isRecording)
               Positioned(
                 top: MediaQuery.of(context).padding.top + 120,
                 left: 0,
@@ -190,12 +192,12 @@ class _CameraScreenState extends State<CameraScreen>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           AnimatedOpacity(
-                              opacity: provider.showBlink ? 1.0 : 0.2,
+                              opacity: fileProvider.showBlink ? 1.0 : 0.2,
                               duration: Duration(microseconds: 100),
                               child: Icon(Icons.circle, color: Colors.red, size: 12)),
                           SizedBox(width: 6),
                           Text(
-                            formatDuration(provider.recordingSeconds),
+                            formatDuration(fileProvider.recordingSeconds),
                             style: TextStyle(
                               color: whiteColor,
                               fontWeight: FontWeight.bold,

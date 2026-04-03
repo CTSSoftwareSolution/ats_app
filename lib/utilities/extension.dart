@@ -131,6 +131,16 @@ String formatDuration(int seconds){
 return "$min:$sec";
 }
 
+String formatDate(String rawValue) {
+  DateTime dateTime = DateTime.parse(rawValue);
+  return DateFormat('dd-MM-yyyy').format(dateTime);
+}
+
+String formatTime(String rawValue) {
+  DateTime dateTime = DateTime.parse(rawValue);
+  return DateFormat('hh:mm a').format(dateTime);
+}
+
 
 
 

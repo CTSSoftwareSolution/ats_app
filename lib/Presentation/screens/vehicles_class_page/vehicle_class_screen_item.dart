@@ -118,10 +118,55 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 16, 16),
+                  padding: const EdgeInsets.fromLTRB(20, 14, 16, 14),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 9, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF3F6FB),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: const Color(0xFFDDE3F0),
+                                width: 1,
+                              ),
+                            ),
+                            child: CustomText(
+                              text: "Booking Id : ${widget.classDataModel.bookingId}"
+                                  .toString(),
+                              fontFamily: "Bold",
+                              fontSize: 11.0,
+                              textColor: const Color(0xFF3D5080),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 9, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF3F6FB),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: const Color(0xFFDDE3F0),
+                                width: 1,
+                              ),
+                            ),
+                            child: CustomText(
+                              text: "${formatDate(widget.classDataModel.appointmentDate.toString())} : ${formatTime(widget.classDataModel.appointmentDate.toString())}",
+                              fontFamily: "Bold",
+                              fontSize: 11.0,
+                              textColor: const Color(0xFF3D5080),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      10.height,
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

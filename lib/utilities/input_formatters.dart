@@ -139,7 +139,13 @@ class InputFormatters {
     ),
   ];
 
-
+  static List<TextInputFormatter> get searchFieldValidation => [
+    FilteringTextInputFormatter.deny(RegExp(r'^\s')),
+    FilteringTextInputFormatter.deny("  "),
+    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 ]')),
+    FilteringTextInputFormatter.deny(
+      RegExp(r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])'),),
+  ];
 
 }
 
