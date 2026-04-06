@@ -61,6 +61,51 @@ class ResultScreenItem extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 9, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3F6FB),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: const Color(0xFFDDE3F0),
+                            width: 1,
+                          ),
+                        ),
+                        child: CustomText(
+                          text: "Booking Id : ${appointments.bookingId}"
+                              .toString(),
+                          fontFamily: "Bold",
+                          fontSize: 11.0,
+                          textColor: const Color(0xFF3D5080),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 9, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3F6FB),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: const Color(0xFFDDE3F0),
+                            width: 1,
+                          ),
+                        ),
+                        child: CustomText(
+                          text: "${formatDate(appointments.appointmentDate.toString())} : ${formatTime(appointments.appointmentDate.toString())}",
+                          fontFamily: "Bold",
+                          fontSize: 11.0,
+                          textColor: const Color(0xFF3D5080),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  10.height,
+                  Row(
                     children: [
                       Container(
                         width: 58,

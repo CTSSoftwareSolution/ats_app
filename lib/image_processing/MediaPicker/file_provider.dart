@@ -54,6 +54,8 @@ final List<MediaFile?> mediaFile = [];
   bool _showBlink = true;
   bool get showBlink => _showBlink;
 
+  CameraDescription? get cameraDescription => controller?.description;
+
   void timerStart(){
     _recordingSeconds = 0;
     _showBlink = true;
@@ -128,6 +130,7 @@ final List<MediaFile?> mediaFile = [];
     if (controller != null){
       if(controller!.value.isInitialized) return;
       await controller!.initialize();
+
       notifyListeners();
       return;
     }
@@ -325,6 +328,15 @@ final List<MediaFile?> mediaFile = [];
       }
 
       await controller!.startVideoRecording();
+      // final sensorOrientation = controller?.description.sensorOrientation;
+      //
+      // final orientation = controller?.value.deviceOrientation;
+      // if (orientation == DeviceOrientation.portraitUp || orientation == DeviceOrientation.portraitDown) {
+      //   print('Recording in Portrait');
+      // } else {
+      //   print('Recording in Landscape');
+      // }
+      //  debugPrint("Camera Orientation: $sensorOrientation");
       _isRecording = true;
       timerStart();
 

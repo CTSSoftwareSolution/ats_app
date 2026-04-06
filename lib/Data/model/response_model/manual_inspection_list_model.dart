@@ -97,6 +97,8 @@ class ManualLisAppointments {
   ManualLisAppointments({
       String? vehicleKey, 
       num? appointmentId, 
+      String? bookingId, 
+      String? appointmentDate, 
       String? registrationNo, 
       num? status, 
       String? vehicleClass, 
@@ -116,9 +118,12 @@ class ManualLisAppointments {
       String? model, 
       String? mfgMonth, 
       num? gvw, 
+      dynamic updatedAt, 
       String? manualStatus,}){
     _vehicleKey = vehicleKey;
     _appointmentId = appointmentId;
+    _bookingId = bookingId;
+    _appointmentDate = appointmentDate;
     _registrationNo = registrationNo;
     _status = status;
     _vehicleClass = vehicleClass;
@@ -138,12 +143,15 @@ class ManualLisAppointments {
     _model = model;
     _mfgMonth = mfgMonth;
     _gvw = gvw;
+    _updatedAt = updatedAt;
     _manualStatus = manualStatus;
 }
 
   ManualLisAppointments.fromJson(dynamic json) {
     _vehicleKey = json['vehicle_key'];
     _appointmentId = json['appointment_id'];
+    _bookingId = json['booking_id'];
+    _appointmentDate = json['appointment_date'];
     _registrationNo = json['registration_no'];
     _status = json['status'];
     _vehicleClass = json['vehicle_class'];
@@ -163,10 +171,13 @@ class ManualLisAppointments {
     _model = json['model'];
     _mfgMonth = json['mfg_month'];
     _gvw = json['gvw'];
+    _updatedAt = json['updated_at'];
     _manualStatus = json['manual_status'];
   }
   String? _vehicleKey;
   num? _appointmentId;
+  String? _bookingId;
+  String? _appointmentDate;
   String? _registrationNo;
   num? _status;
   String? _vehicleClass;
@@ -186,9 +197,12 @@ class ManualLisAppointments {
   String? _model;
   String? _mfgMonth;
   num? _gvw;
+  dynamic _updatedAt;
   String? _manualStatus;
   ManualLisAppointments copyWith({  String? vehicleKey,
   num? appointmentId,
+  String? bookingId,
+  String? appointmentDate,
   String? registrationNo,
   num? status,
   String? vehicleClass,
@@ -208,9 +222,12 @@ class ManualLisAppointments {
   String? model,
   String? mfgMonth,
   num? gvw,
+  dynamic updatedAt,
   String? manualStatus,
 }) => ManualLisAppointments(  vehicleKey: vehicleKey ?? _vehicleKey,
   appointmentId: appointmentId ?? _appointmentId,
+  bookingId: bookingId ?? _bookingId,
+  appointmentDate: appointmentDate ?? _appointmentDate,
   registrationNo: registrationNo ?? _registrationNo,
   status: status ?? _status,
   vehicleClass: vehicleClass ?? _vehicleClass,
@@ -230,10 +247,13 @@ class ManualLisAppointments {
   model: model ?? _model,
   mfgMonth: mfgMonth ?? _mfgMonth,
   gvw: gvw ?? _gvw,
+  updatedAt: updatedAt ?? _updatedAt,
   manualStatus: manualStatus ?? _manualStatus,
 );
   String? get vehicleKey => _vehicleKey;
   num? get appointmentId => _appointmentId;
+  String? get bookingId => _bookingId;
+  String? get appointmentDate => _appointmentDate;
   String? get registrationNo => _registrationNo;
   num? get status => _status;
   String? get vehicleClass => _vehicleClass;
@@ -253,12 +273,15 @@ class ManualLisAppointments {
   String? get model => _model;
   String? get mfgMonth => _mfgMonth;
   num? get gvw => _gvw;
+  dynamic get updatedAt => _updatedAt;
   String? get manualStatus => _manualStatus;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['vehicle_key'] = _vehicleKey;
     map['appointment_id'] = _appointmentId;
+    map['booking_id'] = _bookingId;
+    map['appointment_date'] = _appointmentDate;
     map['registration_no'] = _registrationNo;
     map['status'] = _status;
     map['vehicle_class'] = _vehicleClass;
@@ -278,6 +301,7 @@ class ManualLisAppointments {
     map['model'] = _model;
     map['mfg_month'] = _mfgMonth;
     map['gvw'] = _gvw;
+    map['updated_at'] = _updatedAt;
     map['manual_status'] = _manualStatus;
     return map;
   }

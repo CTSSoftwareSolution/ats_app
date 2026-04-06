@@ -11,16 +11,16 @@ import 'custom_text_field.dart';
 
 class CustomSearchTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
-  final VoidCallback onCloseClick;
   final VoidCallback? onApplyClick;
   final VoidCallback? onResetClick;
   final TextEditingController controller;
+  final Widget? suffixIcon;
   const CustomSearchTextField({
     super.key,
     required this.onChanged,
-    required this.onCloseClick,
     this.onApplyClick,
     this.onResetClick,
+    this.suffixIcon,
     required this.controller,
   });
 
@@ -39,20 +39,21 @@ class CustomSearchTextField extends StatelessWidget {
       readOnly: false,
       obscureText: false,
       textCapitalization: TextCapitalization.characters,
-      suffixIcon: classProvider.searchValue.isEmpty
-          ? null
-          : IconButton(
-              icon: Container(
-                height: 18.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(40.0)),
-                  color: greyLightColor,
-                ),
-                child: CustomImage(image: closeIcon, scale: 3.5),
-              ),
-              onPressed: onCloseClick,
-              color: blackColor,
-            ),
+      suffixIcon: suffixIcon,
+      // classProvider.searchValue.isEmpty
+      //     ? null
+      //     : IconButton(
+      //         icon: Container(
+      //           height: 18.0,
+      //           decoration: BoxDecoration(
+      //             borderRadius: BorderRadius.all(Radius.circular(40.0)),
+      //             color: greyLightColor,
+      //           ),
+      //           child: CustomImage(image: closeIcon, scale: 3.5),
+      //         ),
+      //         onPressed: onCloseClick,
+      //         color: blackColor,
+      //       ),
       prefixIcon: CustomImage(image: searchIcon, scale: 4.2),
       hint: 'Search...',
       hintStyle: const TextStyle(fontSize: 15, fontFamily: "Medium"),

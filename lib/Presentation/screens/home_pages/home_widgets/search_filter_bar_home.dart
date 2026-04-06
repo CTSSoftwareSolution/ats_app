@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../VehicleFilterChip.dart';
+import '../../../../utilities/color_data.dart';
+import '../../../../utilities/image_data.dart';
+import '../../../../widgets/custom_image.dart';
 import '../../../../widgets/custom_search_bar.dart';
 import '../../../provider/vehicle_class_provider.dart';
 
@@ -37,12 +40,24 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
         children: [
           CustomSearchTextField(
             onChanged: (v) => widget.provider.onSearchChanged(context, v),
-            onCloseClick: () {
-              widget.provider.searchController.clear();
-              widget.provider.vehicleClassApi(context: context, loadMore: false);
-              //widget.provider.onFilterChanged(context,"");
-            },
-            controller: widget.provider.searchController,
+              controller: widget.provider.searchController,
+              suffixIcon: widget.provider.searchValue.isEmpty
+                  ? null
+                  : IconButton(
+                icon: Container(
+                  height: 18.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                    color: greyLightColor,
+                  ),
+                  child: CustomImage(image: closeIcon, scale: 3.5),
+                ),
+                onPressed: () {
+                  widget.provider.searchController.clear();
+                  widget.provider.vehicleClassApi(context: context, loadMore: false);
+                },
+                color: blackColor,
+              )
           ),
           const SizedBox(height: 12),
           _FilterRow(

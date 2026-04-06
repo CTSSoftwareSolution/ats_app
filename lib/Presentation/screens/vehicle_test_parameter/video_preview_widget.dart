@@ -63,11 +63,7 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
                 fullscreenDialog: true,
                 context: context,
                 builder: (context) {
-                  return OrientationBuilder(
-                    builder: (context, orientation) {
-                      return VideoDialog(path: widget.path);
-                    }
-                  );
+                  return VideoDialog(path: widget.path);
                 },
               );
             },

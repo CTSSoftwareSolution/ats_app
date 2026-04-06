@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
 import '../../../utilities/color_data.dart';
+import '../../../utilities/image_data.dart';
+import '../../../widgets/custom_image.dart';
 import '../../../widgets/custom_search_bar.dart';
 import '../pre_inspection_form/inspection_page/inspection_page.dart';
 
@@ -55,11 +57,24 @@ class _ResultScreenState extends State<ResultScreen> {
           children: [
             CustomSearchTextField(
               onChanged: (v) => provider.onSearchChanged(context, v),
-              onCloseClick: () {
-                provider.searchController.clear();
-                provider.onFilterChanged(context);
-              },
               controller: provider.searchController,
+              suffixIcon: provider.searchValue.isEmpty
+                  ? null
+                  : IconButton(
+                      icon: Container(
+                        height: 18.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                          color: greyLightColor,
+                        ),
+                        child: CustomImage(image: closeIcon, scale: 3.5),
+                      ),
+                      onPressed: () {
+                        provider.searchController.clear();
+                        provider.onFilterChanged(context);
+                      },
+                      color: blackColor,
+                    )
             ),
             Expanded(
               child: provider.isLoading ? ListView.builder(

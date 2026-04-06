@@ -41,19 +41,19 @@ PreInspectionDetailsModelsModels copyWith({  bool? status,
 
 class PreInspectionDetailsData {
   PreInspectionDetailsData({
-      List<PreInspectionDetail>? preInspection,
+      List<PostInspectionDetails>? postInspection,
       List<InspectionDetail>? inspection,
-      List<PostInspectionDetails>? postInspection,}){
-    _preInspection = preInspection;
-    _inspection = inspection;
+      List<PreInspectionDetail>? preInspection,}){
     _postInspection = postInspection;
+    _inspection = inspection;
+    _preInspection = preInspection;
 }
 
   PreInspectionDetailsData.fromJson(dynamic json) {
-    if (json['pre_inspection'] != null) {
-      _preInspection = [];
-      json['pre_inspection'].forEach((v) {
-        _preInspection?.add(PreInspectionDetail.fromJson(v));
+    if (json['post_inspection'] != null) {
+      _postInspection = [];
+      json['post_inspection'].forEach((v) {
+        _postInspection?.add(PostInspectionDetails.fromJson(v));
       });
     }
     if (json['inspection'] != null) {
@@ -62,52 +62,52 @@ class PreInspectionDetailsData {
         _inspection?.add(InspectionDetail.fromJson(v));
       });
     }
-    if (json['post_inspection'] != null) {
-      _postInspection = [];
-      json['post_inspection'].forEach((v) {
-        _postInspection?.add(PostInspectionDetails.fromJson(v));
+    if (json['pre_inspection'] != null) {
+      _preInspection = [];
+      json['pre_inspection'].forEach((v) {
+        _preInspection?.add(PreInspectionDetail.fromJson(v));
       });
     }
   }
-  List<PreInspectionDetail>? _preInspection;
-  List<InspectionDetail>? _inspection;
   List<PostInspectionDetails>? _postInspection;
-  PreInspectionDetailsData copyWith({  List<PreInspectionDetail>? preInspection,
+  List<InspectionDetail>? _inspection;
+  List<PreInspectionDetail>? _preInspection;
+  PreInspectionDetailsData copyWith({  List<PostInspectionDetails>? postInspection,
   List<InspectionDetail>? inspection,
-  List<PostInspectionDetails>? postInspection,
-}) => PreInspectionDetailsData(  preInspection: preInspection ?? _preInspection,
+  List<PreInspectionDetail>? preInspection,
+}) => PreInspectionDetailsData(  postInspection: postInspection ?? _postInspection,
   inspection: inspection ?? _inspection,
-  postInspection: postInspection ?? _postInspection,
+  preInspection: preInspection ?? _preInspection,
 );
-  List<PreInspectionDetail>? get preInspection => _preInspection;
-  List<InspectionDetail>? get inspection => _inspection;
   List<PostInspectionDetails>? get postInspection => _postInspection;
+  List<InspectionDetail>? get inspection => _inspection;
+  List<PreInspectionDetail>? get preInspection => _preInspection;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    if (_preInspection != null) {
-      map['pre_inspection'] = _preInspection?.map((v) => v.toJson()).toList();
+    if (_postInspection != null) {
+      map['post_inspection'] = _postInspection?.map((v) => v.toJson()).toList();
     }
     if (_inspection != null) {
       map['inspection'] = _inspection?.map((v) => v.toJson()).toList();
     }
-    if (_postInspection != null) {
-      map['post_inspection'] = _postInspection?.map((v) => v.toJson()).toList();
+    if (_preInspection != null) {
+      map['pre_inspection'] = _preInspection?.map((v) => v.toJson()).toList();
     }
     return map;
   }
 
 }
 
-class PostInspectionDetails {
-  PostInspectionDetails({
+class PreInspectionDetail {
+  PreInspectionDetail({
       String? title, 
       List<CarDataDetails>? carData,}){
     _title = title;
     _carData = carData;
 }
 
-  PostInspectionDetails.fromJson(dynamic json) {
+  PreInspectionDetail.fromJson(dynamic json) {
     _title = json['title'];
     if (json['carData'] != null) {
       _carData = [];
@@ -118,9 +118,9 @@ class PostInspectionDetails {
   }
   String? _title;
   List<CarDataDetails>? _carData;
-  PostInspectionDetails copyWith({  String? title,
+  PreInspectionDetail copyWith({  String? title,
   List<CarDataDetails>? carData,
-}) => PostInspectionDetails(  title: title ?? _title,
+}) => PreInspectionDetail(  title: title ?? _title,
   carData: carData ?? _carData,
 );
   String? get title => _title;
@@ -140,45 +140,61 @@ class PostInspectionDetails {
 class CarDataDetails {
   CarDataDetails({
       num? questionId, 
+      String? questionText, 
       String? inspectionResult, 
       String? evidenceUrl, 
-      String? questionText,}){
+      String? evidenceFileViewUrl, 
+      String? remarks,}){
     _questionId = questionId;
+    _questionText = questionText;
     _inspectionResult = inspectionResult;
     _evidenceUrl = evidenceUrl;
-    _questionText = questionText;
+    _evidenceFileViewUrl = evidenceFileViewUrl;
+    _remarks = remarks;
 }
 
   CarDataDetails.fromJson(dynamic json) {
     _questionId = json['question_id'];
+    _questionText = json['question_text'];
     _inspectionResult = json['inspection_result'];
     _evidenceUrl = json['evidence_url'];
-    _questionText = json['question_text'];
+    _evidenceFileViewUrl = json['evidence_file_view_url'];
+    _remarks = json['remarks'];
   }
   num? _questionId;
+  String? _questionText;
   String? _inspectionResult;
   String? _evidenceUrl;
-  String? _questionText;
+  String? _evidenceFileViewUrl;
+  String? _remarks;
   CarDataDetails copyWith({  num? questionId,
+  String? questionText,
   String? inspectionResult,
   String? evidenceUrl,
-  String? questionText,
+  String? evidenceFileViewUrl,
+  String? remarks,
 }) => CarDataDetails(  questionId: questionId ?? _questionId,
+  questionText: questionText ?? _questionText,
   inspectionResult: inspectionResult ?? _inspectionResult,
   evidenceUrl: evidenceUrl ?? _evidenceUrl,
-  questionText: questionText ?? _questionText,
+  evidenceFileViewUrl: evidenceFileViewUrl ?? _evidenceFileViewUrl,
+  remarks: remarks ?? _remarks,
 );
   num? get questionId => _questionId;
+  String? get questionText => _questionText;
   String? get inspectionResult => _inspectionResult;
   String? get evidenceUrl => _evidenceUrl;
-  String? get questionText => _questionText;
+  String? get evidenceFileViewUrl => _evidenceFileViewUrl;
+  String? get remarks => _remarks;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['question_id'] = _questionId;
+    map['question_text'] = _questionText;
     map['inspection_result'] = _inspectionResult;
     map['evidence_url'] = _evidenceUrl;
-    map['question_text'] = _questionText;
+    map['evidence_file_view_url'] = _evidenceFileViewUrl;
+    map['remarks'] = _remarks;
     return map;
   }
 
@@ -222,17 +238,15 @@ class InspectionDetail {
 
 }
 
-
-
-class PreInspectionDetail {
-  PreInspectionDetail({
+class PostInspectionDetails {
+  PostInspectionDetails({
       String? title, 
       List<CarDataDetails>? carData,}){
     _title = title;
     _carData = carData;
 }
 
-  PreInspectionDetail.fromJson(dynamic json) {
+  PostInspectionDetails.fromJson(dynamic json) {
     _title = json['title'];
     if (json['carData'] != null) {
       _carData = [];
@@ -243,9 +257,9 @@ class PreInspectionDetail {
   }
   String? _title;
   List<CarDataDetails>? _carData;
-  PreInspectionDetail copyWith({  String? title,
+  PostInspectionDetails copyWith({  String? title,
   List<CarDataDetails>? carData,
-}) => PreInspectionDetail(  title: title ?? _title,
+}) => PostInspectionDetails(  title: title ?? _title,
   carData: carData ?? _carData,
 );
   String? get title => _title;
@@ -257,53 +271,6 @@ class PreInspectionDetail {
     if (_carData != null) {
       map['carData'] = _carData?.map((v) => v.toJson()).toList();
     }
-    return map;
-  }
-
-}
-
-class CarDataDetail {
-  CarDataDetail({
-      num? questionId, 
-      String? inspectionResult, 
-      dynamic evidenceUrl, 
-      String? questionText,}){
-    _questionId = questionId;
-    _inspectionResult = inspectionResult;
-    _evidenceUrl = evidenceUrl;
-    _questionText = questionText;
-}
-
-  CarDataDetail.fromJson(dynamic json) {
-    _questionId = json['question_id'];
-    _inspectionResult = json['inspection_result'];
-    _evidenceUrl = json['evidence_url'];
-    _questionText = json['question_text'];
-  }
-  num? _questionId;
-  String? _inspectionResult;
-  dynamic _evidenceUrl;
-  String? _questionText;
-  CarDataDetails copyWith({  num? questionId,
-  String? inspectionResult,
-  dynamic evidenceUrl,
-  String? questionText,
-}) => CarDataDetails(  questionId: questionId ?? _questionId,
-  inspectionResult: inspectionResult ?? _inspectionResult,
-  evidenceUrl: evidenceUrl ?? _evidenceUrl,
-  questionText: questionText ?? _questionText,
-);
-  num? get questionId => _questionId;
-  String? get inspectionResult => _inspectionResult;
-  dynamic get evidenceUrl => _evidenceUrl;
-  String? get questionText => _questionText;
-
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['question_id'] = _questionId;
-    map['inspection_result'] = _inspectionResult;
-    map['evidence_url'] = _evidenceUrl;
-    map['question_text'] = _questionText;
     return map;
   }
 

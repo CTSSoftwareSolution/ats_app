@@ -246,7 +246,10 @@ class InspectionFormProvider extends ChangeNotifier {
 
       if (kDebugMode) {
         alice.onHttpResponse(
-            response, body: jsonEncode({'vehicle_no': vehicleNo}));
+            response,  body: jsonEncode({
+          'vehicle_id': vehicleNo,
+          'appointment_id': appointmentID,
+        }));
       }
 
       if (response.statusCode == 200) {
@@ -319,7 +322,7 @@ class InspectionFormProvider extends ChangeNotifier {
         carData: cd,
         answer: parseAnswer(q.inspectionResult),
       );
-      qa.existingEvidenceUrl = q.evidenceUrl;
+      qa.existingEvidenceUrl = q.evidenceFileViewUrl;
       return qa;
     }
 
