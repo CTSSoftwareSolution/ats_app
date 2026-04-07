@@ -54,7 +54,8 @@ final List<MediaFile?> mediaFile = [];
   bool _showBlink = true;
   bool get showBlink => _showBlink;
 
-  CameraDescription? get cameraDescription => controller?.description;
+  DeviceOrientation? _currentOrientation = DeviceOrientation.portraitUp;
+  DeviceOrientation? get currentOrientation => _currentOrientation;
 
   void timerStart(){
     _recordingSeconds = 0;
@@ -131,6 +132,16 @@ final List<MediaFile?> mediaFile = [];
       if(controller!.value.isInitialized) return;
       await controller!.initialize();
 
+      /// LISTEN for orientation updates
+      controller!.addListener(() {
+        final newOrientation = controller!.value.deviceOrientation;
+
+        if (_currentOrientation != newOrientation) {
+          _currentOrientation = newOrientation;
+          debugPrint("Updated Orientation: $_currentOrientation");
+        }
+      });
+
       notifyListeners();
       return;
     }
@@ -139,6 +150,8 @@ final List<MediaFile?> mediaFile = [];
       ResolutionPreset.high,
       enableAudio: false,
     );
+
+
 
     if(isRecording){
       stopVideoRecording();
@@ -320,23 +333,31 @@ final List<MediaFile?> mediaFile = [];
     }
   }
 
-  Future<void> startVideoRecording()async {
+  Future<void> startVideoRecording(BuildContext context)async {
     try{
 
       if (controller == null || !controller!.value.isInitialized) {
         throw Exception("Camera not initialized");
       }
 
+      final orientation = _currentOrientation;
+      await controller!.lockCaptureOrientation(orientation);
+      if (orientation == DeviceOrientation.portraitUp ||
+          orientation == DeviceOrientation.portraitDown) {
+        await SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+        ]);
+      } else {
+        await SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+      }
       await controller!.startVideoRecording();
-      // final sensorOrientation = controller?.description.sensorOrientation;
-      //
-      // final orientation = controller?.value.deviceOrientation;
-      // if (orientation == DeviceOrientation.portraitUp || orientation == DeviceOrientation.portraitDown) {
-      //   print('Recording in Portrait');
-      // } else {
-      //   print('Recording in Landscape');
-      // }
-      //  debugPrint("Camera Orientation: $sensorOrientation");
+
+
+
+       debugPrint("Camera Orientation: $orientation");
       _isRecording = true;
       timerStart();
 
@@ -374,6 +395,9 @@ final List<MediaFile?> mediaFile = [];
       }else{
         debugPrint("Video discarded");
       }
+      await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+      await controller!.unlockCaptureOrientation();
+
     }catch (e){
       debugPrint("Video error: $e");
       CustomLoader.closeLoader();

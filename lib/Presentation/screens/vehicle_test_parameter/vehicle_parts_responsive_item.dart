@@ -1,6 +1,7 @@
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../utilities/extension.dart';
@@ -63,7 +64,7 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
                  context.read<FileProvider>().setVideo(true);
                  //await context.read<FileProvider>().initCamera();
                  await context.push(CameraScreen());
-               },
+                 },
                isTablet: isTablet,
              ),
            ),
