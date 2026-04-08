@@ -37,6 +37,7 @@ class VerifyHRSPProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
+      debugPrint("Expected Plate: $expectedPlate");
       final result = await ApiService.multipart(
         {
           "expected_plate": expectedPlate,

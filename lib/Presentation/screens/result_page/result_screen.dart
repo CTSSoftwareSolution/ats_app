@@ -106,7 +106,9 @@ class _ResultScreenState extends State<ResultScreen> {
                     );
                   }
                   final item = appointments[index];// setSelectedManualListData
-                  return ResultScreenItem(appointments: item,onRetest: (){
+                  return ResultScreenItem(appointments: item,
+                      onRetest: (){
+                    context.read<ManualInspectionListProvider>().setManualInspectionScreen(true);
                     provider.setSelectedManualListData(item);
                     context.push(InspectionPage(isEditMode: true));
                   });

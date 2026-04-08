@@ -8,6 +8,7 @@ import '../../../EmptyStateWidget.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_bottomsheet.dart';
+import '../../provider/manual_inspection_list_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../manual_inspection_images/manual_inspection_image_screen.dart';
 import '../vehicle_test_parameter/vehicle_parts_screen.dart';
@@ -90,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: VehicleClassScreenItem(
                       classDataModel: item,
                       onTap: () {
+                        context.read<ManualInspectionListProvider>().setManualInspectionScreen(false);
                         provider.setSelectedClass(item);
                         showInspectionSheet(
                           context,

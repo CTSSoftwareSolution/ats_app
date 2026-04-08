@@ -19,9 +19,13 @@ class ImageProcessingService {
   static Future<String> processOverlayImage({required XFile picture, required BuildContext context}) async {
     final location = Provider.of<LocationProvider>(context, listen: false);
     final vehicleClass = Provider.of<VehicleClassProvider>(context, listen: false);
+
     final lat = location.currentPosition?.latitude ?? 0.0;
     final lng = location.currentPosition?.longitude ?? 0.0;
-    final vehicleNo = vehicleClass.selectedClass!.registrationNo;
+    final vehicleNo = (vehicleClass.selectedClass!.registrationNo?.toString() ?? "").isEmpty
+        ? ""
+        : vehicleClass.selectedClass!.registrationNo.toString();
+
 
     final file = File(picture.path);
     final now = DateTime.now();

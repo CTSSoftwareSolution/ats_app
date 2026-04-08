@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Data/model/response_model/inspection_pre_save_req_model.dart';
 import '../../../provider/inspection_form_provider.dart';
+import '../../../provider/manual_inspection_list_provider.dart';
 import '../../../provider/pre_inspection_result_provider.dart';
 import '../../../provider/vehicle_class_provider.dart';
 import '../../bottom_navigation/bottom_navigation_bar.dart';
@@ -90,6 +91,7 @@ class ConfirmationDialog {
   static Future<void> preInspectionSaveAPI({required BuildContext context}) async {
     final provider = Provider.of<PreSaveInspectionProvider>(context, listen: false);
     final cameraController = Provider.of<FileProvider>(context, listen: false);
+    final manualInspectionProvider = Provider.of<ManualInspectionListProvider>(context, listen: false);
 
     final inspectionProvider = Provider.of<InspectionFormProvider>(context, listen: false);
     final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
@@ -124,9 +126,11 @@ class ConfirmationDialog {
     //   );
     // }
     await provider.preSaveInspection(
-      appointmentId:
+      appointmentId: manualInspectionProvider.isManualInspectionScreen ?
+      manualInspectionProvider.selectedManualListData!.appointmentId.toString() :
       vehicleClassProvider.selectedClass!.appointmentId.toString(),
-      vehicleId:
+      vehicleId:  manualInspectionProvider.isManualInspectionScreen ?
+      manualInspectionProvider.selectedManualListData!.vehicleKey.toString() :
       vehicleClassProvider.selectedClass!.vehicleKey.toString(),
       inspectedBy: Preferences.getUserId().toString(),
       inspections: inspections,

@@ -133,9 +133,7 @@ class ResultScreenItem extends StatelessWidget {
                               fontSize: 17,
                               textColor: const Color(0xFF1C2A45),
                             ),
-
                             4.height,
-
                             Row(
                               children: [
                                 Container(
@@ -155,6 +153,44 @@ class ResultScreenItem extends StatelessWidget {
                                 ),
                               ],
                             ),
+                            4.height,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.directions_car_outlined,
+                                      size: 12,
+                                      color: Color(0xFF9AA5C0),
+                                    ),
+                                    4.width,
+                                    CustomText(
+                                      text: appointments.make ?? "",
+                                      fontFamily: "Medium",
+                                      fontSize: 12.0,
+                                      textColor: const Color(0xFF8F9BB8),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    CustomImage(
+                                      image: petrolIcon, scale: 5.5,color: Color(0xFF8F9BB8),),
+                                    4.width,
+                                    CustomText(
+                                      text: appointments.fuelType ?? "",
+                                      fontFamily: "Medium",
+                                      fontSize: 12.0,
+                                      textColor: const Color(0xFF8F9BB8),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+
                           ],
                         ),
                       ),
@@ -190,6 +226,7 @@ class ResultScreenItem extends StatelessWidget {
                           ],
                         ),
                       ),
+
                     ],
                   ),
                   10.height,

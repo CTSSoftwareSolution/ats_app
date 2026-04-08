@@ -71,10 +71,10 @@ class _VehicleNumberPlateScreenState extends State<VehicleNumberPlateScreen> {
 
               TextField(
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9]')),
+                  // FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9]')),
                  // FilteringTextInputFormatter.allow(RegExp(r'[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}')),
-                  FilteringTextInputFormatter.deny(" "),
-                  LengthLimitingTextInputFormatter(10)
+                 //  FilteringTextInputFormatter.deny(" "),
+                 //  LengthLimitingTextInputFormatter(10)
                 ],
                 controller: _frontController,
                 textCapitalization: TextCapitalization.characters,

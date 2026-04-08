@@ -100,6 +100,7 @@ class _VideoDialogState extends State<VideoDialog>
   /// True when the video itself is portrait (aspectRatio < 1)
   bool get _isVideoPortrait {
     if (!isInitialized) return true;
+
     return controller.value.aspectRatio < 1.0;
   }
 

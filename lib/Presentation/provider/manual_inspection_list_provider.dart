@@ -23,6 +23,13 @@ class ManualInspectionListProvider extends ChangeNotifier {
   Timer? debounce;
   ManualLisAppointments? manualLisAppointments;
 
+  bool isManualInspectionScreen = false;
+  void setManualInspectionScreen(bool isManualInspection) {
+    isManualInspectionScreen = isManualInspection;
+    notifyListeners();
+  }
+
+
   void onSearchChanged(BuildContext context, String value) {
     searchValue = value;
     if (debounce?.isActive ?? false) debounce!.cancel();
