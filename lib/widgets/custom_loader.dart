@@ -170,4 +170,40 @@ class CustomLoader {
       ),
     );
   }
+
+  static showCustomErrorSnackBar(String message, BuildContext context) {
+    final snackBar = SnackBar(
+      content: Row(
+        children: [
+          Icon(
+            Icons.error_outline,
+            color: Colors.white,
+            size: 24.0,
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.red,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      margin: EdgeInsets.all(10),
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+      duration: Duration(seconds: 4),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 }

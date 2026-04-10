@@ -61,7 +61,7 @@ class ManualInspectionListProvider extends ChangeNotifier {
       manualInspectionEntity = null;
       page = 1;
       hasMoreData = true;
-      notifyListeners();
+      //notifyListeners();
     } else {
       if (!hasMoreData) return null;
       isLoadMore = true;

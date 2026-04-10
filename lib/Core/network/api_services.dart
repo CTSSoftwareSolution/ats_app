@@ -46,6 +46,11 @@ class ApiService {
 
     /// Check Token Expire 401 - Send Login Screen
     if (response.statusCode == 401) {
+      final responseBody = await compute(_decodeResponse, response.bodyBytes);
+
+      if (responseBody['Message'] == 'Invalid credentials') {
+        return responseBody;
+      }
 
       await Preferences.clear();
 
@@ -53,8 +58,7 @@ class ApiService {
         MaterialPageRoute(builder: (_) => LoginScreen()),
             (route) => false,
       );
-
-      return {};
+      return responseBody;
     }
 
 

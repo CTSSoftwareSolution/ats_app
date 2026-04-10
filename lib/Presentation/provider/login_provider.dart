@@ -63,7 +63,7 @@ class LoginProvider extends ChangeNotifier {
           navigationProvider.updateIndex(0);
           context.push(BottomNavigationBarScreen());
         } else {
-          context.showErrorToast(msg: value.message.toString(), toastLength: Toast.LENGTH_SHORT);
+          CustomLoader.showCustomErrorSnackBar(value.message.toString(), context);
         }
       }
     });

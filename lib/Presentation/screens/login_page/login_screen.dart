@@ -1,6 +1,7 @@
 
 import 'package:ats_app/Presentation/screens/login_page/terms_conditions_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'login_screen_responsive.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -8,19 +9,26 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xff345afa), Color(0xff19162e)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        SystemNavigator.pop();
+      },
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xff345afa), Color(0xff19162e)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-      ),
-      child: const Scaffold(
-        backgroundColor: Colors.transparent,
-        bottomNavigationBar: TermsConditionsScreen(),
-        body: SafeArea(
-          child: LoginResponsiveLayout(),
+        child: const Scaffold(
+          backgroundColor: Colors.transparent,
+          bottomNavigationBar: TermsConditionsScreen(),
+          body: SafeArea(
+            child: LoginResponsiveLayout(),
+          ),
         ),
       ),
     );

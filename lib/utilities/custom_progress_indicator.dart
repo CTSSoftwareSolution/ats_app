@@ -32,6 +32,13 @@ class _CustomProgressIndicatorState extends State<CustomProgressIndicator> with 
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),

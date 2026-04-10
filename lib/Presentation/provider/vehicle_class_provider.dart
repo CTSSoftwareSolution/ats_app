@@ -60,7 +60,7 @@ class VehicleClassProvider extends ChangeNotifier {
       vehicleClassEntity = null;
       page = 1;
       hasMoreData = true;
-      notifyListeners();
+      //notifyListeners();
     } else {
       if (!hasMoreData) return null;
       isLoadMore = true;

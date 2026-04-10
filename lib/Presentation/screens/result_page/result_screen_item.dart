@@ -104,7 +104,7 @@ class ResultScreenItem extends StatelessWidget {
                       ),
                     ],
                   ),
-                  10.height,
+                  15.height,
                   Row(
                     children: [
                       Container(
@@ -155,7 +155,6 @@ class ResultScreenItem extends StatelessWidget {
                             ),
                             4.height,
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(
                                   children: [
@@ -174,10 +173,19 @@ class ResultScreenItem extends StatelessWidget {
                                     ),
                                   ],
                                 ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  child: CustomText(text: "-", textColor: const Color(0xFF8F9BB8),),
+                                ),
                                 Row(
                                   children: [
-                                    CustomImage(
-                                      image: petrolIcon, scale: 5.5,color: Color(0xFF8F9BB8),),
+                                    const Icon(
+                                      Icons.local_gas_station,
+                                      size: 12,
+                                      color: Color(0xFF9AA5C0),
+                                    ),
+                                    // CustomImage(
+                                    //   image: petrolIcon, scale: 5.5,color: Color(0xFF8F9BB8),),
                                     4.width,
                                     CustomText(
                                       text: appointments.fuelType ?? "",

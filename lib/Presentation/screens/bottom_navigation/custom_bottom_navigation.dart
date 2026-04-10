@@ -22,8 +22,8 @@ class CustomBottomNavigation extends StatelessWidget {
         children: [
           navigationIcon(homeIcon, 0, 'Home',navigationProvider.pageIndex,navigationProvider.updateIndex),
           navigationIcon(resultIcon, 1, 'Result',navigationProvider.pageIndex,navigationProvider.updateIndex),
-          navigationIcon(vehicleIcon, 2, 'Plate',navigationProvider.pageIndex,navigationProvider.updateIndex),
-          navigationIcon(profileIcon, 3, 'Profile',navigationProvider.pageIndex,navigationProvider.updateIndex),
+         // navigationIcon(vehicleIcon, 2, 'Plate',navigationProvider.pageIndex,navigationProvider.updateIndex),
+          navigationIcon(profileIcon, 2, 'Profile',navigationProvider.pageIndex,navigationProvider.updateIndex),
         ],
       ),
     );

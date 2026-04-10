@@ -1,4 +1,6 @@
-class LoginResModel {
+import 'package:ats_app/Domain/entities/login_entity.dart';
+
+class LoginResModel extends LoginEntity{
   LoginResModel({
       bool? success, 
       String? message,
@@ -16,9 +18,9 @@ class LoginResModel {
     _data = json['Data'] != null ? LoginDataModel.fromJson(json['Data']) : null;
     if (json['Errors'] != null) {
       _errors = [];
-      json['Errors'].forEach((v) {
-       // _errors?.add(Dynamic.fromJson(v));
-      });
+      // json['Errors'].forEach((v) {
+      //   _errors?.add(Dynamic.fromJson(v));
+      // });
     }
   }
   bool? _success;

@@ -166,7 +166,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                           ),
                         ],
                       ),
-                      10.height,
+                      15.height,
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

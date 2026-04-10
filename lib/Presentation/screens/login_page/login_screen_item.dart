@@ -18,7 +18,7 @@ class LoginScreenItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomText(text: "Username",fontFamily: "Regular",fontSize: 16,textColor: whiteColor,),
+          CustomText(text: "USERNAME",fontFamily: "Regular",fontSize: 16,textColor: whiteColor,),
           5.height,
           CustomTextField(
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
