@@ -5,6 +5,6 @@ A new Flutter project.
 ## Getting Started
 
 ## Flutter SDK:
-- Flutter SDK: 3.38.4
+- Flutter SDK: 3.38.5
 
 
