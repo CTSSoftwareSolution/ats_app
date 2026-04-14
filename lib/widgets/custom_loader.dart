@@ -187,9 +187,9 @@ class CustomLoader {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 12,
               ),
-              overflow: TextOverflow.ellipsis,
+              overflow: TextOverflow.visible,
             ),
           ),
         ],
@@ -197,9 +197,9 @@ class CustomLoader {
       backgroundColor: Colors.red,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(5),
       ),
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.only(top: 50, left: 10, right: 10),
       padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
       duration: Duration(seconds: 4),
     );

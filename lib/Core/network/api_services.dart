@@ -162,16 +162,12 @@ class ApiService {
     if (kDebugMode) {
       alice.onHttpResponse(response, body: request.fields);
     }
-
     if (response.statusCode == 401) {
-
       await Preferences.clear();
-
       navigatorKey.currentState?.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),
             (route) => false,
       );
-
       return {};
     }
     final responseBody = await compute(_decodeResponse, response.bodyBytes);

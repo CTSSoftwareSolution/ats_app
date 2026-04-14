@@ -64,6 +64,7 @@ class LoginProvider extends ChangeNotifier {
           context.push(BottomNavigationBarScreen());
         } else {
           CustomLoader.showCustomErrorSnackBar(value.message.toString(), context);
+          debugPrint(value.message.toString());
         }
       }
     });
