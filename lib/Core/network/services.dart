@@ -25,7 +25,7 @@ final alice = Alice(
 
 
 /// OLD Node.js
-String get vehiclePartsUrl                => "https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getVehicleParts"; //// Machine
+//String get vehiclePartsUrl                => "https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getVehicleParts"; //// Machine
 
 
 /// New API
@@ -37,6 +37,7 @@ String get preInspectionDetails           => "${newBaseUrl}Inspection/preinspect
 String get savePreInspection              => "${newBaseUrl}Inspection/save-pre-inspection";
 String get laneList                       => "${newBaseUrl}lane/list";
 String get manualInspectionList           => "${newBaseUrl}Appointment/manual-inspection-appointment-list";
+String get vehiclePartsUrl           => "${newBaseUrl}vehicle-parts-master/getVehicleParts";
 
 
 const String awsSignedUrl = "https://erpapi.sgbregistration.in/v1/File_upload/getsignedurlsgb";

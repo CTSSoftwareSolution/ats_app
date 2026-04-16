@@ -1,45 +1,58 @@
-import 'package:ats_app/Domain/entities/vehicle_parts_entity.dart';
-
-class VehiclePartsResModel extends VehiclePartsEntity {
+class VehiclePartsResModel {
   VehiclePartsResModel({
-      bool? status, 
+      bool? success, 
       String? message, 
-      List<PartsDataModel>? data,}){
-    _status = status;
+      List<PartsDataModel>? data,
+      List<dynamic>? errors,}){
+    _success = success;
     _message = message;
     _data = data;
+    _errors = errors;
 }
 
   VehiclePartsResModel.fromJson(dynamic json) {
-    _status = json['status'];
-    _message = json['message'];
-    if (json['data'] != null) {
+    _success = json['Success'];
+    _message = json['Message'];
+    if (json['Data'] != null) {
       _data = [];
-      json['data'].forEach((v) {
+      json['Data'].forEach((v) {
         _data?.add(PartsDataModel.fromJson(v));
       });
     }
+    if (json['Errors'] != null) {
+      _errors = [];
+      // json['Errors'].forEach((v) {
+      //   _errors?.add(Dynamic.fromJson(v));
+      // });
+    }
   }
-  bool? _status;
+  bool? _success;
   String? _message;
   List<PartsDataModel>? _data;
-VehiclePartsResModel copyWith({  bool? status,
+  List<dynamic>? _errors;
+VehiclePartsResModel copyWith({  bool? success,
   String? message,
   List<PartsDataModel>? data,
-}) => VehiclePartsResModel(  status: status ?? _status,
+  List<dynamic>? errors,
+}) => VehiclePartsResModel(  success: success ?? _success,
   message: message ?? _message,
   data: data ?? _data,
+  errors: errors ?? _errors,
 );
-  bool? get status => _status;
+  bool? get success => _success;
   String? get message => _message;
   List<PartsDataModel>? get data => _data;
+  List<dynamic>? get errors => _errors;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['status'] = _status;
-    map['message'] = _message;
+    map['Success'] = _success;
+    map['Message'] = _message;
     if (_data != null) {
-      map['data'] = _data?.map((v) => v.toJson()).toList();
+      map['Data'] = _data?.map((v) => v.toJson()).toList();
+    }
+    if (_errors != null) {
+      map['Errors'] = _errors?.map((v) => v.toJson()).toList();
     }
     return map;
   }
@@ -49,45 +62,53 @@ VehiclePartsResModel copyWith({  bool? status,
 class PartsDataModel {
   PartsDataModel({
       num? id, 
-      String? vehicleClass, 
       String? vehiclePartName, 
-      String? status,}){
+      String? status, 
+      String? vehicleClass, 
+      num? type,}){
     _id = id;
-    _vehicleClass = vehicleClass;
     _vehiclePartName = vehiclePartName;
     _status = status;
+    _vehicleClass = vehicleClass;
+    _type = type;
 }
 
   PartsDataModel.fromJson(dynamic json) {
-    _id = json['Id'];
-    _vehicleClass = json['vehicle_class'];
+    _id = json['id'];
     _vehiclePartName = json['vehicle_part_name'];
     _status = json['status'];
+    _vehicleClass = json['vehicle_class'];
+    _type = json['type'];
   }
   num? _id;
-  String? _vehicleClass;
   String? _vehiclePartName;
   String? _status;
+  String? _vehicleClass;
+  num? _type;
   PartsDataModel copyWith({  num? id,
-  String? vehicleClass,
   String? vehiclePartName,
   String? status,
+  String? vehicleClass,
+  num? type,
 }) => PartsDataModel(  id: id ?? _id,
-  vehicleClass: vehicleClass ?? _vehicleClass,
   vehiclePartName: vehiclePartName ?? _vehiclePartName,
   status: status ?? _status,
+  vehicleClass: vehicleClass ?? _vehicleClass,
+  type: type ?? _type,
 );
   num? get id => _id;
-  String? get vehicleClass => _vehicleClass;
   String? get vehiclePartName => _vehiclePartName;
   String? get status => _status;
+  String? get vehicleClass => _vehicleClass;
+  num? get type => _type;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map['Id'] = _id;
-    map['vehicle_class'] = _vehicleClass;
+    map['id'] = _id;
     map['vehicle_part_name'] = _vehiclePartName;
     map['status'] = _status;
+    map['vehicle_class'] = _vehicleClass;
+    map['type'] = _type;
     return map;
   }
 

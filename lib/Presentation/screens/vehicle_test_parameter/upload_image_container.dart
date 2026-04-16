@@ -24,7 +24,10 @@ class UploadImageContainer extends StatelessWidget {
   final double buttonWidth;
   final double width;
   final String text;
+  final String image;
   final bool isVideo;
+  final double? imageHeight;
+  final double? imageWidth;
 
 
 
@@ -35,11 +38,14 @@ class UploadImageContainer extends StatelessWidget {
     required this.isTablet,
     required this.width,
     required this.isVideo,
+    this.image = uploadIcon,
     this.borderRadius = 20.0,
     this.iconSize = 52,
     this.iconScale = 5.5,
     this.buttonHeight = 32.0,
     this.buttonWidth = 110,
+    this.imageHeight,
+    this.imageWidth,
     this.text = "Tap to capture image",
 
   });
@@ -63,6 +69,7 @@ class UploadImageContainer extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(borderRadius),
+
           boxShadow: [
             BoxShadow(
               color: appColor.withValues(alpha:0.08),
@@ -197,7 +204,11 @@ class UploadImageContainer extends StatelessWidget {
                       ),
                     ),
                     child: Center(
-                      child: CustomImage(image: uploadIcon, scale: iconScale),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: CustomImage(image: image, scale: iconScale, height: imageHeight, width: imageWidth,
+                        color: appColor,),
+                      ),
                     ),
                   ),
                   12.height,

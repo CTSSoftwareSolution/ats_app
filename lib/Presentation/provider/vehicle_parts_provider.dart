@@ -116,8 +116,7 @@ class VehiclePartsProvider extends ChangeNotifier {
     resetPage();
     try {
       VehiclePartsReqModel vehiclePartsReqModel = VehiclePartsReqModel(
-        vehicleClass: "LMV"
-            //classProvider.selectedClass!.appointmentId.toString(),
+        vehicleClass: classProvider.selectedClass!.vehicleCategory,
       );
       vehiclePartsEntity = await vehiclePartsUseCases.execute(
         vehiclePartsReqModel

@@ -12,7 +12,7 @@ class VehiclePartsRepoImpl implements VehiclePartsRepository{
      try{
         final response = await ApiService.post(vehiclePartsReqModel, vehiclePartsUrl);
         final model = VehiclePartsResModel.fromJson(response);
-        return VehiclePartsEntity(message: model.message, status: model.status, data: model.data);
+        return VehiclePartsEntity(message: model.message, status: model.success, data: model.data);
       }catch (e){
         throw Exception(e);
       }
