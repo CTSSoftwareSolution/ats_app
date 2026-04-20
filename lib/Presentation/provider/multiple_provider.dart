@@ -1,3 +1,4 @@
+import 'package:ats_app/Core/network/InternetCheck/network_status.dart';
 import 'package:ats_app/Data/repositories_impl/lane_list_impl.dart';
 import 'package:ats_app/Data/repositories_impl/login_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/manual_inspection_list_impl.dart';
@@ -48,6 +49,7 @@ class MultipleProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => NetworkStatus()),
         ChangeNotifierProvider(create: (_) => permissionProvider),
         ChangeNotifierProvider(create: (_) => BottomNavigationProvider()),
         ChangeNotifierProvider(create: (_) => SplashProvider()),

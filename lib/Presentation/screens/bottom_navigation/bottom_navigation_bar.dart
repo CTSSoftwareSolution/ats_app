@@ -1,13 +1,13 @@
 import 'dart:io';
+import 'package:ats_app/Core/network/InternetCheck/network_status.dart';
 import 'package:ats_app/Presentation/provider/bottom_navigation_provider.dart';
 import 'package:ats_app/Presentation/screens/bottom_navigation/navigation_bar_responsive.dart';
 import 'package:ats_app/location/location_provider.dart';
+import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/widgets/custom_dialog_box.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-
 
 class BottomNavigationBarScreen extends StatefulWidget {
   const BottomNavigationBarScreen({super.key});
@@ -36,10 +36,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> w
 
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
-
     if (state == AppLifecycleState.resumed) {
       final locationProvider = context.read<LocationProvider>();
-
 
       Future.delayed(const Duration(milliseconds: 300), () {
         if (mounted) {
@@ -57,10 +55,10 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> w
     // }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final navigationProvider = context.watch<BottomNavigationProvider>();
+    final network = context.watch<NetworkStatus>(); 
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -83,8 +81,25 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> w
         }
       },
       child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: NavigationBarResponsiveLayout()),
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: [
+            Expanded(
+              child: NavigationBarResponsiveLayout()),
+            if (!network.isConnected)
+              Container(
+                height: 30,
+                width: double.infinity,
+                color: redColor,
+                alignment: Alignment.center,
+                child: const Text(
+                  "No Internet Connection",
+                  style: TextStyle(color: whiteColor),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

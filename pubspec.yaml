@@ -55,6 +55,7 @@ dependencies:
   native_exif: ^0.7.0
   video_player:
   sensors_plus: ^7.0.0
+  connectivity_plus: ^7.1.1
 
 
 
