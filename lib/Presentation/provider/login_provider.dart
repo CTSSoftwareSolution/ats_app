@@ -10,7 +10,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/custom_loader.dart';
 import 'bottom_navigation_provider.dart';
-import 'package:ats_app/Core/network/InternetCheck/network_status.dart';
 
 class LoginProvider extends ChangeNotifier {
   LoginUseCases loginUseCases;
@@ -50,15 +49,6 @@ class LoginProvider extends ChangeNotifier {
   }
 
   void login(BuildContext context) async {
-    final network = context.read<NetworkStatus>();
-
-    if (!network.isConnected) {
-      CustomLoader.internetMessage(
-        msg: "No Internet Connection",
-        context: context,
-      );
-      return;
-    }
     await loginApi(context).then((value) async {
       final navigationProvider = Provider.of<BottomNavigationProvider>(context,listen: false);
       if (!context.mounted) return;

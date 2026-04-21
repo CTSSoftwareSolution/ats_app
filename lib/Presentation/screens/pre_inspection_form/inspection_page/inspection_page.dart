@@ -1,6 +1,8 @@
+import 'package:ats_app/Core/network/InternetCheck/network_status.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/submit_fab_widget.dart';
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,23 +26,30 @@ class _InspectionPageState extends State<InspectionPage>
   late TabController _tabController;
 
   @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<InspectionFormProvider>();
-      final vehicleClass = context.read<VehicleClassProvider>();
-      // final manualProvider = context.watch<ManualInspectionListProvider>();
-      final manualProvider = Provider.of<ManualInspectionListProvider>(context, listen: false);
+  @override
+void initState() {
+  super.initState();
+  _tabController = TabController(length: 3, vsync: this);
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final provider = context.read<InspectionFormProvider>();
+    final manualProvider = Provider.of<ManualInspectionListProvider>(context, listen: false);
+    if (context.read<NetworkStatus>().isConnected) {
       if (widget.isEditMode == true) {
         provider.fetchAndPrefill(
-            vehicleNo: manualProvider.selectedManualListData!.registrationNo.toString(),
-            appointmentID: manualProvider.selectedManualListData!.appointmentId.toString());
+          vehicleNo: manualProvider.selectedManualListData!.registrationNo.toString(),
+          appointmentID: manualProvider.selectedManualListData!.appointmentId.toString(),
+        );
       } else {
         provider.fetchInspectionData();
       }
-    });
-  }
+    } else {
+      CustomLoader.internetMessage(
+        msg: "No Internet Connection",
+        context: context,
+      );
+    }
+  });
+}
 
   @override
   void dispose() {

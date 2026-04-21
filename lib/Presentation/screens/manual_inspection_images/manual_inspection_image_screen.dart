@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ats_app/Core/network/InternetCheck/network_status.dart';
 import 'package:ats_app/Presentation/screens/manual_inspection_images/DocumentManualDocModels.dart';
 import 'package:ats_app/Presentation/screens/manual_inspection_images/manual_ins_image_provider.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
@@ -78,7 +79,6 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
       return;
     }
     await provider.uploadDocuments(
-      context: context,
       appointmentId: vehicleClassProvider.selectedClass!.appointmentId.toString(),
       createdBy: Preferences.getUserId().toString(),
       vehicleId: vehicleClassProvider.selectedClass!.vehicleKey.toString(),
@@ -170,9 +170,16 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: FloatingActionButton.extended(
             backgroundColor: appColor,
-              onPressed: (){
-              imageUpload();
-              },
+              onPressed: () {
+                 if (context.read<NetworkStatus>().isConnected) {
+                    imageUpload();
+                    } else {
+                   CustomLoader.internetMessage(
+                    msg: "No Internet Connection",
+                    context: context,
+                     );
+                    }
+                   },
               label: CustomText(text: "Next", fontSize: 18.0, fontFamily: "Bold",)),
         ),
       ),

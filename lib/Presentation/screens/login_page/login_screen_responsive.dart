@@ -1,6 +1,8 @@
+import 'package:ats_app/Core/network/InternetCheck/network_status.dart';
 import 'package:ats_app/Responsive/responsive_ext.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/widgets/custom_button.dart';
+import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../utilities/logo_screen_item.dart';
@@ -19,21 +21,23 @@ class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return
-    LayoutBuilder(
+    return LayoutBuilder(
       builder: (context, constraints) {
         return Form(
           key: loginFormKey,
           child: Center(
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: constraints.contentMaxWidth),
+              constraints: BoxConstraints(
+                maxWidth: constraints.contentMaxWidth,
+              ),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
                     LogoScreenItem(),
                     LoginScreenItem(),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: constraints.horizontalPadding,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: constraints.horizontalPadding,
                         vertical: constraints.isTablet ? 24 : 16,
                       ),
                       child: CustomButton(
@@ -41,16 +45,21 @@ class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
                         width: double.infinity,
                         buttonText: "Login",
                         onPress: () {
-                          if(loginFormKey.currentState!.validate()){
-                            context.read<LoginProvider>().login(context);
+                          if (context.read<NetworkStatus>().isConnected) {
+                            if (loginFormKey.currentState!.validate()) {
+                              context.read<LoginProvider>().login(context);
+                            }
+                          } else {
+                            CustomLoader.internetMessage(
+                              msg: "No Internet Connection",
+                              context: context,
+                            );
                           }
                         },
                         backgroundColor: whiteColor,
                         foregroundColor: blackColor,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(30.0),
-                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         ),
                         fontSize: constraints.isTablet ? 22.0 : 20.0,
                         fontFamily: "Bold",

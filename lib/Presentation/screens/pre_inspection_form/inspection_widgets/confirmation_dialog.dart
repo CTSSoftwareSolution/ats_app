@@ -1,6 +1,8 @@
 
+import 'package:ats_app/Core/network/InternetCheck/network_status.dart';
 import 'package:ats_app/image_processing/MediaPicker/file_provider.dart';
 import 'package:ats_app/utilities/preferences.dart';
+import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -69,13 +71,18 @@ class ConfirmationDialog {
                           ),
                         ),
                         onPressed: () async {
-                          Navigator.pop(context);
-                          if (isComplete) {
-                            preInspectionSaveAPI(context: context);
-                          //  await typeProvider.saveResultApi(context);
-                          }
-                          // submitInspection(context, provider);
-                        },
+                             Navigator.pop(context);
+                                if (context.read<NetworkStatus>().isConnected) {
+                                   if (isComplete) {
+                                       preInspectionSaveAPI(context: context);
+                                      }
+                                     } else {
+                                      CustomLoader.internetMessage(
+                                       msg: "No Internet Connection",
+                                       context: context,
+                                      );
+                                    }
+                                  },
                         child: const Text('Submit'),
                       ):SizedBox.shrink(),
                   ],

@@ -1,4 +1,4 @@
-
+import 'package:ats_app/Core/network/InternetCheck/network_status.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/responsive_button.dart';
 
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_responsive_item.dart';
@@ -26,7 +26,6 @@ class _VehiclePartsResponsiveLayoutState
   @override
   Widget build(BuildContext context) {
     final partsProvider = context.watch<VehiclePartsProvider>();
-
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -139,22 +138,38 @@ class _VehiclePartsResponsiveLayoutState
                                         ? "Submit"
                                         : "Next",
                                     onPress: () {
-                                      context.read<VehiclePartsProvider>().nextStepper(partsProvider.totalPagesForTablet,);
-                                      if (partsProvider.currentPage <
-                                          partsProvider.totalPagesForTablet -
-                                              1) {
+                                      if (context
+                                          .read<NetworkStatus>()
+                                          .isConnected) {
                                         context
                                             .read<VehiclePartsProvider>()
-                                            .nextPage(
-                                              partsProvider
-                                                      .totalPagesForTablet -
-                                                  1,
+                                            .nextStepper(
+                                              partsProvider.totalPagesForTablet,
                                             );
+
+                                        if (partsProvider.currentPage <
+                                            partsProvider.totalPagesForTablet -
+                                                1) {
+                                          context
+                                              .read<VehiclePartsProvider>()
+                                              .nextPage(
+                                                partsProvider
+                                                        .totalPagesForTablet -
+                                                    1,
+                                              );
+                                        } else {
+                                          context.push(
+                                            InspectionResultScreen(),
+                                          );
+                                          context
+                                              .read<VehiclePartsProvider>()
+                                              .resetStepperForTablet();
+                                        }
                                       } else {
-                                        context.push(InspectionResultScreen());
-                                        context
-                                            .read<VehiclePartsProvider>()
-                                            .resetStepperForTablet();
+                                        CustomLoader.internetMessage(
+                                          msg: "No Internet Connection",
+                                          context: context,
+                                        );
                                       }
                                     },
                                   ),
@@ -167,23 +182,33 @@ class _VehiclePartsResponsiveLayoutState
                                       ? "Submit"
                                       : "Next",
                                   onPress: () {
-                                    context
-                                        .read<VehiclePartsProvider>()
-                                        .nextStepper(partsProvider.totalPages);
-
-                                    if (partsProvider.currentPage <
-                                        partsProvider.totalPages - 1) {
+                                    if (context
+                                        .read<NetworkStatus>()
+                                        .isConnected) {
                                       context
                                           .read<VehiclePartsProvider>()
-                                          .nextPage(
-                                            partsProvider.totalPages - 1,
+                                          .nextStepper(
+                                            partsProvider.totalPages,
                                           );
-                                    } else {
 
-                                      context.push(InspectionResultScreen());
-                                      context
-                                          .read<VehiclePartsProvider>()
-                                          .resetStepper();
+                                      if (partsProvider.currentPage <
+                                          partsProvider.totalPages - 1) {
+                                        context
+                                            .read<VehiclePartsProvider>()
+                                            .nextPage(
+                                              partsProvider.totalPages - 1,
+                                            );
+                                      } else {
+                                        context.push(InspectionResultScreen());
+                                        context
+                                            .read<VehiclePartsProvider>()
+                                            .resetStepper();
+                                      }
+                                    } else {
+                                      CustomLoader.internetMessage(
+                                        msg: "No Internet Connection",
+                                        context: context,
+                                      );
                                     }
                                   },
                                 ),

@@ -1,10 +1,7 @@
 import 'dart:async';
 
-import 'package:ats_app/Core/network/InternetCheck/network_status.dart';
 import 'package:ats_app/Data/model/request_model/vehicle_class_req_model.dart';
-import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import '../../Data/model/response_model/vehicle_class_res_model.dart';
 import '../../Domain/entities/vehicle_class_entity.dart';
 import '../../Domain/usecases/vehicle_class_usecases.dart';
@@ -57,15 +54,6 @@ Future<VehicleClassEntity?> vehicleClassApi({
   required BuildContext context,
   bool loadMore = false,
 }) async {
-
-  final network = context.read<NetworkStatus>();
-  if (!network.isConnected) {
-    CustomLoader.internetMessage(
-      msg: "No Internet Connection",
-      context: context,
-    );
-    return null;
-  }
 
   if (!loadMore) {
     isLoading = true;

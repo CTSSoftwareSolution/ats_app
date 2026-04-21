@@ -1,6 +1,8 @@
+import 'package:ats_app/Core/network/InternetCheck/network_status.dart';
 import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_responsive.dart';
 import 'package:ats_app/image_processing/MediaPicker/file_provider.dart';
+import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
@@ -20,7 +22,16 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<VehiclePartsProvider>().vehiclePartsApi(context);
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (context.read<NetworkStatus>().isConnected) {
+      context.read<VehiclePartsProvider>().vehiclePartsApi(context);
+    } else {
+      CustomLoader.internetMessage(
+        msg: "No Internet Connection",
+        context: context,
+      );
+    }
+  });
     context.read<FileProvider>().clearAll();
   }
 
