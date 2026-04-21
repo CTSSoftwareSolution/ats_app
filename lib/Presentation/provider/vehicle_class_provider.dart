@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:ats_app/Core/network/InternetCheck/network_status.dart';
 import 'package:ats_app/Data/model/request_model/vehicle_class_req_model.dart';
+import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import '../../Data/model/response_model/vehicle_class_res_model.dart';
 import '../../Domain/entities/vehicle_class_entity.dart';
 import '../../Domain/usecases/vehicle_class_usecases.dart';
@@ -50,48 +53,62 @@ class VehicleClassProvider extends ChangeNotifier {
     });
   }
 
-  Future<VehicleClassEntity?> vehicleClassApi({
-    required BuildContext context,
-    bool loadMore = false,
-  }) async {
-    if (!loadMore) {
-      isLoading = true;
-      isLoadMore = false;
-      vehicleClassEntity = null;
-      page = 1;
-      hasMoreData = true;
-      //notifyListeners();
-    } else {
-      if (!hasMoreData) return null;
-      isLoadMore = true;
-      notifyListeners();
-    }
-    try {
-      VehicleClassReqModel vehicleClassReqModel = VehicleClassReqModel(
-        searchText: searchController.text,
-        pageNo: page,
-        pageSize: pageSize,
-        vehicleCategory: _selectedFilter == 'All' ? '' : _selectedFilter,
-      );
-      final response = await vehicleClassUseCases.execute(vehicleClassReqModel);
-      if (response.data?.appointments?.isNotEmpty ?? false) {
-        if (loadMore && vehicleClassEntity != null) {
-          vehicleClassEntity!.data!.appointments!
-              .addAll(response.data!.appointments!);
-        } else {
-          vehicleClassEntity = response;
-        }
-        page++;
-      } else {
-        hasMoreData = false;
-      }
-    } catch (e) {
-      hasMoreData = false;
-    } finally {
-      isLoading = false;
-      isLoadMore = false;
-      notifyListeners();
-    }
+Future<VehicleClassEntity?> vehicleClassApi({
+  required BuildContext context,
+  bool loadMore = false,
+}) async {
+
+  final network = context.read<NetworkStatus>();
+  if (!network.isConnected) {
+    CustomLoader.internetMessage(
+      msg: "No Internet Connection",
+      context: context,
+    );
     return null;
   }
+
+  if (!loadMore) {
+    isLoading = true;
+    isLoadMore = false;
+    vehicleClassEntity = null;
+    page = 1;
+    hasMoreData = true;
+    //notifyListeners();
+  } else {
+    if (!hasMoreData) return null;
+    isLoadMore = true;
+    notifyListeners();
+  }
+
+  try {
+    VehicleClassReqModel vehicleClassReqModel = VehicleClassReqModel(
+      searchText: searchController.text,
+      pageNo: page,
+      pageSize: pageSize,
+      vehicleCategory: _selectedFilter == 'All' ? '' : _selectedFilter,
+    );
+
+    final response = await vehicleClassUseCases.execute(vehicleClassReqModel);
+
+    if (response.data?.appointments?.isNotEmpty ?? false) {
+      if (loadMore && vehicleClassEntity != null) {
+        vehicleClassEntity!.data!.appointments!
+            .addAll(response.data!.appointments!);
+      } else {
+        vehicleClassEntity = response;
+      }
+      page++;
+    } else {
+      hasMoreData = false;
+    }
+  } catch (e) {
+    hasMoreData = false;
+  } finally {
+    isLoading = false;
+    isLoadMore = false;
+    notifyListeners();
+  }
+
+  return null;
+}
 }

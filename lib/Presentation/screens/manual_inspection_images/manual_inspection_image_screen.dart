@@ -78,6 +78,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
       return;
     }
     await provider.uploadDocuments(
+      context: context,
       appointmentId: vehicleClassProvider.selectedClass!.appointmentId.toString(),
       createdBy: Preferences.getUserId().toString(),
       vehicleId: vehicleClassProvider.selectedClass!.vehicleKey.toString(),
