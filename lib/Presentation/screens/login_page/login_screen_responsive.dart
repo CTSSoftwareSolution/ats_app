@@ -21,6 +21,7 @@ class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
 
   @override
   Widget build(BuildContext context) {
+     final checkInternet = context.watch<NetworkStatus>();
     return LayoutBuilder(
       builder: (context, constraints) {
         return Form(
@@ -45,7 +46,7 @@ class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
                         width: double.infinity,
                         buttonText: "Login",
                         onPress: () {
-                          if (context.read<NetworkStatus>().isConnected) {
+                          if (checkInternet.isConnected) {
                             if (loginFormKey.currentState!.validate()) {
                               context.read<LoginProvider>().login(context);
                             }
