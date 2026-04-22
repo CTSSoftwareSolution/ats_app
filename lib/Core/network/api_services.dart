@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
+import '../../Data/model/request_model/create_bulk_req_model.dart';
 import '../../Data/model/response_model/inspection_pre_save_req_model.dart';
 import '../../Presentation/screens/login_page/login_screen.dart';
 import '../../Presentation/screens/manual_inspection_images/DocumentManualDocModels.dart';
@@ -232,4 +233,65 @@ class ApiService {
     final responseBody = await compute(_decodeResponse, response.bodyBytes);
     return responseBody;
   }
+
+  static Future<Map<String, dynamic>?> aiMultipartUpload({
+    required String registrationNumber,
+    required String applicationNumber,
+    required String createdBy,
+    required List<CreateBulkReqModel> mediaType,
+    required String apiUrl,
+  }) async {
+    Map<String, String> headers = {
+      HttpHeaders.authorizationHeader: 'Bearer ${Preferences.getToken()}',
+    };
+    final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+
+    request.headers.addAll(headers);
+    request.fields['registration_no'] = registrationNumber;
+    request.fields['application_no'] = applicationNumber;
+    request.fields['created_by'] = createdBy;
+
+    for (int i = 0; i < mediaType.length; i++) {
+      final item = mediaType[i];
+      request.fields['questions[$i].question_id'] = item.questionId;
+      final image = item.images;
+      if (image != null && image.path.isNotEmpty && await image.exists()) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'questions[$i].image',
+            image.path,
+            contentType: MediaType('image', 'jpeg'),
+          ),
+        );
+        debugPrint('Image sent [$i]: ${image.path}');
+      } else {
+        debugPrint('No image for [$i]: ${item.questionId}');
+      }
+
+      final video = item.videos;
+      if(video != null && video.path.isNotEmpty && await video.exists()) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'questions[$i].video',
+            video.path,
+            contentType: MediaType('video', 'mp4'),
+          ),
+        );
+        debugPrint('Video sent [$i]: ${video.path}');
+      }else {
+        debugPrint('No video for [$i]: ${item.questionId}');
+      }
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    if (kDebugMode) {
+      alice.onHttpResponse(response, body: request.fields);
+    }
+
+    final responseBody = await compute(_decodeResponse, response.bodyBytes);
+    return responseBody;
+  }
+
+
 }

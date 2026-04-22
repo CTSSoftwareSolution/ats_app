@@ -1,15 +1,23 @@
+import 'dart:io';
 
+import 'package:ats_app/Data/model/request_model/create_bulk_req_model.dart';
+import 'package:ats_app/Presentation/provider/create_bulk_provider.dart';
+import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_page/inspection_page.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/responsive_button.dart';
 
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_responsive_item.dart';
 import 'package:ats_app/Responsive/responsive_ext.dart';
+import 'package:ats_app/utilities/preferences.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../utilities/custom_stepper.dart';
 import '../../../utilities/extension.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/custom_text.dart';
+import '../../provider/ai_inspection_details_provider.dart';
+import '../../provider/vehicle_class_provider.dart';
 import '../../provider/vehicle_parts_provider.dart';
 import '../inspection_result/inspection_result_screen.dart';
 
@@ -26,7 +34,6 @@ class _VehiclePartsResponsiveLayoutState
   @override
   Widget build(BuildContext context) {
     final partsProvider = context.watch<VehiclePartsProvider>();
-
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -139,7 +146,11 @@ class _VehiclePartsResponsiveLayoutState
                                         ? "Submit"
                                         : "Next",
                                     onPress: () {
-                                      context.read<VehiclePartsProvider>().nextStepper(partsProvider.totalPagesForTablet,);
+                                      context
+                                          .read<VehiclePartsProvider>()
+                                          .nextStepper(
+                                            partsProvider.totalPagesForTablet,
+                                          );
                                       if (partsProvider.currentPage <
                                           partsProvider.totalPagesForTablet -
                                               1) {
@@ -179,11 +190,9 @@ class _VehiclePartsResponsiveLayoutState
                                             partsProvider.totalPages - 1,
                                           );
                                     } else {
-
-                                      context.push(InspectionResultScreen());
-                                      context
-                                          .read<VehiclePartsProvider>()
-                                          .resetStepper();
+                                      aiMediaUpload(context: context);
+                                      // context.push(InspectionResultScreen());
+                                      // context.read<VehiclePartsProvider>().resetStepper();
                                     }
                                   },
                                 ),
@@ -195,5 +204,41 @@ class _VehiclePartsResponsiveLayoutState
         );
       },
     );
+  }
+
+  static Future<void> aiMediaUpload({required BuildContext context}) async {
+    final createController = Provider.of<CreateBulkProvider>(context, listen: false);
+    final classController = Provider.of<VehicleClassProvider>(context, listen: false);
+    final fileController = Provider.of<FileProvider>(context, listen: false);
+    final partsController = Provider.of<VehiclePartsProvider>(context, listen: false);
+    final detailsController = Provider.of<AiInspectionDetailsProvider>(context, listen: false);
+
+    List<CreateBulkReqModel> questions = [];
+
+    for(int i = 0; i < partsController.vehiclePartsEntity!.data!.length; i++){
+      final vehicleParts = partsController.vehiclePartsEntity!.data![i];
+      final media = fileController.getMedia(i);
+
+      questions.add(
+        CreateBulkReqModel(
+            questionId: vehicleParts.questionId.toString(),
+            images:  media?.image != null ? File(media!.image!.path) : null,
+            videos: media?.video != null ? File(media!.video!.path) : null,
+        ),
+      );
+
+    }
+
+    await createController.uploadAIImage(
+      registrationNumber: classController.selectedClass!.registrationNo
+          .toString(),
+      applicationNumber: classController.selectedClass!.appointmentId
+          .toString(),
+      createdBy: Preferences.getUserId(),
+      questions: questions,
+    );
+    detailsController.aiInspectionDetails(context);
+    context.push(InspectionPage(viewMode: true,));
+    context.read<VehiclePartsProvider>().resetStepper();
   }
 }

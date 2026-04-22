@@ -1,3 +1,5 @@
+import 'package:ats_app/Data/repositories_impl/ai_inspection_details_repo_impl.dart';
+import 'package:ats_app/Data/repositories_impl/create_bulk_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/lane_list_impl.dart';
 import 'package:ats_app/Data/repositories_impl/login_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/manual_inspection_list_impl.dart';
@@ -5,12 +7,15 @@ import 'package:ats_app/Data/repositories_impl/pre_save_inspection_impl.dart';
 import 'package:ats_app/Data/repositories_impl/vehicle_class_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/vehicle_parts_repo_impl.dart';
 import 'package:ats_app/Domain/repositories/manual_inspection_repository.dart';
+import 'package:ats_app/Domain/usecases/ai_inspection_details_usecases.dart';
+import 'package:ats_app/Domain/usecases/create_bulk_usecases.dart';
 import 'package:ats_app/Domain/usecases/lane_list_usecase.dart';
 import 'package:ats_app/Domain/usecases/login_usecases.dart';
 import 'package:ats_app/Domain/usecases/manual_inspection_list_usecase.dart';
 import 'package:ats_app/Domain/usecases/pre_inspection_result_usecases.dart';
 import 'package:ats_app/Domain/usecases/pre_save_inspection_usecase.dart';
 import 'package:ats_app/Domain/usecases/vehicle_parts_usecases.dart';
+import 'package:ats_app/Presentation/provider/create_bulk_provider.dart';
 import 'package:ats_app/Presentation/provider/inspection_form_provider.dart';
 import 'package:ats_app/Presentation/provider/inspection_result_provider.dart';
 import 'package:ats_app/Presentation/provider/login_provider.dart';
@@ -36,6 +41,7 @@ import '../../Domain/usecases/vehicle_class_usecases.dart';
 import '../../image_processing/MediaPicker/file_provider.dart';
 import '../../main.dart';
 import '../screens/pre_inspection_form/pre_save_inspection_provider.dart';
+import 'ai_inspection_details_provider.dart';
 import 'bottom_navigation_provider.dart';
 import 'lane_list_provider.dart';
 import 'manual_inspection_list_provider.dart';
@@ -64,8 +70,10 @@ class MultipleProvider extends StatelessWidget {
        // ChangeNotifierProvider(create: (_) => PreInspectionResultProvider(preInspectionResultUseCases: PreInspectionResultUseCases(preInspectionResultRepository:))),
         ChangeNotifierProvider(create: (_) => LaneListProvider(laneListUseCase: LaneListUseCase(laneListRepository: LaneListImpl()))),
         ChangeNotifierProvider(create: (_) => LocationProvider()),
-        ChangeNotifierProvider(create: (_) => VehiclePartsProvider(vehiclePartsUseCases: VehiclePartsUseCases(vehiclePartsRepository: VehiclePartsRepoImpl())))
-        
+        ChangeNotifierProvider(create: (_) => VehiclePartsProvider(vehiclePartsUseCases: VehiclePartsUseCases(vehiclePartsRepository: VehiclePartsRepoImpl()))),
+        ChangeNotifierProvider(create: (_) => CreateBulkProvider( useCases : CreateBulkUseCases(repository: CreateBulkRepoImpl()))),
+        ChangeNotifierProvider(create: (_) => AiInspectionDetailsProvider( aiInspectionDetailsUseCases : AIInspectionDetailsUseCases( detailsRepository: AIInspectionDetailsRepoImpl()))),
+
       ],
       child: const MyApp(),
     );

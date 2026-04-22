@@ -18,13 +18,6 @@ class VehiclePartsProvider extends ChangeNotifier {
   List<PartsDataModel> currentPageData = [];
 
 
-  // String? vehiclePart;
-  // String? get selectedParts => vehiclePart;
-  // void setSelectedParts(String parts){
-  //   vehiclePart = parts;
-  // }
-
-
   int currentPage = 0;
   int itemsPerPage = 2;
   int currentStep = 0;

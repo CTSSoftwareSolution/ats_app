@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:ats_app/Presentation/PreInspectionDetailsModelsModels.dart';
+import 'package:ats_app/Data/model/response_model/pre_inspection_details_model.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -254,7 +254,7 @@ class InspectionFormProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
-        final editModel = PreInspectionDetailsModelsModels.fromJson(decoded);
+        final editModel = PreInspectionDetailsModels.fromJson(decoded);
 
         if (editModel.status == true && editModel.data != null) {
           _buildSectionsFromDetailsModel(editModel.data!);

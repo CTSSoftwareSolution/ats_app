@@ -1,4 +1,6 @@
-class VehiclePartsResModel {
+import '../../../Domain/entities/vehicle_parts_entity.dart';
+
+class VehiclePartsResModel extends VehiclePartsEntity{
   VehiclePartsResModel({
       bool? success, 
       String? message, 
@@ -65,12 +67,14 @@ class PartsDataModel {
       String? vehiclePartName, 
       String? status, 
       String? vehicleClass, 
-      num? type,}){
+      num? type, 
+      num? questionId,}){
     _id = id;
     _vehiclePartName = vehiclePartName;
     _status = status;
     _vehicleClass = vehicleClass;
     _type = type;
+    _questionId = questionId;
 }
 
   PartsDataModel.fromJson(dynamic json) {
@@ -79,28 +83,33 @@ class PartsDataModel {
     _status = json['status'];
     _vehicleClass = json['vehicle_class'];
     _type = json['type'];
+    _questionId = json['question_id'];
   }
   num? _id;
   String? _vehiclePartName;
   String? _status;
   String? _vehicleClass;
   num? _type;
+  num? _questionId;
   PartsDataModel copyWith({  num? id,
   String? vehiclePartName,
   String? status,
   String? vehicleClass,
   num? type,
+  num? questionId,
 }) => PartsDataModel(  id: id ?? _id,
   vehiclePartName: vehiclePartName ?? _vehiclePartName,
   status: status ?? _status,
   vehicleClass: vehicleClass ?? _vehicleClass,
   type: type ?? _type,
+  questionId: questionId ?? _questionId,
 );
   num? get id => _id;
   String? get vehiclePartName => _vehiclePartName;
   String? get status => _status;
   String? get vehicleClass => _vehicleClass;
   num? get type => _type;
+  num? get questionId => _questionId;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -109,6 +118,7 @@ class PartsDataModel {
     map['status'] = _status;
     map['vehicle_class'] = _vehicleClass;
     map['type'] = _type;
+    map['question_id'] = _questionId;
     return map;
   }
 

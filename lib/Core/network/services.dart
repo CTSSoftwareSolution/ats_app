@@ -37,7 +37,12 @@ String get preInspectionDetails           => "${newBaseUrl}Inspection/preinspect
 String get savePreInspection              => "${newBaseUrl}Inspection/save-pre-inspection";
 String get laneList                       => "${newBaseUrl}lane/list";
 String get manualInspectionList           => "${newBaseUrl}Appointment/manual-inspection-appointment-list";
+
+// machine api
 String get vehiclePartsUrl           => "${newBaseUrl}vehicle-parts-master/getVehicleParts";
+String get createBulkUrl           => "${newBaseUrl}queue/create-bulk";
+String get aiPreInspectionDetailsUrl           => "${newBaseUrl}Inspection/ai-preinspection-details";
+String get aiSavePreInspection           => "${newBaseUrl}Inspection/save-ai-pre-inspection";
 
 
 const String awsSignedUrl = "https://erpapi.sgbregistration.in/v1/File_upload/getsignedurlsgb";

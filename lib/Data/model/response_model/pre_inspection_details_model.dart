@@ -1,5 +1,7 @@
-class PreInspectionDetailsModelsModels {
-  PreInspectionDetailsModelsModels({
+import '../../../Domain/entities/pre_inspection_details_entity.dart';
+
+class PreInspectionDetailsModels extends PreInspectionDetailsEntity{
+  PreInspectionDetailsModels({
       bool? status, 
       String? message,
     PreInspectionDetailsData? data,}){
@@ -8,7 +10,7 @@ class PreInspectionDetailsModelsModels {
     _data = data;
 }
 
-  PreInspectionDetailsModelsModels.fromJson(dynamic json) {
+  PreInspectionDetailsModels.fromJson(dynamic json) {
     _status = json['status'];
     _message = json['message'];
     _data = json['data'] != null ? PreInspectionDetailsData.fromJson(json['data']) : null;
@@ -16,10 +18,10 @@ class PreInspectionDetailsModelsModels {
   bool? _status;
   String? _message;
   PreInspectionDetailsData? _data;
-PreInspectionDetailsModelsModels copyWith({  bool? status,
+  PreInspectionDetailsModels copyWith({  bool? status,
   String? message,
   PreInspectionDetailsData? data,
-}) => PreInspectionDetailsModelsModels(  status: status ?? _status,
+}) => PreInspectionDetailsModels(  status: status ?? _status,
   message: message ?? _message,
   data: data ?? _data,
 );

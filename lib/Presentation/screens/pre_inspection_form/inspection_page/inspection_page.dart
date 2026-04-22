@@ -1,3 +1,4 @@
+import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/submit_fab_widget.dart';
 import 'package:ats_app/utilities/color_data.dart';
@@ -13,7 +14,8 @@ import '../inspection_widgets/section_tab_view.dart';
 
 class InspectionPage extends StatefulWidget {
   final bool? isEditMode;
-  const InspectionPage({super.key, this.isEditMode});
+  final bool? viewMode;
+  const InspectionPage({super.key, this.isEditMode, this.viewMode = false});
 
   @override
   State<InspectionPage> createState() => _InspectionPageState();
@@ -29,6 +31,7 @@ class _InspectionPageState extends State<InspectionPage>
     _tabController = TabController(length: 3, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<InspectionFormProvider>();
+      final detailsProvider = context.read<AiInspectionDetailsProvider>();
       final vehicleClass = context.read<VehicleClassProvider>();
       // final manualProvider = context.watch<ManualInspectionListProvider>();
       final manualProvider = Provider.of<ManualInspectionListProvider>(context, listen: false);
@@ -36,7 +39,11 @@ class _InspectionPageState extends State<InspectionPage>
         provider.fetchAndPrefill(
             vehicleNo: manualProvider.selectedManualListData!.registrationNo.toString(),
             appointmentID: manualProvider.selectedManualListData!.appointmentId.toString());
-      } else {
+      }
+      // else if(widget.viewMode ==  true){
+      //   detailsProvider.aiInspectionDetails(context);
+      // }
+      else {
         provider.fetchInspectionData();
       }
     });
