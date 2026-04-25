@@ -238,6 +238,7 @@ class ApiService {
     required String registrationNumber,
     required String applicationNumber,
     required String createdBy,
+    required String appointmentId,
     required List<CreateBulkReqModel> mediaType,
     required String apiUrl,
   }) async {
@@ -250,6 +251,7 @@ class ApiService {
     request.fields['registration_no'] = registrationNumber;
     request.fields['application_no'] = applicationNumber;
     request.fields['created_by'] = createdBy;
+    request.fields['appointment_id'] = appointmentId;
 
     for (int i = 0; i < mediaType.length; i++) {
       final item = mediaType[i];

@@ -10,12 +10,14 @@ class CreateBulkUseCases {
   Future<CreateBulkEntity> execute({
     required String registrationNumber,
     required String applicationNumber,
+    required String appointmentId,
     required String createdBy,
     required List<CreateBulkReqModel> questions,
   }) {
     return repository.aiMediaUpload(
       registrationNumber: registrationNumber,
       applicationNumber: applicationNumber,
+      appointmentId: appointmentId,
       createdBy: createdBy,
       questions: questions,
     );

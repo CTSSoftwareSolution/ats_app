@@ -12,6 +12,7 @@ class CreateBulkRepoImpl implements CreateBulkRepository{
   Future<CreateBulkEntity> aiMediaUpload({
     required String registrationNumber,
     required String applicationNumber,
+    required String appointmentId,
     required String createdBy,
     required List<CreateBulkReqModel> questions,
 }) async {
@@ -21,6 +22,7 @@ class CreateBulkRepoImpl implements CreateBulkRepository{
       final response = await ApiService.aiMultipartUpload(
           registrationNumber: registrationNumber,
           applicationNumber: applicationNumber,
+          appointmentId: appointmentId,
           createdBy: createdBy,
           mediaType: questions,
           apiUrl: createBulkUrl

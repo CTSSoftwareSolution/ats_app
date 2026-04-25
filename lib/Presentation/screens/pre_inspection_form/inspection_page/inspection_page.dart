@@ -29,25 +29,29 @@ class _InspectionPageState extends State<InspectionPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<InspectionFormProvider>();
       final detailsProvider = context.read<AiInspectionDetailsProvider>();
       final vehicleClass = context.read<VehicleClassProvider>();
       // final manualProvider = context.watch<ManualInspectionListProvider>();
       final manualProvider = Provider.of<ManualInspectionListProvider>(context, listen: false);
+
+      if(widget.viewMode == true){
+        detailsProvider.aiInspectionDetails(context);
+      }
       if (widget.isEditMode == true) {
         provider.fetchAndPrefill(
             vehicleNo: manualProvider.selectedManualListData!.registrationNo.toString(),
             appointmentID: manualProvider.selectedManualListData!.appointmentId.toString());
       }
-      // else if(widget.viewMode ==  true){
-      //   detailsProvider.aiInspectionDetails(context);
-      // }
       else {
         provider.fetchInspectionData();
       }
     });
   }
+
+
 
   @override
   void dispose() {
@@ -89,6 +93,10 @@ class _InspectionPageState extends State<InspectionPage>
   Widget _buildBody(InspectionFormProvider provider) {
     if (provider.isLoading) return const LoadingScreen();
     if (provider.hasError) return ErrorScreen(provider: provider);
+
+    // if (provider.sections.isEmpty) {
+    //   return const Center(child: Text("No sections available"));
+    // }
 
     final sections = provider.filteredSections;
 

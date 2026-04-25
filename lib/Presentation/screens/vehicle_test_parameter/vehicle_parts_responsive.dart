@@ -226,18 +226,20 @@ class _VehiclePartsResponsiveLayoutState
             videos: media?.video != null ? File(media!.video!.path) : null,
         ),
       );
-
+ 
     }
 
     await createController.uploadAIImage(
       registrationNumber: classController.selectedClass!.registrationNo
           .toString(),
-      applicationNumber: classController.selectedClass!.appointmentId
+      applicationNumber: classController.selectedClass!.bookingId
           .toString(),
       createdBy: Preferences.getUserId(),
       questions: questions,
+      appointmentId: classController.selectedClass!.appointmentId
+          .toString(),
     );
-    detailsController.aiInspectionDetails(context);
+    // detailsController.aiInspectionDetails(context);
     context.push(InspectionPage(viewMode: true,));
     context.read<VehiclePartsProvider>().resetStepper();
   }

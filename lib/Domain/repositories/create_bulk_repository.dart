@@ -7,6 +7,7 @@ abstract class CreateBulkRepository {
     required String registrationNumber,
     required String applicationNumber,
     required String createdBy,
+    required String appointmentId,
     required List<CreateBulkReqModel> questions,
   });
 }

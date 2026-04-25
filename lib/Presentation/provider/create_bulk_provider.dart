@@ -13,12 +13,13 @@ class CreateBulkProvider extends ChangeNotifier {
     required String registrationNumber,
     required String applicationNumber,
     required String createdBy,
+    required String appointmentId,
     required List<CreateBulkReqModel> questions,
   }) async {
     CustomLoader.showLoader("Please wait...");
     notifyListeners();
     try{
-      await useCases.execute(registrationNumber: registrationNumber, applicationNumber: applicationNumber, createdBy: createdBy, questions: questions);
+      await useCases.execute(registrationNumber: registrationNumber, applicationNumber: applicationNumber, createdBy: createdBy, questions: questions, appointmentId: appointmentId);
     } catch (e) {
       CustomLoader.closeLoader();
     }

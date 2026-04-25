@@ -80,8 +80,8 @@ class InspectionFormProvider extends ChangeNotifier {
   InspectionQueUseCases inspectionQueUseCases;
   InspectionFormProvider({required this.inspectionQueUseCases});
 
-  static const String _editApiUrl =
-      'https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getPreInspectionDetailsByVehicleID';
+  // static const String _editApiUrl =
+  //     'https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getPreInspectionDetailsByVehicleID';
 
   bool _isLoading = false;
   bool _hasError = false;
