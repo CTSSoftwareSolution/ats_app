@@ -6,6 +6,7 @@ import '../Presentation/provider/permission_provider.dart';
 
 const String defaultBaseUrl = "https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev";
 const String newDefaultBaseUrl = "http://65.2.53.173/api/api/";
+//const String newDefaultBaseUrl = "http://192.168.1.5/API/";
 
 class AppConfig {
 

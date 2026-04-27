@@ -493,6 +493,16 @@ class InspectionFormProvider extends ChangeNotifier {
     return result;
   }
 
+  void loadFromDetailsModel(PreInspectionDetailsData data) {
+    _isEditMode = true;
+    _sections = [];
+    _questionKeys.clear();
+
+    _buildSectionsFromDetailsModel(data);
+
+    notifyListeners();
+  }
+
   void _setError(String message) {
     _hasError = true;
     _errorMessage = message;
