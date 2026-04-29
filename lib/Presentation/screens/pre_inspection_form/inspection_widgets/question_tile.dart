@@ -104,42 +104,6 @@ class _QuestionTileState extends State<QuestionTile> {
     }
   }
 
-  // Widget _buildAnswerDisplay(AnswerState? answer) {
-  //   String text;
-  //   Color color;
-  //
-  //   switch (answer) {
-  //     case AnswerState.Pass:
-  //       text = "Yes";
-  //       color = Colors.green;
-  //       break;
-  //     case AnswerState.Fail:
-  //       text = "No";
-  //       color = Colors.red;
-  //       break;
-  //     default:
-  //       text = "Pending";
-  //       color = Colors.grey;
-  //   }
-  //
-  //   return AnimatedContainer(
-  //     duration: const Duration(milliseconds: 180),
-  //     padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-  //     decoration: BoxDecoration(
-  //       color: color.withValues(alpha: 0.12),
-  //       borderRadius: BorderRadius.circular(8),
-  //       border: Border.all(color: color,width: 1.5),
-  //     ),
-  //     child: Text(
-  //       text,
-  //       style: TextStyle(
-  //         color: color,
-  //         fontWeight: FontWeight.w700,
-  //         fontSize: 13,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
