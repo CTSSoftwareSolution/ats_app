@@ -4,7 +4,7 @@ class AnswerButton extends StatelessWidget {
   final String label;
   final bool selected;
   final Color selectedColor;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const AnswerButton({super.key,
     required this.label,

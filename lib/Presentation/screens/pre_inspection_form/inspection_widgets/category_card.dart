@@ -10,9 +10,11 @@ class CategoryCard extends StatelessWidget {
   final int sectionIndex;
   final int categoryIndex;
 
+
   const CategoryCard({super.key,
     required this.sectionIndex,
     required this.categoryIndex,
+
   });
 
   @override

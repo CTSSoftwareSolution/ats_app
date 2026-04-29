@@ -14,8 +14,8 @@ import '../inspection_widgets/section_tab_view.dart';
 
 class InspectionPage extends StatefulWidget {
   final bool? isEditMode;
-  final bool? viewMode;
-  const InspectionPage({super.key, this.isEditMode, this.viewMode = false});
+
+  const InspectionPage({super.key, this.isEditMode,});
 
   @override
   State<InspectionPage> createState() => _InspectionPageState();
@@ -37,7 +37,7 @@ class _InspectionPageState extends State<InspectionPage>
       // final manualProvider = context.watch<ManualInspectionListProvider>();
       final manualProvider = Provider.of<ManualInspectionListProvider>(context, listen: false);
 
-      if(widget.viewMode == true){
+      if(detailsProvider.isAIModeOn){
         detailsProvider.aiInspectionDetails(context);
       }
       if (widget.isEditMode == true) {
@@ -54,6 +54,9 @@ class _InspectionPageState extends State<InspectionPage>
 
 
   @override
+
+
+
   void dispose() {
     _tabController.dispose();
     super.dispose();
@@ -152,7 +155,7 @@ class _InspectionPageState extends State<InspectionPage>
             controller: _tabController,
             children: List.generate(
               sections.length,
-                  (i) => SectionTabView(sectionIndex: i),
+                  (i) => SectionTabView(sectionIndex: i,),
             ),
           ),
         ),

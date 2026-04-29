@@ -7,7 +7,8 @@ import 'category_card.dart';
 
 class SectionTabView extends StatelessWidget {
   final int sectionIndex;
-  const SectionTabView({super.key, required this.sectionIndex});
+
+  const SectionTabView({super.key, required this.sectionIndex,});
 
   @override
   Widget build(BuildContext context) {

@@ -21,7 +21,13 @@ class AiInspectionDetailsProvider extends ChangeNotifier{
 
    bool isLoading = false;
 
+  bool isAIMode = false;
+  bool get isAIModeOn => isAIMode;
 
+  void setAIMode(bool value) {
+    isAIMode = value;
+    notifyListeners();
+  }
 
   Future<PreInspectionDetailsEntity?> aiInspectionDetails(BuildContext context) async{
 
@@ -41,6 +47,7 @@ class AiInspectionDetailsProvider extends ChangeNotifier{
       aiDetailsEntity = await aiInspectionDetailsUseCases.execute(detailsReqModel);
       if (aiDetailsEntity?.data != null) {
         formProvider.loadFromDetailsModel(aiDetailsEntity!.data!);
+        debugPrint("AI Details${aiDetailsEntity!.data.toString()}");
       }
       return aiDetailsEntity;
     } catch (e) {

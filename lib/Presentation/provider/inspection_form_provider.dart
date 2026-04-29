@@ -497,7 +497,7 @@ class InspectionFormProvider extends ChangeNotifier {
     _isEditMode = true;
     _sections = [];
     _questionKeys.clear();
-
+    debugPrint("AI Details $data}");
     _buildSectionsFromDetailsModel(data);
 
     notifyListeners();

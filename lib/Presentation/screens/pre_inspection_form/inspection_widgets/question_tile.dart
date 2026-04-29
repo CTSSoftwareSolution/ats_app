@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../../Core/network/services.dart';
 import '../../../../aws_images/aws_signedurl_provider.dart';
 import '../../../../image_processing/MediaPicker/file_provider.dart';
+import '../../../provider/ai_inspection_details_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../camera_page/camera_screen.dart';
 import 'image_picker_prompt.dart';
@@ -22,6 +23,7 @@ class QuestionTile extends StatefulWidget {
   final Color accentColor;
   final bool isLast;
 
+
   const QuestionTile({
     super.key,
     required this.sectionIndex,
@@ -29,6 +31,7 @@ class QuestionTile extends StatefulWidget {
     required this.questionIndex,
     required this.accentColor,
     required this.isLast,
+
   });
 
   @override
@@ -101,8 +104,46 @@ class _QuestionTileState extends State<QuestionTile> {
     }
   }
 
+  // Widget _buildAnswerDisplay(AnswerState? answer) {
+  //   String text;
+  //   Color color;
+  //
+  //   switch (answer) {
+  //     case AnswerState.Pass:
+  //       text = "Yes";
+  //       color = Colors.green;
+  //       break;
+  //     case AnswerState.Fail:
+  //       text = "No";
+  //       color = Colors.red;
+  //       break;
+  //     default:
+  //       text = "Pending";
+  //       color = Colors.grey;
+  //   }
+  //
+  //   return AnimatedContainer(
+  //     duration: const Duration(milliseconds: 180),
+  //     padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+  //     decoration: BoxDecoration(
+  //       color: color.withValues(alpha: 0.12),
+  //       borderRadius: BorderRadius.circular(8),
+  //       border: Border.all(color: color,width: 1.5),
+  //     ),
+  //     child: Text(
+  //       text,
+  //       style: TextStyle(
+  //         color: color,
+  //         fontWeight: FontWeight.w700,
+  //         fontSize: 13,
+  //       ),
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
+    final isReadOnly = context.watch<AiInspectionDetailsProvider>().isAIModeOn;
     return Consumer<InspectionFormProvider>(
       builder: (context, provider, _) {
         final origSec = provider.originalSectionIndex(widget.sectionIndex);
@@ -123,7 +164,7 @@ class _QuestionTileState extends State<QuestionTile> {
           key: _tileKey,
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: isNo ? Colors.red.shade50 : isYes ? Colors.green.shade50 : Colors.transparent,
+            color: isReadOnly ? Colors.grey.shade200 : ( isNo ? Colors.red.shade50 : isYes ? Colors.green.shade50 :  Colors.transparent),
             border: widget.isLast
                 ? null
                 : Border(
@@ -169,13 +210,16 @@ class _QuestionTileState extends State<QuestionTile> {
                 ],
               ),
               const SizedBox(height: 10),
+              // isReadOnly ?
+              // _buildAnswerDisplay(question.answer) :
               Row(
                 children: [
                   AnswerButton(
                     label: '✓  Yes',
                     selected: isYes,
-                    selectedColor: Colors.green,
-                    onTap: () {
+                    selectedColor: isReadOnly ? Colors.grey :Colors.green,
+                    onTap: isReadOnly ? null :
+                  () {
                       provider.answerQuestion(
                         sectionIndex: origSec,
                         categoryIndex: origCat,
@@ -190,8 +234,9 @@ class _QuestionTileState extends State<QuestionTile> {
                   AnswerButton(
                     label: '✗  No',
                     selected: isNo,
-                    selectedColor: Colors.red,
-                    onTap: () {
+                    selectedColor:isReadOnly ? Colors.grey : Colors.red,
+                    onTap: isReadOnly ? null :
+                        () {
                       provider.answerQuestion(
                         sectionIndex: origSec,
                         categoryIndex: origCat,
