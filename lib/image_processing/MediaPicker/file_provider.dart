@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:ats_app/image_processing/image_processing_service.dart';
 import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:camera/camera.dart';

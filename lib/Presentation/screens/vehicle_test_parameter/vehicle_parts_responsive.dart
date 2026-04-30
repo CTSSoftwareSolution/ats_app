@@ -29,8 +29,8 @@ class VehiclePartsResponsiveLayout extends StatefulWidget {
       _VehiclePartsResponsiveLayoutState();
 }
 
-class _VehiclePartsResponsiveLayoutState extends State<VehiclePartsResponsiveLayout> {
-
+class _VehiclePartsResponsiveLayoutState
+    extends State<VehiclePartsResponsiveLayout> {
   int allIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -119,7 +119,7 @@ class _VehiclePartsResponsiveLayoutState extends State<VehiclePartsResponsiveLay
                                     itemBuilder: (context, index) {
                                       final item =
                                           partsProvider.currentPageData[index];
-                                       allIndex =
+                                      allIndex =
                                           partsProvider.currentPage *
                                               partsProvider.itemsPerPage +
                                           index;
@@ -148,9 +148,21 @@ class _VehiclePartsResponsiveLayoutState extends State<VehiclePartsResponsiveLay
                                         ? "Submit"
                                         : "Next",
                                     onPress: () {
-                                      context.read<VehiclePartsProvider>().nextStepper(partsProvider.totalPagesForTablet);
-                                      if (partsProvider.currentPage < partsProvider.totalPagesForTablet - 1) {
-                                        context.read<VehiclePartsProvider>().nextPage(partsProvider.totalPagesForTablet - 1,);
+                                      context
+                                          .read<VehiclePartsProvider>()
+                                          .nextStepper(
+                                            partsProvider.totalPagesForTablet,
+                                          );
+                                      if (partsProvider.currentPage <
+                                          partsProvider.totalPagesForTablet -
+                                              1) {
+                                        context
+                                            .read<VehiclePartsProvider>()
+                                            .nextPage(
+                                              partsProvider
+                                                      .totalPagesForTablet -
+                                                  1,
+                                            );
                                       } else {
                                         context.push(InspectionResultScreen());
                                         context
@@ -168,20 +180,31 @@ class _VehiclePartsResponsiveLayoutState extends State<VehiclePartsResponsiveLay
                                       ? "Submit"
                                       : "Next",
                                   onPress: () {
-                                    if(fileProvider.getMedia(allIndex) == null){
-                                      CustomLoader.message("Please upload all required images/video");
-                                    }else{
-                                      context.read<VehiclePartsProvider>().nextStepper(partsProvider.totalPages);
+                                    final error = partsProvider.validateMedia(
+                                      context: context,
+                                    );
 
-                                      if (partsProvider.currentPage < partsProvider.totalPages - 1) {
-                                        context.read<VehiclePartsProvider>().nextPage( partsProvider.totalPages - 1);
+                                    if (error != null) {
+                                      CustomLoader.message(error);
+                                    } else {
+                                      context
+                                          .read<VehiclePartsProvider>()
+                                          .nextStepper(
+                                            partsProvider.totalPages,
+                                          );
+
+                                      if (partsProvider.currentPage <
+                                          partsProvider.totalPages - 1) {
+                                        context
+                                            .read<VehiclePartsProvider>()
+                                            .nextPage(
+                                              partsProvider.totalPages - 1,
+                                            );
                                       } else {
                                         aiMediaUpload(context: context);
-                                        // context.push(InspectionResultScreen());
-                                        // context.read<VehiclePartsProvider>().resetStepper();
                                       }
                                     }
-                                    },
+                                  },
                                 ),
                         ],
                       ),
@@ -194,37 +217,46 @@ class _VehiclePartsResponsiveLayoutState extends State<VehiclePartsResponsiveLay
   }
 
   static Future<void> aiMediaUpload({required BuildContext context}) async {
-    final createController = Provider.of<CreateBulkProvider>(context, listen: false);
-    final classController = Provider.of<VehicleClassProvider>(context, listen: false);
+    final createController = Provider.of<CreateBulkProvider>(
+      context,
+      listen: false,
+    );
+    final classController = Provider.of<VehicleClassProvider>(
+      context,
+      listen: false,
+    );
     final fileController = Provider.of<FileProvider>(context, listen: false);
-    final partsController = Provider.of<VehiclePartsProvider>(context, listen: false);
-    final detailsController = Provider.of<AiInspectionDetailsProvider>(context, listen: false);
+    final partsController = Provider.of<VehiclePartsProvider>(
+      context,
+      listen: false,
+    );
+    final detailsController = Provider.of<AiInspectionDetailsProvider>(
+      context,
+      listen: false,
+    );
 
     List<CreateBulkReqModel> questions = [];
 
-    for(int i = 0; i < partsController.vehiclePartsEntity!.data!.length; i++){
+    for (int i = 0; i < partsController.vehiclePartsEntity!.data!.length; i++) {
       final vehicleParts = partsController.vehiclePartsEntity!.data![i];
       final media = fileController.getMedia(i);
 
       questions.add(
         CreateBulkReqModel(
-            questionId: vehicleParts.questionId.toString(),
-            images:  media?.image != null ? File(media!.image!.path) : null,
-            videos: media?.video != null ? File(media!.video!.path) : null,
+          questionId: vehicleParts.questionId.toString(),
+          images: media?.image != null ? File(media!.image!.path) : null,
+          videos: media?.video != null ? File(media!.video!.path) : null,
         ),
       );
- 
     }
 
     await createController.uploadAIImage(
       registrationNumber: classController.selectedClass!.registrationNo
           .toString(),
-      applicationNumber: classController.selectedClass!.bookingId
-          .toString(),
+      applicationNumber: classController.selectedClass!.bookingId.toString(),
       createdBy: Preferences.getUserId(),
       questions: questions,
-      appointmentId: classController.selectedClass!.appointmentId
-          .toString(),
+      appointmentId: classController.selectedClass!.appointmentId.toString(),
     );
 
     detailsController.setAIMode(true);

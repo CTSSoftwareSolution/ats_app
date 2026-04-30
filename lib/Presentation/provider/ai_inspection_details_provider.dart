@@ -3,11 +3,7 @@ import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../Data/model/request_model/pre_inspection_details_req_model.dart';
-import '../../Data/model/response_model/inspection_que_model.dart';
-import '../../Data/model/response_model/pre_inspection_details_model.dart';
-import '../../Domain/entities/inspection_que_entity.dart';
 import '../../Domain/entities/pre_inspection_details_entity.dart';
 import '../../widgets/custom_loader.dart';
 import 'inspection_form_provider.dart';

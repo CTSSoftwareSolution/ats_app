@@ -6,13 +6,13 @@ import 'package:ats_app/Data/repositories_impl/manual_inspection_list_impl.dart'
 import 'package:ats_app/Data/repositories_impl/pre_save_inspection_impl.dart';
 import 'package:ats_app/Data/repositories_impl/vehicle_class_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/vehicle_parts_repo_impl.dart';
-import 'package:ats_app/Domain/repositories/manual_inspection_repository.dart';
+
 import 'package:ats_app/Domain/usecases/ai_inspection_details_usecases.dart';
 import 'package:ats_app/Domain/usecases/create_bulk_usecases.dart';
 import 'package:ats_app/Domain/usecases/lane_list_usecase.dart';
 import 'package:ats_app/Domain/usecases/login_usecases.dart';
 import 'package:ats_app/Domain/usecases/manual_inspection_list_usecase.dart';
-import 'package:ats_app/Domain/usecases/pre_inspection_result_usecases.dart';
+
 import 'package:ats_app/Domain/usecases/pre_save_inspection_usecase.dart';
 import 'package:ats_app/Domain/usecases/vehicle_parts_usecases.dart';
 import 'package:ats_app/Presentation/provider/create_bulk_provider.dart';
@@ -20,7 +20,7 @@ import 'package:ats_app/Presentation/provider/inspection_form_provider.dart';
 import 'package:ats_app/Presentation/provider/inspection_result_provider.dart';
 import 'package:ats_app/Presentation/provider/login_provider.dart';
 import 'package:ats_app/Presentation/provider/permission_provider.dart';
-import 'package:ats_app/Presentation/provider/pre_inspection_result_provider.dart';
+
 import 'package:ats_app/Presentation/provider/splash_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_parts_provider.dart';
@@ -34,7 +34,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Data/repositories_impl/document_manual_doc_impl.dart';
 import '../../Data/repositories_impl/inspection_que_impl.dart';
-import '../../Domain/repositories/pre_inspection_result_repository.dart';
+
 import '../../Domain/usecases/document_manual_doc_usecase.dart';
 import '../../Domain/usecases/inspection_que_usecases.dart';
 import '../../Domain/usecases/vehicle_class_usecases.dart';

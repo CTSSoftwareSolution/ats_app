@@ -2,6 +2,7 @@ import 'package:ats_app/Data/model/response_model/vehicle_parts_res_model.dart';
 import 'package:ats_app/Domain/entities/vehicle_parts_entity.dart';
 import 'package:ats_app/Domain/usecases/vehicle_parts_usecases.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
+import 'package:ats_app/image_processing/MediaPicker/file_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../Data/model/request_model/vehicle_parts_req_model.dart';
@@ -21,7 +22,9 @@ class VehiclePartsProvider extends ChangeNotifier {
   int currentPage = 0;
   int itemsPerPage = 2;
   int currentStep = 0;
-  int get totalPages => (vehiclePartsEntity!.data!.length / itemsPerPage).ceil();
+
+  int get totalPages =>
+      (vehiclePartsEntity!.data!.length / itemsPerPage).ceil();
 
   int _itemsPerPageForTablet = 4;
 
@@ -32,9 +35,9 @@ class VehiclePartsProvider extends ChangeNotifier {
   }
 
   int get itemsPerPageForTablet => _itemsPerPageForTablet;
+
   int get totalPagesForTablet =>
       (vehiclePartsEntity!.data!.length / _itemsPerPageForTablet).ceil();
-
 
 
   void resetPage() {
@@ -112,7 +115,7 @@ class VehiclePartsProvider extends ChangeNotifier {
         vehicleClass: classProvider.selectedClass!.vehicleCategory,
       );
       vehiclePartsEntity = await vehiclePartsUseCases.execute(
-        vehiclePartsReqModel
+          vehiclePartsReqModel
       );
       return vehiclePartsEntity;
     } catch (e) {
@@ -122,6 +125,46 @@ class VehiclePartsProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+    return null;
+  }
+
+  String? validateMedia({required BuildContext context}) {
+    final fileProvider = Provider.of<FileProvider>(context, listen: false,);
+    for (int i = 0; i < currentPageData.length; i++) {
+      final parts = currentPageData[i];
+      final globalIndex = currentPage *itemsPerPage+i;
+      final media = fileProvider.getMedia(globalIndex);
+
+      final partName = parts.vehiclePartName;
+
+      switch (parts.type) {
+        case 1:
+          if (media?.image == null) {
+            return "Please upload image for $partName";
+          }
+          break;
+
+        case 2:
+          if (media?.video == null) {
+            return "Please upload video for $partName";
+          }
+          break;
+
+        case 3:
+          if (media?.image == null) {
+            return "Please upload image for $partName";
+          }
+          if(media?.video == null){
+            return "Please upload video for $partName";
+          }
+          break;
+
+        default:
+          return "Invalid media type for $partName";
+
+      }
+    }
+
     return null;
   }
 }

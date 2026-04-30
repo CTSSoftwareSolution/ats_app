@@ -1,4 +1,3 @@
-import 'package:ats_app/Data/model/request_model/pre_ins_details_req_model.dart';
 import 'package:ats_app/Data/model/request_model/pre_inspection_details_req_model.dart';
 import 'package:ats_app/Domain/repositories/ai_inspection_details_repository.dart';
 

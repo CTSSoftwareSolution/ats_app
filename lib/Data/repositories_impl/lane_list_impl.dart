@@ -1,12 +1,6 @@
-
-import 'package:ats_app/Data/model/response_model/inspection_que_model.dart';
 import 'package:ats_app/Data/model/response_model/lane_list_model.dart';
-import 'package:ats_app/Domain/entities/inspection_que_entity.dart';
 import 'package:ats_app/Domain/entities/lane_list_entity.dart';
-import 'package:ats_app/Domain/repositories/inspection_que_repository.dart';
 import 'package:ats_app/Domain/repositories/lane_list_repository.dart';
-import 'package:flutter/cupertino.dart';
-
 import '../../Core/network/api_services.dart';
 import '../../Core/network/services.dart';
 

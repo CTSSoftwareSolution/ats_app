@@ -175,7 +175,7 @@ class ApiService {
     return responseBody;
   }
 
-  /// Pre Save Inspection
+  /// Manual Pre Save Inspection
   static Future<Map<String, dynamic>?> preSaveInspectionMultipartUpload({
     required String appointmentId,
     required String inspectedBy,
@@ -289,6 +289,65 @@ class ApiService {
     final response = await http.Response.fromStream(streamedResponse);
     if (kDebugMode) {
       alice.onHttpResponse(response, body: request.fields);
+    }
+
+    final responseBody = await compute(_decodeResponse, response.bodyBytes);
+    return responseBody;
+  }
+
+  /// Machine Pre Save Inspection
+  static Future<Map<String, dynamic>?> aiSaveInspectionMultipartUpload({
+    required String appointmentId,
+    required String inspectedBy,
+    required String vehicleId,
+    required List<InspectionPreSaveReqModel> inspections,
+    required String apiUrl,
+  }) async {
+    Map<String, String> headers = {
+      HttpHeaders.authorizationHeader: 'Bearer ${Preferences.getToken()}',
+    };
+    final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+    request.headers.addAll(headers);
+    request.fields['appointment_id'] = appointmentId;
+    request.fields['vehicle_id'] = vehicleId;
+    request.fields['inspected_by'] = inspectedBy;
+    for (int i = 0; i < inspections.length; i++) {
+      final item = inspections[i];
+      request.fields['inspections[$i].question_id'] = item.questionId;
+      request.fields['inspections[$i].inspection_result'] =
+          item.inspectionResult;
+      request.fields['inspections[$i].severity_level'] = item.severityLevel;
+      request.fields['inspections[$i].remarks'] = item.remarks;
+      final image = item.image1;
+      if (image != null && image.path.isNotEmpty && await image.exists()) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'inspections[$i].image1',
+            image.path,
+            contentType: MediaType('image', 'jpeg'),
+          ),
+        );
+        debugPrint('✅ Image sent [$i]: ${image.path}');
+      } else {
+        debugPrint('⏭️ No image for [$i]: ${item.questionId}');
+      }
+    }
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    if (kDebugMode) {
+      alice.onHttpResponse(response, body: request.fields);
+    }
+
+    if (response.statusCode == 401) {
+
+      await Preferences.clear();
+
+      navigatorKey.currentState?.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => LoginScreen()),
+            (route) => false,
+      );
+
+      return {};
     }
 
     final responseBody = await compute(_decodeResponse, response.bodyBytes);

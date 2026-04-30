@@ -1,11 +1,5 @@
-
-
-
 import 'package:ats_app/Presentation/screens/manual_inspection_images/DocumentManualDocModels.dart';
-
 import 'package:ats_app/Presentation/screens/manual_inspection_images/DocumentManualDocResModels.dart';
-import 'package:flutter/cupertino.dart';
-
 import '../../Core/network/api_services.dart';
 import '../../Core/network/services.dart';
 import '../../Domain/entities/document_manual_doc_entity.dart';

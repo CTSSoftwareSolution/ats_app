@@ -1,5 +1,4 @@
 import 'package:ats_app/Domain/entities/create_bulk_entity.dart';
-
 import '../../Data/model/request_model/create_bulk_req_model.dart';
 
 abstract class CreateBulkRepository {

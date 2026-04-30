@@ -71,6 +71,7 @@ class ConfirmationDialog {
                         onPressed: () async {
                           Navigator.pop(context);
                           if (isComplete) {
+
                             preInspectionSaveAPI(context: context);
                           //  await typeProvider.saveResultApi(context);
                           }
