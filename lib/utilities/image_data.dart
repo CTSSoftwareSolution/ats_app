@@ -45,6 +45,7 @@ const carNumberPlateImage = "assets/car_number_plate.png";
 const stopIconImage = "assets/stop.png";
 const circleIconImage = "assets/circle.png";
 const playIconImage = "assets/play.png";
+const viewIconImage = "assets/view.png";
 const pictureUploadImage = "assets/picture_upload.png";
 const videoUploadImage = "assets/video_upload.png";
 

@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../image_processing/MediaPicker/file_provider.dart';
+import 'image_dialog_box.dart';
 
 class UploadImageContainer extends StatelessWidget {
   final VoidCallback onTap;
@@ -129,6 +130,35 @@ class UploadImageContainer extends StatelessWidget {
                 ),
               ),
             ),
+            if (!isVideo)
+              Positioned(
+                top: 10,
+                right: 10,
+                child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => ImageDialogBox(path: mediaFile.path),
+                    );
+                  },
+                  child:  Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.90),
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.12),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: CustomImage(image: viewIconImage,scale: 30, color: appColor,)
+                  ),
+                ),
+              ),
             Positioned(
               bottom: 10,
               right: 10,
