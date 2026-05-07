@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import '../../../../utilities/color_data.dart';
 import '../../../../utilities/image_data.dart';
+import '../../../../utilities/preferences.dart';
 import '../../../../widgets/custom_image.dart';
 
 class BuildHeaderHome extends StatelessWidget {
@@ -49,6 +49,27 @@ class BuildHeaderHome extends StatelessWidget {
                   color: Colors.white.withOpacity(0.75),
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+                child: Row(
+                  children: [
+                     Icon(
+                      Icons.location_on,
+                      color: Colors.white.withOpacity(0.75),
+                      size: 18,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      Preferences.getLocation(),
+                      style:  TextStyle(
+                        color: Colors.white.withOpacity(0.75),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

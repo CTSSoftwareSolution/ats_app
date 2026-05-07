@@ -1,12 +1,10 @@
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_shimmer.dart';
 import 'package:ats_app/utilities/color_data.dart';
-import 'package:ats_app/widgets/custom_text.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
-import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_bottomsheet.dart';
 import '../../provider/manual_inspection_list_provider.dart';
 import '../../provider/vehicle_class_provider.dart';

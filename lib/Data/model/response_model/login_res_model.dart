@@ -1,4 +1,4 @@
-import 'package:ats_app/Domain/entities/login_entity.dart';
+import '../../../Domain/entities/login_entity.dart';
 
 class LoginResModel extends LoginEntity{
   LoginResModel({
@@ -62,12 +62,14 @@ class LoginDataModel {
       bool? mustChangePassword, 
       List<String>? roles, 
       String? userFullName, 
-      String? userId,}){
+      String? userId, 
+      String? location,}){
     _accessToken = accessToken;
     _mustChangePassword = mustChangePassword;
     _roles = roles;
     _userFullName = userFullName;
     _userId = userId;
+    _location = location;
 }
 
   LoginDataModel.fromJson(dynamic json) {
@@ -76,28 +78,33 @@ class LoginDataModel {
     _roles = json['roles'] != null ? json['roles'].cast<String>() : [];
     _userFullName = json['user_full_name'];
     _userId = json['user_id'];
+    _location = json['location'];
   }
   String? _accessToken;
   bool? _mustChangePassword;
   List<String>? _roles;
   String? _userFullName;
   String? _userId;
+  String? _location;
   LoginDataModel copyWith({  String? accessToken,
   bool? mustChangePassword,
   List<String>? roles,
   String? userFullName,
   String? userId,
+  String? location,
 }) => LoginDataModel(  accessToken: accessToken ?? _accessToken,
   mustChangePassword: mustChangePassword ?? _mustChangePassword,
   roles: roles ?? _roles,
   userFullName: userFullName ?? _userFullName,
   userId: userId ?? _userId,
+  location: location ?? _location,
 );
   String? get accessToken => _accessToken;
   bool? get mustChangePassword => _mustChangePassword;
   List<String>? get roles => _roles;
   String? get userFullName => _userFullName;
   String? get userId => _userId;
+  String? get location => _location;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -106,6 +113,7 @@ class LoginDataModel {
     map['roles'] = _roles;
     map['user_full_name'] = _userFullName;
     map['user_id'] = _userId;
+    map['location'] = _location;
     return map;
   }
 

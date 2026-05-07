@@ -56,7 +56,7 @@ class LoginProvider extends ChangeNotifier {
           Preferences.setUserId(value.data!.userId.toString());
           Preferences.setToken(value.data!.accessToken.toString());
           Preferences.setName(value.data!.userFullName.toString());
-          // Preferences.setEmail(value.data![0].email.toString());
+          Preferences.setLocation(value.data!.location.toString());
           // Preferences.setImage(value.data![0].imageUpload.toString());
           navigationProvider.updateIndex(0);
           context.push(BottomNavigationBarScreen());
