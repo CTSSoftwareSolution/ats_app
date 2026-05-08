@@ -1,4 +1,5 @@
 import 'package:ats_app/Data/repositories_impl/ai_inspection_details_repo_impl.dart';
+import 'package:ats_app/Data/repositories_impl/ai_update_result_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/create_bulk_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/lane_list_impl.dart';
 import 'package:ats_app/Data/repositories_impl/login_repo_impl.dart';
@@ -15,6 +16,7 @@ import 'package:ats_app/Domain/usecases/manual_inspection_list_usecase.dart';
 
 import 'package:ats_app/Domain/usecases/pre_save_inspection_usecase.dart';
 import 'package:ats_app/Domain/usecases/vehicle_parts_usecases.dart';
+import 'package:ats_app/Presentation/provider/ai_update_result_provider.dart';
 import 'package:ats_app/Presentation/provider/create_bulk_provider.dart';
 import 'package:ats_app/Presentation/provider/inspection_form_provider.dart';
 import 'package:ats_app/Presentation/provider/inspection_result_provider.dart';
@@ -35,6 +37,7 @@ import 'package:provider/provider.dart';
 import '../../Data/repositories_impl/document_manual_doc_impl.dart';
 import '../../Data/repositories_impl/inspection_que_impl.dart';
 
+import '../../Domain/usecases/ai_update_result_usecases.dart';
 import '../../Domain/usecases/document_manual_doc_usecase.dart';
 import '../../Domain/usecases/inspection_que_usecases.dart';
 import '../../Domain/usecases/vehicle_class_usecases.dart';
@@ -73,6 +76,7 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => VehiclePartsProvider(vehiclePartsUseCases: VehiclePartsUseCases(vehiclePartsRepository: VehiclePartsRepoImpl()))),
         ChangeNotifierProvider(create: (_) => CreateBulkProvider( useCases : CreateBulkUseCases(repository: CreateBulkRepoImpl()))),
         ChangeNotifierProvider(create: (_) => AiInspectionDetailsProvider( aiInspectionDetailsUseCases : AIInspectionDetailsUseCases( detailsRepository: AIInspectionDetailsRepoImpl()))),
+        ChangeNotifierProvider(create: (_) => AiUpdateResultProvider( resultUseCases : AiUpdateResultUseCases( aiUpdateResultRepository: AiUpdateResultRepoImpl()))),
 
       ],
       child: const MyApp(),

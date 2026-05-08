@@ -43,6 +43,7 @@ String get vehiclePartsUrl           => "${newBaseUrl}vehicle-parts-master/getVe
 String get createBulkUrl           => "${newBaseUrl}queue/create-bulk";
 String get aiPreInspectionDetailsUrl           => "${newBaseUrl}Inspection/ai-preinspection-details";
 String get aiSavePreInspection           => "${newBaseUrl}Inspection/save-ai-pre-inspection";
+String get aiUpdateQuestionResultUrl           => "${newBaseUrl}Inspection/update-ai-inspection-result-questionwise";
 
 
 const String awsSignedUrl = "https://erpapi.sgbregistration.in/v1/File_upload/getsignedurlsgb";

@@ -154,6 +154,7 @@ class CategoryCard extends StatelessWidget {
                         questionIndex: entry.key,
                         accentColor: section.color,
                         isLast: entry.key == cat.questions.length - 1,
+
                       );
                     }),
                   ],

@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../../Core/network/services.dart';
 import '../../../../aws_images/aws_signedurl_provider.dart';
 import '../../../../image_processing/MediaPicker/file_provider.dart';
+import '../../../../utilities/change_status_bottom_sheet.dart';
 import '../../../provider/ai_inspection_details_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../camera_page/camera_screen.dart';
@@ -105,8 +106,10 @@ class _QuestionTileState extends State<QuestionTile> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
+    final aiDetailsProvider = context.watch<AiInspectionDetailsProvider>();
     final isReadOnly = context.watch<AiInspectionDetailsProvider>().isAIModeOn;
     return Consumer<InspectionFormProvider>(
       builder: (context, provider, _) {
@@ -122,13 +125,13 @@ class _QuestionTileState extends State<QuestionTile> {
         provider.registerQuestionKey(origSec, origCat, origQue, _tileKey);
 
         final isNo = question.answer == AnswerState.Fail;
-        final isYes = question.answer == AnswerState.Pass;
+        var isYes = question.answer == AnswerState.Pass;
 
         return AnimatedContainer(
           key: _tileKey,
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: isReadOnly ? Colors.grey.shade200 : ( isNo ? Colors.red.shade50 : isYes ? Colors.green.shade50 :  Colors.transparent),
+            color: isReadOnly ? Colors.grey.shade100 : ( isNo ? Colors.red.shade50 : isYes ? Colors.green.shade50 :  Colors.transparent),
             border: widget.isLast
                 ? null
                 : Border(
@@ -177,39 +180,80 @@ class _QuestionTileState extends State<QuestionTile> {
               // isReadOnly ?
               // _buildAnswerDisplay(question.answer) :
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AnswerButton(
-                    label: '✓  Yes',
-                    selected: isYes,
-                    selectedColor: isReadOnly ? Colors.grey :Colors.green,
-                    onTap: isReadOnly ? null :
-                  () {
-                      provider.answerQuestion(
-                        sectionIndex: origSec,
-                        categoryIndex: origCat,
-                        questionIndex: origQue,
-                        answer: AnswerState.Pass,
-                      );
-                      // Auto-scroll to next unanswered question
-                      _scrollToNext(provider, origSec, origCat, origQue);
-                    },
+                  Row(
+                    children: [
+                      AnswerButton(
+                        label: '✓  Yes',
+                        selected: isYes,
+                        selectedColor: isReadOnly ? Colors.grey :Colors.green,
+                        onTap: isReadOnly ? null :
+                      () {
+                          provider.answerQuestion(
+                            sectionIndex: origSec,
+                            categoryIndex: origCat,
+                            questionIndex: origQue,
+                            answer: AnswerState.Pass,
+                          );
+                          // Auto-scroll to next unanswered question
+                          _scrollToNext(provider, origSec, origCat, origQue);
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      AnswerButton(
+                        label: '✗  No',
+                        selected: isNo,
+                        selectedColor:isReadOnly ? Colors.grey : Colors.red,
+                        onTap: isReadOnly ? null :
+                            () {
+                          provider.answerQuestion(
+                            sectionIndex: origSec,
+                            categoryIndex: origCat,
+                            questionIndex: origQue,
+                            answer: AnswerState.Fail,
+                          );
+                          // No auto-scroll on Fail — user must fill remark/image
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  AnswerButton(
-                    label: '✗  No',
-                    selected: isNo,
-                    selectedColor:isReadOnly ? Colors.grey : Colors.red,
-                    onTap: isReadOnly ? null :
-                        () {
-                      provider.answerQuestion(
-                        sectionIndex: origSec,
-                        categoryIndex: origCat,
-                        questionIndex: origQue,
-                        answer: AnswerState.Fail,
+                  aiDetailsProvider.isAIModeOn ?
+                  GestureDetector(
+                    onTap: (){
+                      aiDetailsProvider.setSelectedQueId(int.parse(question.carData.questionId.toString()));
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) => ChangeStatusSheet(
+                          isPass: isYes,
+                          onSubmit: (v) => setState(() => isYes = v),
+                        ),
                       );
-                      // No auto-scroll on Fail — user must fill remark/image
                     },
-                  ),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: widget.accentColor.withValues(alpha:0.10),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color:  widget.accentColor,
+                          width:  1,
+                        ),
+                      ),
+                      child: Text(
+                        "Change Status",
+                        style: TextStyle(
+                          color: widget.accentColor,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  )
+                      : SizedBox.shrink()
                 ],
               ),
               AnimatedCrossFade(

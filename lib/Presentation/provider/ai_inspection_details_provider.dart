@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Data/model/request_model/pre_inspection_details_req_model.dart';
+import '../../Data/model/response_model/pre_inspection_details_model.dart';
 import '../../Domain/entities/pre_inspection_details_entity.dart';
 import '../../widgets/custom_loader.dart';
 import 'inspection_form_provider.dart';
@@ -19,6 +20,13 @@ class AiInspectionDetailsProvider extends ChangeNotifier{
 
   bool isAIMode = false;
   bool get isAIModeOn => isAIMode;
+
+  int? questionId;
+  int? get selectedQueId => questionId;
+  void setSelectedQueId(int queId) {
+    questionId = queId;
+    notifyListeners();
+  }
 
   void setAIMode(bool value) {
     isAIMode = value;
