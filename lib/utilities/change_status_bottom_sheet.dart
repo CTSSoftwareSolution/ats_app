@@ -1,6 +1,8 @@
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../Presentation/provider/ai_inspection_details_provider.dart';
 import '../Presentation/provider/ai_update_result_provider.dart';
 
 // ── Bottom Sheet ─────────────────────────────────────────────
@@ -20,8 +22,10 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
   void initState() {
     super.initState();
     final updateResultProvider = Provider.of<AiUpdateResultProvider>(context,listen: false);
+    final detailsProvider = Provider.of<AiInspectionDetailsProvider>(context,listen: false);
     debugPrint("Status : ${widget.isPass}");
-    updateResultProvider.toPass = !widget.isPass;
+    debugPrint("selectedQuestionId : ${detailsProvider.selectedQueId}");
+    updateResultProvider.toPass = false;
     updateResultProvider.ctrl.addListener(() => setState(() => updateResultProvider.chars = updateResultProvider.ctrl.text.length));
 
   }
@@ -58,7 +62,11 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
     final updateResultProvider = context.watch<AiUpdateResultProvider>();
     final kb = MediaQuery.of(context).viewInsets.bottom;
     final accent = updateResultProvider.toPass ? Color(0xFF007AFF) : Color(0xFFE74C3C);
-
+    // final bool currentStatus =
+    // updateResultProvider.toPass
+    //     ? !widget.isPass
+    //     : widget.isPass;
+    final status = widget.isPass ? "Fail" : "Pass";
     return AnimatedPadding(
       duration: const Duration(milliseconds: 280),
       curve: Curves.easeOutCubic,
@@ -119,7 +127,7 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
                 const SizedBox(height: 10),
                 Row(children: [
                   Expanded(
-                    child: Text('Change to ${updateResultProvider.toPass ? "Pass" : "Fail"}',
+                    child: Text('Change to $status',
                         style: const TextStyle(fontSize: 16,
                             fontWeight: FontWeight.w700, color: Color(0xFF1C1C1E))),
                   ),
@@ -127,24 +135,24 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
                     value: updateResultProvider.toPass,
                     onChanged: (v) {
 
-                      updateResultProvider.toPass = v;
+                     updateResultProvider.toPass = v;
+                     final bool changedStatus =
+                     v ? !widget.isPass : widget.isPass;
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          duration: const Duration(seconds: 1),
-                          content: Text(
-                            v ? 'Selected: Pass' : 'Selected: Fail',
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          backgroundColor:
-                          v ? const Color(0xFF27AE60) : const Color(0xFFE74C3C),
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          margin: const EdgeInsets.all(16),
-                        ),
-                      );
+                     ScaffoldMessenger.of(context).showSnackBar(
+                       SnackBar(
+                         duration: const Duration(seconds: 1),
+                         content: Text(
+                           'Selected: ${changedStatus ? "Pass" : "Fail"}',
+                           style: const TextStyle(
+                             fontWeight: FontWeight.w600,
+                           ),
+                         ),
+                         backgroundColor: changedStatus
+                             ? const Color(0xFF27AE60)
+                             : const Color(0xFFE74C3C),
+                       ),
+                     );
                     },
                   ),
                 ]),
@@ -210,7 +218,14 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
                 const SizedBox(width: 10),
                 Expanded(child: _PrimaryButton(
                     label: 'Submit', color: accent, onTap: (){
-                  updateResultProvider.aiUpdateResult(context);
+                  final bool finalStatus =
+                  updateResultProvider.toPass
+                      ? !widget.isPass
+                      : widget.isPass;
+                  updateResultProvider.aiUpdateResult(context, finalStatus);
+                  context.pop();
+                  updateResultProvider.ctrl.clear();
+                  updateResultProvider.toPass = false;
                 })),
               ]),
             ),

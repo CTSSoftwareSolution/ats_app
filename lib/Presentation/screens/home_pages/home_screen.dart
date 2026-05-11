@@ -1,3 +1,4 @@
+import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dart';
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_shimmer.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:extensions_pro/extensions_pro.dart';
@@ -9,6 +10,7 @@ import '../../../widgets/custom_bottomsheet.dart';
 import '../../provider/manual_inspection_list_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../manual_inspection_images/manual_inspection_image_screen.dart';
+import '../pre_inspection_form/inspection_page/inspection_page.dart';
 import '../vehicle_test_parameter/vehicle_parts_screen.dart';
 import '../vehicles_class_page/vehicle_class_screen_item.dart';
 import 'home_widgets/buildHeaderHome.dart';
@@ -47,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<VehicleClassProvider>();
     final fileProvider = context.watch<FileProvider>();
+    final detailsProvider = context.watch<AiInspectionDetailsProvider>();
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FB),
       body: SafeArea(
@@ -97,7 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (value == 'Manual Inspection') {
                               context.push(ManualInspectionImageScreen());
                             } else {
-                              context.push(VehiclePartsScreen());
+                             // context.push(VehiclePartsScreen());
+                              detailsProvider.setAIMode(true);
+                              context.push(InspectionPage());
                             }
                           },
                         );

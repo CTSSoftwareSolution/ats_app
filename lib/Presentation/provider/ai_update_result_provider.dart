@@ -27,7 +27,7 @@ class AiUpdateResultProvider extends ChangeNotifier{
   final ctrl = TextEditingController();
   int chars = 0;
 
-  Future<AiUpdateResultEntity?> aiUpdateResult(BuildContext context) async{
+  Future<AiUpdateResultEntity?> aiUpdateResult(BuildContext context, bool statusResult) async{
     final classProvider = Provider.of<VehicleClassProvider>(context,listen: false);
     final detailsProvider = Provider.of<AiInspectionDetailsProvider>(context,listen: false);
     try{
@@ -38,7 +38,7 @@ class AiUpdateResultProvider extends ChangeNotifier{
         vehicleNo: classProvider.selectedClass?.registrationNo,
         appointmentId: classProvider.selectedClass?.appointmentId,
         questionId: detailsProvider.selectedQueId,
-        aiInspectionResult: "",
+        aiInspectionResult: statusResult == true ? "Pass" : "Fail",
         aiRemark: ctrl.text
       );
       aiUpdateResultEntity = await  resultUseCases.execute(updateResultReqModel);
