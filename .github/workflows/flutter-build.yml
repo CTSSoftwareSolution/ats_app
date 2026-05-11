@@ -1,5 +1,6 @@
-name: Flutter Build APK (Debug - Fixed)
+name: Flutter Build APK
 
+# Trigger the workflow on pushes to main or maithil branch
 on:
   push:
     branches: [ main, maithil ]
@@ -9,30 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
+      # 1. Checkout the code
       - uses: actions/checkout@v3
 
-      # 2. Setup Flutter
+      # 2️. Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: 'stable'
 
-      # 3. Accept Android licenses
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses || true
-
-      # 4. Install dependencies
-      - name: Get Flutter dependencies
+      # 3️. Install dependencies
+      - name: Get dependencies
         run: flutter pub get
 
-      # 5. Build debug APK
+      # 4️. Build debug APK (faster, ensures workflow works)
       - name: Build Debug APK
         run: flutter build apk --debug
 
-      # 6. Upload debug APK
-      - name: Upload Debug APK
+      # 5️. Build release APK
+      - name: Build Release APK
+        run: flutter build apk --release
+
+      # 6️. Upload both APKs as artifacts
+      - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
-          name: flutter-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          name: flutter-apks
+          path: |
+            build/app/outputs/flutter-apk/app-debug.apk
+            build/app/outputs/flutter-apk/app-release.apk
