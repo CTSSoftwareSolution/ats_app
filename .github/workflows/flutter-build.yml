@@ -3,7 +3,7 @@ name: Flutter Build APK
 # Trigger the workflow on pushes to any branch
 on:
   push:
-    branches: [ main. maithil ]   # or replace 'main' with your default branch
+    branches: [ main, maithil ]   # or replace 'main' with your default branch
 
 jobs:
   build:
