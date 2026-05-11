@@ -1,6 +1,6 @@
 name: Flutter Build APK
 
-# Trigger the workflow on pushes to main or maithil branch
+# Trigger the workflow on pushes to main or maithil or master branch
 on:
   push:
     branches: [ main, maithil, master ]
