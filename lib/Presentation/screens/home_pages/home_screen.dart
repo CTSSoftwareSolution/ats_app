@@ -100,9 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (value == 'Manual Inspection') {
                               context.push(ManualInspectionImageScreen());
                             } else {
-                             // context.push(VehiclePartsScreen());
-                              detailsProvider.setAIMode(true);
-                              context.push(InspectionPage());
+                             context.push(VehiclePartsScreen());
                             }
                           },
                         );

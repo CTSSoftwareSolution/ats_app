@@ -36,36 +36,11 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
     updateResultProvider.ctrl.dispose(); super.dispose();
   }
 
-  // void _submit() {
-  //   widget.onSubmit(toPass);
-  //
-  //   Navigator.pop(context);
-  //
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Text(
-  //         'Status updated to ${_toPass ? "Pass" : "Fail"}',
-  //         style: const TextStyle(fontWeight: FontWeight.w500),
-  //       ),
-  //       backgroundColor: const Color(0xFF1C1C1E),
-  //       behavior: SnackBarBehavior.floating,
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(12),
-  //       ),
-  //       margin: const EdgeInsets.all(16),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     final updateResultProvider = context.watch<AiUpdateResultProvider>();
     final kb = MediaQuery.of(context).viewInsets.bottom;
     final accent = updateResultProvider.toPass ? Color(0xFF007AFF) : Color(0xFFE74C3C);
-    // final bool currentStatus =
-    // updateResultProvider.toPass
-    //     ? !widget.isPass
-    //     : widget.isPass;
     final status = widget.isPass ? "Fail" : "Pass";
     return AnimatedPadding(
       duration: const Duration(milliseconds: 280),
@@ -136,23 +111,23 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
                     onChanged: (v) {
 
                      updateResultProvider.toPass = v;
-                     final bool changedStatus =
-                     v ? !widget.isPass : widget.isPass;
+                     // final bool changedStatus =
+                     // v ? !widget.isPass : widget.isPass;
 
-                     ScaffoldMessenger.of(context).showSnackBar(
-                       SnackBar(
-                         duration: const Duration(seconds: 1),
-                         content: Text(
-                           'Selected: ${changedStatus ? "Pass" : "Fail"}',
-                           style: const TextStyle(
-                             fontWeight: FontWeight.w600,
-                           ),
-                         ),
-                         backgroundColor: changedStatus
-                             ? const Color(0xFF27AE60)
-                             : const Color(0xFFE74C3C),
-                       ),
-                     );
+                     // ScaffoldMessenger.of(context).showSnackBar(
+                     //   SnackBar(
+                     //     duration: const Duration(seconds: 1),
+                     //     content: Text(
+                     //       'Selected: ${changedStatus ? "Pass" : "Fail"}',
+                     //       style: const TextStyle(
+                     //         fontWeight: FontWeight.w600,
+                     //       ),
+                     //     ),
+                     //     backgroundColor: changedStatus
+                     //         ? const Color(0xFF27AE60)
+                     //         : const Color(0xFFE74C3C),
+                     //   ),
+                    // );
                     },
                   ),
                 ]),
