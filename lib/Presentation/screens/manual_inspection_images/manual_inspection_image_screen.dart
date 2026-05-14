@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dart';
 import 'package:ats_app/Presentation/screens/manual_inspection_images/DocumentManualDocModels.dart';
 import 'package:ats_app/Presentation/screens/manual_inspection_images/manual_ins_image_provider.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
@@ -53,6 +54,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     final cameraController = Provider.of<FileProvider>(context, listen: false);
     final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
     final location = Provider.of<LocationProvider>(context, listen: false);
+    final detailsProvider = Provider.of<AiInspectionDetailsProvider>(context, listen: false);
 
     List<DocumentManualDocModels> docs = [];
     for (int i = 0; i < cameraController.mediaFile.length; i++) {
@@ -86,6 +88,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
 
     //cameraController.clearAll();
     if(!mounted) return;
+    detailsProvider.setAIMode(false);
     context.push(InspectionPage(isEditMode: false,));
       //context.push(VehiclePartsScreen());
   }

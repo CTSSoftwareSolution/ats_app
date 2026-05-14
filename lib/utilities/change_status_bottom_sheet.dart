@@ -30,15 +30,16 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
 
   }
 
-  @override
-  void dispose() {
-    final updateResultProvider = Provider.of<AiUpdateResultProvider>(context,listen: false);
-    updateResultProvider.ctrl.dispose(); super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   final updateResultProvider = Provider.of<AiUpdateResultProvider>(context,listen: false);
+  //   updateResultProvider.ctrl.dispose(); super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
     final updateResultProvider = context.watch<AiUpdateResultProvider>();
+    final detailsProvider = context.watch<AiInspectionDetailsProvider>();
     final kb = MediaQuery.of(context).viewInsets.bottom;
     final accent = updateResultProvider.toPass ? Color(0xFF007AFF) : Color(0xFFE74C3C);
     final status = widget.isPass ? "Fail" : "Pass";
@@ -192,15 +193,15 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(child: _PrimaryButton(
-                    label: 'Submit', color: accent, onTap: (){
+                    label: 'Submit', color: accent, onTap: () async {
                   final bool finalStatus =
                   updateResultProvider.toPass
                       ? !widget.isPass
                       : widget.isPass;
                   updateResultProvider.aiUpdateResult(context, finalStatus);
-                  context.pop();
-                  updateResultProvider.ctrl.clear();
-                  updateResultProvider.toPass = false;
+
+                  // updateResultProvider.ctrl.clear();
+                  // updateResultProvider.toPass = false;
                 })),
               ]),
             ),

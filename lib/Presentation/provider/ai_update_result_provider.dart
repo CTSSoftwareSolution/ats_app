@@ -2,6 +2,7 @@ import 'package:ats_app/Data/model/request_model/ai_update_result_req_model.dart
 import 'package:ats_app/Domain/entities/ai_update_result_entity.dart';
 import 'package:ats_app/Domain/usecases/ai_update_result_usecases.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
@@ -42,6 +43,9 @@ class AiUpdateResultProvider extends ChangeNotifier{
         aiRemark: ctrl.text
       );
       aiUpdateResultEntity = await  resultUseCases.execute(updateResultReqModel);
+      await detailsProvider.aiInspectionDetails(context);
+      context.pop();
+      return aiUpdateResultEntity;
     }catch (e){
       aiUpdateResultEntity = null;
     } finally {

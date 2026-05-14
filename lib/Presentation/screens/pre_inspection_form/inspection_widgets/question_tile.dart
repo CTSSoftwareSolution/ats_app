@@ -260,7 +260,7 @@ class _QuestionTileState extends State<QuestionTile> {
                 duration: const Duration(milliseconds: 300),
                 crossFadeState:
                // isNo || isYes ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-                isNo ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                (!aiDetailsProvider.isAIModeOn && isNo) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
                 firstChild: const SizedBox.shrink(),
                 secondChild: Padding(
                   padding: const EdgeInsets.only(top: 12),

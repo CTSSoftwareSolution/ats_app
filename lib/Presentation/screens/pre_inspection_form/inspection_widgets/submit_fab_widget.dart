@@ -1,6 +1,8 @@
+import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/confirmation_dialog.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/validation_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 
 
@@ -15,6 +17,7 @@ class SubmitFAB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final questionsWithNoButNoImage = _validateQuestionsWithNoAnswer();
+    final detailsProvider = context.watch<AiInspectionDetailsProvider>();
     return FloatingActionButton.extended(
       onPressed: () => _handleSubmit(context),
       backgroundColor:
@@ -24,7 +27,8 @@ class SubmitFAB extends StatelessWidget {
         provider.isFullyComplete ? Icons.check_circle : Icons.send_rounded,
         color: Colors.white,
       ),
-      label: questionsWithNoButNoImage.isNotEmpty?   Text(
+      label: (questionsWithNoButNoImage.isNotEmpty && !detailsProvider.isAIMode) ?
+      Text(
         provider.isFullyComplete
             ? 'Report is not ready'
             : '${provider.grandTotalAnswered}/${provider.grandTotalQuestions} Answered',
@@ -49,12 +53,16 @@ class SubmitFAB extends StatelessWidget {
 
   Future<void> _handleSubmit(BuildContext context) async {
     final questionsWithNoButNoImage = _validateQuestionsWithNoAnswer();
+    final detailsProvider = Provider.of<AiInspectionDetailsProvider>(context,listen: false);
+
+    if(!detailsProvider.isAIMode){
     if (questionsWithNoButNoImage.isNotEmpty) {
       ValidationDialog.show(
         context: context,
         questions: questionsWithNoButNoImage,
       );
       return;
+    }
     }
     // Show confirmation dialog if validation passes
     final isComplete = provider.isFullyComplete;
