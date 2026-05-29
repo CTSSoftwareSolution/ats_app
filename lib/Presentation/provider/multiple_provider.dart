@@ -34,9 +34,11 @@ import 'package:ats_app/aws_images/aws_usecase.dart';
 import 'package:ats_app/location/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../Data/repositories_impl/ai_save_inspection_repo_impl.dart';
 import '../../Data/repositories_impl/document_manual_doc_impl.dart';
 import '../../Data/repositories_impl/inspection_que_impl.dart';
 
+import '../../Domain/usecases/ai_save_inspection_usecases.dart';
 import '../../Domain/usecases/ai_update_result_usecases.dart';
 import '../../Domain/usecases/document_manual_doc_usecase.dart';
 import '../../Domain/usecases/inspection_que_usecases.dart';
@@ -45,6 +47,7 @@ import '../../image_processing/MediaPicker/file_provider.dart';
 import '../../main.dart';
 import '../screens/pre_inspection_form/pre_save_inspection_provider.dart';
 import 'ai_inspection_details_provider.dart';
+import 'ai_save_inspection_provider.dart';
 import 'bottom_navigation_provider.dart';
 import 'lane_list_provider.dart';
 import 'manual_inspection_list_provider.dart';
@@ -77,6 +80,7 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CreateBulkProvider( useCases : CreateBulkUseCases(repository: CreateBulkRepoImpl()))),
         ChangeNotifierProvider(create: (_) => AiInspectionDetailsProvider( aiInspectionDetailsUseCases : AIInspectionDetailsUseCases( detailsRepository: AIInspectionDetailsRepoImpl()))),
         ChangeNotifierProvider(create: (_) => AiUpdateResultProvider( resultUseCases : AiUpdateResultUseCases( aiUpdateResultRepository: AiUpdateResultRepoImpl()))),
+        ChangeNotifierProvider(create: (_) => AiSaveInspectionProvider( useCase : AISaveInspectionUseCase( repository: AiSaveInspectionRepoImpl()))),
 
       ],
       child: const MyApp(),

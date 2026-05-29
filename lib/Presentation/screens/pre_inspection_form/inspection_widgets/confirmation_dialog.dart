@@ -5,6 +5,8 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Data/model/response_model/inspection_pre_save_req_model.dart';
+import '../../../provider/ai_inspection_details_provider.dart';
+import '../../../provider/ai_save_inspection_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../../provider/manual_inspection_list_provider.dart';
 import '../../../provider/pre_inspection_result_provider.dart';
@@ -71,8 +73,13 @@ class ConfirmationDialog {
                         onPressed: () async {
                           Navigator.pop(context);
                           if (isComplete) {
+                            final detailsProvider = context.read<AiInspectionDetailsProvider>();
+                            if (detailsProvider.isAIMode) {
+                              await aiPreInspectionSaveAPI(context: context);
+                            } else {
+                              preInspectionSaveAPI(context: context);
+                            }
 
-                            preInspectionSaveAPI(context: context);
                           //  await typeProvider.saveResultApi(context);
                           }
                           // submitInspection(context, provider);
@@ -136,6 +143,56 @@ class ConfirmationDialog {
       inspectedBy: Preferences.getUserId().toString(),
       inspections: inspections,
       context: context
+    );
+    //cameraController.clearAll();
+    cameraController.clearImages();
+    context.pushAndRemoveUntil(BottomNavigationBarScreen());
+  }
+
+
+  static Future<void> aiPreInspectionSaveAPI({required BuildContext context}) async {
+    final provider = Provider.of<AiSaveInspectionProvider>(context, listen: false);
+    final cameraController = Provider.of<FileProvider>(context, listen: false);
+    final manualInspectionProvider = Provider.of<ManualInspectionListProvider>(context, listen: false);
+
+    final inspectionProvider = Provider.of<InspectionFormProvider>(context, listen: false);
+    final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
+    List<InspectionPreSaveReqModel> inspections = [];
+    for (final section in inspectionProvider.sections) {
+      for (final category in section.categories) {
+        for (final q in category.questions) {
+          if (q.carData.questionId == null) continue;
+          if (q.answer == AnswerState.Fail && q.imagePath == null) {
+            debugPrint("⚠Skipping Fail without image: Q${q.carData.questionId}");
+            continue;
+          }
+          inspections.add(
+            InspectionPreSaveReqModel(
+              questionId: q.carData.questionId!.toString(),
+              inspectionResult: q.answer.name,
+              severityLevel: q.answer == AnswerState.Fail ? "High" : "Low",
+              remarks: q.remark?.isEmpty ?? true ? "NA" : q.remark!,
+              image1: q.imagePath,
+            ),
+          );
+        }
+      }
+    }
+    // for (final item in inspections) {
+    //   debugPrint(
+    //     "QuestionId: ${item.questionId}, "
+    //         "Result: ${item.inspectionResult}, "
+    //         "Severity: ${item.severityLevel}, "
+    //         "Remarks: ${item.remarks}, "
+    //         "Image: ${item.image1?.path ?? 'No Image'}",
+    //   );
+    // }
+    await provider.aiSaveInspection(
+        appointmentId: manualInspectionProvider.isManualInspectionScreen ? manualInspectionProvider.selectedManualListData!.appointmentId.toString() : vehicleClassProvider.selectedClass!.appointmentId.toString(),
+        vehicleId:  manualInspectionProvider.isManualInspectionScreen ? manualInspectionProvider.selectedManualListData!.vehicleKey.toString() : vehicleClassProvider.selectedClass!.vehicleKey.toString(),
+        inspectedBy: Preferences.getUserId().toString(),
+        inspections: inspections,
+        context: context
     );
     //cameraController.clearAll();
     cameraController.clearImages();
