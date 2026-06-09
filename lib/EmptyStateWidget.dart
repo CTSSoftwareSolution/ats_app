@@ -154,7 +154,7 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: const Color(0xFF4F8EF7).withOpacity(0.10),
+                        color: const Color(0xff1c3e70).withOpacity(0.10),
                         width: 2,
                       ),
                     ),
@@ -167,9 +167,9 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
                   height: 110,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF4F8EF7).withOpacity(0.06),
+                    color: const Color(0xff1c3e70).withOpacity(0.06),
                     border: Border.all(
-                      color: const Color(0xFF4F8EF7).withOpacity(0.12),
+                      color: const Color(0xff1c3e70).withOpacity(0.12),
                       width: 1.5,
                     ),
                   ),
@@ -181,13 +181,13 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF6EA8FE), Color(0xFF4F8EF7)],
+                      colors: [Color(0xFF6EA8FE), Color(0xff1c3e70)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF4F8EF7).withOpacity(0.35),
+                        color: const Color(0xff1c3e70).withOpacity(0.35),
                         blurRadius: 24,
                         spreadRadius: 2,
                         offset: const Offset(0, 8),
@@ -223,7 +223,7 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
           height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: const Color(0xFF4F8EF7)
+            color: const Color(0xff1c3e70)
                 .withOpacity(i % 2 == 0 ? 0.35 : 0.18),
           ),
         ),
@@ -239,14 +239,14 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
         const EdgeInsets.symmetric(horizontal: 28, vertical: 13),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF6EA8FE), Color(0xFF4F8EF7)],
+            colors: [Color(0xff1c3e70), Color(0xFF4F8EF7)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF4F8EF7).withOpacity(0.35),
+              color: const Color(0xff1c3e70).withOpacity(0.35),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),

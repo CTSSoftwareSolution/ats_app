@@ -101,7 +101,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
         backgroundColor: appColor,
         titleSpacing: 0,
         title: const CustomText(
-          text: "Inspection Upload",
+          text: "Gather Vehicle Data",
           fontFamily: "SemiBold",
           fontSize: 20,
         ),

@@ -110,13 +110,16 @@ class VehiclePartsProvider extends ChangeNotifier {
     );
     isLoading = true;
     resetPage();
+    debugPrint("vehiclePartsApi");
     try {
       VehiclePartsReqModel vehiclePartsReqModel = VehiclePartsReqModel(
-        vehicleClass: classProvider.selectedClass!.vehicleCategory,
+        vehicleClass: "LMV" //classProvider.selectedClass!.vehicleCategory,
       );
+      debugPrint("successful $vehiclePartsReqModel");
       vehiclePartsEntity = await vehiclePartsUseCases.execute(
           vehiclePartsReqModel
       );
+      debugPrint("successful vehiclePartsApi");
       return vehiclePartsEntity;
     } catch (e) {
       vehiclePartsEntity = null;

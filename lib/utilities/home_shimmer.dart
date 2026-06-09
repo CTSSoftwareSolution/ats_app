@@ -24,14 +24,9 @@ class HomeShimmer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CustomImage(image: gvtLogo,height: 50.0,width: 50.0),
-                  CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",),
-                  CustomImage(image: ceriseLogo,height: 50.0,width: 50.0),
-                ],
-              ),
+              // CustomImage(image: gvtLogo,height: 50.0,width: 50.0),
+              // CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",),
+              CustomImage(image: lmsLogo,height: 50.0,width: 50.0),
 
               //   25.height,
               //
