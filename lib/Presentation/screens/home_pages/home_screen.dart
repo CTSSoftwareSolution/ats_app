@@ -52,6 +52,18 @@ class _HomeScreenState extends State<HomeScreen> {
     final detailsProvider = context.watch<AiInspectionDetailsProvider>();
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FB),
+      // floatingActionButton: Padding(
+      //   padding: const EdgeInsets.only(bottom: 70),
+      //   child: FloatingActionButton.extended(
+      //     backgroundColor: appColor,
+      //     onPressed: () {
+      //       context.push(VehiclePartsScreen());
+      //     },
+      //     label: const Text("AI Inspection",style: TextStyle(fontWeight: FontWeight.bold,),),
+      //     icon: Icon(Icons.precision_manufacturing_outlined,color: whiteColor,),
+      //   ),
+      // ),
+      //floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: SafeArea(
         child: Column(
           children: [

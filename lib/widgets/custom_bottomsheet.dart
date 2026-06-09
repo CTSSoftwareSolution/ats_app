@@ -42,7 +42,7 @@ class _InspectionSheet extends StatelessWidget {
           const SizedBox(height: 20),
           _InspectionTile(
             icon: Icons.person_outline_rounded,
-            label: 'Manual Inspection',
+            label: 'Visual Inspection',
             description: 'Performed by a technician',
             color: const Color(0xFF4361EE),
             onTap: () {
@@ -53,12 +53,12 @@ class _InspectionSheet extends StatelessWidget {
           const SizedBox(height: 12),
           _InspectionTile(
             icon: Icons.precision_manufacturing_outlined,
-            label: 'Machine Inspection',
-            description: 'Automated AI-powered scan',
+            label: 'Under PIT Inspection',
+            description: '',
             color: const Color(0xFF06D6A0),
             onTap: () {
-              Navigator.pop(context);
-              onSelect('Machine Inspection');
+              // Navigator.pop(context);
+              // onSelect('Machine Inspection');
             },
           ),
           const SizedBox(height: 8),

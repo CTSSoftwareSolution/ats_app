@@ -4,7 +4,7 @@ import '../Data/model/profile_model.dart';
 
 const atsLogo = "assets/ats_logo.png";
 const gvtLogo = "assets/gvm_maharashtra.png";
-const ceriseLogo = "assets/cerise_logo.png";
+const lmsLogo = "assets/logolms.png";
 const logoImage = "assets/logo.png";
 const appLogoImage = "assets/app-logo.png";
 const homeIcon = "assets/home.png";
