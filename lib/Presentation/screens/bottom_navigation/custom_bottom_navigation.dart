@@ -41,25 +41,9 @@ class CustomBottomNavigation extends StatelessWidget {
           ),
         ),
 
-       // const SizedBox(width: 10),
 
-        Expanded(
-          flex: 1,
-          child: InkWell(
-            onTap: (){
-              context.push(VehiclePartsScreen());
-            },
-            child: Container(
-              height: 60,
-              decoration: BoxDecoration(
-                color: appColor,
-                shape: BoxShape.circle,
-                //borderRadius: BorderRadius.all(Radius.circular(30.0))
-              ),
-              child: Center(child: Icon(Icons.precision_manufacturing_outlined,color: whiteColor,),)
-            ),
-          ),
-        ),
+
+
       ],
     );
   }

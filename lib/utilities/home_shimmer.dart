@@ -24,21 +24,21 @@ class HomeShimmer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              // CustomImage(image: gvtLogo,height: 50.0,width: 50.0),
-              // CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",),
-              CustomImage(image: lmsLogo,height: 50.0,width: 50.0),
+              CustomImage(image: gvtLogo,height: 50.0,width: 50.0),
+              CustomText(text: "ATS Corporation", fontSize: 24.0, fontFamily: "Black",),
+              CustomImage(image: ceriseLogo,height: 50.0,width: 50.0),
 
-              //   25.height,
-              //
-              //
-              //   Container(
-              //   height: 180,
-              //   width: double.infinity,
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(8),
-              //   ),
-              // ),
+                25.height,
+
+
+                Container(
+                height: 180,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
 
               30.height,
 

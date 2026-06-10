@@ -9,58 +9,74 @@ class BuildHeaderHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                appColor,appColor.withOpacity(0.75)
-                //Color(0xff5878f1), Color(0xff345afa), Color(0xff0f3af8)
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: appColor.withOpacity(0.30),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
+    return  Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [appColor, appColor.withOpacity(0.75)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: appColor.withOpacity(0.30),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _LogoBadge(image: gvtLogo),
+          Column(
+            children: [
+              const Text(
+                'ATS Corporation',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Vehicle Inspection System',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.75),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: Colors.white.withOpacity(0.75),
+                      size: 18,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      Preferences.getLocation(),
+                      style:  TextStyle(
+                        color: Colors.white.withOpacity(0.75),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          child: CustomImage(image: lmsLogo, height: 75, width: double.infinity),
-        ),
-      //  SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50.0),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.location_on,
-                  color: appColor,
-                  size: 18,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  Preferences.getLocation(),
-                  style:  TextStyle(
-                    color: blackColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+          _LogoBadge(image: ceriseLogo),
+        ],
+      ),
     );
   }
 }
