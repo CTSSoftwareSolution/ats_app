@@ -1,8 +1,10 @@
+import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/image_data.dart';
+import 'package:ats_app/utilities/preferences.dart';
+import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
-import '../../../../utilities/color_data.dart';
-import '../../../../utilities/image_data.dart';
-import '../../../../utilities/preferences.dart';
-import '../../../../widgets/custom_image.dart';
+
+
 
 class BuildHeaderHome extends StatelessWidget {
   const BuildHeaderHome({super.key});
@@ -17,8 +19,7 @@ class BuildHeaderHome extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                appColor,appColor.withOpacity(0.75)
-                //Color(0xff5878f1), Color(0xff345afa), Color(0xff0f3af8)
+                appColor,appColor.withValues(alpha: 0.75)
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -26,7 +27,7 @@ class BuildHeaderHome extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: appColor.withOpacity(0.30),
+                color: appColor.withValues(alpha: 0.30),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
               ),
@@ -34,7 +35,6 @@ class BuildHeaderHome extends StatelessWidget {
           ),
           child: CustomImage(image: lmsLogo, height: 75, width: double.infinity),
         ),
-      //  SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50.0),
           child: Padding(
@@ -65,21 +65,6 @@ class BuildHeaderHome extends StatelessWidget {
   }
 }
 
-class _LogoBadge extends StatelessWidget {
-  final String image;
-  const _LogoBadge({required this.image});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(6),
-      decoration: BoxDecoration(
-        color: whiteColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: CustomImage(image: image, height: 38, width: 38),
-    );
-  }
-}
 
 

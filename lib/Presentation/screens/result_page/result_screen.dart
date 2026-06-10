@@ -106,7 +106,7 @@ class _ResultScreenState extends State<ResultScreen> {
                       ),
                     );
                   }
-                  final item = appointments[index];// setSelectedManualListData
+                  final item = appointments[index];
                   return ResultScreenItem(appointments: item,
                       onRetest: (){
                     context.read<ManualInspectionListProvider>().setManualInspectionScreen(true);
@@ -119,18 +119,6 @@ class _ResultScreenState extends State<ResultScreen> {
             ),
           ],
         ),
-
-        // ListView.builder(
-        //   padding: EdgeInsets.only(bottom: 80.0),
-        //   physics: BouncingScrollPhysics(),
-        //   itemCount: 7,
-        //     shrinkWrap: false ,
-        //     itemBuilder: (context,index){
-        //   return Padding(
-        //     padding: const EdgeInsets.symmetric(vertical: 5.0,horizontal: 8.0),
-        //     child: ResultScreenItem(),
-        //   );})
-
       ))
     );
   }

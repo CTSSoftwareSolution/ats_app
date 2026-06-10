@@ -51,7 +51,7 @@ class ProfileDetailsContainer extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 22.0, horizontal: 20.0),
             child: Row(
               children: [
-                // Avatar
+
                 Container(
                   width: 68,
                   height: 68,

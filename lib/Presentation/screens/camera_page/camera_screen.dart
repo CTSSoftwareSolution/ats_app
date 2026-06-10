@@ -18,17 +18,6 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
-   // FileProvider? provider;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   final provider = context.read<FileProvider>();
-  //   WidgetsBinding.instance.addObserver(this);
-  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
-  //     await provider.initCamera();
-  //   });
-  // }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -58,13 +47,18 @@ class _CameraScreenState extends State<CameraScreen>
     }
     final size = MediaQuery.of(context).size;
     final scale = size.aspectRatio * cameraController.value.aspectRatio;
-    return WillPopScope(
-      onWillPop: () async {
-        if ( fileProvider.isVideo && fileProvider.isRecording) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
+        if (fileProvider.isVideo && fileProvider.isRecording) {
           await fileProvider.stopVideoRecording(save: false);
         }
-        return true;
-      },
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+        },
       child: Scaffold(
         body: Stack(
           children: [
@@ -130,47 +124,10 @@ class _CameraScreenState extends State<CameraScreen>
                     child: Padding(
                       padding: const EdgeInsets.all(3.0),
                       child: CustomImage(image: fileProvider.isRecording ? stopIconImage : circleIconImage, scale: fileProvider.isRecording ? 18 : 10, color: Colors.red,),
-                      // Container(
-                      //   decoration: BoxDecoration(
-                      //     // shape: provider.isRecording ? BoxShape.rectangle : BoxShape.circle,
-                      //     color: Colors.red,
-                      //   ),
-                      // ),
                     ),
                   ) :
                   CustomImage(image: cameraButtonIcon, scale: 4),
                 ),
-                // GestureDetector(
-                //   onTap: () async {
-                //     if(provider.isVideo){
-                //       if(provider.isRecording){
-                //         await provider.stopVideoRecording();
-                //         if (!context.mounted) return;
-                //         context.pop();
-                //       }else{
-                //         await provider.startVideoRecording();
-                //       }
-                //     }else{
-                //       await provider.takePicture(context);
-                //       if (!context.mounted) return;
-                //       context.pop();
-                //     }
-                //     },
-                //   child: provider.isVideo ?
-                //   Container(
-                //     height: 60,
-                //     width: 60,
-                //     decoration: BoxDecoration(
-                //       color: provider.isRecording ? whiteColor : Colors.red,
-                //       shape: BoxShape.circle,
-                //       border: provider.isRecording ? null : Border.all(color: whiteColor, width: 5.0, style: BorderStyle.solid)
-                //     ),
-                //     child: provider.isRecording ?
-                //        CustomImage(image: stopIconImage,scale: 22,color: Colors.red,) :
-                //         null
-                //   ) :
-                //   CustomImage(image: cameraButtonIcon, scale: 4),
-                // ),
               ),
             ),
             if (fileProvider.isVideo && fileProvider.isRecording)

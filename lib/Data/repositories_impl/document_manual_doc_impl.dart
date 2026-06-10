@@ -1,9 +1,10 @@
-import 'package:ats_app/Presentation/screens/manual_inspection_images/DocumentManualDocModels.dart';
-import 'package:ats_app/Presentation/screens/manual_inspection_images/DocumentManualDocResModels.dart';
+
 import '../../Core/network/api_services.dart';
 import '../../Core/network/services.dart';
 import '../../Domain/entities/document_manual_doc_entity.dart';
 import '../../Domain/repositories/manual_doc_inspection_upload_repository.dart';
+import '../../Presentation/screens/manual_inspection_images/document-manual_doc_res_models.dart';
+import '../../Presentation/screens/manual_inspection_images/document_manual_doc_models.dart';
 
 class DocumentManualDocImpl implements DocumentManualDocRepository {
 

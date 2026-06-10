@@ -14,7 +14,7 @@ import 'package:http/http.dart';
 import '../../Data/model/request_model/create_bulk_req_model.dart';
 import '../../Data/model/response_model/inspection_pre_save_req_model.dart';
 import '../../Presentation/screens/login_page/login_screen.dart';
-import '../../Presentation/screens/manual_inspection_images/DocumentManualDocModels.dart';
+import '../../Presentation/screens/manual_inspection_images/document_manual_doc_models.dart';
 
 class ApiService {
   // static Future<Map<String, dynamic>> post(dynamic body, String apiUrl) async {

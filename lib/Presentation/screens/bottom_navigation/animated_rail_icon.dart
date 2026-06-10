@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../utilities/color_data.dart';
 
 class AnimatedRailIcon extends StatelessWidget {

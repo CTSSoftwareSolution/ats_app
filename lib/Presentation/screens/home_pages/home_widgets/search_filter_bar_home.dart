@@ -2,7 +2,6 @@ import 'package:ats_app/Presentation/provider/lane_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../../../../VehicleFilterChip.dart';
 import '../../../../utilities/color_data.dart';
 import '../../../../utilities/image_data.dart';

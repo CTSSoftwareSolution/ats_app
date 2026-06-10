@@ -1,5 +1,4 @@
 import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dart';
-import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/submit_fab_widget.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:extensions_pro/extensions_pro.dart';
@@ -33,8 +32,7 @@ class _InspectionPageState extends State<InspectionPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<InspectionFormProvider>();
       final detailsProvider = context.read<AiInspectionDetailsProvider>();
-      final vehicleClass = context.read<VehicleClassProvider>();
-      // final manualProvider = context.watch<ManualInspectionListProvider>();
+
       final manualProvider = Provider.of<ManualInspectionListProvider>(context, listen: false);
 
       if(detailsProvider.isAIModeOn){

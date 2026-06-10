@@ -30,10 +30,8 @@ class InspectionResultScreenItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Left: icon + text
             Row(
               children: [
-                // Icon box
                 Container(
                   width: 48,
                   height: 48,
@@ -66,7 +64,6 @@ class InspectionResultScreenItem extends StatelessWidget {
                       textColor: const Color(0xFF1A2340),
                     ),
                     6.height,
-                    // Status badge
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10.0, vertical: 4.0),
@@ -99,8 +96,6 @@ class InspectionResultScreenItem extends StatelessWidget {
                 ),
               ],
             ),
-
-            // Right: Action button
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30.0),

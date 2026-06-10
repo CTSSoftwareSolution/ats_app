@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dart';
-import 'package:ats_app/Presentation/screens/manual_inspection_images/DocumentManualDocModels.dart';
+import 'package:ats_app/Presentation/screens/manual_inspection_images/document_manual_doc_models.dart';
 import 'package:ats_app/Presentation/screens/manual_inspection_images/manual_ins_image_provider.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
 import 'package:ats_app/location/location_provider.dart';
@@ -19,7 +19,7 @@ import '../../../widgets/custom_text.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../camera_page/camera_screen.dart';
 import '../pre_inspection_form/inspection_page/inspection_page.dart';
-import '../vehicle_test_parameter/vehicle_parts_screen.dart';
+
 
 class ManualInspectionImageScreen extends StatefulWidget {
   const ManualInspectionImageScreen({super.key});

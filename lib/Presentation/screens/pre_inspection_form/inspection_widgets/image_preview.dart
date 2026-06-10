@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class ImagePreview extends StatelessWidget {
-  final File? imageFile;         // local image (new upload)
-  final String? imageUrl;        // network image (existing evidence)
+  final File? imageFile;
+  final String? imageUrl;
   final VoidCallback onRemove;
   final VoidCallback onReplace;
 

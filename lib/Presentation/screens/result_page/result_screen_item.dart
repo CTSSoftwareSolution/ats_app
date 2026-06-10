@@ -1,4 +1,4 @@
-import 'package:ats_app/utilities/color_data.dart';
+
 import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
@@ -29,9 +29,9 @@ class ResultScreenItem extends StatelessWidget {
     final Color failBg = const Color(0xFFFCEBEB);
     final Color statusBg = isPass ? passBg : failBg;
 
-    final List<Color> accentGradient = isPass
-        ? [const Color(0xFF1DB77A), const Color(0xFF5DCAA5)]
-        : [const Color(0xFFE24B4A), const Color(0xFFF09595)];
+    // final List<Color> accentGradient = isPass
+    //     ? [const Color(0xFF1DB77A), const Color(0xFF5DCAA5)]
+    //     : [const Color(0xFFE24B4A), const Color(0xFFF09595)];
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
@@ -42,13 +42,13 @@ class ResultScreenItem extends StatelessWidget {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: statusColor.withOpacity(0.08),
+              color: statusColor.withValues(alpha: 0.08),
               blurRadius: 16,
               spreadRadius: 0,
               offset: const Offset(0, 6),
             ),
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -184,8 +184,6 @@ class ResultScreenItem extends StatelessWidget {
                                       size: 12,
                                       color: Color(0xFF9AA5C0),
                                     ),
-                                    // CustomImage(
-                                    //   image: petrolIcon, scale: 5.5,color: Color(0xFF8F9BB8),),
                                     4.width,
                                     CustomText(
                                       text: appointments.fuelType ?? "",
@@ -209,7 +207,7 @@ class ResultScreenItem extends StatelessWidget {
                           borderRadius: BorderRadius.circular(100),
                           color: statusBg,
                           border: Border.all(
-                            color: statusColor.withOpacity(0.25),
+                            color: statusColor.withValues(alpha: 0.25),
                             width: 1,
                           ),
                         ),

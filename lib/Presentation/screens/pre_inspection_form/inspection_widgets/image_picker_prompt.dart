@@ -18,10 +18,10 @@ class ImagePickerPrompt extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: boxColor,//Colors.red.shade50,
+          color: boxColor,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: borderColor!,//Colors.red.shade200,
+            color: borderColor!,
             width: 1.5,
           ),
         ),
@@ -29,13 +29,13 @@ class ImagePickerPrompt extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.add_a_photo_rounded,
-                color: iconColor,//Colors.red.shade400,
+                color: iconColor,
                 size: 28),
             const SizedBox(height: 6),
             Text(
               'Add Evidence Photo',
               style: TextStyle(
-                color: titleColor,//Colors.red.shade500,
+                color: titleColor,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -44,7 +44,7 @@ class ImagePickerPrompt extends StatelessWidget {
             Text(
               'Tap to capture or upload from gallery',
               style: TextStyle(
-                color: subtitleColor,//Colors.red.shade300,
+                color: subtitleColor,
                 fontSize: 11,
               ),
             ),

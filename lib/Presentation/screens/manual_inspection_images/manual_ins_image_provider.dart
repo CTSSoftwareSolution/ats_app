@@ -2,7 +2,7 @@ import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Domain/usecases/document_manual_doc_usecase.dart';
-import 'DocumentManualDocModels.dart';
+import 'document_manual_doc_models.dart';
 
 
 class ManualInsImageProvider extends ChangeNotifier {

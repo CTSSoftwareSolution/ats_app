@@ -20,3 +20,18 @@ const cameraBackConColor = Color(0x4fd9d9d9);
 const textFieldColor = Color(0xf3e8e8e8);
 const background = Color(0xfff4f5fa);
 
+// new-manual-flow
+
+const border = Color(0xFFDDE2EE);
+const textMuted = Color(0xFF94A3B8);
+const textPrimary = Color(0xFF0D1B3E);
+const naLight = Color(0xFFF1F5F9);
+const pass = Color(0xFF1A7F4B);
+const navyAccent = Color(0xFF2E53A0);
+const surface = Color(0xFFFFFFFF);
+const passLight = Color(0xFFE8F5EE);
+const accentLight = Color(0xFFEFF4FF);
+const navy = Color(0xFF0D1B3E);
+const textWhiteSub = Color(0xFFB8C8E8);
+const bg           = Color(0xFFF4F6FA);
+

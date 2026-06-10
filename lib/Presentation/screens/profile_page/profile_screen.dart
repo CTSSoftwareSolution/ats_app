@@ -1,18 +1,17 @@
-import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_page/inspection_page.dart';
+
 import 'package:ats_app/Presentation/screens/profile_page/profile_details_container.dart';
 import 'package:ats_app/utilities/profile_menu_widget.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../Data/model/profile_model.dart';
+
 import '../../../app_config/ip_address_bottom_sheet_screen.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
-import '../../provider/login_provider.dart';
+
 import '../login_page/login_screen.dart';
-import '../manual_inspection_images/manual_inspection_image_screen.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -22,25 +21,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
-  //
-  //   Future<void> getAppVersion() async {
-  //     try {
-  //       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  //
-  //       appVersion = 'Version: ${packageInfo.version}';
-  //
-  //     } catch (e) {
-  //
-  //       appVersion = 'Error';
-  //     }
-  //     notifyListeners();
-  //   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -118,10 +98,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 1:
         break;
       case 2:
-       // context.push(InspectionPage());
+
         break;
       case 3:
-       // context.push(ManualInspectionImageScreen());
+
         break;
       case 4:
         showIpAddressBottomSheet(context);

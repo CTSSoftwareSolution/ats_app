@@ -3,7 +3,6 @@ import 'package:ats_app/Presentation/screens/bottom_navigation/animated_rail_ico
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 import '../../../utilities/preferences.dart';

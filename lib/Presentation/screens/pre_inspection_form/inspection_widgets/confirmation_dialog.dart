@@ -9,7 +9,6 @@ import '../../../provider/ai_inspection_details_provider.dart';
 import '../../../provider/ai_save_inspection_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../../provider/manual_inspection_list_provider.dart';
-import '../../../provider/pre_inspection_result_provider.dart';
 import '../../../provider/vehicle_class_provider.dart';
 import '../../bottom_navigation/bottom_navigation_bar.dart';
 import '../pre_save_inspection_provider.dart';
@@ -79,11 +78,8 @@ class ConfirmationDialog {
                             } else {
                               preInspectionSaveAPI(context: context);
                             }
-
-                          //  await typeProvider.saveResultApi(context);
                           }
-                          // submitInspection(context, provider);
-                        },
+                          },
                         child: const Text('Submit'),
                       ):SizedBox.shrink(),
                   ],
@@ -124,15 +120,6 @@ class ConfirmationDialog {
         }
       }
     }
-    // for (final item in inspections) {
-    //   debugPrint(
-    //     "QuestionId: ${item.questionId}, "
-    //         "Result: ${item.inspectionResult}, "
-    //         "Severity: ${item.severityLevel}, "
-    //         "Remarks: ${item.remarks}, "
-    //         "Image: ${item.image1?.path ?? 'No Image'}",
-    //   );
-    // }
     await provider.preSaveInspection(
       appointmentId: manualInspectionProvider.isManualInspectionScreen ?
       manualInspectionProvider.selectedManualListData!.appointmentId.toString() :
@@ -144,9 +131,10 @@ class ConfirmationDialog {
       inspections: inspections,
       context: context
     );
-    //cameraController.clearAll();
     cameraController.clearImages();
+    if (!context.mounted) return;
     context.pushAndRemoveUntil(BottomNavigationBarScreen());
+
   }
 
 
@@ -178,15 +166,6 @@ class ConfirmationDialog {
         }
       }
     }
-    // for (final item in inspections) {
-    //   debugPrint(
-    //     "QuestionId: ${item.questionId}, "
-    //         "Result: ${item.inspectionResult}, "
-    //         "Severity: ${item.severityLevel}, "
-    //         "Remarks: ${item.remarks}, "
-    //         "Image: ${item.image1?.path ?? 'No Image'}",
-    //   );
-    // }
     await provider.aiSaveInspection(
         appointmentId: manualInspectionProvider.isManualInspectionScreen ? manualInspectionProvider.selectedManualListData!.appointmentId.toString() : vehicleClassProvider.selectedClass!.appointmentId.toString(),
         vehicleId:  manualInspectionProvider.isManualInspectionScreen ? manualInspectionProvider.selectedManualListData!.vehicleKey.toString() : vehicleClassProvider.selectedClass!.vehicleKey.toString(),
@@ -194,8 +173,9 @@ class ConfirmationDialog {
         inspections: inspections,
         context: context
     );
-    //cameraController.clearAll();
     cameraController.clearImages();
+    if (!context.mounted) return;
     context.pushAndRemoveUntil(BottomNavigationBarScreen());
+
   }
 }

@@ -47,14 +47,6 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> w
         }
       });
     }
-    // else if (state == AppLifecycleState.paused) {
-    // } else if (state == AppLifecycleState.inactive) {
-    //   // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   //   await locationProvider.getCurrentLocation(context);
-    //   // });
-    // } else if (state == AppLifecycleState.detached) {
-    // } else if (state == AppLifecycleState.hidden) {
-    // }
   }
 
 

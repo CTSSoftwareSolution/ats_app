@@ -4,7 +4,6 @@ import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
-
 import '../../../utilities/image_data.dart';
 import '../../../vehicle_number_plate/vehicle_number_plate_screen.dart';
 

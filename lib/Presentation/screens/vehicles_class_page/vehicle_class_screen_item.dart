@@ -292,6 +292,17 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
+
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFF3F6FB),
+                                        borderRadius: BorderRadius.circular(30),
+                                        border: Border.all(
+                                          color: const Color(0xFFDDE3F0),
+                                          width: 1,
+                                        ),
+                                      ),
+                                    )
                                   ],
                                 ),
                               ],

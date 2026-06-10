@@ -1,4 +1,4 @@
-import '../../Presentation/screens/manual_inspection_images/DocumentManualDocModels.dart';
+import '../../Presentation/screens/manual_inspection_images/document_manual_doc_models.dart';
 import '../entities/document_manual_doc_entity.dart';
 
 
