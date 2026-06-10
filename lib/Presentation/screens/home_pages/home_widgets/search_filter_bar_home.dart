@@ -34,7 +34,7 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
     final chipsProvider = context.watch<LaneListProvider>();
     return Container(
       color: const Color(0xFFF4F6FB),
-      padding: const EdgeInsets.fromLTRB(16, 3, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
