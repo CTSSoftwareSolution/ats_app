@@ -53,12 +53,12 @@ class _InspectionSheet extends StatelessWidget {
           const SizedBox(height: 12),
           _InspectionTile(
             icon: Icons.precision_manufacturing_outlined,
-            label: 'Under PIT Inspection',
-            description: '',
+            label: 'Machine Inspection',
+            description: 'Automated AI-powered scan',
             color: const Color(0xFF06D6A0),
             onTap: () {
-              // Navigator.pop(context);
-              // onSelect('Machine Inspection');
+              Navigator.pop(context);
+              onSelect('Machine Inspection');
             },
           ),
           const SizedBox(height: 8),
