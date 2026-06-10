@@ -32,6 +32,8 @@ import 'package:ats_app/aws_images/aws_repository_impl.dart';
 import 'package:ats_app/aws_images/aws_signedurl_provider.dart';
 import 'package:ats_app/aws_images/aws_usecase.dart';
 import 'package:ats_app/location/location_provider.dart';
+import 'package:ats_app/new_manual_flow/app_provider.dart';
+import 'package:ats_app/new_manual_flow/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Data/repositories_impl/ai_save_inspection_repo_impl.dart';
@@ -81,6 +83,8 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AiInspectionDetailsProvider( aiInspectionDetailsUseCases : AIInspectionDetailsUseCases( detailsRepository: AIInspectionDetailsRepoImpl()))),
         ChangeNotifierProvider(create: (_) => AiUpdateResultProvider( resultUseCases : AiUpdateResultUseCases( aiUpdateResultRepository: AiUpdateResultRepoImpl()))),
         ChangeNotifierProvider(create: (_) => AiSaveInspectionProvider( useCase : AISaveInspectionUseCase( repository: AiSaveInspectionRepoImpl()))),
+        ChangeNotifierProvider(create: (_) => AppProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
 
       ],
       child: const MyApp(),

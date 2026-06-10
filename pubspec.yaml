@@ -57,6 +57,7 @@ dependencies:
   sensors_plus: ^7.0.0
 
   google_fonts: ^6.1.0
+  geocoding: ^3.0.0
 
 
 

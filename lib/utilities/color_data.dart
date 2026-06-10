@@ -22,16 +22,40 @@ const background = Color(0xfff4f5fa);
 
 // new-manual-flow
 
-const border = Color(0xFFDDE2EE);
-const textMuted = Color(0xFF94A3B8);
-const textPrimary = Color(0xFF0D1B3E);
-const naLight = Color(0xFFF1F5F9);
-const pass = Color(0xFF1A7F4B);
-const navyAccent = Color(0xFF2E53A0);
-const surface = Color(0xFFFFFFFF);
-const passLight = Color(0xFFE8F5EE);
-const accentLight = Color(0xFFEFF4FF);
-const navy = Color(0xFF0D1B3E);
-const textWhiteSub = Color(0xFFB8C8E8);
-const bg           = Color(0xFFF4F6FA);
+// Backgrounds
+ const bg           = Color(0xFFF4F6FA);
+ const surface      = Color(0xFFFFFFFF);
+ const surface2     = Color(0xFFEDF0F7);
+ const surfaceDark  = Color(0xFF0D1B3E);
+
+// Navy palette
+ const navy         = Color(0xFF0D1B3E);
+ const navyMid      = Color(0xFF1A2F5E);
+ const navyLight    = Color(0xFF253F7A);
+ const navyAccent   = Color(0xFF2E53A0);
+
+// Borders
+ const border       = Color(0xFFDDE2EE);
+ const borderDark   = Color(0xFFB8C4DE);
+
+// Semantic
+ const pass         = Color(0xFF1A7F4B);
+ const passLight    = Color(0xFFE8F5EE);
+ const fail         = Color(0xFFC0392B);
+ const failLight    = Color(0xFFFDECEA);
+ const warn         = Color(0xFFB45309);
+ const warnLight    = Color(0xFFFEF3E2);
+ const na           = Color(0xFF64748B);
+ const naLight      = Color(0xFFF1F5F9);
+
+// Text
+ const textPrimary  = Color(0xFF0D1B3E);
+ const textSecondary= Color(0xFF4A5568);
+ const textMuted    = Color(0xFF94A3B8);
+ const textWhite    = Color(0xFFFFFFFF);
+ const textWhiteSub = Color(0xFFB8C8E8);
+
+// Accent (bright blue for highlights)
+ const accent       = Color(0xFF2563EB);
+ const accentLight  = Color(0xFFEFF4FF);
 

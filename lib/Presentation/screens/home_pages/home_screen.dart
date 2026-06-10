@@ -1,8 +1,10 @@
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_shimmer.dart';
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
+import '../../../new_manual_flow/new_screen/vehicle_details_screen.dart';
 import '../../provider/manual_inspection_list_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../vehicles_class_page/vehicle_class_screen_item.dart';
@@ -84,8 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: VehicleClassScreenItem(
                       classDataModel: item,
                       onTap: () {
-                        context.read<ManualInspectionListProvider>().setManualInspectionScreen(false);
-                        provider.setSelectedClass(item);
+                        // context.read<ManualInspectionListProvider>().setManualInspectionScreen(false);
+                        // provider.setSelectedClass(item);
+                        context.push(VehicleDetailScreen(vehicleId: "99d9054b-dbee-4dc2-93c2-ce6891f191c2",));
                         },
                     ),
                   );
