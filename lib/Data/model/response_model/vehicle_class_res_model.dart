@@ -1,8 +1,8 @@
 class VehicleClassResModel {
   VehicleClassResModel({
       bool? status, 
-      String? message,
-    ClassDataModel? data,}){
+      String? message, 
+      ClassDataModel? data,}){
     _status = status;
     _message = message;
     _data = data;
@@ -117,7 +117,8 @@ class Appointments {
       String? make, 
       String? model, 
       String? mfgMonth, 
-      num? gvw,}){
+      num? gvw, 
+      String? regNo,}){
     _vehicleKey = vehicleKey;
     _appointmentId = appointmentId;
     _registrationNo = registrationNo;
@@ -141,6 +142,7 @@ class Appointments {
     _model = model;
     _mfgMonth = mfgMonth;
     _gvw = gvw;
+    _regNo = regNo;
 }
 
   Appointments.fromJson(dynamic json) {
@@ -167,6 +169,7 @@ class Appointments {
     _model = json['model'];
     _mfgMonth = json['mfg_month'];
     _gvw = json['gvw'];
+    _regNo = json['reg_no'];
   }
   String? _vehicleKey;
   num? _appointmentId;
@@ -191,6 +194,7 @@ class Appointments {
   String? _model;
   String? _mfgMonth;
   num? _gvw;
+  String? _regNo;
 Appointments copyWith({  String? vehicleKey,
   num? appointmentId,
   String? registrationNo,
@@ -214,6 +218,7 @@ Appointments copyWith({  String? vehicleKey,
   String? model,
   String? mfgMonth,
   num? gvw,
+  String? regNo,
 }) => Appointments(  vehicleKey: vehicleKey ?? _vehicleKey,
   appointmentId: appointmentId ?? _appointmentId,
   registrationNo: registrationNo ?? _registrationNo,
@@ -237,6 +242,7 @@ Appointments copyWith({  String? vehicleKey,
   model: model ?? _model,
   mfgMonth: mfgMonth ?? _mfgMonth,
   gvw: gvw ?? _gvw,
+  regNo: regNo ?? _regNo,
 );
   String? get vehicleKey => _vehicleKey;
   num? get appointmentId => _appointmentId;
@@ -261,6 +267,7 @@ Appointments copyWith({  String? vehicleKey,
   String? get model => _model;
   String? get mfgMonth => _mfgMonth;
   num? get gvw => _gvw;
+  String? get regNo => _regNo;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -287,6 +294,7 @@ Appointments copyWith({  String? vehicleKey,
     map['model'] = _model;
     map['mfg_month'] = _mfgMonth;
     map['gvw'] = _gvw;
+    map['reg_no'] = _regNo;
     return map;
   }
 

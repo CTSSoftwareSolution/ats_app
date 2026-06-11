@@ -23,7 +23,7 @@ class VehiclePhotosScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(builder: (_, prov, __) {
-      final v = prov.vehicles.firstWhere((e) => e.id == vehicleId);
+      final v = prov.vehicles.firstWhere((e) => e.regNo == vehicleId);
       final done = v.photoCount;
       final total = VehiclePhotoAngle.values.length;
 
@@ -334,7 +334,7 @@ class _PhotosBottomBar extends StatelessWidget {
   Future<void> _submitAndUpload(BuildContext context) async {
     final prov = context.read<AppProvider>();
     final auth = context.read<AuthProvider>();
-    final v = prov.vehicles.firstWhere((e) => e.id == vehicleId);
+    final v = prov.vehicles.firstWhere((e) => e.regNo == vehicleId);
 
     debugPrint('[Submit] Vehicle: ' + v.regNo + '  Photos: ' + v.photos.length.toString());
     for (final e in v.photos.entries) {

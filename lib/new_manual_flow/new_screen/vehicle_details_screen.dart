@@ -22,7 +22,10 @@ class VehicleDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(builder: (_, prov, __) {
-      final v = prov.vehicles.firstWhere((e) => e.id == vehicleId);
+      debugPrint("testId: $vehicleId");
+      debugPrint("testList: ${prov.vehicles}");
+      final v = prov.vehicles.firstWhere((e) => e.regNo == vehicleId);
+
       return DebugFabWrapper(
         child: Scaffold(
           backgroundColor: bg,

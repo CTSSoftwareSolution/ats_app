@@ -14,7 +14,7 @@ class ReportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final prov = context.watch<AppProvider>();
-    final v = prov.vehicles.firstWhere((e) => e.id == vehicleId);
+    final v = prov.vehicles.firstWhere((e) => e.regNo == vehicleId);
 
     final isFit = v.overallResult == 'FIT';
     final isPending = v.overallResult == 'PENDING';

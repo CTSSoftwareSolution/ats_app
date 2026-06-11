@@ -27,7 +27,7 @@ class InspectionFlowScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(builder: (_, prov, __) {
-      final v = prov.vehicles.firstWhere((e) => e.id == vehicleId);
+      final v = prov.vehicles.firstWhere((e) => e.regNo == vehicleId);
       final sections = phase == InspectionPhase.pre
           ? v.preSections : v.postSections;
       final doneCount = phase == InspectionPhase.pre
@@ -73,8 +73,8 @@ class InspectionFlowScreen extends StatelessWidget {
               Consumer<AppProvider>(
                 builder: (_, p, __) {
                   final s = phase == InspectionPhase.pre
-                      ? p.vehicles.firstWhere((e) => e.id == vehicleId).preSections
-                      : p.vehicles.firstWhere((e) => e.id == vehicleId).postSections;
+                      ? p.vehicles.firstWhere((e) => e.regNo == vehicleId).preSections
+                      : p.vehicles.firstWhere((e) => e.regNo == vehicleId).postSections;
                   return PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert, color: Colors.white),
                     color: surface,
@@ -82,7 +82,7 @@ class InspectionFlowScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         side: const BorderSide(color: border)),
                     onSelected: (val) {
-                      final v2 = p.vehicles.firstWhere((e) => e.id == vehicleId);
+                      final v2 = p.vehicles.firstWhere((e) => e.regNo == vehicleId);
                       if (val == 'pass_all') {
                         for (final sec in s) p.markAllPass(v2, sec);
                       }
@@ -151,7 +151,7 @@ class _SectionTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(builder: (_, prov, __) {
-      final v = prov.vehicles.firstWhere((e) => e.id == vehicleId);
+      final v = prov.vehicles.firstWhere((e) => e.regNo == vehicleId);
       final s = v.sections.firstWhere((s) => s.id == section.id);
       return Column(children: [
         LinearProgressIndicator(
@@ -206,7 +206,7 @@ class _BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(builder: (_, prov, __) {
-      final v = prov.vehicles.firstWhere((e) => e.id == vehicleId);
+      final v = prov.vehicles.firstWhere((e) => e.regNo == vehicleId);
       final passIns = phase == InspectionPhase.pre
           ? v.preSections.fold(0, (s, sec) => s + sec.passCount)
           : v.postSections.fold(0, (s, sec) => s + sec.passCount);
