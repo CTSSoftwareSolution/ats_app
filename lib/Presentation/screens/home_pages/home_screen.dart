@@ -7,6 +7,7 @@ import '../../../EmptyStateWidget.dart';
 import '../../../new_manual_flow/new_screen/vehicle_details_screen.dart';
 import '../../provider/manual_inspection_list_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
+import '../manual_inspection_images/manual_inspection_image_screen.dart';
 import '../vehicles_class_page/vehicle_class_screen_item.dart';
 import 'home_widgets/build_header_home.dart';
 import 'home_widgets/search_filter_bar_home.dart';
@@ -86,10 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: VehicleClassScreenItem(
                       classDataModel: item,
                       onTap: () {
-                        // context.read<ManualInspectionListProvider>().setManualInspectionScreen(false);
-                       // provider.setSelectedClass(item);
-                        debugPrint("RegNo on list : ${item.registrationNo}");
-                        context.push( VehicleDetailScreen(vehicleId: item.registrationNo.toString(),));
+                        context.read<ManualInspectionListProvider>().setManualInspectionScreen(false);
+                       provider.setSelectedClass(item);
+                        context.push(ManualInspectionImageScreen());
+                       //  debugPrint("RegNo on list : ${item.registrationNo}");
+                       //  context.push( VehicleDetailScreen(vehicleId: item.registrationNo.toString(),));
                         },
                     ),
                   );
