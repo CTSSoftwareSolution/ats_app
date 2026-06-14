@@ -14,7 +14,7 @@ import '../new_widget/inspection_card.dart';
 import '../new_widget/upload_progress_dialog.dart';
 
 
-class InspectionFlowScreen extends StatelessWidget {
+class InspectionFlowScreen extends StatefulWidget {
   final String vehicleId;
   final InspectionPhase phase;
 
@@ -25,18 +25,36 @@ class InspectionFlowScreen extends StatelessWidget {
   });
 
   @override
+  State<InspectionFlowScreen> createState() => _InspectionFlowScreenState();
+}
+
+class _InspectionFlowScreenState extends State<InspectionFlowScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final prov = context.read<AppProvider>();
+
+      await prov.loadSections();
+
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(builder: (_, prov, __) {
-      final v = prov.vehicles.firstWhere((e) => e.regNo == vehicleId);
-      final sections = phase == InspectionPhase.pre
+      final v = prov.vehicles.firstWhere((e) => e.regNo == widget.vehicleId);
+      final sections = widget.phase == InspectionPhase.pre
           ? v.preSections : v.postSections;
-      final doneCount = phase == InspectionPhase.pre
+      final doneCount = widget.phase == InspectionPhase.pre
           ? v.preDoneCount : v.postDoneCount;
-      final totalItems = phase == InspectionPhase.pre
+      final totalItems = widget.phase == InspectionPhase.pre
           ? v.preTotalItems : v.postTotalItems;
-      final phaseLabel = phase == InspectionPhase.pre
+      final phaseLabel = widget.phase == InspectionPhase.pre
           ? 'PRE-INSPECTION' : 'POST-INSPECTION';
-      final phaseColor = phase == InspectionPhase.pre
+      final phaseColor = widget.phase == InspectionPhase.pre
           ? navyAccent : pass;
 
       return DefaultTabController(
@@ -72,9 +90,9 @@ class InspectionFlowScreen extends StatelessWidget {
             actions: [
               Consumer<AppProvider>(
                 builder: (_, p, __) {
-                  final s = phase == InspectionPhase.pre
-                      ? p.vehicles.firstWhere((e) => e.regNo == vehicleId).preSections
-                      : p.vehicles.firstWhere((e) => e.regNo == vehicleId).postSections;
+                  final s = widget.phase == InspectionPhase.pre
+                      ? p.vehicles.firstWhere((e) => e.regNo == widget.vehicleId).preSections
+                      : p.vehicles.firstWhere((e) => e.regNo == widget.vehicleId).postSections;
                   return PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert, color: Colors.white),
                     color: surface,
@@ -82,7 +100,7 @@ class InspectionFlowScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         side: const BorderSide(color: border)),
                     onSelected: (val) {
-                      final v2 = p.vehicles.firstWhere((e) => e.regNo == vehicleId);
+                      final v2 = p.vehicles.firstWhere((e) => e.regNo == widget.vehicleId);
                       if (val == 'pass_all') {
                         for (final sec in s) p.markAllPass(v2, sec);
                       }
@@ -133,10 +151,10 @@ class InspectionFlowScreen extends StatelessWidget {
           ),
           body: TabBarView(
             children: sections.map((section) =>
-                _SectionTab(vehicleId: vehicleId, section: section)).toList(),
+                _SectionTab(vehicleId: widget.vehicleId, section: section)).toList(),
           ),
           bottomNavigationBar: _BottomBar(
-              vehicleId: vehicleId, phase: phase, phaseColor: phaseColor),
+              vehicleId: widget.vehicleId, phase: widget.phase, phaseColor: phaseColor),
         )),
       );
     });
@@ -152,7 +170,11 @@ class _SectionTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(builder: (_, prov, __) {
       final v = prov.vehicles.firstWhere((e) => e.regNo == vehicleId);
-      final s = v.sections.firstWhere((s) => s.id == section.id);
+      final s = v.sections.firstWhere((s) {
+        debugPrint("s.id = ${s.id}");
+        debugPrint("section.id = ${section.id}");
+        return s.id == section.id;
+      });
       return Column(children: [
         LinearProgressIndicator(
           value: s.items.isEmpty ? 0 : s.doneCount / s.items.length,

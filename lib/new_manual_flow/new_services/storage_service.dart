@@ -6,7 +6,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../new_model/auth_model.dart';
 
-
 enum SaveResult { savedToServer, savedLocally, failed }
 
 class StorageResult {
@@ -107,17 +106,17 @@ class StorageService {
     final fallback = await _saveToFallback(bytes: bytes, filename: filename);
     return fallback != null
         ? StorageResult(
-            result: SaveResult.savedLocally,
-            savedPath: fallback,
-            isLocal: true,
-            error: 'Saved to app folder (configured path unavailable)',
-          )
+      result: SaveResult.savedLocally,
+      savedPath: fallback,
+      isLocal: true,
+      error: 'Saved to app folder (configured path unavailable)',
+    )
         : const StorageResult(
-            result: SaveResult.failed,
-            savedPath: '',
-            isLocal: true,
-            error: 'Failed to save photo',
-          );
+      result: SaveResult.failed,
+      savedPath: '',
+      isLocal: true,
+      error: 'Failed to save photo',
+    );
   }
 
   // ── Upload video via API ──────────────────────────────────────────────────

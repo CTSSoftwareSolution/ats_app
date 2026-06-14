@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 import 'package:uuid/uuid.dart';
-import '../new_model/auth_model.dart' show AppConfig;
+
+import '../new_model/auth_model.dart';
 import '../new_model/vehicle_photos_model.dart';
 import 'location_service.dart';
 
@@ -14,10 +15,10 @@ class VehiclePhotoService {
   static const _uuid = Uuid();
 
   static Future<VehiclePhoto?> capture(
-    VehiclePhotoAngle angle, {
-    AppConfig? config,
-    String vehicleReg = '',
-  }) async {
+      VehiclePhotoAngle angle, {
+        AppConfig? config,
+        String vehicleReg = '',
+      }) async {
     // GPS starts in background before camera opens
     final geoFuture = LocationService.getCurrentLocation();
 
@@ -156,7 +157,7 @@ class VehiclePhotoService {
 
   static void _tx(Canvas canvas, String text, Offset offset,
       {required double fontSize, Color color = Colors.white,
-       bool bold = false, double? maxWidth}) {
+        bool bold = false, double? maxWidth}) {
     final tp = TextPainter(
       text: TextSpan(text: text, style: TextStyle(
         color: color, fontSize: fontSize,

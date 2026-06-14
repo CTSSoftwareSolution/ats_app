@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+
+import '../../Core/network/services.dart';
+import '../../utilities/preferences.dart';
 import '../new_model/auth_model.dart';
 import '../new_model/inspection_model.dart';
 import 'debug_service.dart';
@@ -9,58 +12,98 @@ class InspectionApiService {
 
   // GET /api/inspection/inspection-questions-list-new
   static Future<List<InspectionSection>> fetchSections(AppConfig config) async {
-    final url = '${config.fullApiBase}/inspection/inspection-questions-list-new';
+    //final url = '${config.fullApiBase}/inspection/inspection-questions-list-new';
+    final url = 'http://65.2.53.173/Api/api/inspection/inspection-questions-list-new';
+    DebugService.log('SYS', 'fetchSections -> ' + url);
+    debugPrint('SYS fetchSections -> $url');
 
-    DebugService.log('SYS', 'fetchSections → $url');
-    DebugService.log('SYS', 'apiKey=${config.apiKey.isEmpty ? "EMPTY!" : config.apiKey.substring(0, 20) + "..."}');
-
+    config.apiKey = Preferences.getToken();
     try {
       final uri = Uri.parse(url);
       DebugService.apiRequest('POST', url, authToken: config.apiKey);
 
+      debugPrint('API Request: POST, $url, ${config.apiKey}');
+      debugPrint('Token ${config.apiKey}');
+
       final response = await http.post(uri,
         headers: {
           'Authorization': 'Bearer ${config.apiKey}',
-          'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: '{}',
-      ).timeout(Duration(seconds: config.apiTimeoutSeconds));
+      );
+
+      if (kDebugMode) {
+        alice.onHttpResponse(
+          response,
+          body: response.body,
+        );
+      }
+
+      debugPrint('API Response: ${response.body}');
 
       DebugService.apiResponse(response.statusCode, response.body);
 
+       debugPrint('API Response: ${response.statusCode}, ${response.body}');
+
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-
         if (json['status'] == true) {
-          final data = json['data'] as Map<String, dynamic>;
+          final data     = json['data'] as Map<String, dynamic>;
           final preList  = data['pre_inspection']  as List<dynamic>? ?? [];
           final postList = data['post_inspection'] as List<dynamic>? ?? [];
 
           DebugService.log('SYS',
-              'Questions loaded: pre=${preList.length} post=${postList.length}');
+              'Questions: pre=' + preList.length.toString() +
+                  ' post=' + postList.length.toString());
+          debugPrint('SYS  Questions: pre= ${preList.length.toString()} post= ${ postList.length.toString()}');
 
+          // Group by area -> one tab per area (Lighting, Safety, Body...)
           final sections = <InspectionSection>[];
-          for (final s in preList)  sections.add(_parseSection(s, InspectionPhase.pre));
-          for (final s in postList) sections.add(_parseSection(s, InspectionPhase.post));
+          sections.addAll(_groupByArea(preList,  InspectionPhase.pre));
+          sections.addAll(_groupByArea(postList, InspectionPhase.post));
 
-          DebugService.log('SYS', 'Total sections: ${sections.length}');
+          DebugService.log('SYS', 'Sections: ' + sections.length.toString());
+          debugPrint('SYS Sections: ${sections.length.toString()}');
           return sections;
-        } else {
-          DebugService.log('RES✗',
-              'status=false  message=${json['message']}');
         }
-      } else {
-        DebugService.log('RES✗',
-            'HTTP ${response.statusCode}  body=${response.body.length > 100 ? response.body.substring(0, 100) : response.body}');
+        DebugService.log('RES\u2717', 'status=false');
+        debugPrint('RES\u2717 status=false');
       }
     } catch (e) {
-      DebugService.log('RES✗', 'fetchSections exception: $e');
-      debugPrint('[InspectionAPI] Exception: $e');
+      DebugService.log('RES\u2717', 'fetchSections: ' + e.toString());
+      debugPrint('RES\u2717 fetchSections:  ${ e.toString()}');
     }
-
-    DebugService.log('SYS', 'Using fallback hardcoded sections');
+    DebugService.log('SYS', 'Using fallback sections');
+    debugPrint('SYS  Using fallback sections');
     return [];
+  }
+
+  // Group flat list by area -> one InspectionSection per area
+  static List<InspectionSection> _groupByArea(
+      List<dynamic> list, InspectionPhase phase) {
+    final areaMap = <String, List<InspectionItem>>{};
+    for (final q in list) {
+      final area = (q['area'] as String? ?? 'General');
+      areaMap.putIfAbsent(area, () => []);
+      areaMap[area]!.add(_parseItem(q));
+    }
+    return areaMap.entries.map((e) => InspectionSection(
+      id:    phase.name + '_' + e.key.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '_'),
+      title: e.key,
+      icon:  _areaIcon(e.key),
+      phase: phase,
+      items: e.value,
+    )).toList();
+  }
+
+
+  static int _toInt(dynamic v, int fallback) {
+    if (v == null) return fallback;
+    if (v is int)  return v;
+    if (v is double) return v.toInt();
+    return int.tryParse(v.toString()) ?? fallback;
   }
 
   static InspectionSection _parseSection(
@@ -83,8 +126,17 @@ class InspectionApiService {
     final questionId    = q['question_id']    as int?    ?? 0;
     final questionText  = q['question_text']  as String? ?? '';
     final complexity    = q['complexity']     as String? ?? 'Medium';
-    final photoVideoFlag = q['photo_video']   as int?    ?? 3;
-    final allowMultiple  = (q['allow_multiple'] as int?  ?? 1) == 1;
+    // photo_video: 1=photo only, 2=video only, 3=both
+    // allow_multiple: 1=multiple allowed, 0=single only
+    final photoVideoFlag = _toInt(q['photo_video'], 3);
+    final allowMultiple  = _toInt(q['allow_multiple'], 1) == 1;
+
+    DebugService.log('SYS',
+        'Q' + questionId.toString() +
+            ' photo_video=' + (q['photo_video']?.toString() ?? 'null') +
+            ' allow_multiple=' + (q['allow_multiple']?.toString() ?? 'null') +
+            ' => flag=' + photoVideoFlag.toString() +
+            ' multi=' + allowMultiple.toString());
     final itemsList     = q['items']          as List<dynamic>? ?? [];
     final rulesList     = q['rules']          as List<dynamic>? ?? [];
 

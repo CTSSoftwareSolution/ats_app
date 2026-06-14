@@ -49,7 +49,7 @@ class DebugService {
   }
 
   static void uploadFile(String filename, {int? sizeBytes, bool ok = true,
-      String? error}) {
+    String? error}) {
     if (!_enabled) return;
     final size = sizeBytes != null
         ? ' (${(sizeBytes / 1024).toStringAsFixed(1)} KB)' : '';

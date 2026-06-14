@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
+
 import '../new_model/auth_model.dart';
 import '../new_model/inspection_model.dart';
 import 'location_service.dart';
@@ -224,7 +225,7 @@ class GeoMediaService {
 
   static void _tx(Canvas canvas, String text, Offset offset,
       {required double fontSize, Color color = Colors.white,
-       bool bold = false, double? maxWidth}) {
+        bool bold = false, double? maxWidth}) {
     final tp = TextPainter(
       text: TextSpan(text: text, style: TextStyle(
         color: color, fontSize: fontSize,

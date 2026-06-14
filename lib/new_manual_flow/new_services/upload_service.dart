@@ -85,9 +85,9 @@ class UploadService {
 
     DebugService.log('FIELDS',
         'vehicle_id=' + vehicle.regNo +
-        '  appointment_id=' + vehicle.appointmentId +
-        '  created_by=' + config.createdBy +
-        '  total_files=' + photos.length.toString());
+            '  appointment_id=' + vehicle.appointmentId +
+            '  created_by=' + config.createdBy +
+            '  total_files=' + photos.length.toString());
 
     // Sort photos in fixed label order (1→8) to match server sequence
     const angleOrder = [
@@ -136,7 +136,7 @@ class UploadService {
 
       DebugService.log('ATTACH',
           '[$i] ' + label + '  labelId=' + labelId.toString() +
-          '  ' + (fileBytes.length / 1024).toStringAsFixed(1) + ' KB');
+              '  ' + (fileBytes.length / 1024).toStringAsFixed(1) + ' KB');
       attached++;
     }
 
@@ -223,7 +223,7 @@ class UploadService {
       for (final item in s.items) {
         if (item.media.isNotEmpty) {
           DebugService.log('UPLOAD',
-            'Item ${item.ref} has ${item.media.length} media file(s)');
+              'Item ${item.ref} has ${item.media.length} media file(s)');
         }
         for (final m in item.media) {
           allMedia.add({
@@ -337,7 +337,7 @@ class UploadService {
       DebugService.apiRequest('POST', url, authToken: config.apiKey);
       DebugService.log('FIELDS',
           'vehicle_id=$vehicleId  appointment_id=$appointmentId  '
-          'label_id=$labelId  lat=$latitude  lng=$longitude');
+              'label_id=$labelId  lat=$latitude  lng=$longitude');
       DebugService.log('SIZE',
           '${(fileBytes.length / 1024).toStringAsFixed(1)} KB  file=$filename');
 

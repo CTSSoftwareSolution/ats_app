@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'new_model/auth_model.dart' show AppConfig;
+import 'new_model/auth_model.dart';
 import 'new_model/inspection_data.dart';
 import 'new_model/inspection_model.dart';
 import 'new_model/vehicle_entry.dart';
@@ -10,7 +10,7 @@ import 'new_services/vehicle_api_service.dart';
 import 'new_services/vehicle_photo_service.dart';
 
 
-class   AppProvider extends ChangeNotifier {
+class AppProvider extends ChangeNotifier {
   AppConfig _config = AppConfig();
   AppConfig get config => _config;
 
@@ -33,22 +33,29 @@ class   AppProvider extends ChangeNotifier {
 
   // ── Load inspection sections from API ────────────────────────────────────────
   Future<void> loadSections() async {
+    //debugPrint('[Sections] START url=' + _config.fullApiBase);
     try {
       final sections = await InspectionApiService.fetchSections(_config);
+      debugPrint('[Sections] API returned ' + sections.length.toString());
       if (sections.isNotEmpty) {
         _cachedSections = sections;
-        debugPrint('[AppProvider] Sections loaded: ${sections.length}');
+        // Log first item flags to confirm data is correct
+        final firstItem = sections.first.items.isNotEmpty ? sections.first.items.first : null;
+        // if (firstItem != null) {
+        //   debugPrint('[Sections] First item: ref=' + firstItem.ref +
+        //       ' qid=' + firstItem.questionId.toString() +
+        //       ' flag=' + firstItem.photoVideoFlag.toString() +
+        //       ' name=' + firstItem.name.substring(0, 20));
+        // }
       } else {
-        // Fallback to hardcoded
         _cachedSections = InspectionData.buildSections();
-        debugPrint('[AppProvider] Using fallback sections');
+        debugPrint('[Sections] FALLBACK — API returned empty');
       }
     } catch (e) {
       _cachedSections = InspectionData.buildSections();
-      debugPrint('[AppProvider] Section load error: $e — using fallback');
+      debugPrint('[Sections] FALLBACK — error: ' + e.toString());
     }
   }
-
   List<InspectionSection> _buildSectionsForVehicle() {
     if (_cachedSections.isNotEmpty) {
       // Deep copy so each vehicle gets its own independent state
@@ -78,7 +85,7 @@ class   AppProvider extends ChangeNotifier {
     _vehicleError = null;
     notifyListeners();
     try {
-      final list = await VehicleApiService.fetchVehicles(config: _config);
+      final list = await VehicleApiService.fetchVehicles(config: _config, sections: _cachedSections.isNotEmpty ? _cachedSections : null);
       vehicles.clear();
       vehicles.addAll(list);
       if (list.isEmpty) {

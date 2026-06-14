@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+
 import '../new_model/auth_model.dart';
 import '../new_model/inspection_model.dart';
 import 'debug_service.dart';
@@ -83,17 +84,17 @@ class InspectionResultService {
 
         DebugService.log('ATTACH',
             '[$i] ${m.type.name}  labelId=$labelId  '
-            '${(bytes.length / 1024).toStringAsFixed(1)} KB');
+                '${(bytes.length / 1024).toStringAsFixed(1)} KB');
         attached++;
       }
 
       DebugService.log('UPLOAD',
           'Sending q${item.questionId}(${item.ref}) — result=${item.resultLabel} '
-          'files=$attached');
+              'files=$attached');
 
       final streamed = await request.send()
           .timeout(Duration(seconds: config.apiTimeoutSeconds *
-              (attached > 0 ? attached + 1 : 1)));
+          (attached > 0 ? attached + 1 : 1)));
       final body = await streamed.stream.bytesToString();
 
       DebugService.apiResponse(streamed.statusCode, body);

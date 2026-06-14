@@ -30,7 +30,7 @@ class ConfigStorage {
   }
 
   static Future<void> save({required String serverUrl,
-      required String apiBasePath}) async {
+    required String apiBasePath}) async {
     final p = await SharedPreferences.getInstance();
     await p.setString(_keyServerUrl, serverUrl.trim());
     await p.setString(_keyApiBasePath, apiBasePath.trim());

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
 import 'auth_provider.dart';
 import 'new_services/debug_service.dart';
+
 
 // ── Wrap any screen with this to add the debug FAB ───────────────────────────
 class DebugFabWrapper extends StatelessWidget {
@@ -83,7 +85,7 @@ class _DebugLogSheetState extends State<_DebugLogSheet> {
   final _scroll = ScrollController();
   String _filter = 'ALL';
   static const _filters = ['ALL', 'REQ', 'RES✓', 'RES✗', 'AUTH',
-      'UP✓', 'UP✗', 'SYS'];
+    'UP✓', 'UP✗', 'SYS'];
 
   @override
   void initState() {
@@ -125,8 +127,8 @@ class _DebugLogSheetState extends State<_DebugLogSheet> {
             width: 40, height: 4,
             margin: const EdgeInsets.only(top: 10, bottom: 8),
             decoration: BoxDecoration(
-              color: Colors.white24,
-              borderRadius: BorderRadius.circular(2)),
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2)),
           ),
 
           // ── Header ─────────────────────────────────────────────────
@@ -143,8 +145,8 @@ class _DebugLogSheetState extends State<_DebugLogSheet> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(10)),
+                    color: Colors.white.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(10)),
                 child: Text('${DebugService.entries.length} entries',
                     style: GoogleFonts.robotoMono(
                         color: Colors.white54, fontSize: 9)),
@@ -161,8 +163,8 @@ class _DebugLogSheetState extends State<_DebugLogSheet> {
                       .join('\n');
                   Clipboard.setData(ClipboardData(text: text));
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Copied to clipboard'),
-                        duration: Duration(seconds: 1)));
+                      const SnackBar(content: Text('Copied to clipboard'),
+                          duration: Duration(seconds: 1)));
                 },
               ),
               // Clear
@@ -200,7 +202,7 @@ class _DebugLogSheetState extends State<_DebugLogSheet> {
                   onTap: () {
                     setState(() => _filter = f);
                     WidgetsBinding.instance.addPostFrameCallback(
-                        (_) => _scrollToBottom());
+                            (_) => _scrollToBottom());
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
@@ -213,9 +215,9 @@ class _DebugLogSheetState extends State<_DebugLogSheet> {
                           : Colors.white.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: selected
-                            ? Colors.greenAccent.withOpacity(0.6)
-                            : Colors.white.withOpacity(0.1)),
+                          color: selected
+                              ? Colors.greenAccent.withOpacity(0.6)
+                              : Colors.white.withOpacity(0.1)),
                     ),
                     child: Text('$f ($count)',
                         style: TextStyle(
@@ -237,31 +239,31 @@ class _DebugLogSheetState extends State<_DebugLogSheet> {
           Expanded(
             child: entries.isEmpty
                 ? Center(child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.info_outline_rounded,
-                          color: Colors.white24, size: 36),
-                      const SizedBox(height: 10),
-                      Text('No log entries',
-                          style: GoogleFonts.robotoMono(
-                              color: Colors.white38, fontSize: 12)),
-                      const SizedBox(height: 4),
-                      Text('Make an API call to see entries here',
-                          style: GoogleFonts.inter(
-                              color: Colors.white24, fontSize: 11)),
-                    ],
-                  ))
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.info_outline_rounded,
+                    color: Colors.white24, size: 36),
+                const SizedBox(height: 10),
+                Text('No log entries',
+                    style: GoogleFonts.robotoMono(
+                        color: Colors.white38, fontSize: 12)),
+                const SizedBox(height: 4),
+                Text('Make an API call to see entries here',
+                    style: GoogleFonts.inter(
+                        color: Colors.white24, fontSize: 11)),
+              ],
+            ))
                 : ListView.separated(
-                    controller: _scroll,
-                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 20),
-                    itemCount: entries.length,
-                    separatorBuilder: (_, __) =>
-                        const Divider(color: Colors.white10, height: 1),
-                    itemBuilder: (_, i) {
-                      final e = entries[i];
-                      return _EntryRow(entry: e, index: i);
-                    },
-                  ),
+              controller: _scroll,
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 20),
+              itemCount: entries.length,
+              separatorBuilder: (_, __) =>
+              const Divider(color: Colors.white10, height: 1),
+              itemBuilder: (_, i) {
+                final e = entries[i];
+                return _EntryRow(entry: e, index: i);
+              },
+            ),
           ),
         ]),
       ),
@@ -283,16 +285,16 @@ class _EntryRow extends StatelessWidget {
         Clipboard.setData(ClipboardData(
             text: '[${entry.timeStr}] ${entry.tag}  ${entry.message}'));
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Line copied'),
-              duration: Duration(milliseconds: 800)));
+            const SnackBar(content: Text('Line copied'),
+                duration: Duration(milliseconds: 800)));
       },
       child: Container(
         padding: EdgeInsets.symmetric(
             vertical: isSeparator ? 8 : 4, horizontal: 4),
         decoration: isSeparator
             ? BoxDecoration(
-                color: Colors.white.withOpacity(0.03),
-                borderRadius: BorderRadius.circular(4))
+            color: Colors.white.withOpacity(0.03),
+            borderRadius: BorderRadius.circular(4))
             : null,
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // Line number
@@ -310,8 +312,8 @@ class _EntryRow extends StatelessWidget {
             width: 52,
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
             decoration: BoxDecoration(
-              color: entry.color.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(3)),
+                color: entry.color.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(3)),
             child: Text(entry.tag,
                 style: TextStyle(
                     color: entry.color, fontSize: 8,

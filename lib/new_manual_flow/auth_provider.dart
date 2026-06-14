@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+
 import 'new_model/auth_model.dart';
 import 'new_services/config_storage.dart';
 import 'new_services/debug_service.dart';
@@ -54,7 +55,7 @@ class AuthProvider extends ChangeNotifier {
     if (apiBasePath != null)  _config.apiBasePath = apiBasePath;
   }
 
-    // ── Login via Cerisetech API ──────────────────────────────────────────────
+  // ── Login via Cerisetech API ──────────────────────────────────────────────
   // Local admin credentials — bypasses API, used for first-time config
   static const _localAdminUser = 'admin';
   static const _localAdminPass = 'admin@2026';
