@@ -89,9 +89,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         context.read<ManualInspectionListProvider>().setManualInspectionScreen(false);
                        provider.setSelectedClass(item);
-                        context.push(ManualInspectionImageScreen());
-                       //  debugPrint("RegNo on list : ${item.registrationNo}");
-                       //  context.push( VehicleDetailScreen(vehicleId: item.registrationNo.toString(),));
+                       // context.push(ManualInspectionImageScreen());
+                        debugPrint("RegNo on list : ${item.registrationNo}");
+                        context.push( VehicleDetailScreen(vehicleId: item.registrationNo.toString(),));
                         },
                     ),
                   );
