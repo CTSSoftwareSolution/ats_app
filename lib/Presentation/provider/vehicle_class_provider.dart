@@ -58,21 +58,21 @@ class VehicleClassProvider extends ChangeNotifier {
 
 
 // Add a helper method to your provider:
-  VehicleEntry _mapAppointmentToVehicleEntry(Appointments appointment) {
-    return VehicleEntry(
-      id: const Uuid().v4(),
-      appointmentId: appointment.appointmentId?.toString() ?? '',
-      bookingId: appointment.bookingId ?? '',
-      regNo: appointment.registrationNo ?? appointment.regNo ?? '',
-      vehicleClass: appointment.vehicleClass ?? '',
-      make: appointment.make ?? '',
-      model: appointment.model ?? '',
-      fuelType: appointment.fuelType ?? '',
-      engineNo: appointment.engineNo ?? '',
-      chassisNo: appointment.vin ?? '',        // mapping vin → chassisNo
-      sections: [],                            // populate later as needed
-    );
-  }
+//   VehicleEntry _mapAppointmentToVehicleEntry(Appointments appointment) {
+//     return VehicleEntry(
+//       id: const Uuid().v4(),
+//       appointmentId: appointment.appointmentId?.toString() ?? '',
+//       bookingId: appointment.bookingId ?? '',
+//       regNo: appointment.registrationNo ?? appointment.regNo ?? '',
+//       vehicleClass: appointment.vehicleClass ?? '',
+//       make: appointment.make ?? '',
+//       model: appointment.model ?? '',
+//       fuelType: appointment.fuelType ?? '',
+//       engineNo: appointment.engineNo ?? '',
+//       chassisNo: appointment.vin ?? '',        // mapping vin → chassisNo
+//       sections: [],                            // populate later as needed
+//     );
+//   }
 
   Future<VehicleClassEntity?> vehicleClassApi({
     required BuildContext context,
@@ -99,26 +99,26 @@ class VehicleClassProvider extends ChangeNotifier {
       );
       final response = await vehicleClassUseCases.execute(vehicleClassReqModel);
       if (response.data?.appointments?.isNotEmpty ?? false) {
-       final appProvider = context.read<AppProvider>();
+      // final appProvider = context.read<AppProvider>();
 
         if (loadMore && vehicleClassEntity != null) {
           vehicleClassEntity!.data!.appointments!.addAll(response.data!.appointments!);
-          final newEntries = response.data!.appointments!
-              .map(_mapAppointmentToVehicleEntry)
-              .toList();
-          appProvider.vehicles.addAll(newEntries);
-          appProvider.notifyListeners();
+          // final newEntries = response.data!.appointments!
+          //     .map(_mapAppointmentToVehicleEntry)
+          //     .toList();
+          // appProvider.vehicles.addAll(newEntries);
+          // appProvider.notifyListeners();
 
         } else {
           vehicleClassEntity = response;
          // Replace AppProvider vehicles on fresh load
-          final allEntries = response.data!.appointments!
-              .map(_mapAppointmentToVehicleEntry)
-              .toList();
-          appProvider.vehicles
-            ..clear()
-            ..addAll(allEntries);
-          appProvider.notifyListeners();
+         //  final allEntries = response.data!.appointments!
+         //      .map(_mapAppointmentToVehicleEntry)
+         //      .toList();
+         //  appProvider.vehicles
+         //    ..clear()
+         //    ..addAll(allEntries);
+         //  appProvider.notifyListeners();
         }
 
         page++;

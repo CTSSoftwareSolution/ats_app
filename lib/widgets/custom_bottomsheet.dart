@@ -47,7 +47,7 @@ class _InspectionSheet extends StatelessWidget {
             color: const Color(0xFF4361EE),
             onTap: () {
               Navigator.pop(context);
-              onSelect('Manual Inspection');
+              onSelect('Visual Inspection');
             },
           ),
           const SizedBox(height: 12),
@@ -57,8 +57,8 @@ class _InspectionSheet extends StatelessWidget {
             description: '',
             color: const Color(0xFF06D6A0),
             onTap: () {
-              // Navigator.pop(context);
-              // onSelect('Machine Inspection');
+              Navigator.pop(context);
+              onSelect('Under PIT Inspection');
             },
           ),
           const SizedBox(height: 8),

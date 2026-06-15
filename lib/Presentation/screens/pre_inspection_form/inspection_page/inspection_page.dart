@@ -27,38 +27,51 @@ class _InspectionPageState extends State<InspectionPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+  //  _tabController = TabController(length: 3, vsync: this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<InspectionFormProvider>();
       final detailsProvider = context.read<AiInspectionDetailsProvider>();
 
       final manualProvider = Provider.of<ManualInspectionListProvider>(context, listen: false);
-
-      if(detailsProvider.isAIModeOn){
-        detailsProvider.aiInspectionDetails(context);
-      }
-      if (widget.isEditMode == true) {
-        provider.fetchAndPrefill(
-            vehicleNo: manualProvider.selectedManualListData!.registrationNo.toString(),
-            appointmentID: manualProvider.selectedManualListData!.appointmentId.toString());
-      }
-      else {
-        provider.fetchInspectionData();
-      }
+       provider.fetchInspectionData();
+      // if(detailsProvider.isAIModeOn){
+      //   detailsProvider.aiInspectionDetails(context);
+      // }
+      // if (widget.isEditMode == true) {
+      //   provider.fetchAndPrefill(
+      //       vehicleNo: manualProvider.selectedManualListData!.registrationNo.toString(),
+      //       appointmentID: manualProvider.selectedManualListData!.appointmentId.toString());
+      // }
+      // else {
+      //   provider.fetchInspectionData();
+      // }
     });
   }
 
-
-
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
+    final count =
+        context.read<InspectionFormProvider>()
+            .visibleSections
+            .length;
 
-
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+    _tabController = TabController(
+      length: count,
+      vsync: this,
+    );
   }
+  //
+  // @override
+  //
+  //
+  //
+  // void dispose() {
+  //   _tabController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +112,8 @@ class _InspectionPageState extends State<InspectionPage>
     //   return const Center(child: Text("No sections available"));
     // }
 
-    final sections = provider.filteredSections;
+   // final sections = provider.filteredSections;
+    final sections = provider.visibleSections;
 
     return Column(
       children: [
@@ -118,29 +132,31 @@ class _InspectionPageState extends State<InspectionPage>
               fontWeight: FontWeight.w600,
               letterSpacing: 0.3,
             ),
-            tabs: provider.sections.map((s) => Tab(
-              icon: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Icon(s.icon, size: 18),
-                  if (s.isComplete)
-                    Positioned(
-                      right: -6,
-                      top: -4,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: Colors.greenAccent,
-                          shape: BoxShape.circle,
+            tabs: List.generate(sections.length, (i) {
+              final s = sections[i];
+              return Tab(
+                icon: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Icon(s.icon, size: 18),
+                    if (s.isComplete)
+                      Positioned(
+                        right: -6,
+                        top: -4,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Colors.greenAccent,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                       ),
-                    ),
-                ],
-              ),
-             // text: s.label.split('-').last,
-              text: 'Step ${provider.sections.indexOf(s) + 1}',
-            )).toList(),
+                  ],
+                ),
+                text: 'Step ${i + 1}',
+              );
+            }),
           ),
         ),
 

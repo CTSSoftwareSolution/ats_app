@@ -1,16 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:ats_app/Data/model/response_model/inspection_new_que_model.dart';
 import 'package:ats_app/Data/model/response_model/pre_inspection_details_model.dart';
+import 'package:ats_app/Domain/entities/inspection_new_que_entity.dart';
+import 'package:ats_app/Domain/usecases/inspection_new_que_usecases.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../../../Data/model/response_model/inspection_que_model.dart';
+import '../../../Data/model/response_model/inspection_que_model.dart' hide CarData, PreInspection, PostInspection;
 import '../../../Domain/entities/inspection_que_entity.dart';
 import '../../../Domain/usecases/inspection_que_usecases.dart';
 import '../../Core/network/services.dart';
 import '../screens/pre_inspection_form/answer_models.dart';
+
+enum InspectionMode {
+  visualInspection,
+  underPitInspection,
+}
 
 /// Answer State
 enum AnswerState { unanswered, Pass, Fail }
@@ -77,8 +85,10 @@ class SectionState {
 
 ///  PROVIDER
 class InspectionFormProvider extends ChangeNotifier {
-  InspectionQueUseCases inspectionQueUseCases;
-  InspectionFormProvider({required this.inspectionQueUseCases});
+  // InspectionQueUseCases inspectionQueUseCases;
+  InspectionNewQueUseCases inspectionNewQueUseCases;
+  //InspectionFormProvider({required this.inspectionQueUseCases});
+  InspectionFormProvider({required this.inspectionNewQueUseCases});
 
   // static const String _editApiUrl =
   //     'https://3l4vre4apl.execute-api.ap-south-1.amazonaws.com/dev/getPreInspectionDetailsByVehicleID';
@@ -86,7 +96,8 @@ class InspectionFormProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _hasError = false;
   String _errorMessage = '';
-  InspectionQueEntity? _model;
+  // InspectionQueEntity? _model;
+  InspectionNewQueEntity? _model;
   List<SectionState> _sections = [];
   bool _isEditMode = false;
   QuestionFilter _filter = QuestionFilter.all;
@@ -97,7 +108,8 @@ class InspectionFormProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
   String get errorMessage => _errorMessage;
-  InspectionQueEntity? get model => _model;
+  //InspectionQueEntity? get model => _model;
+  InspectionNewQueEntity? get model => _model;
   List<SectionState> get sections => _sections;
   bool get isEditMode => _isEditMode;
   QuestionFilter get filter => _filter;
@@ -108,6 +120,33 @@ class InspectionFormProvider extends ChangeNotifier {
   int get grandTotalNo => _sections.fold(
       0, (sum, s) =>
   sum + s.categories.fold(0, (cSum, c) => cSum + c.questions.where((q) => q.answer == AnswerState.Fail).length));
+
+
+  //Inspection Mode for New Manual flow
+  InspectionMode _inspectionMode = InspectionMode.visualInspection;
+
+  InspectionMode get inspectionMode => _inspectionMode;
+
+  List<SectionState> get visibleSections {
+    switch (_inspectionMode) {
+      case InspectionMode.visualInspection:
+        return _sections.where((s) =>
+        s.label == 'Pre-Inspection' ||
+            s.label == 'Post-Inspection'
+        ).toList();
+
+      case InspectionMode.underPitInspection:
+        return _sections.where((s) =>
+        s.label == 'Under-PIT Inspection'
+        ).toList();
+    }
+  }
+
+
+  void setInspectionMode(InspectionMode mode) {
+    _inspectionMode = mode;
+    notifyListeners();
+  }
 
   //  Auto Scroll
   void registerQuestionKey(int sec, int cat, int que, GlobalKey key) {
@@ -191,7 +230,7 @@ class InspectionFormProvider extends ChangeNotifier {
 
     try {
       debugPrint('→ Fetching inspection data from usecase');
-      final response = await inspectionQueUseCases.execute();
+      final response = await inspectionNewQueUseCases.execute();
 
       _model = response;
 
@@ -217,70 +256,70 @@ class InspectionFormProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchAndPrefill({required String vehicleNo, required String appointmentID}) async {
-    _isLoading = true;
-    _hasError = false;
-    _errorMessage = '';
-    _isEditMode = true;
-    _filter = QuestionFilter.all;
-    _sections = [];
-    _questionKeys.clear();
-    notifyListeners();
+  // Future<void> fetchAndPrefill({required String vehicleNo, required String appointmentID}) async {
+  //   _isLoading = true;
+  //   _hasError = false;
+  //   _errorMessage = '';
+  //   _isEditMode = true;
+  //   _filter = QuestionFilter.all;
+  //   _sections = [];
+  //   _questionKeys.clear();
+  //   notifyListeners();
+  //
+  //   try {
+  //     debugPrint('→ [EditMode] Fetching for vehicle: $vehicleNo $appointmentID');
+  //
+  //     Map<String, String> headers = {
+  //       HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+  //       HttpHeaders.authorizationHeader: 'Bearer ${Preferences.getToken()}',
+  //     };
+  //
+  //     final response = await http.post(
+  //       Uri.parse(preInspectionDetails),
+  //       headers: headers,
+  //       body: jsonEncode({
+  //         'vehicle_id': vehicleNo,
+  //         'appointment_id': appointmentID,
+  //       }),
+  //     ).timeout(const Duration(seconds: 30));
+  //
+  //     if (kDebugMode) {
+  //       alice.onHttpResponse(
+  //           response,  body: jsonEncode({
+  //         'vehicle_id': vehicleNo,
+  //         'appointment_id': appointmentID,
+  //       }));
+  //     }
+  //
+  //     if (response.statusCode == 200) {
+  //       final decoded = jsonDecode(response.body);
+  //       final editModel = PreInspectionDetailsModels.fromJson(decoded);
+  //
+  //       if (editModel.status == true && editModel.data != null) {
+  //         _buildSectionsFromDetailsModel(editModel.data!);
+  //         debugPrint('→ [EditMode] Sections built: ${_sections.length}');
+  //       } else {
+  //         _setError(editModel.message ?? 'status=false or data=null');
+  //       }
+  //     } else {
+  //       _setError('HTTP Error ${response.statusCode}');
+  //     }
+  //   } on TimeoutException {
+  //     _setError('Request timed out. Check internet connection.');
+  //   } on SocketException catch (e) {
+  //     _setError('No internet connection: ${e.message}');
+  //   } on FormatException catch (e) {
+  //     _setError('Data parse error: ${e.message}');
+  //   } catch (e, stack) {
+  //     debugPrint('→ [EditMode] ERROR: $e\n$stack');
+  //     _setError('Unexpected error: $e');
+  //   } finally {
+  //     _isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
 
-    try {
-      debugPrint('→ [EditMode] Fetching for vehicle: $vehicleNo $appointmentID');
-
-      Map<String, String> headers = {
-        HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
-        HttpHeaders.authorizationHeader: 'Bearer ${Preferences.getToken()}',
-      };
-
-      final response = await http.post(
-        Uri.parse(preInspectionDetails),
-        headers: headers,
-        body: jsonEncode({
-          'vehicle_id': vehicleNo,
-          'appointment_id': appointmentID,
-        }),
-      ).timeout(const Duration(seconds: 30));
-
-      if (kDebugMode) {
-        alice.onHttpResponse(
-            response,  body: jsonEncode({
-          'vehicle_id': vehicleNo,
-          'appointment_id': appointmentID,
-        }));
-      }
-
-      if (response.statusCode == 200) {
-        final decoded = jsonDecode(response.body);
-        final editModel = PreInspectionDetailsModels.fromJson(decoded);
-
-        if (editModel.status == true && editModel.data != null) {
-          _buildSectionsFromDetailsModel(editModel.data!);
-          debugPrint('→ [EditMode] Sections built: ${_sections.length}');
-        } else {
-          _setError(editModel.message ?? 'status=false or data=null');
-        }
-      } else {
-        _setError('HTTP Error ${response.statusCode}');
-      }
-    } on TimeoutException {
-      _setError('Request timed out. Check internet connection.');
-    } on SocketException catch (e) {
-      _setError('No internet connection: ${e.message}');
-    } on FormatException catch (e) {
-      _setError('Data parse error: ${e.message}');
-    } catch (e, stack) {
-      debugPrint('→ [EditMode] ERROR: $e\n$stack');
-      _setError('Unexpected error: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  void _buildSections(InspectorData data) {
+  void _buildSections(NewInspectionData data) {
     _sections = [
       SectionState(
         label: 'Pre-Inspection',
@@ -290,11 +329,11 @@ class InspectionFormProvider extends ChangeNotifier {
         categories: _buildFromPreInspection(data.preInspection ?? []),
       ),
       SectionState(
-        label: 'Inspection',
+        label: 'Under-PIT Inspection',
         subtitle: 'Main vehicle check',
         color: const Color(0xFF1A3C6E),
         icon: Icons.directions_car_outlined,
-        categories: _buildFromInspection(data.inspection ?? []),
+        categories: _buildFromInspection(data.underPitInspection ?? []),
       ),
       SectionState(
         label: 'Post-Inspection',
@@ -306,65 +345,65 @@ class InspectionFormProvider extends ChangeNotifier {
     ];
   }
 
-  void _buildSectionsFromDetailsModel(PreInspectionDetailsData data) {
-    AnswerState parseAnswer(String? r) {
-      if (r == 'Pass') return AnswerState.Pass;
-      if (r == 'Fail') return AnswerState.Fail;
-      return AnswerState.unanswered;
-    }
-
-    QuestionAnswer fromCarDataDetails(CarDataDetails q) {
-      final cd = CarData(
-        questionId: q.questionId?.toInt(),
-        questionText: q.questionText,
-      );
-      final qa = QuestionAnswer(
-        carData: cd,
-        answer: parseAnswer(q.inspectionResult),
-      );
-      qa.existingEvidenceUrl = q.evidenceFileViewUrl;
-      return qa;
-    }
-
-    _sections = [
-      SectionState(
-        label: 'Pre-Inspection',
-        subtitle: 'Before vehicle enters',
-        color: const Color(0xFF0D7377),
-        icon: Icons.assignment_turned_in_outlined,
-        categories: (data.preInspection ?? [])
-            .map((cat) => CategoryState(
-          title: cat.title ?? 'Unknown',
-          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
-        ))
-            .toList(),
-      ),
-      SectionState(
-        label: 'Inspection',
-        subtitle: 'Main vehicle check',
-        color: const Color(0xFF1A3C6E),
-        icon: Icons.directions_car_outlined,
-        categories: (data.inspection ?? [])
-            .map((cat) => CategoryState(
-          title: cat.title ?? 'Unknown',
-          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
-        ))
-            .toList(),
-      ),
-      SectionState(
-        label: 'Post-Inspection',
-        subtitle: 'After vehicle exits',
-        color: const Color(0xFF7B2D8B),
-        icon: Icons.task_alt_outlined,
-        categories: (data.postInspection ?? [])
-            .map((cat) => CategoryState(
-          title: cat.title ?? 'Unknown',
-          questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
-        ))
-            .toList(),
-      ),
-    ];
-  }
+  // void _buildSectionsFromDetailsModel(PreInspectionDetailsData data) {
+  //   AnswerState parseAnswer(String? r) {
+  //     if (r == 'Pass') return AnswerState.Pass;
+  //     if (r == 'Fail') return AnswerState.Fail;
+  //     return AnswerState.unanswered;
+  //   }
+  //
+  //   QuestionAnswer fromCarDataDetails(CarDataDetails q) {
+  //     final cd = CarData(
+  //       questionId: q.questionId?.toInt(),
+  //       questionText: q.questionText,
+  //     );
+  //     final qa = QuestionAnswer(
+  //       carData: cd,
+  //       answer: parseAnswer(q.inspectionResult),
+  //     );
+  //     qa.existingEvidenceUrl = q.evidenceFileViewUrl;
+  //     return qa;
+  //   }
+  //
+  //   _sections = [
+  //     SectionState(
+  //       label: 'Pre-Inspection',
+  //       subtitle: 'Before vehicle enters',
+  //       color: const Color(0xFF0D7377),
+  //       icon: Icons.assignment_turned_in_outlined,
+  //       categories: (data.preInspection ?? [])
+  //           .map((cat) => CategoryState(
+  //         title: cat.title ?? 'Unknown',
+  //         questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
+  //       ))
+  //           .toList(),
+  //     ),
+  //     SectionState(
+  //       label: 'Under-PIT Inspection',
+  //       subtitle: 'Main vehicle check',
+  //       color: const Color(0xFF1A3C6E),
+  //       icon: Icons.directions_car_outlined,
+  //       categories: (data.underPitInspection ?? [])
+  //           .map((cat) => CategoryState(
+  //         title: cat.title ?? 'Unknown',
+  //         questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
+  //       ))
+  //           .toList(),
+  //     ),
+  //     SectionState(
+  //       label: 'Post-Inspection',
+  //       subtitle: 'After vehicle exits',
+  //       color: const Color(0xFF7B2D8B),
+  //       icon: Icons.task_alt_outlined,
+  //       categories: (data.postInspection ?? [])
+  //           .map((cat) => CategoryState(
+  //         title: cat.title ?? 'Unknown',
+  //         questions: (cat.carData ?? []).map(fromCarDataDetails).toList(),
+  //       ))
+  //           .toList(),
+  //     ),
+  //   ];
+  // }
 
   List<CategoryState> _buildFromPreInspection(List<PreInspection> raw) =>
       raw.map((cat) => CategoryState(
@@ -372,7 +411,7 @@ class InspectionFormProvider extends ChangeNotifier {
         questions: (cat.carData ?? []).map((q) => QuestionAnswer(carData: q)).toList(),
       )).toList();
 
-  List<CategoryState> _buildFromInspection(List<Inspection> raw) =>
+  List<CategoryState> _buildFromInspection(List<UnderPitInspection> raw) =>
       raw.map((cat) => CategoryState(
         title: cat.title ?? 'Unknown',
         questions: (cat.carData ?? []).map((q) => QuestionAnswer(carData: q)).toList(),
@@ -451,26 +490,35 @@ class InspectionFormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  int originalSectionIndex(int filteredSectionIdx) {
-    final filteredSection = filteredSections[filteredSectionIdx];
-    return _sections.indexWhere((s) => s.label == filteredSection.label);
+  int originalSectionIndex(int visibleSectionIdx) {
+    final visibleSection = visibleSections[visibleSectionIdx];
+
+    return _sections.indexWhere(
+          (s) => s.label == visibleSection.label,
+    );
   }
 
-  int originalCategoryIndex(int filteredSectionIdx, int filteredCatIdx) {
-    final filteredSection = filteredSections[filteredSectionIdx];
-    final filteredCat = filteredSection.categories[filteredCatIdx];
-    final origSectionIdx = originalSectionIndex(filteredSectionIdx);
-    return _sections[origSectionIdx].categories.indexWhere((c) => c.title == filteredCat.title);
+  int originalCategoryIndex(int visibleSectionIdx, int visibleCatIdx) {
+    final visibleSection = visibleSections[visibleSectionIdx];
+    final visibleCat = visibleSection.categories[visibleCatIdx];
+
+    final origSectionIdx = originalSectionIndex(visibleSectionIdx);
+
+    return _sections[origSectionIdx].categories.indexWhere(
+          (c) => c.title == visibleCat.title,
+    );
   }
 
   int originalQuestionIndex(int filteredSectionIdx, int filteredCatIdx, int filteredQueIdx) {
-    final filteredSection = filteredSections[filteredSectionIdx];
-    final filteredCat = filteredSection.categories[filteredCatIdx];
-    final filteredQ = filteredCat.questions[filteredQueIdx];
+    final visibleSection = visibleSections[filteredSectionIdx];
+    final visibleCat = visibleSection.categories[filteredCatIdx];
+    final visibleQ = visibleCat.questions[filteredQueIdx];
     final origSectionIdx = originalSectionIndex(filteredSectionIdx);
     final origCatIdx = originalCategoryIndex(filteredSectionIdx, filteredCatIdx);
     return _sections[origSectionIdx].categories[origCatIdx].questions
-        .indexWhere((q) => q.carData.questionId == filteredQ.carData.questionId);
+        .indexWhere(
+          (q) => q.carData.questionId == visibleQ.carData.questionId,
+    );
   }
 
   List<QuestionAnswerModel> collectAnswers() {
@@ -498,7 +546,7 @@ class InspectionFormProvider extends ChangeNotifier {
     _sections = [];
     _questionKeys.clear();
     debugPrint("AI Details $data}");
-    _buildSectionsFromDetailsModel(data);
+    //_buildSectionsFromDetailsModel(data);
 
     notifyListeners();
   }

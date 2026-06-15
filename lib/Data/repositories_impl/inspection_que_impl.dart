@@ -17,4 +17,5 @@ class InspectionQueImpl implements InspectionQueRepository{
       throw Exception(e);
     }
   }
+
 }

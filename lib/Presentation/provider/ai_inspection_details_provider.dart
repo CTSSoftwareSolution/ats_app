@@ -50,7 +50,7 @@ class AiInspectionDetailsProvider extends ChangeNotifier{
       );
       aiDetailsEntity = await aiInspectionDetailsUseCases.execute(detailsReqModel);
       if (aiDetailsEntity?.data != null) {
-        formProvider.loadFromDetailsModel(aiDetailsEntity!.data!);
+      //  formProvider.loadFromDetailsModel(aiDetailsEntity!.data!);
         debugPrint("AI Details${aiDetailsEntity!.data.toString()}");
       }
       return aiDetailsEntity;

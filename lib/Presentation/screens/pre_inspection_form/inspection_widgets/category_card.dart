@@ -24,7 +24,8 @@ class CategoryCard extends StatelessWidget {
 
         // final section = provider.sections[sectionIndex];
         // final cat = section.categories[categoryIndex];
-        final section = provider.filteredSections[sectionIndex];
+      //  final section = provider.filteredSections[sectionIndex];
+        final section = provider.visibleSections[sectionIndex];
         final cat = section.categories[categoryIndex];
 
         Color statusColor;

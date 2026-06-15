@@ -14,12 +14,22 @@ class SectionTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<InspectionFormProvider>(
       builder: (context, provider, _) {
-        if (provider.filteredSections.isEmpty ||
-            sectionIndex >= provider.filteredSections.length) {
+        final sections = provider.visibleSections;
+
+        if (sections.isEmpty ||
+            sectionIndex >= sections.length) {
           return _buildEmptyState(provider);
         }
 
-        final section = provider.filteredSections[sectionIndex];
+        final section = sections[sectionIndex];
+        // if (provider.filteredSections.isEmpty ||
+        //     sectionIndex >= provider.filteredSections.length) {
+        //   return _buildEmptyState(provider);
+        // }
+        //
+        // final section = provider.filteredSections[sectionIndex];
+        debugPrint('→ Section: ${section.label}');
+        debugPrint('→ Section: ${sectionIndex}');
 
         if (section.categories.isEmpty) {
           return _buildEmptyState(provider);

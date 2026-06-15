@@ -46,6 +46,11 @@ String get aiSavePreInspection           => "${newBaseUrl}Inspection/save-ai-pre
 String get aiUpdateQuestionResultUrl           => "${newBaseUrl}Inspection/update-ai-inspection-result-questionwise";
 
 
+String get newInspectionQuestionsList           => "${newBaseUrl}inspection/inspection-questions-list-new";
+
+
+
+
 const String awsSignedUrl = "https://erpapi.sgbregistration.in/v1/File_upload/getsignedurlsgb";
 const awsImagePathUrl = 'https://s3.ap-south-1.amazonaws.com/sgberp.in/inspectorApp/';
 

@@ -10,6 +10,7 @@ import 'package:ats_app/Data/repositories_impl/vehicle_parts_repo_impl.dart';
 
 import 'package:ats_app/Domain/usecases/ai_inspection_details_usecases.dart';
 import 'package:ats_app/Domain/usecases/create_bulk_usecases.dart';
+import 'package:ats_app/Domain/usecases/inspection_new_que_usecases.dart';
 import 'package:ats_app/Domain/usecases/lane_list_usecase.dart';
 import 'package:ats_app/Domain/usecases/login_usecases.dart';
 import 'package:ats_app/Domain/usecases/manual_inspection_list_usecase.dart';
@@ -38,6 +39,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Data/repositories_impl/ai_save_inspection_repo_impl.dart';
 import '../../Data/repositories_impl/document_manual_doc_impl.dart';
+import '../../Data/repositories_impl/inspection_new_que_impl.dart';
 import '../../Data/repositories_impl/inspection_que_impl.dart';
 
 import '../../Domain/usecases/ai_save_inspection_usecases.dart';
@@ -71,7 +73,8 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FileProvider()..initCamera(),lazy: true,),
         ChangeNotifierProvider(create: (_) => VehicleClassProvider(vehicleClassUseCases: VehicleClassUseCases(vehicleClassRepository: VehicleClassRepoImpl()))),
         ChangeNotifierProvider(create: (_) => InspectionResultProvider()),
-        ChangeNotifierProvider(create: (_) => InspectionFormProvider(inspectionQueUseCases: InspectionQueUseCases(inspectionQueRepository: InspectionQueImpl()))),
+        //ChangeNotifierProvider(create: (_) => InspectionFormProvider(inspectionQueUseCases: InspectionQueUseCases(inspectionQueRepository: InspectionQueImpl()))),
+        ChangeNotifierProvider(create: (_) => InspectionFormProvider(inspectionNewQueUseCases: InspectionNewQueUseCases(inspectionNewQueRepository: InspectionNewQueImpl()))),
         ChangeNotifierProvider(create: (_) => AwsSignedUrlProvider(awsUseCase: AwsUseCase(repository: AwsRepositoryImpl()))),
         ChangeNotifierProvider(create: (_) => ManualInsImageProvider(useCase: DocumentManualDocUseCase(repository: DocumentManualDocImpl()))),
         ChangeNotifierProvider(create: (_) => PreSaveInspectionProvider(useCase: PreSaveInspectionUseCase(repository: PreSaveInspectionImpl()))),
