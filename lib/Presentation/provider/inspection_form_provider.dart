@@ -116,7 +116,8 @@ class InspectionFormProvider extends ChangeNotifier {
 
   int get grandTotalAnswered => _sections.fold(0, (sum, s) => sum + s.totalAnswered);
   int get grandTotalQuestions => _sections.fold(0, (sum, s) => sum + s.totalQuestions);
-  bool get isFullyComplete => grandTotalQuestions > 0 && grandTotalAnswered == grandTotalQuestions;
+  //bool get isFullyComplete => grandTotalQuestions > 0 && grandTotalAnswered == grandTotalQuestions;
+  bool get isFullyComplete => visibleTotalQuestions > 0 && visibleAnsweredQuestions == visibleTotalQuestions;
   int get grandTotalNo => _sections.fold(
       0, (sum, s) =>
   sum + s.categories.fold(0, (cSum, c) => cSum + c.questions.where((q) => q.answer == AnswerState.Fail).length));
@@ -128,6 +129,8 @@ class InspectionFormProvider extends ChangeNotifier {
   InspectionMode get inspectionMode => _inspectionMode;
 
   List<SectionState> get visibleSections {
+    debugPrint("VISIBLE MODE => $_inspectionMode");
+
     switch (_inspectionMode) {
       case InspectionMode.visualInspection:
         return _sections.where((s) =>
@@ -145,7 +148,22 @@ class InspectionFormProvider extends ChangeNotifier {
 
   void setInspectionMode(InspectionMode mode) {
     _inspectionMode = mode;
+    debugPrint("MODE => $mode");
     notifyListeners();
+  }
+
+  int get visibleTotalQuestions {
+    return visibleSections.fold(
+      0,
+          (sum, s) => sum + s.totalQuestions,
+    );
+  }
+
+  int get visibleAnsweredQuestions {
+    return visibleSections.fold(
+      0,
+          (sum, s) => sum + s.totalAnswered,
+    );
   }
 
   //  Auto Scroll
@@ -237,6 +255,17 @@ class InspectionFormProvider extends ChangeNotifier {
       if (_model?.status == true && _model?.data != null) {
         _buildSections(_model!.data!);
         debugPrint('→ Sections built: ${_sections.length}');
+        for (final section in _sections) {
+          debugPrint(
+              "${section.label} -> categories=${section.categories.length}"
+          );
+
+          for (final cat in section.categories) {
+            debugPrint(
+                "   ${cat.title} -> questions=${cat.questions.length}"
+            );
+          }
+        }
       } else {
         _setError(
             'API Error: ${_model?.message ?? 'status=false or data=null'}');
@@ -320,6 +349,9 @@ class InspectionFormProvider extends ChangeNotifier {
   // }
 
   void _buildSections(NewInspectionData data) {
+    debugPrint("PRE COUNT = ${data.preInspection?.length}");
+    debugPrint("UNDER PIT COUNT = ${data.underPitInspection?.length}");
+    debugPrint("POST COUNT = ${data.postInspection?.length}");
     _sections = [
       SectionState(
         label: 'Pre-Inspection',

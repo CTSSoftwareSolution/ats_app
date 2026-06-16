@@ -10,6 +10,8 @@ import '../../../../Core/network/services.dart';
 import '../../../../aws_images/aws_signedurl_provider.dart';
 import '../../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../../utilities/change_status_bottom_sheet.dart';
+import '../../../../utilities/image_data.dart';
+import '../../../../widgets/custom_image.dart';
 import '../../../provider/ai_inspection_details_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../camera_page/camera_screen.dart';
@@ -145,35 +147,72 @@ class _QuestionTileState extends State<QuestionTile> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 1, right: 10),
-                    width: 26,
-                    height: 22,
-                    decoration: BoxDecoration(
-                      color: widget.accentColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Q${widget.questionIndex + 1}',
-                        style: TextStyle(
-                          color: widget.accentColor,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Container(
+                  //   margin: const EdgeInsets.only(top: 1, right: 10),
+                  //   width: 26,
+                  //   height: 22,
+                  //   decoration: BoxDecoration(
+                  //     color: widget.accentColor.withValues(alpha: 0.1),
+                  //     borderRadius: BorderRadius.circular(6),
+                  //   ),
+                  //   child: Center(
+                  //     child: Text(
+                  //       'Q${widget.questionIndex + 1}',
+                  //       style: TextStyle(
+                  //         color: widget.accentColor,
+                  //         fontSize: 9,
+                  //         fontWeight: FontWeight.w800,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+
                   Expanded(
-                    child: Text(
-                      question.carData.questionText ?? '',
-                      style: TextStyle(
-                        fontSize: 13.5,
-                        color: Colors.grey.shade700,
-                        height: 1.4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: List.generate(
+                        question.carData.items?.length ?? 0,
+                            (index) {
+                          final item = question.carData.items![index];
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 2),
+                                  child: CustomImage(image: checkCircleImage,scale: 38, color: widget.accentColor,)
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    item.itemText ?? '',
+                                    style: TextStyle(
+                                      fontSize: 13.5,
+                                      color: Colors.grey.shade700,
+                                      height: 1.4,
+                                      fontWeight: FontWeight.w700
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
+                  // Expanded(
+                  //   child: Text(
+                  //     question.carData.questionText ?? '',
+                  //     style: TextStyle(
+                  //       fontSize: 13.5,
+                  //       color: Colors.grey.shade700,
+                  //       height: 1.4,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
               const SizedBox(height: 10),

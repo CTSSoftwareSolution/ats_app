@@ -49,7 +49,7 @@ class ConfirmationDialog {
                 const SizedBox(height: 15),
           Text(
               isComplete
-                  ? 'All ${provider.grandTotalQuestions} questions answered. Ready to submit?'
+                  ? 'All ${provider.visibleTotalQuestions} questions answered. Ready to submit?'
                   : '$unanswered question(s) still unanswered.',
             style: TextStyle(fontSize: 16,fontFamily: "Regular"),
             ), const SizedBox(height: 20),
@@ -100,7 +100,7 @@ class ConfirmationDialog {
     final inspectionProvider = Provider.of<InspectionFormProvider>(context, listen: false);
     final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
     List<InspectionPreSaveReqModel> inspections = [];
-    for (final section in inspectionProvider.sections) {
+    for (final section in inspectionProvider.visibleSections) {
       for (final category in section.categories) {
         for (final q in category.questions) {
           if (q.carData.questionId == null) continue;

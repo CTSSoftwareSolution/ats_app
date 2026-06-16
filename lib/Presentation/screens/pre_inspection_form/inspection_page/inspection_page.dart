@@ -22,7 +22,7 @@ class InspectionPage extends StatefulWidget {
 
 class _InspectionPageState extends State<InspectionPage>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+   TabController? _tabController;
 
   @override
   void initState() {
@@ -49,20 +49,22 @@ class _InspectionPageState extends State<InspectionPage>
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final count =
-        context.read<InspectionFormProvider>()
-            .visibleSections
-            .length;
-
-    _tabController = TabController(
-      length: count,
-      vsync: this,
-    );
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //
+  //   final count =
+  //       context.read<InspectionFormProvider>()
+  //           .visibleSections
+  //           .length;
+  //
+  //   if (count > 0) {
+  //     _tabController = TabController(
+  //       length: count,
+  //       vsync: this,
+  //     );
+  //   }
+  // }
   //
   // @override
   //
@@ -72,6 +74,21 @@ class _InspectionPageState extends State<InspectionPage>
   //   _tabController.dispose();
   //   super.dispose();
   // }
+
+   void _updateTabController(int length) {
+     if (length <= 0) return;
+
+     if (_tabController?.length != length) {
+       _tabController?.dispose();
+
+       _tabController = TabController(
+         length: length,
+         vsync: this,
+       );
+
+       setState(() {});
+     }
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +131,9 @@ class _InspectionPageState extends State<InspectionPage>
 
    // final sections = provider.filteredSections;
     final sections = provider.visibleSections;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateTabController(sections.length);
+    });
 
     return Column(
       children: [
@@ -178,8 +198,8 @@ class _InspectionPageState extends State<InspectionPage>
   }
 
   Widget _buildFilterBar(InspectionFormProvider provider) {
-    final answered = provider.grandTotalAnswered;
-    final unanswered = provider.grandTotalQuestions - answered;
+    final answered = provider.visibleAnsweredQuestions;
+    final unanswered = provider.visibleTotalQuestions - answered;
     final no = provider.grandTotalNo;
 
     return Container(
@@ -192,7 +212,7 @@ class _InspectionPageState extends State<InspectionPage>
           children: [
             _FilterChip(
               label: 'All',
-              count: provider.grandTotalQuestions,
+              count: provider.visibleTotalQuestions,
               selected: provider.filter == QuestionFilter.all,
               color: const Color(0xFF1A3C6E),
               onTap: () => provider.setFilter(QuestionFilter.all),

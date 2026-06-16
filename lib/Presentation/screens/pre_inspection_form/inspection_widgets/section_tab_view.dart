@@ -21,7 +21,9 @@ class SectionTabView extends StatelessWidget {
           return _buildEmptyState(provider);
         }
 
-        final section = sections[sectionIndex];
+        final section = provider.visibleSections[sectionIndex];
+        debugPrint("SECTION NAME = ${section.label}");
+        debugPrint("CATEGORY COUNT = ${section.categories.length}");
         // if (provider.filteredSections.isEmpty ||
         //     sectionIndex >= provider.filteredSections.length) {
         //   return _buildEmptyState(provider);

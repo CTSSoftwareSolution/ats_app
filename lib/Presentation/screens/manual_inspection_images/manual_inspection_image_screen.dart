@@ -98,7 +98,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
             debugPrint('Visual Inspection');
             provider.setInspectionMode(InspectionMode.visualInspection,);
             context.push(InspectionPage(isEditMode: false),);
-          } else if (value == 'Under PIT Inspection') {
+          } else if (value == 'Under-PIT Inspection') {
             debugPrint('Under PIT Inspection');
             provider.setInspectionMode(InspectionMode.underPitInspection,);
             context.push(InspectionPage(isEditMode: false),);

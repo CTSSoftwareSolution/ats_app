@@ -48,6 +48,7 @@ const playIconImage = "assets/play.png";
 const viewIconImage = "assets/view.png";
 const pictureUploadImage = "assets/picture_upload.png";
 const videoUploadImage = "assets/video_upload.png";
+const checkCircleImage = "assets/check-circle.png";
 
 const manualInspectionIcon = "assets/manual-inspection.png";
 const machineInspectionIcon = "assets/machine-inspection.png";

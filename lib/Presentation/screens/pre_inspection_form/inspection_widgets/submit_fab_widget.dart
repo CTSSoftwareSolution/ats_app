@@ -18,6 +18,8 @@ class SubmitFAB extends StatelessWidget {
   Widget build(BuildContext context) {
     final questionsWithNoButNoImage = _validateQuestionsWithNoAnswer();
     final detailsProvider = context.watch<AiInspectionDetailsProvider>();
+
+
     return FloatingActionButton.extended(
       onPressed: () => _handleSubmit(context),
       backgroundColor:
@@ -31,7 +33,7 @@ class SubmitFAB extends StatelessWidget {
       Text(
         provider.isFullyComplete
             ? 'Report is not ready'
-            : '${provider.grandTotalAnswered}/${provider.grandTotalQuestions} Answered',
+            : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered',
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w700,
@@ -41,7 +43,7 @@ class SubmitFAB extends StatelessWidget {
       Text(
         provider.isFullyComplete
             ? 'Submit Report'
-            : '${provider.grandTotalAnswered}/${provider.grandTotalQuestions} Answered',
+            : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered',
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w700,
@@ -66,7 +68,8 @@ class SubmitFAB extends StatelessWidget {
     }
     // Show confirmation dialog if validation passes
     final isComplete = provider.isFullyComplete;
-    final unanswered = provider.grandTotalQuestions - provider.grandTotalAnswered;
+    //final unanswered = provider.grandTotalQuestions - provider.grandTotalAnswered;
+    final unanswered = provider.visibleTotalQuestions - provider.visibleAnsweredQuestions;
     ConfirmationDialog.show(
       context: context,
       provider: provider,

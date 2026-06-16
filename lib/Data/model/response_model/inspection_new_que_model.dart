@@ -56,9 +56,9 @@ class NewInspectionData {
         _preInspection?.add(PreInspection.fromJson(v));
       });
     }
-    if (json['Under Pit Inspection'] != null) {
+    if (json['under_pit_inspection'] != null) {
       _underPitInspection = [];
-      json['Under Pit Inspection'].forEach((v) {
+      json['under_pit_inspection'].forEach((v) {
         _underPitInspection?.add(UnderPitInspection.fromJson(v));
       });
     }
@@ -89,7 +89,7 @@ class NewInspectionData {
       map['pre_inspection'] = _preInspection?.map((v) => v.toJson()).toList();
     }
     if (_underPitInspection != null) {
-      map['Under Pit Inspection'] = _underPitInspection?.map((v) => v.toJson()).toList();
+      map['under_pit_inspection'] = _underPitInspection?.map((v) => v.toJson()).toList();
     }
     if (_postInspection != null) {
       map['post_inspection'] = _postInspection?.map((v) => v.toJson()).toList();

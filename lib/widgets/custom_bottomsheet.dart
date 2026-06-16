@@ -58,7 +58,7 @@ class _InspectionSheet extends StatelessWidget {
             color: const Color(0xFF06D6A0),
             onTap: () {
               Navigator.pop(context);
-              onSelect('Under PIT Inspection');
+              onSelect('Under-PIT Inspection');
             },
           ),
           const SizedBox(height: 8),
