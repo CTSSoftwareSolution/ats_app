@@ -38,15 +38,18 @@ String get savePreInspection              => "${newBaseUrl}Inspection/save-pre-i
 String get laneList                       => "${newBaseUrl}lane/list";
 String get manualInspectionList           => "${newBaseUrl}Appointment/manual-inspection-appointment-list";
 
-// machine api
+// machine apic
 String get vehiclePartsUrl           => "${newBaseUrl}vehicle-parts-master/getVehicleParts";
-String get createBulkUrl           => "${newBaseUrl}queue/create-bulk";
-String get aiPreInspectionDetailsUrl           => "${newBaseUrl}Inspection/ai-preinspection-details";
-String get aiSavePreInspection           => "${newBaseUrl}Inspection/save-ai-pre-inspection";
-String get aiUpdateQuestionResultUrl           => "${newBaseUrl}Inspection/update-ai-inspection-result-questionwise";
+String get createBulkUrl             => "${newBaseUrl}queue/create-bulk";
+String get aiPreInspectionDetailsUrl => "${newBaseUrl}Inspection/ai-preinspection-details";
+String get aiSavePreInspection       => "${newBaseUrl}Inspection/save-ai-pre-inspection";
+String get aiUpdateQuestionResultUrl => "${newBaseUrl}Inspection/update-ai-inspection-result-questionwise";
 
 
-String get newInspectionQuestionsList           => "${newBaseUrl}inspection/inspection-questions-list-new";
+/// New app API
+String get newInspectionQuestionsListUrl    => "${newBaseUrl}inspection/inspection-questions-list-new";
+String get newVehicleListWithAppointmentUrl => "${newBaseUrl}vehicle/list-with-appointment";
+String get newSubmitItemUrl => "${newBaseUrl}inspection/submit-item";
 
 
 

@@ -13,7 +13,7 @@ import '../model/response_model/inspection_new_que_model.dart';
   @override
   Future<InspectionNewQueEntity> newQuestionApi() async{
     try{
-      final response = await ApiService.post("", newInspectionQuestionsList);
+      final response = await ApiService.post("", newInspectionQuestionsListUrl);
       final model = InspectionNewQueModel.fromJson(response);
       return InspectionNewQueEntity(message: model.message, status: model.status, data: model.data);
     }catch (e){

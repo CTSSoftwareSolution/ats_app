@@ -18,6 +18,7 @@ import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_bottomsheet.dart';
 import '../../../widgets/custom_text.dart';
 import '../../provider/inspection_form_provider.dart';
+import '../../provider/new_vehicle_list_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../camera_page/camera_screen.dart';
 import '../pre_inspection_form/inspection_page/inspection_page.dart';
@@ -54,7 +55,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
   void imageUpload() async {
     final provider = Provider.of<ManualInsImageProvider>(context, listen: false);
     final cameraController = Provider.of<FileProvider>(context, listen: false);
-    final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
+    final vehicleListProvider = Provider.of<NewVehicleListProvider>(context, listen: false);
     final location = Provider.of<LocationProvider>(context, listen: false);
     final detailsProvider = Provider.of<AiInspectionDetailsProvider>(context, listen: false);
 
@@ -82,9 +83,9 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
       return;
     }
      await provider.uploadDocuments(
-      appointmentId: vehicleClassProvider.selectedClass!.appointmentId.toString(),
+      appointmentId: vehicleListProvider.selectedVehicle!.appointmentId.toString(),
       createdBy: Preferences.getUserId().toString(),
-      vehicleId: vehicleClassProvider.selectedClass!.vehicleKey.toString(),
+      vehicleId: vehicleListProvider.selectedVehicle!.registrationNo.toString(),
       documents: docs,
     );
     if (!mounted) return;

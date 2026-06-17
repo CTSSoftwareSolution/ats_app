@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:ats_app/Data/model/request_model/create_bulk_req_model.dart';
 import 'package:ats_app/Presentation/provider/create_bulk_provider.dart';
+import 'package:ats_app/Presentation/provider/new_vehicle_list_provider.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_page/inspection_page.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/responsive_button.dart';
 
@@ -221,7 +222,7 @@ class _VehiclePartsResponsiveLayoutState
       context,
       listen: false,
     );
-    final classController = Provider.of<VehicleClassProvider>(
+    final listController = Provider.of<NewVehicleListProvider>(
       context,
       listen: false,
     );
@@ -251,12 +252,12 @@ class _VehiclePartsResponsiveLayoutState
     }
 
     await createController.uploadAIImage(
-      registrationNumber: classController.selectedClass!.registrationNo
+      registrationNumber: listController.selectedVehicle!.registrationNo
           .toString(),
-      applicationNumber: classController.selectedClass!.bookingId.toString(),
+      applicationNumber: listController.selectedVehicle!.bookingId.toString(),
       createdBy: Preferences.getUserId(),
       questions: questions,
-      appointmentId: classController.selectedClass!.appointmentId.toString(),
+      appointmentId: listController.selectedVehicle!.appointmentId.toString(),
     );
 
     detailsController.setAIMode(true);

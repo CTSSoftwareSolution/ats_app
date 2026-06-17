@@ -1,6 +1,7 @@
 import 'package:ats_app/Data/model/response_model/vehicle_parts_res_model.dart';
 import 'package:ats_app/Domain/entities/vehicle_parts_entity.dart';
 import 'package:ats_app/Domain/usecases/vehicle_parts_usecases.dart';
+import 'package:ats_app/Presentation/provider/new_vehicle_list_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:ats_app/image_processing/MediaPicker/file_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -104,7 +105,7 @@ class VehiclePartsProvider extends ChangeNotifier {
   }
 
   Future<VehiclePartsEntity?> vehiclePartsApi(BuildContext context) async {
-    final classProvider = Provider.of<VehicleClassProvider>(
+    final vehicleListProvider = Provider.of<NewVehicleListProvider>(
       context,
       listen: false,
     );

@@ -1,3 +1,4 @@
+import 'package:ats_app/Presentation/provider/new_vehicle_list_provider.dart';
 import 'package:ats_app/utilities/input_formatters.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class CustomSearchTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color scaffoldBgColor = Theme.of(context).scaffoldBackgroundColor;
-    final classProvider = context.watch<VehicleClassProvider>();
+    final listProvider = context.watch<NewVehicleListProvider>();
     return CustomTextField(
       inputFormatters: InputFormatters.searchFieldValidation,
       contentPadding: EdgeInsets.symmetric(vertical: 10.0),

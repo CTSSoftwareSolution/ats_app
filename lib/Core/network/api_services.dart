@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
 import '../../Data/model/request_model/create_bulk_req_model.dart';
+import '../../Data/model/request_model/new_inspection_save_req_model.dart';
 import '../../Data/model/response_model/inspection_pre_save_req_model.dart';
 import '../../Presentation/screens/login_page/login_screen.dart';
 import '../../Presentation/screens/manual_inspection_images/document_manual_doc_models.dart';
@@ -330,6 +331,73 @@ class ApiService {
         debugPrint('✅ Image sent [$i]: ${image.path}');
       } else {
         debugPrint('⏭️ No image for [$i]: ${item.questionId}');
+      }
+    }
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    if (kDebugMode) {
+      alice.onHttpResponse(response, body: request.fields);
+    }
+
+    if (response.statusCode == 401) {
+
+      await Preferences.clear();
+
+      navigatorKey.currentState?.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => LoginScreen()),
+            (route) => false,
+      );
+
+      return {};
+    }
+
+    final responseBody = await compute(_decodeResponse, response.bodyBytes);
+    return responseBody;
+  }
+
+
+
+/// New Save Inspection
+  static Future<Map<String, dynamic>?> newSaveInspectionMultipartUpload({
+    required String vehicleId,
+    required String appointmentId,
+    required String createdBy,
+    required String questionId,
+    required String result,
+    required String severityLevel,
+    required String observation,
+    required List<NewInspectionSaveReqModel> saveInspectionReqModel,
+    required String apiUrl,
+  }) async {
+    Map<String, String> headers = {
+      HttpHeaders.authorizationHeader: 'Bearer ${Preferences.getToken()}',
+    };
+    final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+    request.headers.addAll(headers);
+    request.fields['appointment_id'] = appointmentId;
+    request.fields['vehicle_id'] = vehicleId;
+    request.fields['created_by'] = createdBy;
+    request.fields['question_id'] = createdBy;
+    request.fields['result'] = createdBy;
+    request.fields['observation'] = createdBy;
+    request.fields['severity_level'] = createdBy;
+    for (int i = 0; i < saveInspectionReqModel.length; i++) {
+      final item = saveInspectionReqModel[i];
+      request.fields['documents[$i].label_id'] = item.labelId;
+      request.fields['documents[$i].latitude'] = item.latitude;
+      request.fields['documents[$i].longitude'] = item.longitude;
+      final image = item.file;
+      if (image != null && image.path.isNotEmpty && await image.exists()) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'documents[$i].file',
+            image.path,
+            contentType: MediaType('image', 'jpeg'),
+          ),
+        );
+        debugPrint('✅ Image sent [$i]: ${image.path}');
+      } else {
+        debugPrint('⏭️ No image for [$i]: ${item.labelId}');
       }
     }
     final streamedResponse = await request.send();

@@ -1,4 +1,5 @@
 import 'package:ats_app/Domain/usecases/ai_inspection_details_usecases.dart';
+import 'package:ats_app/Presentation/provider/new_vehicle_list_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,7 @@ class AiInspectionDetailsProvider extends ChangeNotifier{
   Future<PreInspectionDetailsEntity?> aiInspectionDetails(BuildContext context) async{
 
 
-    final classProvider = Provider.of<VehicleClassProvider>(context,listen: false);
+    final vehicleListProvider = Provider.of<NewVehicleListProvider>(context,listen: false);
     final formProvider = Provider.of<InspectionFormProvider>(context, listen: false);
 
     try {
@@ -45,8 +46,8 @@ class AiInspectionDetailsProvider extends ChangeNotifier{
       notifyListeners();
 
       PreInspectionDetailsReqModel detailsReqModel = PreInspectionDetailsReqModel(
-          vehicleId: classProvider.selectedClass?.registrationNo,
-        appointmentId:  classProvider.selectedClass?.appointmentId
+          vehicleId: vehicleListProvider.selectedVehicle?.registrationNo,
+        appointmentId:  vehicleListProvider.selectedVehicle?.appointmentId
       );
       aiDetailsEntity = await aiInspectionDetailsUseCases.execute(detailsReqModel);
       if (aiDetailsEntity?.data != null) {

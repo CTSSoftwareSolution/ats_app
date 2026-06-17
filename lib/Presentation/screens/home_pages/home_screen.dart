@@ -4,8 +4,9 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
-import '../../../new_manual_flow/new_screen/vehicle_details_screen.dart';
+
 import '../../provider/manual_inspection_list_provider.dart';
+import '../../provider/new_vehicle_list_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../manual_inspection_images/manual_inspection_image_screen.dart';
 import '../vehicles_class_page/vehicle_class_screen_item.dart';
@@ -26,11 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<VehicleClassProvider>().vehicleClassApi(context: context);
+    context.read<NewVehicleListProvider>().vehicleListApi(context: context);
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {
-        context.read<VehicleClassProvider>().vehicleClassApi(context: context, loadMore: true);
+        context.read<NewVehicleListProvider>().vehicleListApi(context: context, loadMore: true);
       }
     });
   }
@@ -43,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<VehicleClassProvider>();
+    final provider = context.watch<NewVehicleListProvider>();
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FB),
 
@@ -57,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: 6,
                 itemBuilder: (_, __) => const HomeShimmer(),
-              ) : (provider.vehicleClassEntity?.data?.appointments?.isEmpty ?? true)
+              ) : (provider.newVehicleListEntity?.data?.rows?.isEmpty ?? true)
                   ? const EmptyStateWidget(
                 icon: Icons.search_off_rounded,
                 title: 'No Appointments Found',
@@ -66,9 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.only(bottom: 100),
                 controller: _scrollController,
                 physics: const BouncingScrollPhysics(),
-                itemCount: provider.vehicleClassEntity!.data!.appointments!.length + (provider.isLoadMore ? 1 : 0),
+                itemCount: provider.newVehicleListEntity!.data!.rows!.length + (provider.isLoadMore ? 1 : 0),
                 itemBuilder: (context, index) {
-                  final appointments = provider.vehicleClassEntity!.data!.appointments!;
+                  final appointments = provider.newVehicleListEntity!.data!.rows!;
                   if (index == appointments.length) {
                     return Padding(
                       padding:
@@ -85,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     child: VehicleClassScreenItem(
-                      classDataModel: item,
+                      vehicleDataModel: item,
                       onTap: () {
                         context.read<ManualInspectionListProvider>().setManualInspectionScreen(false);
                        provider.setSelectedClass(item);

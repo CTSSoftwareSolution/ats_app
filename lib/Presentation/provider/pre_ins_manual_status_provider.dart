@@ -1,6 +1,7 @@
 import 'package:ats_app/Data/model/request_model/pre_ins_manual_status_req_model.dart';
 import 'package:ats_app/Domain/entities/pre_ins_manual_status_entity.dart';
 import 'package:ats_app/Domain/usecases/pre_ins_manual_status_usecases.dart';
+import 'package:ats_app/Presentation/provider/new_vehicle_list_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -18,9 +19,9 @@ class PreInsManualStatusProvider extends ChangeNotifier{
 
   Future<PreInsManualStatusEntity?> getManualStatusApi(BuildContext context) async{
 
-    final classProvider = Provider.of<VehicleClassProvider>(context,listen: false);
+    final vehicleListProvider = Provider.of<NewVehicleListProvider>(context,listen: false);
     try {
-      PreInsManualStatusReqModel statusReqModel = PreInsManualStatusReqModel(vehicleNo: classProvider.selectedClass?.registrationNo);
+      PreInsManualStatusReqModel statusReqModel = PreInsManualStatusReqModel(vehicleNo: vehicleListProvider.selectedVehicle?.registrationNo);
       preInsManualStatusEntity = await preInsManualStatusUseCases.execute(statusReqModel);
       notifyListeners();
       return preInsManualStatusEntity;

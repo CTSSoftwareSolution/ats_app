@@ -1,6 +1,7 @@
 import 'package:ats_app/Data/model/request_model/pre_inspection_result_req_model.dart';
 import 'package:ats_app/Domain/entities/pre_inspection_result_entity.dart';
 import 'package:ats_app/Domain/usecases/pre_inspection_result_usecases.dart';
+import 'package:ats_app/Presentation/provider/new_vehicle_list_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,7 @@ class PreInspectionResultProvider extends ChangeNotifier{
   PreInspectionResultEntity? preInspectionResultEntity;
 
   Future<PreInspectionResultEntity?> saveResultApi(BuildContext context)async{
-    final classProvider = Provider.of<VehicleClassProvider>(context,listen: false);
+    final vehicleListProvider = Provider.of<NewVehicleListProvider>(context,listen: false);
     final inspectionProvider = Provider.of<InspectionFormProvider>(context, listen: false);
     isLoading = true;
     CustomLoader.showLoader("Please wait...");
@@ -33,7 +34,7 @@ class PreInspectionResultProvider extends ChangeNotifier{
     }).toList();
     try {
       PreInspectionResultReqModel resultReqModel = PreInspectionResultReqModel(
-        vehicleNo: classProvider.selectedClass?.registrationNo,
+        vehicleNo: vehicleListProvider.selectedVehicle?.registrationNo,
         inspectedBy: "",
         results: resultList
       );

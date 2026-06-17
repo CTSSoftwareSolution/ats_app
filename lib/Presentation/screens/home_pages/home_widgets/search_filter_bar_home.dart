@@ -7,11 +7,12 @@ import '../../../../utilities/color_data.dart';
 import '../../../../utilities/image_data.dart';
 import '../../../../widgets/custom_image.dart';
 import '../../../../widgets/custom_search_bar.dart';
+import '../../../provider/new_vehicle_list_provider.dart';
 import '../../../provider/vehicle_class_provider.dart';
 
 
 class SearchFilterBarHome extends StatefulWidget {
-  final VehicleClassProvider provider;
+  final NewVehicleListProvider provider;
   const SearchFilterBarHome({super.key, required this.provider});
 
   @override
@@ -53,7 +54,7 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
                 ),
                 onPressed: () {
                   widget.provider.searchController.clear();
-                  widget.provider.vehicleClassApi(context: context, loadMore: false);
+                  widget.provider.vehicleListApi(context: context, loadMore: false);
                 },
                 color: blackColor,
               )
@@ -71,7 +72,7 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
 
 class _FilterRow extends StatelessWidget {
 
-  final VehicleClassProvider vehicleProvider;
+  final NewVehicleListProvider vehicleProvider;
   final LaneListProvider chipsProvider;
 
   const _FilterRow({

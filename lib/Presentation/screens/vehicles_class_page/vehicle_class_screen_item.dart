@@ -4,17 +4,18 @@ import 'package:ats_app/widgets/custom_image.dart';
 import 'package:ats_app/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 
+import '../../../Data/model/response_model/new_vehicle_list_res_model.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 
 class VehicleClassScreenItem extends StatefulWidget {
-  final Appointments classDataModel;
+  final Rows vehicleDataModel;
   final VoidCallback onTap;
 
   const VehicleClassScreenItem({
     super.key,
     required this.onTap,
-    required this.classDataModel,
+    required this.vehicleDataModel,
   });
 
   @override
@@ -137,7 +138,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                               ),
                             ),
                             child: CustomText(
-                              text: "Booking Id : ${widget.classDataModel.bookingId}"
+                              text: "Booking Id : ${widget.vehicleDataModel.bookingId}"
                                   .toString(),
                               fontFamily: "Bold",
                               fontSize: 11.0,
@@ -157,7 +158,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                               ),
                             ),
                             child: CustomText(
-                              text: "${formatDate(widget.classDataModel.appointmentDate.toString())} : ${formatTime(widget.classDataModel.appointmentDate.toString())}",
+                              text: formatDate(widget.vehicleDataModel.fitnessExpiry.toString()),
                               fontFamily: "Bold",
                               fontSize: 11.0,
                               textColor: const Color(0xFF3D5080),
@@ -202,7 +203,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                                   children: [
                                     Expanded(
                                       child: CustomText(
-                                        text: widget.classDataModel.registrationNo
+                                        text: widget.vehicleDataModel.registrationNo
                                             .toString(),
                                         fontFamily: "Bold",
                                         fontSize: 16.5,
@@ -232,7 +233,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                                               image: petrolIcon, scale: 5.5),
                                           5.width,
                                           CustomText(
-                                            text: widget.classDataModel.fuelType
+                                            text: widget.vehicleDataModel.fuelTypeName
                                                 .toString(),
                                             fontSize: 11.5,
                                             fontFamily: "Bold",
@@ -265,7 +266,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                                               color: Color(0xFF6B7BA4)),
                                           4.width,
                                           CustomText(
-                                            text: widget.classDataModel.vehicleClass
+                                            text: widget.vehicleDataModel.categoryName
                                                 .toString(),
                                             fontFamily: "Bold",
                                             fontSize: 11.0,
@@ -284,7 +285,7 @@ class _VehicleClassScreenItemState extends State<VehicleClassScreenItem>
                                     4.width,
                                     Flexible(
                                       child: CustomText(
-                                        text: widget.classDataModel.make
+                                        text: widget.vehicleDataModel.make
                                             .toString(),
                                         fontFamily: "Medium",
                                         fontSize: 12.0,

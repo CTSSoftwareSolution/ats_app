@@ -1,6 +1,7 @@
 import 'package:ats_app/Data/model/request_model/ai_update_result_req_model.dart';
 import 'package:ats_app/Domain/entities/ai_update_result_entity.dart';
 import 'package:ats_app/Domain/usecases/ai_update_result_usecases.dart';
+import 'package:ats_app/Presentation/provider/new_vehicle_list_provider.dart';
 import 'package:ats_app/Presentation/provider/vehicle_class_provider.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,15 +30,15 @@ class AiUpdateResultProvider extends ChangeNotifier{
   int chars = 0;
 
   Future<AiUpdateResultEntity?> aiUpdateResult(BuildContext context, bool statusResult) async{
-    final classProvider = Provider.of<VehicleClassProvider>(context,listen: false);
+    final vehicleListProvider = Provider.of<NewVehicleListProvider>(context,listen: false);
     final detailsProvider = Provider.of<AiInspectionDetailsProvider>(context,listen: false);
     try{
       isLoading = true;
       notifyListeners();
 
       AiUpdateResultReqModel updateResultReqModel = AiUpdateResultReqModel(
-        vehicleNo: classProvider.selectedClass?.registrationNo,
-        appointmentId: classProvider.selectedClass?.appointmentId,
+        vehicleNo: vehicleListProvider.selectedVehicle?.registrationNo,
+        appointmentId: vehicleListProvider.selectedVehicle?.appointmentId,
         questionId: detailsProvider.selectedQueId,
         aiInspectionResult: statusResult == true ? "Pass" : "Fail",
         aiRemark: ctrl.text
