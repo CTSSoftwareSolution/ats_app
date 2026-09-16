@@ -42,7 +42,7 @@ dependencies:
   flutter_alice: ^2.0.1
   extensions_pro: ^1.0.27
   flutter_easyloading: ^3.0.5
-  fluttertoast: ^8.2.12
+  fluttertoast: ^10.0.0
   overlay_support: ^2.1.0
   shared_preferences: ^2.2.2
   shimmer: ^3.0.0
@@ -57,7 +57,7 @@ dependencies:
   sensors_plus: ^7.0.0
 
   google_fonts: ^6.1.0
-  geocoding: ^3.0.0
+  geocoding: ^5.0.0
   uuid: ^4.5.3
 
 

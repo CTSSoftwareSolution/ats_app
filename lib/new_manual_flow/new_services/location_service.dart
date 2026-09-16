@@ -69,8 +69,8 @@ class LocationService {
       String address =
           '${pos.latitude.toStringAsFixed(5)}, ${pos.longitude.toStringAsFixed(5)}';
       try {
-        final marks = await placemarkFromCoordinates(
-            pos.latitude, pos.longitude)
+        final marks = await Geocoding()
+            .placemarkFromCoordinates(pos.latitude, pos.longitude)
             .timeout(const Duration(seconds: 5));
         if (marks.isNotEmpty) {
           final p = marks.first;
