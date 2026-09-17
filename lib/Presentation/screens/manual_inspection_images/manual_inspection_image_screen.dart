@@ -21,6 +21,7 @@ import '../../provider/inspection_form_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../camera_page/camera_screen.dart';
 import '../pre_inspection_form/inspection_page/inspection_page.dart';
+import '../vehicle_test_parameter/vehicle_parts_screen.dart';
 
 
 class ManualInspectionImageScreen extends StatefulWidget {
@@ -89,22 +90,22 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     );
     if (!mounted) return;
 
-
-      showInspectionSheet(context,
-        onSelect: (value) {
-          final provider = context.read<InspectionFormProvider>();
-
-          if (value == 'Visual Inspection') {
-            debugPrint('Visual Inspection');
-            provider.setInspectionMode(InspectionMode.visualInspection,);
-            context.push(InspectionPage(isEditMode: false),);
-          } else if (value == 'Under-PIT Inspection') {
-            debugPrint('Under PIT Inspection');
-            provider.setInspectionMode(InspectionMode.underPitInspection,);
-            context.push(InspectionPage(isEditMode: false),);
-          }
-        },
-      );
+    context.push(VehiclePartsScreen());
+      // showInspectionSheet(context,
+      //   onSelect: (value) {
+      //     final provider = context.read<InspectionFormProvider>();
+      //
+      //     if (value == 'Visual Inspection') {
+      //       debugPrint('Visual Inspection');
+      //       provider.setInspectionMode(InspectionMode.visualInspection,);
+      //       context.push(InspectionPage(isEditMode: false),);
+      //     } else if (value == 'Under-PIT Inspection') {
+      //       debugPrint('Under PIT Inspection');
+      //       provider.setInspectionMode(InspectionMode.underPitInspection,);
+      //       context.push(InspectionPage(isEditMode: false),);
+      //     }
+      //   },
+      // );
 
 
     //cameraController.clearAll();
