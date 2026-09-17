@@ -76,42 +76,6 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
                 ],
               ],
             ),
-           // Row(
-           //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-           //   children: [
-           //     Expanded(
-           //       child: UploadImageContainer(
-           //         isVideo: false,
-           //               width: 180,
-           //               index: allIndex,
-           //                onTap: () async {
-           //                  context.read<FileProvider>().setCurrentIndex(allIndex);
-           //                  context.read<FileProvider>().setVideo(false);
-           //                 // await context.read<FileProvider>().initCamera();
-           //                  await context.push(CameraScreen());
-           //                },
-           //                isTablet: isTablet,
-           //              ),
-           //     ),
-           //     10.width,
-           //     Expanded(
-           //       child: UploadImageContainer(
-           //         isVideo: true,
-           //         width: 180,
-           //         index: allIndex,
-           //         text: "Tap to capture video",
-           //         onTap: () async {
-           //           context.read<FileProvider>().setCurrentIndex(allIndex);
-           //           context.read<FileProvider>().setVideo(true);
-           //           //await context.read<FileProvider>().initCamera();
-           //           await context.push(CameraScreen());
-           //           },
-           //         isTablet: isTablet,
-           //       ),
-           //     ),
-           //   ],
-           //
-           // ),
           ],
         ),
       ),

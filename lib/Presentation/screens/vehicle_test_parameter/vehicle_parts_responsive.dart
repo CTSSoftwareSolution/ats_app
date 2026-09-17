@@ -37,20 +37,10 @@ class _VehiclePartsResponsiveLayoutState
     final partsProvider = context.watch<VehiclePartsProvider>();
     final fileProvider = context.watch<FileProvider>();
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return OrientationBuilder(
-          builder: (context, orientation) {
-            if (constraints.isTablet &&
-                partsProvider.vehiclePartsEntity != null) {
-              partsProvider.setTabletItemsPerPage(
-                orientation == Orientation.portrait,
-              );
-            }
-            return Center(
+    return Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: constraints.horizontalPadding,
+                  horizontal: 20.0,
                 ),
                 child: partsProvider.isLoading
                     ? Center(child: CustomLoader.loader())
@@ -65,55 +55,17 @@ class _VehiclePartsResponsiveLayoutState
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          constraints.isTablet ? 35.height : 25.height,
+                           25.height,
                           Center(
                             child: CustomStepper(
                               currentStep: partsProvider.currentStep,
-                              totalStep: constraints.isTablet
-                                  ? partsProvider.totalPagesForTablet
-                                  : partsProvider.totalPages,
-                              width: constraints.isTablet
-                                  ? (orientation == Orientation.portrait
-                                        ? double.infinity
-                                        : constraints.contentMaxWidth / 2)
-                                  : double.infinity,
+                              totalStep:  partsProvider.totalPages,
+                              width: double.infinity,
                             ),
                           ),
-                          constraints.isTablet ? 30.height : 15.height,
+                          15.height,
                           Expanded(
-                            child: constraints.isTablet
-                                ? GridView.builder(
-                                    itemCount:
-                                        partsProvider.currentPageData.length,
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount:
-                                              orientation ==
-                                                  Orientation.portrait
-                                              ? 2
-                                              : 3,
-                                          mainAxisSpacing: constraints.isTablet
-                                              ? 10
-                                              : 40,
-                                          crossAxisSpacing: 15,
-                                          childAspectRatio: 6 / 5,
-                                        ),
-                                    itemBuilder: (context, index) {
-                                      final item =
-                                          partsProvider.currentPageData[index];
-                                      final allIndex =
-                                          partsProvider.currentPage *
-                                              partsProvider
-                                                  .itemsPerPageForTablet +
-                                          index;
-                                      return VehiclePartsResponsiveItem(
-                                        item: item,
-                                        allIndex: allIndex,
-                                        isTablet: true,
-                                      );
-                                    },
-                                  )
-                                : ListView.builder(
+                            child: ListView.builder(
                                     itemCount:
                                         partsProvider.currentPageData.length,
                                     itemBuilder: (context, index) {
@@ -136,43 +88,7 @@ class _VehiclePartsResponsiveLayoutState
                                     },
                                   ),
                           ),
-                          constraints.isTablet
-                              ? Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: ResponsiveButton(
-                                    width: 200,
-                                    buttonText:
-                                        partsProvider.currentPage ==
-                                            partsProvider.totalPagesForTablet -
-                                                1
-                                        ? "Submit"
-                                        : "Next",
-                                    onPress: () {
-                                      context
-                                          .read<VehiclePartsProvider>()
-                                          .nextStepper(
-                                            partsProvider.totalPagesForTablet,
-                                          );
-                                      if (partsProvider.currentPage <
-                                          partsProvider.totalPagesForTablet -
-                                              1) {
-                                        context
-                                            .read<VehiclePartsProvider>()
-                                            .nextPage(
-                                              partsProvider
-                                                      .totalPagesForTablet -
-                                                  1,
-                                            );
-                                      } else {
-                                        context.push(InspectionResultScreen());
-                                        context
-                                            .read<VehiclePartsProvider>()
-                                            .resetStepperForTablet();
-                                      }
-                                    },
-                                  ),
-                                )
-                              : ResponsiveButton(
+                          ResponsiveButton(
                                   width: double.infinity,
                                   buttonText:
                                       partsProvider.currentPage ==
@@ -187,16 +103,13 @@ class _VehiclePartsResponsiveLayoutState
                                     if (error != null) {
                                       CustomLoader.message(error);
                                     } else {
-                                      context
-                                          .read<VehiclePartsProvider>()
-                                          .nextStepper(
+                                      context.read<VehiclePartsProvider>().nextStepper(
                                             partsProvider.totalPages,
                                           );
 
                                       if (partsProvider.currentPage <
                                           partsProvider.totalPages - 1) {
-                                        context
-                                            .read<VehiclePartsProvider>()
+                                        context.read<VehiclePartsProvider>()
                                             .nextPage(
                                               partsProvider.totalPages - 1,
                                             );
@@ -210,10 +123,9 @@ class _VehiclePartsResponsiveLayoutState
                       ),
               ),
             );
-          },
-        );
-      },
-    );
+
+
+
   }
 
   static Future<void> aiMediaUpload({required BuildContext context}) async {
