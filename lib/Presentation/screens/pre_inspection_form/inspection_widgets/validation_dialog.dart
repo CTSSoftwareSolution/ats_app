@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../utilities/color_data.dart';
+
 class ValidationDialog {
   static void show({
     required BuildContext context,
@@ -9,32 +11,46 @@ class ValidationDialog {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
+        titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        contentPadding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+        actionsPadding: const EdgeInsets.all(20),
         title: Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.red.shade600),
-            const SizedBox(width: 10),
-            const Text('Evidence Required!'),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: failLight,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.photo_camera_outlined, color: fail, size: 22),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(child: Text('Evidence Required!')),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Following questions marked as "No" require evidence photos:',
               style: TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
+                fontFamily: "SemiBold",
+                color: textPrimary,
               ),
             ),
             const SizedBox(height: 12),
             Container(
-              constraints: const BoxConstraints(maxHeight: 200),
+              constraints: const BoxConstraints(maxHeight: 220),
+              decoration: BoxDecoration(
+                color: bg,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: border),
+              ),
               child: SingleChildScrollView(
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: questions.map((q) {
@@ -43,18 +59,17 @@ class ValidationDialog {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.photo_camera,
-                            size: 16,
-                            color: Colors.red.shade400,
+                          const Padding(
+                            padding: EdgeInsets.only(top: 1),
+                            child: Icon(Icons.error_outline_rounded, size: 16, color: fail),
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               q,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey.shade600,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: textSecondary,
                               ),
                             ),
                           ),
@@ -66,27 +81,23 @@ class ValidationDialog {
               ),
             ),
             const SizedBox(height: 12),
-            Text(
+            const Text(
               'Please add photos for all failed inspections before submitting.',
               style: TextStyle(
-                fontSize: 12,
-                color: Colors.red.shade600,
-                fontWeight: FontWeight.w500,
+                fontSize: 12.5,
+                color: fail,
+                fontFamily: "SemiBold",
               ),
             ),
           ],
         ),
         actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1A3C6E),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Got it'),
             ),
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Got it'),
           ),
         ],
       ),

@@ -11,54 +11,67 @@ import 'package:provider/provider.dart';
 class LoginScreenItem extends StatelessWidget {
   const LoginScreenItem({super.key});
 
+  static const _labelStyleSize = 14.0;
+  static const _fieldPadding = EdgeInsets.symmetric(horizontal: 14.0, vertical: 16.0);
+  static const _hintStyle = TextStyle(fontSize: 15, fontFamily: "Medium", color: textMuted);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 60.0,horizontal: 30.0),
+      padding: const EdgeInsets.fromLTRB(24.0, 40.0, 24.0, 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomText(text: "USERNAME",fontFamily: "Regular",fontSize: 16,textColor: whiteColor,),
-          5.height,
+          const CustomText(
+            text: "Sign in",
+            fontFamily: "Bold",
+            fontSize: 22,
+            textColor: whiteColor,
+          ),
+          4.height,
+          const CustomText(
+            text: "Use your inspector credentials to continue",
+            fontFamily: "Medium",
+            fontSize: 14,
+            textColor: textWhiteSub,
+          ),
+          28.height,
+          const CustomText(text: "Username", fontFamily: "SemiBold", fontSize: _labelStyleSize, textColor: whiteColor),
+          8.height,
           CustomTextField(
-            contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+            contentPadding: _fieldPadding,
             maxLines: 1,
-            fillColor: textFieldColor,
+            fillColor: whiteColor,
             errorColor: whiteColor,
-            focusedErrorBorder:  OutlineInputBorder(
-              borderSide: BorderSide(color: appColor, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            ),
             hint: "Enter your username",
             controller: context.watch<LoginProvider>().emailController,
-            hintStyle: TextStyle(fontSize: 16, fontFamily: "Regular"),
+            hintStyle: _hintStyle,
             readOnly: false,
             textCapitalization: TextCapitalization.none,
+            prefixIcon: const Icon(Icons.person_outline_rounded, color: textSecondary),
             validator: (value) => Validators.userNameValidation(value!, context),
             inputFormatters: InputFormatters.specialRestrictions,
           ),
-        20.height,
-          CustomText(text: "PASSWORD",fontFamily: "Regular",fontSize: 16,textColor: whiteColor,),
-          5.height,
+          20.height,
+          const CustomText(text: "Password", fontFamily: "SemiBold", fontSize: _labelStyleSize, textColor: whiteColor),
+          8.height,
           CustomTextField(
-            contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+            contentPadding: _fieldPadding,
             maxLines: 1,
-            fillColor: textFieldColor,
+            fillColor: whiteColor,
             errorColor: whiteColor,
-            focusedErrorBorder:  OutlineInputBorder(
-              borderSide: BorderSide(color: appColor, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            ),
             hint: "Enter your password",
             controller: context.watch<LoginProvider>().passwordController,
-            hintStyle: TextStyle(fontSize: 16, fontFamily: "Regular"),
+            hintStyle: _hintStyle,
             readOnly: false,
             obscureText: context.watch<LoginProvider>().passwordVisible,
             textCapitalization: TextCapitalization.none,
+            prefixIcon: const Icon(Icons.lock_outline_rounded, color: textSecondary),
             validator: (value) => Validators.passwordValidation(value!, context),
             inputFormatters: InputFormatters.spaceNotAllowed,
             suffixIcon: IconButton(
               color: appColor,
+              tooltip: context.watch<LoginProvider>().passwordVisible == true ? "Show password" : "Hide password",
                 onPressed: (){
                 context.read<LoginProvider>().passwordVisibility();
                 },

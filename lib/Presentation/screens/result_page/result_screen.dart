@@ -2,7 +2,6 @@ import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dar
 import 'package:ats_app/Presentation/provider/manual_inspection_list_provider.dart';
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_shimmer.dart';
 import 'package:ats_app/Presentation/screens/result_page/result_screen_item.dart';
-import 'package:ats_app/widgets/custom_text.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -46,14 +45,15 @@ class _ResultScreenState extends State<ResultScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<ManualInspectionListProvider>();
     return Scaffold(
-      backgroundColor: background,
+      backgroundColor: bg,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: appColor,
-        title: CustomText(text: "Result", fontFamily: "SemiBold",textColor: whiteColor,fontSize: 20,)
+        titleSpacing: 16,
+        title: const Text("Result")
       ),
       body: SafeArea(child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         child:      Column(
           children: [
             CustomSearchTextField(
@@ -77,6 +77,7 @@ class _ResultScreenState extends State<ResultScreen> {
                       color: blackColor,
                     )
             ),
+            const SizedBox(height: 6),
             Expanded(
               child: provider.isLoading ? ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),

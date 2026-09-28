@@ -2,6 +2,7 @@
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/question_tile.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/status_chip.dart';
 import 'package:flutter/material.dart';
+import '../../../../utilities/color_data.dart';
 import 'package:provider/provider.dart';
 
 import '../../../provider/inspection_form_provider.dart';
@@ -32,31 +33,28 @@ class CategoryCard extends StatelessWidget {
         String statusLabel;
 
         if (cat.hasFailed) {
-          statusColor = Colors.red;
+          statusColor = fail;
           statusLabel = 'Fail';
         } else if (cat.allPassed) {
-          statusColor = Colors.green;
+          statusColor = pass;
           statusLabel = 'Pass';
         } else if (cat.answeredCount > 0) {
-          statusColor = Colors.orange;
+          statusColor = warn;
           statusLabel = 'Partial';
         } else {
-          statusColor = Colors.grey.shade400;
+          statusColor = na;
           statusLabel = 'Pending';
         }
 
         return Container(
           margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: surface,
             borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha:0.06),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
+            border: Border.all(
+              color: cat.hasFailed ? fail.withValues(alpha: 0.35) : border,
+            ),
           ),
           child: Column(
             children: [
@@ -92,9 +90,9 @@ class CategoryCard extends StatelessWidget {
                             Text(
                               cat.title,
                               style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.grey.shade800,
+                                fontSize: 14.5,
+                                fontFamily: "Bold",
+                                color: textPrimary,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -105,7 +103,7 @@ class CategoryCard extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(4),
                                     child: LinearProgressIndicator(
                                       value: cat.progress,
-                                      backgroundColor: Colors.grey.shade200,
+                                      backgroundColor: surface2,
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                           section.color),
                                       minHeight: 4,
@@ -117,7 +115,7 @@ class CategoryCard extends StatelessWidget {
                                   '${cat.answeredCount}/${cat.totalCount}',
                                   style: TextStyle(
                                     fontSize: 11,
-                                    color: Colors.grey.shade500,
+                                    color: textSecondary,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -133,7 +131,7 @@ class CategoryCard extends StatelessWidget {
                         turns: cat.isExpanded ? 0.5 : 0,
                         duration: const Duration(milliseconds: 250),
                         child: Icon(Icons.keyboard_arrow_down_rounded,
-                            color: Colors.grey.shade500),
+                            color: textSecondary),
                       ),
                     ],
                   ),
@@ -145,7 +143,7 @@ class CategoryCard extends StatelessWidget {
                   children: [
                     Divider(
                         height: 1,
-                        color: Colors.grey.shade100,
+                        color: border,
                         indent: 16,
                         endIndent: 16),
                     ...cat.questions.asMap().entries.map((entry) {

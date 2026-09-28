@@ -32,8 +32,8 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
   Widget build(BuildContext context) {
     final chipsProvider = context.watch<LaneListProvider>();
     return Container(
-      color: const Color(0xFFF4F6FB),
-      padding: const EdgeInsets.fromLTRB(16, 3, 16, 8),
+      color: bg,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -85,12 +85,12 @@ class _FilterRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Filter by Category',
+          'FILTER BY CATEGORY',
           style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            color: Colors.black54,
-            letterSpacing: 0.3,
+            fontSize: 11.5,
+            fontFamily: "Bold",
+            color: textMuted,
+            letterSpacing: 0.8,
           ),
         ),
         const SizedBox(height: 8),

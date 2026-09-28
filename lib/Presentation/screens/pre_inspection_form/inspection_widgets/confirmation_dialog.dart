@@ -3,6 +3,7 @@ import 'package:ats_app/image_processing/MediaPicker/file_provider.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import '../../../../utilities/color_data.dart';
 import 'package:provider/provider.dart';
 import '../../../../Data/model/response_model/inspection_pre_save_req_model.dart';
 import '../../../provider/ai_inspection_details_provider.dart';
@@ -23,10 +24,7 @@ class ConfirmationDialog {
     showDialog(
       context: context,
       builder: (_) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
         child: ConstrainedBox(
           constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.85,
@@ -35,39 +33,47 @@ class ConfirmationDialog {
             padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-              Row(
-                children: [
-                  Icon(
-                    isComplete ? Icons.check_circle : Icons.warning_amber_rounded,///242424
-                    color: isComplete ? Colors.green : Colors.orange,
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: isComplete ? passLight : warnLight,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(width: 10),
-                  Text(isComplete ? 'Submit Inspection?' : 'Incomplete!',style: TextStyle(fontSize: 20,fontFamily: "Medium"),),
-                ],
-              ),
-                const SizedBox(height: 15),
-          Text(
-              isComplete
-                  ? 'All ${provider.visibleTotalQuestions} questions answered. Ready to submit?'
-                  : '$unanswered question(s) still unanswered.',
-            style: TextStyle(fontSize: 16,fontFamily: "Regular"),
-            ), const SizedBox(height: 20),
+                  child: Icon(
+                    isComplete ? Icons.check_circle_rounded : Icons.warning_amber_rounded,
+                    color: isComplete ? pass : warn,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  isComplete ? 'Submit Inspection?' : 'Incomplete!',
+                  style: const TextStyle(fontSize: 18, fontFamily: "Bold", color: textPrimary),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  isComplete
+                      ? 'All ${provider.visibleTotalQuestions} questions answered. Ready to submit?'
+                      : '$unanswered question(s) still unanswered.',
+                  style: const TextStyle(fontSize: 14.5, color: textSecondary, height: 1.45),
+                ),
+                const SizedBox(height: 24),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: unanswered==0? Text("Cancel",style: TextStyle(fontSize: 14,fontFamily: "Bold"),):Text("Got it",style: TextStyle(fontSize: 16,fontFamily: "Bold"),),
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: unanswered==0? const Text("Cancel") : const Text("Got it"),
+                        ),
                       ),
-                      unanswered==0?
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isComplete ? Colors.green : const Color(0xFF1A3C6E),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                      if (unanswered==0) ...[
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: isComplete ? pass : appColor,
                         ),
                         onPressed: () async {
                           Navigator.pop(context);
@@ -81,7 +87,9 @@ class ConfirmationDialog {
                           }
                           },
                         child: const Text('Submit'),
-                      ):SizedBox.shrink(),
+                      ),
+                      ),
+                      ],
                   ],
                 )
               ],

@@ -14,57 +14,23 @@ class ProfileDetailsContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24.0),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            appColor,
-            appColor.withValues(alpha:0.75),
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: appColor.withValues(alpha:0.38),
-            blurRadius: 24,
-            spreadRadius: 0,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16.0),
+        color: appColor,
       ),
       child: Stack(
         children: [
-          Positioned(
-            bottom: -20,
-            left: -20,
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha:0.06),
-              ),
-            ),
-          ),
           // Content
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 22.0, horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 16.0),
             child: Row(
               children: [
 
                 Container(
-                  width: 68,
-                  height: 68,
+                  width: 60,
+                  height: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha:0.14),
-                        blurRadius: 14,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
                     border: Border.all(
                       color: Colors.white.withValues(alpha:0.9),
                       width: 2.5,
@@ -89,7 +55,7 @@ class ProfileDetailsContainer extends StatelessWidget {
                     children: [
                       CustomText(
                         text: Preferences.getName(),
-                        fontSize: 20,
+                        fontSize: 18,
                         fontFamily: "Bold",
                         textColor: Colors.white,
                       ),

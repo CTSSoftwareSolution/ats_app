@@ -1,10 +1,8 @@
 import 'package:ats_app/Responsive/responsive_ext.dart';
+import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
-import 'package:ats_app/utilities/extension.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
-import 'custom_button.dart';
-import 'custom_text.dart';
 
 customShowDialog({
   required BuildContext context,
@@ -23,212 +21,84 @@ customShowDialog({
             final isTablet = constraints.isTablet;
             final isLandscape = orientation == Orientation.landscape;
             return Dialog(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
+              insetPadding: const EdgeInsets.symmetric(horizontal: 24),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   maxWidth: isTablet
                       ? (isLandscape
                             ? constraints.maxWidth / 2.5
                             : constraints.maxWidth / 1.5)
-                      : double.infinity,
+                      : 420,
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(28.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: appColor.withValues(alpha: 0.12),
-                        blurRadius: 40,
-                        offset: const Offset(0, 16),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 12, 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          tooltip: 'Close',
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () => context.pop(),
+                          icon: const Icon(Icons.close_rounded, size: 20, color: textMuted),
+                        ),
                       ),
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.07),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(28.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.fromLTRB(
-                            20,
-                            isTablet ? 22 : 18,
-                            20,
-                            isTablet ? 22 : 18,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                appColor,
-                                appColor.withValues(alpha: 0.75),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: accentLight,
+                                borderRadius: BorderRadius.circular(AppRadius.md),
+                              ),
+                              child: const Icon(Icons.help_outline_rounded, color: appColor, size: 24),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              title,
+                              style: TextStyle(
+                                fontFamily: "Bold",
+                                fontSize: isTablet ? 20 : 18,
+                                color: textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              subTitle,
+                              style: TextStyle(
+                                fontSize: isTablet ? 16 : 14.5,
+                                color: textSecondary,
+                                height: 1.45,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: cancelClick,
+                                    child: const Text("No"),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: FilledButton(
+                                    onPressed: okClick,
+                                    child: const Text("Yes"),
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
-                          child: Stack(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.18,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                        ),
-                                        child: const Icon(
-                                          Icons.help_outline_rounded,
-                                          color: Colors.white,
-                                          size: 16,
-                                        ),
-                                      ),
-                                      10.width,
-                                      CustomText(
-                                        text: title,
-                                        fontSize: isTablet ? 18.0 : 15.5,
-                                        fontWeight: FontWeight.w700,
-                                        textColor: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                  // Close button
-                                  GestureDetector(
-                                    onTap: () => context.pop(),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withValues(
-                                          alpha: 0.18,
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: const Icon(
-                                        Icons.close_rounded,
-                                        color: Colors.white,
-                                        size: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                          ],
                         ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            20,
-                            isTablet ? 22 : 18,
-                            20,
-                            isTablet ? 22 : 18,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF5F7FC),
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
-                                    color: const Color(0xFFE4E8F4),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: CustomText(
-                                  text: subTitle,
-                                  fontSize: isTablet ? 17.0 : 14.0,
-                                  fontWeight: FontWeight.w500,
-                                  textColor: const Color(0xFF3D5080),
-                                ),
-                              ),
-
-                              16.height,
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 2,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(14),
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            appColor,
-                                            appColor.withValues(alpha: 0.78),
-                                          ],
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: appColor.withValues(
-                                              alpha: 0.28,
-                                            ),
-                                            blurRadius: 12,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: CustomButton(
-                                        width: double.infinity,
-                                        height: isTablet ? 44.0 : 40.0,
-                                        buttonText: "Yes",
-                                        onPress: okClick,
-                                        backgroundColor: Colors.transparent,
-                                        foregroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            14,
-                                          ),
-                                        ),
-                                        fontSize: isTablet ? 16.0 : 13.5,
-                                      ),
-                                    ),
-                                  ),
-                                  10.width,
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: cancelClick,
-                                      child: Container(
-                                        height: isTablet ? 44.0 : 40.0,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFF0F3FA),
-                                          borderRadius: BorderRadius.circular(
-                                            14,
-                                          ),
-                                        ),
-                                        alignment: Alignment.center,
-                                        child: CustomText(
-                                          text: "No",
-                                          fontSize: isTablet ? 16.0 : 13.5,
-                                          fontWeight: FontWeight.w700,
-                                          textColor: const Color(0xFF6B7A99),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

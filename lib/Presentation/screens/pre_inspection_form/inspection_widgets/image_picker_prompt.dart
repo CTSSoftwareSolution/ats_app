@@ -12,43 +12,55 @@ class ImagePickerPrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: boxColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: borderColor!,
-            width: 1.5,
+    return Material(
+      color: boxColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: borderColor!, width: 1.5),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: iconColor?.withValues(alpha: 0.10),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.add_a_photo_rounded, color: iconColor, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Add Evidence Photo',
+                      style: TextStyle(
+                        color: titleColor,
+                        fontSize: 14,
+                        fontFamily: "Bold",
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Required for items marked "No". Tap to open camera.',
+                      style: TextStyle(
+                        color: subtitleColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: iconColor),
+            ],
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.add_a_photo_rounded,
-                color: iconColor,
-                size: 28),
-            const SizedBox(height: 6),
-            Text(
-              'Add Evidence Photo',
-              style: TextStyle(
-                color: titleColor,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              'Tap to capture or upload from gallery',
-              style: TextStyle(
-                color: subtitleColor,
-                fontSize: 11,
-              ),
-            ),
-          ],
         ),
       ),
     );

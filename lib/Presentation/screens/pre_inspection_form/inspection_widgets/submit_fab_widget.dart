@@ -2,6 +2,7 @@ import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dar
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/confirmation_dialog.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/validation_dialog.dart';
 import 'package:flutter/material.dart';
+import '../../../../utilities/color_data.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 
@@ -23,8 +24,8 @@ class SubmitFAB extends StatelessWidget {
     return FloatingActionButton.extended(
       onPressed: () => _handleSubmit(context),
       backgroundColor:
-      provider.isFullyComplete ? Colors.green : const Color(0xFF1A3C6E),
-      elevation: 6,
+      provider.isFullyComplete ? pass : appColor,
+      elevation: 3,
       icon: Icon(
         provider.isFullyComplete ? Icons.check_circle : Icons.send_rounded,
         color: Colors.white,
@@ -36,8 +37,8 @@ class SubmitFAB extends StatelessWidget {
             : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered',
         style: const TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.w700,
-          fontSize: 14,
+          fontFamily: "Bold",
+          fontSize: 15,
         ),
       ):
       Text(
@@ -46,8 +47,8 @@ class SubmitFAB extends StatelessWidget {
             : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered',
         style: const TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.w700,
-          fontSize: 14,
+          fontFamily: "Bold",
+          fontSize: 15,
         ),
       ),
     );

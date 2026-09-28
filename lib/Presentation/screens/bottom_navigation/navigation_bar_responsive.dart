@@ -35,9 +35,9 @@ class _NavigationBarResponsiveLayoutState extends State<NavigationBarResponsiveL
                       child: navigationProvider.pages[navigationProvider.pageIndex],
                     ),
                     Positioned(
-                      left: 5,
-                      right: 5,
-                      bottom: 20,
+                      left: 16,
+                      right: 16,
+                      bottom: 12,
                       child: SafeArea(
                         child: CustomBottomNavigation(),
                       ),

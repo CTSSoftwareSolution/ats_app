@@ -1,3 +1,4 @@
+import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/image_data.dart';
 import 'package:ats_app/utilities/preferences.dart';
@@ -11,60 +12,48 @@ class BuildHeaderHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                appColor,appColor.withValues(alpha: 0.75)
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: appColor.withValues(alpha: 0.30),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
+    final String location = (Preferences.getLocation() ?? '').toString();
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+      decoration: BoxDecoration(
+        color: appColor,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+      ),
+      child: Column(
+        children: [
+          CustomImage(image: lmsLogo, height: 60, width: double.infinity),
+          if (location.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(100),
               ),
-            ],
-          ),
-          child: CustomImage(image: lmsLogo, height: 75, width: double.infinity),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50.0),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.location_on,
-                  color: appColor,
-                  size: 18,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  Preferences.getLocation(),
-                  style:  TextStyle(
-                    color: blackColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.location_on_rounded, color: whiteColor, size: 15),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      location,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: whiteColor,
+                        fontSize: 12,
+                        fontFamily: "SemiBold",
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        ],
+      ),
     );
   }
 }
-
-
-
-

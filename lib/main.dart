@@ -1,5 +1,5 @@
 import 'package:ats_app/Presentation/provider/multiple_provider.dart';
-import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/app_theme.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,22 +40,9 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         builder: EasyLoading.init(),
         title: 'ATS',
-        theme: ThemeData(
-            scaffoldBackgroundColor: whiteColor,
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: false,
-            appBarTheme: const AppBarTheme(
-                systemOverlayStyle: SystemUiOverlayStyle(
-                  statusBarColor: appColor, // Status bar color
-                  statusBarIconBrightness:
-                  Brightness.light, // Android icon color
-                  statusBarBrightness: Brightness.light, // iOS icon color
-                ))),
+        theme: AppTheme.light,
         home: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: appColor,
-            statusBarIconBrightness: Brightness.light,
-          ),
+          value: AppTheme.statusBarStyle,
           child: SplashScreen(),
         ),
       ),

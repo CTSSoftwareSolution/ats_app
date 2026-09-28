@@ -16,7 +16,7 @@ import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_bottomsheet.dart';
-import '../../../widgets/custom_text.dart';
+import '../../../widgets/app_ui.dart';
 import '../../provider/inspection_form_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../camera_page/camera_screen.dart';
@@ -118,89 +118,148 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
   @override
   Widget build(BuildContext context) {
     final fileProvider = context.watch<FileProvider>();
+    final selected = context.watch<VehicleClassProvider>().selectedClass;
+    final regNo = selected?.registrationNo?.toString() ?? '';
+    int captured = 0;
+    for (int i = 0; i < labels.length; i++) {
+      if (fileProvider.getMedia(i)?.image != null) captured++;
+    }
     return Scaffold(
       appBar:  AppBar(
-        backgroundColor: appColor,
-        titleSpacing: 0,
-        title: const CustomText(
-          text: "Gather Vehicle Data",
-          fontFamily: "SemiBold",
-          fontSize: 20,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Gather Vehicle Data"),
+            if (regNo.isNotEmpty)
+              Text(
+                regNo.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 12.5,
+                  fontFamily: "SemiBold",
+                  color: textWhiteSub,
+                  letterSpacing: 0.8,
+                ),
+              ),
+          ],
         ),
-        leading: IconButton(
+        leading: AppBackButton(
           onPressed: (){
             context.pop();
             fileProvider.clearAll();
           },
-          icon: ImageIcon(
-            AssetImage(backArrowIcon),
-            color: whiteColor,
-            size: 20,
-          ),
         ),
       ),
-          body: SafeArea(
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: BouncingScrollPhysics(),
-                padding: EdgeInsets.only(top: 15,left: 10,right: 10, bottom: 140),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 1.1
-                ),
-                itemCount: labels.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(
-                          text:labels[index],
-                          fontFamily: "Medium",
-                          fontSize: 15.0,
-                        ),
-                        10.height,
-                        Expanded(child:
-                        UploadImageContainer(
-                          isVideo: false,
-                          width: double.infinity,
-                          buttonHeight: 28,
-                          buttonWidth: 80,
-                          iconSize: 40,
-                          iconScale: 6.5,
-                          onTap: () async {
-                            fileProvider.setVideo(false);
-                            fileProvider.setCurrentIndex(index);
-                           // await fileProvider.initCamera();
-                            await context.push(CameraScreen());
-                          },
-                            index: index,
-                            isTablet: false,
-                          borderRadius: 5.0,
-                        ))
-                      ],
-                    ),
-                  );
-                },
+      body: Column(
+        children: [
+          CaptureProgressHeader(
+            title: "Mandatory vehicle photos",
+            subtitle: captured == labels.length
+                ? "All photos captured. Continue to upload."
+                : "Capture all ${labels.length} photos to continue",
+            done: captured,
+            total: labels.length,
           ),
-    ),
-      floatingActionButton:
-      SizedBox(
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: FloatingActionButton.extended(
-            backgroundColor: appColor,
-              onPressed: (){
-              imageUpload();
+          const Divider(),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final columns = constraints.maxWidth >= 600 ? 3 : 2;
+                return GridView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 0.92,
+                  ),
+                  itemCount: labels.length,
+                  itemBuilder: (context, index) {
+                    final isCaptured = fileProvider.getMedia(index)?.image != null;
+                    return AppCard(
+                      padding: const EdgeInsets.all(10),
+                      borderColor: isCaptured ? pass.withValues(alpha: 0.35) : null,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 22,
+                                height: 22,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: isCaptured ? pass : surface2,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: isCaptured
+                                    ? const Icon(Icons.check_rounded, size: 14, color: whiteColor)
+                                    : Text(
+                                        "${index + 1}",
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          fontFamily: "Bold",
+                                          color: textSecondary,
+                                        ),
+                                      ),
+                              ),
+                              8.width,
+                              Expanded(
+                                child: Text(
+                                  labels[index],
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontFamily: "SemiBold",
+                                    fontSize: 13.5,
+                                    color: textPrimary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          8.height,
+                          Expanded(
+                            child: UploadImageContainer(
+                              isVideo: false,
+                              width: double.infinity,
+                              buttonHeight: 30,
+                              buttonWidth: 96,
+                              iconSize: 38,
+                              iconScale: 6.5,
+                              text: "Required",
+                              onTap: () async {
+                                fileProvider.setVideo(false);
+                                fileProvider.setCurrentIndex(index);
+                               // await fileProvider.initCamera();
+                                await context.push(CameraScreen());
+                              },
+                              index: index,
+                              isTablet: false,
+                              borderRadius: 10.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
               },
-              label: CustomText(text: "Next", fontSize: 18.0, fontFamily: "Bold",)),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomActionBar(
+        child: PrimaryButton(
+          label: captured == labels.length
+              ? "Upload & Continue"
+              : "Next  ($captured/${labels.length})",
+          icon: Icons.cloud_upload_outlined,
+          onPressed: (){
+            imageUpload();
+          },
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 

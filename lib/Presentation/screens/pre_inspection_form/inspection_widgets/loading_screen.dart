@@ -1,25 +1,31 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../utilities/color_data.dart';
+
 class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF1A3C6E),
-      child: const Center(
+    return const ColoredBox(
+      color: bg,
+      child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
-            SizedBox(height: 20),
+            SizedBox(
+              width: 36,
+              height: 36,
+              child: CircularProgressIndicator(color: appColor, strokeWidth: 3),
+            ),
+            SizedBox(height: 16),
             Text(
-              'Fetching Inspection Questions...',
+              'Fetching inspection questions…',
               style: TextStyle(
-                color: Colors.white70,
-                fontSize: 16,
-                letterSpacing: 0.5,
+                color: textSecondary,
+                fontSize: 15,
+                fontFamily: "Medium",
               ),
             ),
           ],

@@ -1,4 +1,5 @@
 import 'package:ats_app/Responsive/responsive_ext.dart';
+import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -33,11 +34,11 @@ class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
                     LogoScreenItem(),
                     LoginScreenItem(),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: constraints.horizontalPadding,
-                        vertical: constraints.isTablet ? 24 : 16,
+                      padding: EdgeInsets.symmetric(horizontal: 24,
+                        vertical: constraints.isTablet ? 24 : 20,
                       ),
                       child: CustomButton(
-                        height: constraints.isTablet ? 56.0 : 50.0,
+                        height: constraints.isTablet ? 56.0 : 52.0,
                         width: double.infinity,
                         buttonText: "Login",
                         onPress: () {
@@ -46,13 +47,13 @@ class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
                           }
                         },
                         backgroundColor: whiteColor,
-                        foregroundColor: blackColor,
+                        foregroundColor: appColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
-                            Radius.circular(30.0),
+                            Radius.circular(AppRadius.md),
                           ),
                         ),
-                        fontSize: constraints.isTablet ? 22.0 : 20.0,
+                        fontSize: constraints.isTablet ? 19.0 : 17.0,
                         fontFamily: "Bold",
                       ),
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../utilities/app_theme.dart';
 import '../utilities/color_data.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -64,8 +65,14 @@ class CustomTextField extends StatelessWidget {
     this.cursorColor,
   });
 
+  OutlineInputBorder _border(Color color, double width) => OutlineInputBorder(
+        borderSide: BorderSide(color: color, width: width),
+        borderRadius: const BorderRadius.all(Radius.circular(AppRadius.md)),
+      );
+
   @override
   Widget build(BuildContext context) {
+    final double stroke = borderWidth ?? 1;
     return SizedBox(
       height: height,
       width: width,
@@ -82,51 +89,27 @@ class CustomTextField extends StatelessWidget {
         readOnly: readOnly,
         minLines: minLines,
         maxLines: maxLines,
-        style: TextStyle(
-          color: blackColor,
+        style: const TextStyle(
+          color: textPrimary,
           fontSize: 15,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
         ),
         textAlign: textAlign ?? TextAlign.start,
         cursorColor: cursorColor ?? appColor,
         decoration: InputDecoration(
           contentPadding: contentPadding,
-          fillColor: fillColor,
+          fillColor: fillColor ?? surface,
           filled: true,
           hintTextDirection: TextDirection.ltr,
-          hintStyle: hintStyle,
+          hintStyle: hintStyle.copyWith(color: hintStyle.color ?? textMuted),
           focusColor: appColor,
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: borderColor ?? appColor,
-              width: borderWidth ?? 1,
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          ),
+          enabledBorder: _border(borderColor ?? border, stroke),
           disabledBorder: disabledBorder,
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: borderColor ?? appColor,
-              width: borderWidth ?? 1,
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          ),
-          focusedErrorBorder: focusedErrorBorder,
-          border: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: borderColor ?? appColor,
-              width: borderWidth ?? 1,
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: borderColor ?? appColor,
-              width: borderWidth ?? 1,
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          ),
-          errorStyle: TextStyle(color: errorColor),
+          focusedBorder: _border(borderColor ?? appColor, stroke + 0.5),
+          focusedErrorBorder: focusedErrorBorder ?? _border(fail, stroke + 0.5),
+          border: _border(borderColor ?? border, stroke),
+          errorBorder: _border(fail, stroke),
+          errorStyle: TextStyle(color: errorColor ?? fail, fontSize: 12),
           hintText: hint,
           suffixIcon: suffixIcon,
           prefixIcon: prefixIcon,

@@ -14,10 +14,18 @@ class CustomBottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     final navigationProvider = context.watch<BottomNavigationProvider>();
     return Container(
-      height: 60,
+      height: 64,
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       decoration: BoxDecoration(
         color: appColor,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: navy.withValues(alpha: 0.18),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         children: [

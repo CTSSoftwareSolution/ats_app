@@ -4,8 +4,8 @@ import 'package:ats_app/image_processing/MediaPicker/file_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
-import '../../../utilities/image_data.dart';
-import '../../../widgets/custom_text.dart';
+import '../../../widgets/app_ui.dart';
+import '../../provider/vehicle_class_provider.dart';
 
 class VehiclePartsScreen extends StatefulWidget {
   const VehiclePartsScreen({super.key});
@@ -28,6 +28,7 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
   Widget build(BuildContext context) {
 
     final partsProvider = context.watch<VehiclePartsProvider>();
+    final regNo = context.watch<VehicleClassProvider>().selectedClass?.registrationNo?.toString() ?? '';
     if (!partsProvider.isLoading &&
         partsProvider.vehiclePartsEntity != null &&
         partsProvider.vehiclePartsEntity!.data != null) {
@@ -42,17 +43,25 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
           }
         },
       child: Scaffold(
-        backgroundColor: background,
+        backgroundColor: bg,
         appBar: AppBar(
-          titleSpacing: 0.0,
-          backgroundColor: appColor,
-          title: CustomText(
-            text: "Vehicle Test Parameter",
-            fontSize: 20,
-            fontFamily: "SemiBold",
-            textColor: whiteColor,
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Vehicle Test Parameter"),
+              if (regNo.isNotEmpty)
+                Text(
+                  regNo.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 12.5,
+                    fontFamily: "SemiBold",
+                    color: textWhiteSub,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+            ],
           ),
-          leading: IconButton(
+          leading: AppBackButton(
             onPressed: (){
               if(partsProvider.currentStep > 0){
                 context.read<VehiclePartsProvider>().previousPage();
@@ -60,11 +69,6 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
                 Navigator.pop(context);
               }
               },
-            icon: ImageIcon(
-              AssetImage(backArrowIcon),
-              color: whiteColor,
-              size: 20,
-            ),
           ),
         ),
         body: SafeArea(

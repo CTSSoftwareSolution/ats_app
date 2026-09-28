@@ -6,20 +6,17 @@ import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_page
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/responsive_button.dart';
 
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_responsive_item.dart';
-import 'package:ats_app/Responsive/responsive_ext.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../EmptyStateWidget.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
-import '../../../utilities/custom_stepper.dart';
-import '../../../utilities/extension.dart';
+import '../../../widgets/app_ui.dart';
 import '../../../widgets/custom_loader.dart';
-import '../../../widgets/custom_text.dart';
 import '../../provider/ai_inspection_details_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../../provider/vehicle_parts_provider.dart';
-import '../inspection_result/inspection_result_screen.dart';
 
 class VehiclePartsResponsiveLayout extends StatefulWidget {
   const VehiclePartsResponsiveLayout({super.key});
@@ -32,97 +29,111 @@ class VehiclePartsResponsiveLayout extends StatefulWidget {
 class _VehiclePartsResponsiveLayoutState
     extends State<VehiclePartsResponsiveLayout> {
   int allIndex = 0;
+
+  /// Number of test items whose required image/video has been captured.
+  int _capturedCount(VehiclePartsProvider partsProvider, FileProvider fileProvider) {
+    final data = partsProvider.vehiclePartsEntity?.data ?? [];
+    int count = 0;
+    for (int i = 0; i < data.length; i++) {
+      final media = fileProvider.getMedia(i);
+      final hasImage = media?.image != null;
+      final hasVideo = media?.video != null;
+      final type = data[i].type;
+      final done = type == 1
+          ? hasImage
+          : type == 2
+              ? hasVideo
+              : hasImage && hasVideo;
+      if (done) count++;
+    }
+    return count;
+  }
+
   @override
   Widget build(BuildContext context) {
     final partsProvider = context.watch<VehiclePartsProvider>();
     final fileProvider = context.watch<FileProvider>();
 
-    return Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20.0,
+    if (partsProvider.isLoading) {
+      return Center(child: CustomLoader.loader());
+    }
+    if (partsProvider.vehiclePartsEntity!.data!.isEmpty) {
+      return EmptyStateWidget(
+        icon: Icons.fact_check_outlined,
+        title: 'No test parameters',
+        subtitle: partsProvider.vehiclePartsEntity!.message.toString(),
+      );
+    }
+
+    final totalItems = partsProvider.vehiclePartsEntity!.data!.length;
+    final isLastPage = partsProvider.currentPage == partsProvider.totalPages - 1;
+    final firstItem = partsProvider.currentPage * partsProvider.itemsPerPage + 1;
+    final lastItem = firstItem + partsProvider.currentPageData.length - 1;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CaptureProgressHeader(
+          title: "Step ${partsProvider.currentPage + 1} of ${partsProvider.totalPages}",
+          subtitle: "Items $firstItem–$lastItem of $totalItems  •  "
+              "${_capturedCount(partsProvider, fileProvider)} captured",
+          done: partsProvider.currentPage + 1,
+          total: partsProvider.totalPages,
+          trailingLabel: "${partsProvider.currentPage + 1}/${partsProvider.totalPages}",
+        ),
+        const Divider(),
+        Expanded(
+          child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                  itemCount:
+                      partsProvider.currentPageData.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 14),
+                  itemBuilder: (context, index) {
+                    final item =
+                        partsProvider.currentPageData[index];
+                    allIndex =
+                        partsProvider.currentPage *
+                            partsProvider.itemsPerPage +
+                        index;
+                    return VehiclePartsResponsiveItem(
+                      item: item,
+                      allIndex: allIndex,
+                      isTablet: false,
+                    );
+                  },
                 ),
-                child: partsProvider.isLoading
-                    ? Center(child: CustomLoader.loader())
-                    : partsProvider.vehiclePartsEntity!.data!.isEmpty
-                    ? Center(
-                        child: CustomText(
-                          text: partsProvider.vehiclePartsEntity!.message
-                              .toString(),
-                          fontFamily: "Bold",
-                        ),
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                           25.height,
-                          Center(
-                            child: CustomStepper(
-                              currentStep: partsProvider.currentStep,
-                              totalStep:  partsProvider.totalPages,
-                              width: double.infinity,
-                            ),
-                          ),
-                          15.height,
-                          Expanded(
-                            child: ListView.builder(
-                                    itemCount:
-                                        partsProvider.currentPageData.length,
-                                    itemBuilder: (context, index) {
-                                      final item =
-                                          partsProvider.currentPageData[index];
-                                      allIndex =
-                                          partsProvider.currentPage *
-                                              partsProvider.itemsPerPage +
-                                          index;
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 20.0,
-                                        ),
-                                        child: VehiclePartsResponsiveItem(
-                                          item: item,
-                                          allIndex: allIndex,
-                                          isTablet: false,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                          ),
-                          ResponsiveButton(
-                                  width: double.infinity,
-                                  buttonText:
-                                      partsProvider.currentPage ==
-                                          partsProvider.totalPages - 1
-                                      ? "Submit"
-                                      : "Next",
-                                  onPress: () {
-                                    final error = partsProvider.validateMedia(
-                                      context: context,
-                                    );
+        ),
+        BottomActionBar(
+          child: ResponsiveButton(
+                width: double.infinity,
+                buttonText: isLastPage ? "Submit" : "Next",
+                onPress: () {
+                  final error = partsProvider.validateMedia(
+                    context: context,
+                  );
 
-                                    if (error != null) {
-                                      CustomLoader.message(error);
-                                    } else {
-                                      context.read<VehiclePartsProvider>().nextStepper(
-                                            partsProvider.totalPages,
-                                          );
+                  if (error != null) {
+                    CustomLoader.message(error);
+                  } else {
+                    context.read<VehiclePartsProvider>().nextStepper(
+                          partsProvider.totalPages,
+                        );
 
-                                      if (partsProvider.currentPage <
-                                          partsProvider.totalPages - 1) {
-                                        context.read<VehiclePartsProvider>()
-                                            .nextPage(
-                                              partsProvider.totalPages - 1,
-                                            );
-                                      } else {
-                                        aiMediaUpload(context: context);
-                                      }
-                                    }
-                                  },
-                                ),
-                        ],
-                      ),
+                    if (partsProvider.currentPage <
+                        partsProvider.totalPages - 1) {
+                      context.read<VehiclePartsProvider>()
+                          .nextPage(
+                            partsProvider.totalPages - 1,
+                          );
+                    } else {
+                      aiMediaUpload(context: context);
+                    }
+                  }
+                },
               ),
-            );
+        ),
+      ],
+    );
 
 
 

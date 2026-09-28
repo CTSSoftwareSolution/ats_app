@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 
 import '../Presentation/provider/ai_inspection_details_provider.dart';
 import '../Presentation/provider/ai_update_result_provider.dart';
+import 'color_data.dart';
+import 'color_data.dart' as palette show pass, fail;
+
 
 // ── Bottom Sheet ─────────────────────────────────────────────
 class ChangeStatusSheet extends StatefulWidget {
@@ -41,7 +44,7 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
     final updateResultProvider = context.watch<AiUpdateResultProvider>();
     final detailsProvider = context.watch<AiInspectionDetailsProvider>();
     final kb = MediaQuery.of(context).viewInsets.bottom;
-    final accent = updateResultProvider.toPass ? Color(0xFF007AFF) : Color(0xFFE74C3C);
+    const accent = appColor;
     final status = widget.isPass ? "Fail" : "Pass";
     return AnimatedPadding(
       duration: const Duration(milliseconds: 280),
@@ -63,7 +66,7 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
                 margin: const EdgeInsets.only(top: 10, bottom: 6),
                 width: 36, height: 4,
                 decoration: BoxDecoration(
-                  color: Color(0xFFE5E5EA),
+                  color: border,
                   borderRadius: BorderRadius.circular(99),
                 ),
               ),
@@ -75,10 +78,10 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Text('Change Status',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700,
-                        color: Color(0xFF1C1C1E), letterSpacing: -0.3)),
+                        color: textPrimary, letterSpacing: -0.3)),
                 const SizedBox(height: 2),
-                const Text('Machine · Line A',
-                    style: TextStyle(fontSize: 13, color: Color(0xFF8E8E93))),
+                const Text('Override the AI inspection result for this item',
+                    style: TextStyle(fontSize: 13, color: textSecondary)),
               ]),
             ),
             Divider(height: 1, color: Color(0xFFF2F2F7)),
@@ -99,13 +102,13 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Text('CHANGE TO',
                     style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600,
-                        color: Color(0xFF8E8E93), letterSpacing: 1)),
+                        color: textSecondary, letterSpacing: 1)),
                 const SizedBox(height: 10),
                 Row(children: [
                   Expanded(
                     child: Text('Change to $status',
                         style: const TextStyle(fontSize: 16,
-                            fontWeight: FontWeight.w700, color: Color(0xFF1C1C1E))),
+                            fontWeight: FontWeight.w700, color: textPrimary)),
                   ),
                   _Toggle(
                     value: updateResultProvider.toPass,
@@ -145,20 +148,20 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
                   maxLength: 200,
                   buildCounter: (_, {required currentLength,
                     required isFocused, maxLength}) => const SizedBox.shrink(),
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF1C1C1E), height: 1.5),
+                  style: const TextStyle(fontSize: 14, color: textPrimary, height: 1.5),
                   decoration: InputDecoration(
                     hintText: 'Reason for this change…',
                     hintStyle: const TextStyle(color: Color(0xFFC7C7CC), fontSize: 14),
                     filled: true,
-                    fillColor: Color(0xFFF9F9FB),
+                    fillColor: bg,
                     contentPadding: const EdgeInsets.fromLTRB(14, 12, 14, 28),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFE5E5EA), width: 0.5),
+                      borderSide: const BorderSide(color: border),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFE5E5EA), width: 0.5),
+                      borderSide: const BorderSide(color: border),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -182,13 +185,13 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
                     height: 50,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
-                      color: Color(0xFFF2F2F7),
+                      color: surface2,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     alignment: Alignment.center,
                     child: const Text('Cancel',
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600,
-                            color: Color(0xFF636366))),
+                            color: textSecondary)),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -223,18 +226,18 @@ class _StatusCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
     decoration: BoxDecoration(
-      color: Color(0xFFF9F9FB),
+      color: bg,
       borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: Color(0xFFEBEBF0), width: 0.5),
+      border: Border.all(color: border),
     ),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(label.toUpperCase(),
           style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w600,
-              color: Color(0xFF8E8E93), letterSpacing: 0.8)),
+              color: textSecondary, letterSpacing: 0.8)),
       const SizedBox(height: 5),
       Text(pass ? 'Pass' : 'Fail',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700,
-              color: pass ? Color(0xFF27AE60) : Color(0xFFE74C3C))),
+              color: pass ? palette.pass : palette.fail)),
     ]),
   );
 }
@@ -254,7 +257,7 @@ class _Toggle extends StatelessWidget {
       width: 48, height: 28,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(99),
-        color: value ? const Color(0xFF34C759) : const Color(0xFFE5E5EA),
+        color: value ? appColor : const Color(0xFFE5E5EA),
       ),
       child: AnimatedAlign(
         duration: const Duration(milliseconds: 240),

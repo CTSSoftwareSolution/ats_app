@@ -1,7 +1,5 @@
 import 'package:ats_app/utilities/color_data.dart';
-import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
-import 'custom_text.dart';
 
 Widget navigationIcon(
   String icon,
@@ -11,48 +9,46 @@ Widget navigationIcon(
   ValueChanged<int> onTabSelected,
 ) {
   final bool isActive = currentIndex == index;
+  final Color color = isActive ? whiteColor : textWhiteSub;
 
   return Expanded(
-    child: InkWell(
-      onTap: () => onTabSelected.call(index),
-      child: AnimatedScale(
-        scale: isActive ? 1.0 : 0.9,
-        duration: const Duration(milliseconds: 200),
+    child: Semantics(
+      selected: isActive,
+      button: true,
+      label: title,
+      child: InkWell(
+        onTap: () => onTabSelected.call(index),
+        borderRadius: BorderRadius.circular(14),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedContainer(
-                duration: const Duration(milliseconds: 50),
+                duration: const Duration(milliseconds: 180),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 decoration: BoxDecoration(
                   color: isActive
-                      ? Colors.white.withValues(alpha: 0.0)
+                      ? Colors.white.withValues(alpha: 0.16)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: isActive
-                      ? [
-                          BoxShadow(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            blurRadius: 12,
-                            spreadRadius: 2,
-                          ),
-                        ]
-                      : [],
+                  borderRadius: BorderRadius.circular(100),
                 ),
                 child: ImageIcon(
                   AssetImage(icon),
                   size: 20,
-                  color: isActive ? whiteColor : bottomIconColor,
+                  color: color,
                 ),
               ),
-              3.height,
-              CustomText(
-                text: title,
-                fontSize: 12,
-                fontFamily: "Bold",
-                textColor: isActive ? whiteColor : bottomIconColor,
+              const SizedBox(height: 3),
+              Text(
+                title,
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontFamily: isActive ? "Bold" : "Medium",
+                  color: color,
+                ),
               ),
             ],
           ),

@@ -26,15 +26,14 @@ class CustomSearchTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color scaffoldBgColor = Theme.of(context).scaffoldBackgroundColor;
     final classProvider = context.watch<VehicleClassProvider>();
     return CustomTextField(
       inputFormatters: InputFormatters.searchFieldValidation,
-      contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+      contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
       maxLines: 1,
-      height: 43,
-      fillColor: scaffoldBgColor,
-      borderWidth: 2,
+      height: 48,
+      fillColor: surface,
+      borderWidth: 1,
       controller: controller,
       readOnly: false,
       obscureText: false,
@@ -54,9 +53,9 @@ class CustomSearchTextField extends StatelessWidget {
       //         onPressed: onCloseClick,
       //         color: blackColor,
       //       ),
-      prefixIcon: CustomImage(image: searchIcon, scale: 4.2),
+      prefixIcon: CustomImage(image: searchIcon, scale: 4.6, color: textSecondary),
       hint: 'Search...',
-      hintStyle: const TextStyle(fontSize: 15, fontFamily: "Medium"),
+      hintStyle: const TextStyle(fontSize: 14, fontFamily: "Medium", color: textMuted),
       onChanged: onChanged,
     );
   }

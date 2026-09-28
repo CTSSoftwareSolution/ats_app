@@ -9,10 +9,10 @@ class HomeShimmer extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade200,
-        highlightColor: Colors.grey.shade50,
+        baseColor: const Color(0xFFE9EDF5),
+        highlightColor: const Color(0xFFF7F9FC),
         child: Container(
-          height: 90,
+          height: 132,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),

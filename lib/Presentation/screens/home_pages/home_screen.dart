@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<VehicleClassProvider>();
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FB),
+      backgroundColor: bg,
 
       body: SafeArea(
         child: Column(

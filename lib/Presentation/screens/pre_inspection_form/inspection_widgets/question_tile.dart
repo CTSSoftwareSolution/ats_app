@@ -11,6 +11,7 @@ import '../../../../aws_images/aws_signedurl_provider.dart';
 import '../../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../../utilities/change_status_bottom_sheet.dart';
 import '../../../../utilities/image_data.dart';
+import '../../../../widgets/app_ui.dart';
 import '../../../../widgets/custom_image.dart';
 import '../../../provider/ai_inspection_details_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
@@ -133,11 +134,11 @@ class _QuestionTileState extends State<QuestionTile> {
           key: _tileKey,
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: isReadOnly ? Colors.grey.shade100 : ( isNo ? Colors.red.shade50 : isYes ? Colors.green.shade50 :  Colors.transparent),
+            color: isReadOnly ? Colors.transparent : ( isNo ? failLight : isYes ? passLight.withValues(alpha: 0.6) :  Colors.transparent),
             border: widget.isLast
                 ? null
                 : Border(
-              bottom: BorderSide(color: Colors.grey.shade100),
+              bottom: BorderSide(color: border),
             ),
           ),
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -189,10 +190,10 @@ class _QuestionTileState extends State<QuestionTile> {
                                   child: Text(
                                     item.itemText ?? '',
                                     style: TextStyle(
-                                      fontSize: 13.5,
-                                      color: Colors.grey.shade700,
+                                      fontSize: 14,
+                                      color: textPrimary,
                                       height: 1.4,
-                                      fontWeight: FontWeight.w700
+                                      fontFamily: "SemiBold"
                                     ),
                                   ),
                                 ),
@@ -221,12 +222,33 @@ class _QuestionTileState extends State<QuestionTile> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  if (isReadOnly)
+                    Row(
+                      children: [
+                        const Text(
+                          'AI result',
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            fontFamily: "SemiBold",
+                            color: textSecondary,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        isYes
+                            ? const StatusBadge.pass()
+                            : isNo
+                                ? const StatusBadge.fail()
+                                : const StatusBadge.pending(),
+                      ],
+                    )
+                  else
                   Row(
                     children: [
                       AnswerButton(
-                        label: '✓  Yes',
+                        label: 'Yes',
+                        icon: Icons.check_rounded,
                         selected: isYes,
-                        selectedColor: isReadOnly ? Colors.grey :Colors.green,
+                        selectedColor: pass,
                         onTap: isReadOnly ? null :
                       () {
                           provider.answerQuestion(
@@ -241,9 +263,10 @@ class _QuestionTileState extends State<QuestionTile> {
                       ),
                       const SizedBox(width: 8),
                       AnswerButton(
-                        label: '✗  No',
+                        label: 'No',
+                        icon: Icons.close_rounded,
                         selected: isNo,
-                        selectedColor:isReadOnly ? Colors.grey : Colors.red,
+                        selectedColor: fail,
                         onTap: isReadOnly ? null :
                             () {
                           provider.answerQuestion(
@@ -258,8 +281,17 @@ class _QuestionTileState extends State<QuestionTile> {
                     ],
                   ),
                   aiDetailsProvider.isAIModeOn ?
-                  GestureDetector(
-                    onTap: (){
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 38),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      side: const BorderSide(color: appColor),
+                      textStyle: const TextStyle(fontSize: 13, fontFamily: "SemiBold"),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    icon: const Icon(Icons.edit_outlined, size: 16),
+                    label: const Text("Change Status"),
+                    onPressed: (){
                       aiDetailsProvider.setSelectedQueId(int.parse(question.carData.questionId.toString()));
                       showModalBottomSheet(
                         context: context,
@@ -271,26 +303,6 @@ class _QuestionTileState extends State<QuestionTile> {
                         ),
                       );
                     },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: widget.accentColor.withValues(alpha:0.10),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color:  widget.accentColor,
-                          width:  1,
-                        ),
-                      ),
-                      child: Text(
-                        "Change Status",
-                        style: TextStyle(
-                          color: widget.accentColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
                   )
                       : SizedBox.shrink()
                 ],
@@ -345,11 +357,11 @@ class _QuestionTileState extends State<QuestionTile> {
                           );
                         } else {
                           return ImagePickerPrompt(
-                            boxColor: isNo ?Colors.red.shade50 : Colors.green.shade50,
-                            borderColor: isNo ? Colors.red.shade200 : Colors.green.shade200,
-                            iconColor: isNo ? Colors.red.shade400 : Colors.green.shade400,
-                            titleColor: isNo ? Colors.red.shade500 : Colors.green.shade500,
-                            subtitleColor: isNo ?Colors.red.shade300 : Colors.green.shade300,
+                            boxColor: surface,
+                            borderColor: isNo ? fail.withValues(alpha: 0.45) : pass.withValues(alpha: 0.45),
+                            iconColor: isNo ? fail : pass,
+                            titleColor: isNo ? fail : pass,
+                            subtitleColor: textSecondary,
                             onTap: () => _pickImage(
                               context,
                               provider,
@@ -363,12 +375,10 @@ class _QuestionTileState extends State<QuestionTile> {
                       }(),
                       const SizedBox(height: 12),
                       CustomTextField(
-                        cursorColor: isNo ? redColor : Colors.green,
-                        contentPadding: const EdgeInsets.only(left: 10.0),
-                        borderColor: isNo ? Colors.red.shade200 : Colors.green.shade200,
-                        borderWidth: 1.5,
-                        fillColor: isNo ? Colors.red.shade50 : Colors.green.shade50,
-                        hint: "Remark here...",
+                        cursorColor: appColor,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+                        fillColor: surface,
+                        hint: "Add a remark (optional)",
                         controller: controller,
                         onChanged: (value) {
                           provider.setQuestionRemark(
@@ -379,8 +389,8 @@ class _QuestionTileState extends State<QuestionTile> {
                           );
                         },
                         hintStyle: TextStyle(
-                          color: isNo ? Colors.red.shade300 : Colors.green.shade300,
-                          fontSize: 11,
+                          color: textMuted,
+                          fontSize: 13,
                         ),
                         readOnly: false,
                         textCapitalization: TextCapitalization.sentences,
