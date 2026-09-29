@@ -3,12 +3,14 @@ import 'package:ats_app/Presentation/screens/profile_page/profile_details_contai
 import 'package:ats_app/utilities/profile_menu_widget.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../app_config/ip_address_bottom_sheet_screen.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
+import '../../provider/create_queue_provider.dart';
 
 import '../login_page/login_screen.dart';
 
@@ -116,6 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
           okClick: () {
             Preferences.clear();
+            context.read<CreateQueueProvider>().clearUploadedImages();
             context.push(LoginScreen());
           },
         );

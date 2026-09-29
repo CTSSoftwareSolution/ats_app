@@ -35,7 +35,7 @@ class _VehiclePartsResponsiveLayoutState
   @override
   Widget build(BuildContext context) {
     final partsProvider = context.watch<VehiclePartsProvider>();
-    final fileProvider = context.watch<FileProvider>();
+    //final fileProvider = context.watch<FileProvider>();
 
     return Center(
               child: Padding(
@@ -93,7 +93,7 @@ class _VehiclePartsResponsiveLayoutState
                                   buttonText:
                                       partsProvider.currentPage ==
                                           partsProvider.totalPages - 1
-                                      ? "Submit"
+                                      ? "View Result"
                                       : "Next",
                                   onPress: () {
                                     final error = partsProvider.validateMedia(
@@ -114,7 +114,9 @@ class _VehiclePartsResponsiveLayoutState
                                               partsProvider.totalPages - 1,
                                             );
                                       } else {
-                                        aiMediaUpload(context: context);
+                                        //aiMediaUpload(context: context);
+                                        context.push(InspectionPage());
+                                        context.read<VehiclePartsProvider>().resetStepper();
                                       }
                                     }
                                   },

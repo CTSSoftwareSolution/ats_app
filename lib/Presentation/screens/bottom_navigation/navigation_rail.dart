@@ -9,6 +9,7 @@ import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
 import '../../../widgets/custom_image.dart';
 import '../../provider/bottom_navigation_provider.dart';
+import '../../provider/create_queue_provider.dart';
 import '../login_page/login_screen.dart';
 
 class TabletNavigationRail extends StatelessWidget {
@@ -84,6 +85,7 @@ class TabletNavigationRail extends StatelessWidget {
                   },
                   okClick: () {
                     Preferences.clear();
+                    context.read<CreateQueueProvider>().clearUploadedImages();
                     context.read<LoginProvider>().emailController.clear();
                     context.read<LoginProvider>().passwordController.clear();
                     context.push(LoginScreen());

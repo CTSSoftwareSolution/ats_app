@@ -35,6 +35,13 @@ class _CameraScreenState extends State<CameraScreen>
     super.dispose();
   }
 
+  String? _capturedPath(FileProvider provider) {
+    final index = provider.currentIndex;
+    if (index == null || index < 0) return null;
+    final media = provider.getMedia(index);
+    return provider.isVideo ? media?.video?.path : media?.image?.path;
+  }
+
   @override
   Widget build(BuildContext context) {
     final fileProvider = context.watch<FileProvider>();
@@ -95,18 +102,25 @@ class _CameraScreenState extends State<CameraScreen>
               child: Center(
                 child: GestureDetector(
                   onTap: () async {
+                    // Return the newly captured file path to the caller so it
+                    // can upload it. Returns null if capture failed.
+                    final before = _capturedPath(fileProvider);
                     if (fileProvider.isVideo) {
                       if (fileProvider.isRecording) {
                         await fileProvider.stopVideoRecording();
                         if (!context.mounted) return;
-                        context.pop();
+                        final after = _capturedPath(fileProvider);
+                        debugPrint("[MEDIA] CameraScreen returning video: $after");
+                        context.pop(after != before ? after : null);
                       } else {
                         await fileProvider.startVideoRecording();
                       }
                     } else {
                       await fileProvider.takePicture(context);
                       if (!context.mounted) return;
-                      context.pop();
+                      final after = _capturedPath(fileProvider);
+                      debugPrint("[MEDIA] CameraScreen returning image: $after");
+                      context.pop(after != before ? after : null);
                     }
                   },
                   child: fileProvider.isVideo ?
