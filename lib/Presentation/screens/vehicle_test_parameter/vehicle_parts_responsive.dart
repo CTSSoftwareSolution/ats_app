@@ -17,9 +17,11 @@ import '../../../utilities/extension.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/custom_text.dart';
 import '../../provider/ai_inspection_details_provider.dart';
+import '../../provider/ai_result_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../../provider/vehicle_parts_provider.dart';
 import '../inspection_result/inspection_result_screen.dart';
+import '../ai_result/ai_result_screen.dart';
 
 class VehiclePartsResponsiveLayout extends StatefulWidget {
   const VehiclePartsResponsiveLayout({super.key});
@@ -95,7 +97,7 @@ class _VehiclePartsResponsiveLayoutState
                                           partsProvider.totalPages - 1
                                       ? "View Result"
                                       : "Next",
-                                  onPress: () {
+                                  onPress: () async {
                                     final error = partsProvider.validateMedia(
                                       context: context,
                                     );
@@ -115,8 +117,20 @@ class _VehiclePartsResponsiveLayoutState
                                             );
                                       } else {
                                         //aiMediaUpload(context: context);
-                                        context.push(InspectionPage());
+                                        //context.push(InspectionPage());
                                         context.read<VehiclePartsProvider>().resetStepper();
+                                        CustomLoader.showLoader("Loading result...");
+                                        final result = await context.read<AiResultProvider>().aiResultDetails(context);
+                                        if (!context.mounted) return;
+                                        if (result == null || result.success == false) {
+                                          CustomLoader.errorMessage(
+                                            (result?.message?.trim().isNotEmpty ?? false)
+                                                ? result!.message!.trim()
+                                                : "Unable to load result. Please try again.",
+                                          );
+                                          return;
+                                        }
+                                        context.push(const AiResultScreen());
                                       }
                                     }
                                   },

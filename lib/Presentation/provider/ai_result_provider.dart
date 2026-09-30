@@ -35,8 +35,8 @@ class AiResultProvider extends ChangeNotifier{
 
       AiResultReqModel aiResultReqModel = AiResultReqModel(
           vehicleId: classProvider.selectedClass?.registrationNo,
-          appointmentId:  classProvider.selectedClass!.appointmentId.toString(),
-          documentId: ""
+          appointmentId:  "",
+          documentId: null
       );
       aiResultEntity = await aiResultUseCases.execute(aiResultReqModel);
       if (aiResultEntity?.data != null) {
@@ -47,6 +47,7 @@ class AiResultProvider extends ChangeNotifier{
     } catch (e) {
       aiResultEntity = null;
     } finally {
+      isLoading = false;
       CustomLoader.closeLoader();
 
       notifyListeners();

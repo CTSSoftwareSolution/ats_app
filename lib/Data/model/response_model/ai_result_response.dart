@@ -1,4 +1,4 @@
-import '../../../Domain/entities/ai_result_entity.dart';
+import 'package:ats_app/Domain/entities/ai_result_entity.dart';
 
 class AiResultResponse extends AiResultEntity{
   AiResultResponse({
