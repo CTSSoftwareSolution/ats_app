@@ -1,4 +1,5 @@
 import 'package:ats_app/Data/model/request_model/ai_result_req_model.dart';
+import 'package:ats_app/Data/model/response_model/ai_result_response.dart';
 import 'package:ats_app/Domain/entities/ai_result_entity.dart';
 import 'package:ats_app/Domain/usecases/ai_inspection_details_usecases.dart';
 import 'package:ats_app/Domain/usecases/ai_result_usecases.dart';
@@ -55,7 +56,17 @@ class AiResultProvider extends ChangeNotifier{
     return null;
   }
 
-
-
-
+  /// Overrides the result of a single question in the loaded data so every
+  /// widget reading it rebuilds with the new value.
+  void updateQuestionResult(ResultData item, String result) {
+    final data = aiResultEntity?.data;
+    if (data == null) return;
+    final index = data.indexOf(item);
+    if (index == -1) return;
+    data[index] = item.copyWith(
+      aiResult: result,
+      aiResponse: (item.aiResponse ?? AiResponse()).copyWith(overallResult: result),
+    );
+    notifyListeners();
+  }
 }

@@ -40,108 +40,99 @@ class _VehiclePartsResponsiveLayoutState
     //final fileProvider = context.watch<FileProvider>();
 
     return Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20.0,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.0),
+        child: partsProvider.isLoading
+            ? Center(child: CustomLoader.loader())
+            : partsProvider.vehiclePartsEntity!.data!.isEmpty
+            ? Center(
+                child: CustomText(
+                  text: partsProvider.vehiclePartsEntity!.message.toString(),
+                  fontFamily: "Bold",
                 ),
-                child: partsProvider.isLoading
-                    ? Center(child: CustomLoader.loader())
-                    : partsProvider.vehiclePartsEntity!.data!.isEmpty
-                    ? Center(
-                        child: CustomText(
-                          text: partsProvider.vehiclePartsEntity!.message
-                              .toString(),
-                          fontFamily: "Bold",
-                        ),
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                           25.height,
-                          Center(
-                            child: CustomStepper(
-                              currentStep: partsProvider.currentStep,
-                              totalStep:  partsProvider.totalPages,
-                              width: double.infinity,
-                            ),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  25.height,
+                  Center(
+                    child: CustomStepper(
+                      currentStep: partsProvider.currentStep,
+                      totalStep: partsProvider.totalPages,
+                      width: double.infinity,
+                    ),
+                  ),
+                  15.height,
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: partsProvider.currentPageData.length,
+                      itemBuilder: (context, index) {
+                        final item = partsProvider.currentPageData[index];
+                        allIndex =
+                            partsProvider.currentPage *
+                                partsProvider.itemsPerPage +
+                            index;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0),
+                          child: VehiclePartsResponsiveItem(
+                            item: item,
+                            allIndex: allIndex,
+                            isTablet: false,
                           ),
-                          15.height,
-                          Expanded(
-                            child: ListView.builder(
-                                    itemCount:
-                                        partsProvider.currentPageData.length,
-                                    itemBuilder: (context, index) {
-                                      final item =
-                                          partsProvider.currentPageData[index];
-                                      allIndex =
-                                          partsProvider.currentPage *
-                                              partsProvider.itemsPerPage +
-                                          index;
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 20.0,
-                                        ),
-                                        child: VehiclePartsResponsiveItem(
-                                          item: item,
-                                          allIndex: allIndex,
-                                          isTablet: false,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                          ),
-                          ResponsiveButton(
-                                  width: double.infinity,
-                                  buttonText:
-                                      partsProvider.currentPage ==
-                                          partsProvider.totalPages - 1
-                                      ? "View Result"
-                                      : "Next",
-                                  onPress: () async {
-                                    final error = partsProvider.validateMedia(
-                                      context: context,
-                                    );
+                        );
+                      },
+                    ),
+                  ),
+                  ResponsiveButton(
+                    width: double.infinity,
+                    buttonText:
+                        partsProvider.currentPage ==
+                            partsProvider.totalPages - 1
+                        ? "View Result"
+                        : "Next",
+                    onPress: () async {
+                      final error = partsProvider.validateMedia(
+                        context: context,
+                      );
 
-                                    if (error != null) {
-                                      CustomLoader.message(error);
-                                    } else {
-                                      context.read<VehiclePartsProvider>().nextStepper(
-                                            partsProvider.totalPages,
-                                          );
+                      if (error != null) {
+                        CustomLoader.message(error);
+                      } else {
+                        context.read<VehiclePartsProvider>().nextStepper(
+                          partsProvider.totalPages,
+                        );
 
-                                      if (partsProvider.currentPage <
-                                          partsProvider.totalPages - 1) {
-                                        context.read<VehiclePartsProvider>()
-                                            .nextPage(
-                                              partsProvider.totalPages - 1,
-                                            );
-                                      } else {
-                                        //aiMediaUpload(context: context);
-                                        //context.push(InspectionPage());
-                                        context.read<VehiclePartsProvider>().resetStepper();
-                                        CustomLoader.showLoader("Loading result...");
-                                        final result = await context.read<AiResultProvider>().aiResultDetails(context);
-                                        if (!context.mounted) return;
-                                        if (result == null || result.success == false) {
-                                          CustomLoader.errorMessage(
-                                            (result?.message?.trim().isNotEmpty ?? false)
-                                                ? result!.message!.trim()
-                                                : "Unable to load result. Please try again.",
-                                          );
-                                          return;
-                                        }
-                                        context.push(const AiResultScreen());
-                                      }
-                                    }
-                                  },
-                                ),
-                        ],
-                      ),
+                        if (partsProvider.currentPage <
+                            partsProvider.totalPages - 1) {
+                          context.read<VehiclePartsProvider>().nextPage(
+                            partsProvider.totalPages - 1,
+                          );
+                        } else {
+                           //aiMediaUpload(context: context);
+                          //  context.push(InspectionPage());
+                          //  context.read<VehiclePartsProvider>().resetStepper();
+                          CustomLoader.showLoader("Loading result...");
+                          final result = await context
+                              .read<AiResultProvider>()
+                              .aiResultDetails(context);
+                          if (!context.mounted) return;
+                          if (result == null || result.success == false) {
+                            CustomLoader.errorMessage(
+                              (result?.message?.trim().isNotEmpty ?? false)
+                                  ? result!.message!.trim()
+                                  : "Unable to load result. Please try again.",
+                            );
+                            return;
+                          }
+                          context.push(const AiResultScreen());
+                        }
+                      }
+                    },
+                  ),
+                ],
               ),
-            );
-
-
-
+      ),
+    );
   }
 
   static Future<void> aiMediaUpload({required BuildContext context}) async {

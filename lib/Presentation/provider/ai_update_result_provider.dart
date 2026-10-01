@@ -29,8 +29,32 @@ class AiUpdateResultProvider extends ChangeNotifier{
   int chars = 0;
 
   Future<AiUpdateResultEntity?> aiUpdateResult(BuildContext context, bool statusResult) async{
-    final classProvider = Provider.of<VehicleClassProvider>(context,listen: false);
     final detailsProvider = Provider.of<AiInspectionDetailsProvider>(context,listen: false);
+    try{
+      final entity = await updateQuestionResult(
+        context,
+        questionId: detailsProvider.selectedQueId,
+        statusResult: statusResult,
+        remark: ctrl.text,
+      );
+      if (entity == null) return null;
+      await detailsProvider.aiInspectionDetails(context);
+      context.pop();
+      return entity;
+    }catch (e){
+      return null;
+    }
+  }
+
+  /// Calls the question-wise update API for the selected vehicle.
+  /// Returns null when the request itself fails.
+  Future<AiUpdateResultEntity?> updateQuestionResult(
+    BuildContext context, {
+    required num? questionId,
+    required bool statusResult,
+    String? remark,
+  }) async {
+    final classProvider = Provider.of<VehicleClassProvider>(context,listen: false);
     try{
       isLoading = true;
       notifyListeners();
@@ -38,17 +62,16 @@ class AiUpdateResultProvider extends ChangeNotifier{
       AiUpdateResultReqModel updateResultReqModel = AiUpdateResultReqModel(
         vehicleNo: classProvider.selectedClass?.registrationNo,
         appointmentId: classProvider.selectedClass?.appointmentId,
-        questionId: detailsProvider.selectedQueId,
+        questionId: questionId,
         aiInspectionResult: statusResult == true ? "Pass" : "Fail",
-        aiRemark: ctrl.text
+        aiRemark: remark ?? ""
       );
       aiUpdateResultEntity = await  resultUseCases.execute(updateResultReqModel);
-      await detailsProvider.aiInspectionDetails(context);
-      context.pop();
       return aiUpdateResultEntity;
     }catch (e){
       aiUpdateResultEntity = null;
     } finally {
+      isLoading = false;
       CustomLoader.closeLoader();
 
       notifyListeners();

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import '../../utilities/preferences.dart';
+import '../screens/ai_result/ai_result_screen.dart';
 import '../screens/bottom_navigation/bottom_navigation_bar.dart';
 import '../screens/login_page/login_screen.dart';
 
@@ -20,7 +21,8 @@ class SplashProvider extends ChangeNotifier{
     if(userId.isEmpty){
       context.push(LoginScreen());
     }else{
-     context.push(const BottomNavigationBarScreen());
+    context.push(const BottomNavigationBarScreen());
+    // context.push(const AiResultScreen());
     }
   }
 

@@ -1,5 +1,9 @@
 import 'package:ats_app/Data/model/response_model/ai_result_response.dart';
 import 'package:ats_app/Presentation/provider/ai_result_provider.dart';
+import 'package:ats_app/Presentation/provider/ai_update_result_provider.dart';
+import 'package:ats_app/Presentation/provider/bottom_navigation_provider.dart';
+import 'package:ats_app/Presentation/screens/bottom_navigation/bottom_navigation_bar.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/app_theme.dart';
@@ -24,6 +28,16 @@ class _AiResultScreenState extends State<AiResultScreen> {
   Future<void> _loadResult() async {
     if (!mounted) return;
     await context.read<AiResultProvider>().aiResultDetails(context);
+  }
+
+  bool _isNavigating = false;
+
+  /// Clears the inspection flow and returns to the dashboard tab.
+  void _goToDashboard() {
+    if (_isNavigating) return;
+    setState(() => _isNavigating = true);
+    context.read<BottomNavigationProvider>().updateIndex(0);
+    context.pushAndRemoveUntil(const BottomNavigationBarScreen());
   }
 
   String _keyOf(ResultData item) =>
@@ -86,6 +100,28 @@ class _AiResultScreenState extends State<AiResultScreen> {
                 child: _buildBody(provider),
               ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: FilledButton(
+            onPressed: _isNavigating ? null : _goToDashboard,
+            style: FilledButton.styleFrom(
+              backgroundColor: appColor,
+              foregroundColor: whiteColor,
+              elevation: 6,
+              shadowColor: navy.withValues(alpha: 0.35),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+              ),
+              textStyle: const TextStyle(fontFamily: "SemiBold", fontSize: 16),
+            ),
+            child: const Text("Done"),
+          ),
+        ),
+      ),
     );
   }
 
@@ -123,7 +159,7 @@ class _AiResultScreenState extends State<AiResultScreen> {
 
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, _fabClearance),
       itemCount: records.length,
       separatorBuilder: (_, __) => const Padding(
         padding: EdgeInsets.symmetric(vertical: 24),
@@ -137,6 +173,8 @@ class _AiResultScreenState extends State<AiResultScreen> {
             label: records.length > 1
                 ? "Inspection Question ${index + 1} of ${records.length}"
                 : "Inspection Question",
+            result: _availableResult(records[index]),
+            onTap: () => _showChangeResultSheet(provider, records[index]),
           ),
           const SizedBox(height: 16),
           const Text(
@@ -149,21 +187,47 @@ class _AiResultScreenState extends State<AiResultScreen> {
       ),
     );
   }
+
+  /// Opens the result editor for [item] only.
+  void _showChangeResultSheet(AiResultProvider provider, ResultData item) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _ChangeResultSheet(
+        questionId: item.labelId,
+        question: item.questionText,
+        current: _availableResult(item),
+        onUpdated: (result) => provider.updateQuestionResult(item, result),
+      ),
+    );
+  }
 }
 
 class _QuestionCard extends StatelessWidget {
   final String? text;
   final String label;
+  final String? result;
+  final VoidCallback onTap;
 
-  const _QuestionCard({this.text, required this.label});
+  const _QuestionCard({this.text, required this.label, this.result, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return AppCard(
+      onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionLabel(label),
+          Row(
+            children: [
+              Expanded(child: _SectionLabel(label)),
+              const SizedBox(width: 8),
+              _resultBadge(result),
+              const SizedBox(width: 4),
+              const Icon(Icons.chevron_right_rounded, size: 20, color: textMuted),
+            ],
+          ),
           const SizedBox(height: 8),
           Text(
             _hasText(text) ? text!.trim() : '—',
@@ -185,33 +249,16 @@ class _ResultDetails extends StatelessWidget {
 
   const _ResultDetails({required this.item});
 
-  bool get _isAiResponseEmpty {
-    final r = item.aiResponse;
-    if (r == null) return true;
-    return r.status == null &&
-        r.overallResult == null &&
-        r.manualCheck == null &&
-        !_hasText(r.message) &&
-        _isEmptyValue(r.analysis);
-  }
-
   @override
   Widget build(BuildContext context) {
     final response = item.aiResponse;
-    final overall = response?.overallResult ?? item.aiResult;
-    final overallBadge = _hasText(overall)
-        ? StatusBadge.fromResult(overall, dense: true)
-        : const StatusBadge.pending(label: 'Result Pending', dense: true);
+    final overall = _availableResult(item);
 
-    if (_isAiResponseEmpty) {
-      return _KeyValueCard(
-        rows: [
-          _DetailRow(label: "Overall Result", child: overallBadge),
-        ],
-        footer: const _InlineNotice(
-          icon: Icons.info_outline_rounded,
-          text: "AI result not available",
-        ),
+    // No overall result yet (missing or pending): show only the notice.
+    if (response == null || overall == null) {
+      return const _InlineNotice(
+        icon: Icons.info_outline_rounded,
+        text: "AI Result Not Available",
       );
     }
 
@@ -220,37 +267,220 @@ class _ResultDetails extends StatelessWidget {
       children: [
         _KeyValueCard(
           rows: [
-            _DetailRow(label: "Overall Result", child: overallBadge),
             _DetailRow(
-              label: "Manual Check",
-              child: _valueBadge(response!.manualCheck),
+              label: "Overall Result",
+              child: StatusBadge.fromResult(overall, dense: true),
             ),
-            _DetailRow(
-              label: "AI Status",
-              child: response.status == null
-                  ? const StatusBadge.pending(dense: true)
-                  : response.status!
-                      ? const StatusBadge.pass(label: 'Success', dense: true)
-                      : const StatusBadge.fail(label: 'Failed', dense: true),
-            ),
-            if (_hasText(response.message))
-              _DetailRow.stacked(
-                label: "Message",
-                child: Text(
-                  response.message!.trim(),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontFamily: "SemiBold",
-                    color: textPrimary,
-                    height: 1.4,
-                  ),
-                ),
-              ),
           ],
         ),
         const SizedBox(height: 16),
         _AnalysisCard(analysis: response.analysis, message: response.message),
       ],
+    );
+  }
+}
+
+/// Bottom sheet to change the result of one question to Pass or Fail.
+class _ChangeResultSheet extends StatefulWidget {
+  final num? questionId;
+  final String? question;
+  final String? current;
+
+  /// Called with the new result once the API has accepted it.
+  final ValueChanged<String> onUpdated;
+
+  const _ChangeResultSheet({
+    this.questionId,
+    this.question,
+    this.current,
+    required this.onUpdated,
+  });
+
+  @override
+  State<_ChangeResultSheet> createState() => _ChangeResultSheetState();
+}
+
+class _ChangeResultSheetState extends State<_ChangeResultSheet> {
+  late String? _selected = widget.current?.trim().toUpperCase();
+  bool _isUpdating = false;
+
+  bool get _canUpdate =>
+      !_isUpdating && _selected != null && _selected != widget.current?.trim().toUpperCase();
+
+  Future<void> _update() async {
+    if (!_canUpdate) return;
+    final result = _selected!;
+    setState(() => _isUpdating = true);
+
+    final response = await context.read<AiUpdateResultProvider>().updateQuestionResult(
+          context,
+          questionId: widget.questionId,
+          statusResult: result == "PASS",
+        );
+
+    if (response?.success == true) {
+      widget.onUpdated(result);
+      CustomLoader.message(
+        _hasText(response!.message) ? response.message!.trim() : "Result updated successfully",
+      );
+      if (mounted) Navigator.pop(context);
+      return;
+    }
+
+    CustomLoader.errorMessage(
+      _hasText(response?.message) ? response!.message!.trim() : "Unable to update result",
+    );
+    if (mounted) setState(() => _isUpdating = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: !_isUpdating,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(20, 10, 20, 20 + MediaQuery.of(context).padding.bottom),
+        decoration: const BoxDecoration(
+          color: surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Change Result",
+              style: TextStyle(fontFamily: "Bold", fontSize: 16, color: textPrimary),
+            ),
+            const SizedBox(height: 16),
+            const _SectionLabel("Inspection Question"),
+            const SizedBox(height: 6),
+            Text(
+              _hasText(widget.question) ? widget.question!.trim() : '—',
+              style: const TextStyle(
+                fontFamily: "SemiBold",
+                fontSize: 15,
+                color: textPrimary,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 4),
+            _DetailRow(label: "Current Result", child: _resultBadge(widget.current)),
+            const Divider(height: 1, thickness: 1, color: border),
+            const SizedBox(height: 16),
+            const _SectionLabel("Change To"),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: _ResultOption(
+                    label: "PASS",
+                    icon: Icons.check_circle_rounded,
+                    color: pass,
+                    background: passLight,
+                    selected: _selected == "PASS",
+                    onTap: _isUpdating ? null : () => setState(() => _selected = "PASS"),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _ResultOption(
+                    label: "FAIL",
+                    icon: Icons.cancel_rounded,
+                    color: fail,
+                    background: failLight,
+                    selected: _selected == "FAIL",
+                    onTap: _isUpdating ? null : () => setState(() => _selected = "FAIL"),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 48,
+              child: FilledButton(
+                onPressed: _canUpdate ? _update : null,
+                style: FilledButton.styleFrom(
+                  backgroundColor: appColor,
+                  disabledBackgroundColor: border,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                ),
+                child: _isUpdating
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: whiteColor),
+                      )
+                    : const Text(
+                        "Update",
+                        style: TextStyle(fontFamily: "SemiBold", fontSize: 15),
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ResultOption extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final Color background;
+  final bool selected;
+  final VoidCallback? onTap;
+
+  const _ResultOption({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.background,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(AppRadius.md);
+    return Material(
+      color: selected ? background : surface,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: Container(
+          height: 52,
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: Border.all(color: selected ? color : border, width: selected ? 1.5 : 1),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 18, color: color),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(fontFamily: "Bold", fontSize: 14, color: color),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -261,8 +491,17 @@ class _AnalysisCard extends StatelessWidget {
 
   const _AnalysisCard({required this.analysis, this.message});
 
+  /// Analysis keys that are kept in the model but not shown to the user.
+  static const _hiddenKeys = {'processing_time_sec'};
+
   @override
   Widget build(BuildContext context) {
+    final analysis = this.analysis is Map
+        ? Map.fromEntries((this.analysis as Map)
+            .entries
+            .where((e) => !_hiddenKeys.contains(e.key.toString())))
+        : this.analysis;
+
     if (_isEmptyValue(analysis)) {
       return _KeyValueCard(
         title: "Analysis",
@@ -276,13 +515,12 @@ class _AnalysisCard extends StatelessWidget {
 
     final rows = <Widget>[];
     if (analysis is Map) {
-      (analysis as Map).forEach((key, value) {
+      analysis.forEach((key, value) {
         rows.add(_DetailRow(label: _humanize(key.toString()), child: _valueBadge(value)));
       });
     } else if (analysis is List) {
-      final list = analysis as List;
-      for (var i = 0; i < list.length; i++) {
-        rows.add(_DetailRow(label: 'Item ${i + 1}', child: _valueBadge(list[i])));
+      for (var i = 0; i < analysis.length; i++) {
+        rows.add(_DetailRow(label: 'Item ${i + 1}', child: _valueBadge(analysis[i])));
       }
     } else {
       rows.add(_DetailRow(label: 'Analysis', child: _valueBadge(analysis)));
@@ -333,12 +571,8 @@ class _KeyValueCard extends StatelessWidget {
 class _DetailRow extends StatelessWidget {
   final String label;
   final Widget child;
-  final bool stacked;
 
-  const _DetailRow({required this.label, required this.child}) : stacked = false;
-
-  /// Label above the value, for long text such as the AI message.
-  const _DetailRow.stacked({required this.label, required this.child}) : stacked = true;
+  const _DetailRow({required this.label, required this.child});
 
   static const _labelStyle = TextStyle(fontSize: 13.5, color: textSecondary);
 
@@ -346,22 +580,13 @@ class _DetailRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      child: stacked
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: _labelStyle),
-                const SizedBox(height: 4),
-                child,
-              ],
-            )
-          : Row(
-              children: [
-                Expanded(child: Text(label, style: _labelStyle)),
-                const SizedBox(width: 16),
-                Flexible(child: Align(alignment: Alignment.centerRight, child: child)),
-              ],
-            ),
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: _labelStyle)),
+          const SizedBox(width: 16),
+          Flexible(child: Align(alignment: Alignment.centerRight, child: child)),
+        ],
+      ),
     );
   }
 }
@@ -484,13 +709,24 @@ class _ScrollableState extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, _fabClearance),
       children: [const SizedBox(height: 40), child],
     );
   }
 }
 
 bool _hasText(String? value) => value != null && value.trim().isNotEmpty;
+
+/// The question's overall result, or null when it is missing or still pending.
+String? _availableResult(ResultData item) {
+  final overall = item.aiResponse?.overallResult;
+  if (!_hasText(overall) || overall!.trim().toLowerCase() == 'pending') return null;
+  return overall;
+}
+
+Widget _resultBadge(String? result) => result == null
+    ? const StatusBadge.neutral(label: 'Not Available', dense: true)
+    : StatusBadge.fromResult(result, dense: true);
 
 bool _isEmptyValue(dynamic value) {
   if (value == null) return true;
@@ -539,3 +775,6 @@ Widget _valueBadge(dynamic value) {
     style: const TextStyle(fontSize: 14, fontFamily: "SemiBold", color: textPrimary),
   );
 }
+
+/// Bottom list padding so the floating Done button never covers content.
+const double _fabClearance = 96;
