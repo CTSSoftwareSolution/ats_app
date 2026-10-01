@@ -1,14 +1,10 @@
 import 'dart:io';
 
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/video_dialog_box.dart';
-import 'package:ats_app/utilities/image_data.dart';
-import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../utilities/color_data.dart';
-import '../../../utilities/extension.dart';
-import '../../../widgets/custom_text.dart';
 
 class VideoPreviewWidget extends StatefulWidget {
   final String path;
@@ -26,73 +22,115 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
   @override
   void initState() {
     super.initState();
-
-    videoPlayerController = VideoPlayerController.file(File(widget.path))
-      ..initialize().then((_) {
-        setState(() {});
-      });
-
-    videoPlayerController!.addListener((){
-      setState(() {});
-    });
+    _load();
   }
 
-  // void togglePlayPause(){
-  //   if(videoPlayerController!.value.isPlaying){
-  //     videoPlayerController!.pause();
-  //   }else{
-  //     videoPlayerController!.play();
-  //   }
-  // }
+  @override
+  void didUpdateWidget(covariant VideoPreviewWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // A retake can reuse this widget with a new file.
+    if (oldWidget.path != widget.path) {
+      _release();
+      _load();
+    }
+  }
+
+  @override
+  void dispose() {
+    _release();
+    super.dispose();
+  }
+
+  void _load() {
+    final controller = VideoPlayerController.file(File(widget.path));
+    videoPlayerController = controller;
+    controller.addListener(_onControllerChanged);
+    controller.initialize().then((_) => _onControllerChanged()).catchError((_) {});
+  }
+
+  void _release() {
+    final controller = videoPlayerController;
+    if (controller == null) return;
+    controller.removeListener(_onControllerChanged);
+    controller.dispose();
+    videoPlayerController = null;
+  }
+
+  void _onControllerChanged() {
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     if (!videoPlayerController!.value.isInitialized) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: SizedBox(
+          width: 22,
+          height: 22,
+          child: CircularProgressIndicator(strokeWidth: 2, color: appColor),
+        ),
+      );
     }
+    final videoSize = videoPlayerController!.value.size;
     return Stack(
       fit: StackFit.expand,
       children: [
-        VideoPlayer(videoPlayerController!),
+        FittedBox(
+          fit: BoxFit.cover,
+          clipBehavior: Clip.hardEdge,
+          child: SizedBox(
+            width: videoSize.width > 0 ? videoSize.width : 1,
+            height: videoSize.height > 0 ? videoSize.height : 1,
+            child: VideoPlayer(videoPlayerController!),
+          ),
+        ),
         Positioned(
-          top: 10,
-          right: 10,
-          child: GestureDetector(
-            onTap: (){
-              showDialog(
-                fullscreenDialog: true,
-                context: context,
-                builder: (context) {
-                  return VideoDialog(path: widget.path);
-                },
-              );
-            },
-            child: Container(
-              height: 30,
-              width: 30,
-             // padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.90),
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.12),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: CustomImage(image: playIconImage,scale: 38, color: appColor,)
+          top: 8,
+          left: 8,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.55),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.videocam_rounded, size: 12, color: Colors.white),
+                SizedBox(width: 4),
+                Text(
+                  "Video",
+                  style: TextStyle(fontFamily: "SemiBold", fontSize: 11, color: Colors.white),
+                ),
+              ],
             ),
           ),
         ),
-        // Center(
-        //   child: AnimatedOpacity(
-        //       opacity: 1.0,
-        //       duration: Duration(milliseconds: 200),
-        //     child: Icon(videoPlayerController!.value.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,size: 35.0,
-        //       color: Colors.white.withValues(alpha: 0.5),))),
-
+        Center(
+          child: Tooltip(
+            message: 'Play video',
+            child: Material(
+              color: Colors.black.withValues(alpha: 0.45),
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () {
+                  showDialog(
+                    fullscreenDialog: true,
+                    context: context,
+                    builder: (context) {
+                      return VideoDialog(path: widget.path);
+                    },
+                  );
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Icon(Icons.play_arrow_rounded, size: 26, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

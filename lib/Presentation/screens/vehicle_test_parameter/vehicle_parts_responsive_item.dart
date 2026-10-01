@@ -4,10 +4,10 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
+import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
-import '../../../utilities/extension.dart';
+import '../../../widgets/app_ui.dart';
 import '../../../widgets/custom_loader.dart';
-import '../../../widgets/custom_text.dart';
 import '../../provider/create_queue_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../camera_page/camera_screen.dart';
@@ -34,7 +34,7 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
           image: isVideo ? videoUploadImage : pictureUploadImage,
           imageHeight: 25.0,
           imageWidth: 25.0,
-          text: isVideo ? "Tap to capture video" : "Tap to capture image",
+          text: isVideo ? "Capture video" : "Capture photo",
           onTap: () async {
             debugPrint("[MEDIA] onTap triggered (index: $allIndex, isVideo: $isVideo)");
             final fileProvider = context.read<FileProvider>();
@@ -119,44 +119,74 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
       );
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: appColor.withValues(alpha: 0.30)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomText(
-              text: item.vehiclePartName.toString(),
-              fontFamily: "Bold",
-              fontSize: 18.0,
-            ),
-            CustomText(
-              text: "Capture or upload the ${item.vehiclePartName}",
-              fontFamily: "Medium",
-              fontSize: 15.0,
-            ),
-            isTablet ? 15.height : 20.height,
-            Row(
-              children: [
-                if (item.type == 1) ...[
-                  buildImageContainer(isVideo: false),
-                ] else if (item.type == 2) ...[
-                  buildImageContainer(isVideo: true),
-                ] else ...[
-                  buildImageContainer(isVideo: false),
-                  SizedBox(width: 10),
-                  buildImageContainer(isVideo: true),
-                ],
+    final media = context.watch<FileProvider>().getMedia(allIndex);
+    final captured = isCaptured(item, media);
+    final partName = item.vehiclePartName.toString();
+    final String requirement = item.type == 1
+        ? "Photo required"
+        : item.type == 2
+            ? "Video required"
+            : "Photo and video required";
+
+    return AppCard(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      borderColor: captured ? pass.withValues(alpha: 0.35) : null,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      partName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppText.sectionTitle,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(requirement, style: AppText.caption),
+                  ],
+                ),
+              ),
+              // const SizedBox(width: AppSpacing.sm),
+              // captured
+              //     ? const StatusBadge.pass(label: "Captured", dense: true)
+              //     : const StatusBadge.pending(label: "Required", dense: true),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Row(
+            children: [
+              if (item.type == 1) ...[
+                buildImageContainer(isVideo: false),
+              ] else if (item.type == 2) ...[
+                buildImageContainer(isVideo: true),
+              ] else ...[
+                buildImageContainer(isVideo: false),
+                const SizedBox(width: AppSpacing.md),
+                buildImageContainer(isVideo: true),
               ],
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
+  }
+
+  /// Whether every media type required by [item] has been captured.
+  /// Mirrors the rule used by `VehiclePartsProvider.validateMedia`.
+  static bool isCaptured(dynamic item, MediaFile? media) {
+    switch (item.type) {
+      case 1:
+        return media?.image != null;
+      case 2:
+        return media?.video != null;
+      default:
+        return media?.image != null && media?.video != null;
+    }
   }
 }

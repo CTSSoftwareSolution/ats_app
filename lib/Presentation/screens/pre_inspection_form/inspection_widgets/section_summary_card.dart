@@ -1,5 +1,6 @@
-
 import 'package:flutter/material.dart';
+import '../../../../utilities/app_theme.dart';
+import '../../../../utilities/color_data.dart';
 import '../../../provider/inspection_form_provider.dart';
 
 class SectionSummaryCard extends StatelessWidget {
@@ -8,23 +9,17 @@ class SectionSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final complete = section.isComplete && section.totalQuestions > 0;
+    final percent = (section.overallProgress * 100).toStringAsFixed(0);
+
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.fromLTRB(
+          AppSpacing.page, AppSpacing.lg, AppSpacing.page, AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [section.color, section.color.withValues(alpha:0.75)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: section.color.withValues(alpha:0.35),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        color: surface,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,85 +27,70 @@ class SectionSummaryCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha:0.2),
-                  borderRadius: BorderRadius.circular(12),
+                  color: accentLight,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
-                child: Icon(section.icon, color: Colors.white, size: 24),
+                child: Icon(section.icon, color: appColor, size: 22),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      section.label,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+                    Text(section.label, style: AppText.sectionTitle),
+                    if (section.subtitle.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        section.subtitle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.caption.copyWith(color: textSecondary),
                       ),
-                    ),
-                    Text(
-                      section.subtitle,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha:0.75),
-                        fontSize: 12,
-                      ),
-                    ),
+                    ],
                   ],
                 ),
               ),
+              const SizedBox(width: AppSpacing.md),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     '${section.totalAnswered}/${section.totalQuestions}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
+                    style: AppText.pageTitle.copyWith(
+                      color: complete ? pass : textPrimary,
                     ),
                   ),
-                  Text(
-                    'Completed',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha:0.7),
-                      fontSize: 11,
-                    ),
-                  ),
+                  const Text('Completed', style: AppText.caption),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           ClipRRect(
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: section.overallProgress,
-              backgroundColor: Colors.white.withValues(alpha:0.25),
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-              minHeight: 7,
+              backgroundColor: surface2,
+              valueColor: AlwaysStoppedAnimation<Color>(complete ? pass : appColor),
+              minHeight: 6,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: AppSpacing.sm),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 '${section.categories.length} categories',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha:0.7),
-                  fontSize: 11,
-                ),
+                style: AppText.caption,
               ),
               Text(
-                '${(section.overallProgress * 100).toStringAsFixed(0)}% done',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha:0.9),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
+                '$percent% done',
+                style: AppText.caption.copyWith(
+                  color: complete ? pass : textSecondary,
+                  fontFamily: "SemiBold",
                 ),
               ),
             ],

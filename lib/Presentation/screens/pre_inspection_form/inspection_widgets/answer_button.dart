@@ -1,41 +1,75 @@
 import 'package:flutter/material.dart';
 
+import '../../../../utilities/app_theme.dart';
+import '../../../../utilities/color_data.dart';
+
+/// One segment of the Yes / No answer selector (48px tall, fills its slot).
 class AnswerButton extends StatelessWidget {
   final String label;
   final bool selected;
   final Color selectedColor;
   final VoidCallback? onTap;
 
+  /// Optional icon shown before the label.
+  final IconData? icon;
+
+  /// Fill used when selected; defaults to a light tint of [selectedColor].
+  final Color? selectedBackground;
+
   const AnswerButton({super.key,
     required this.label,
     required this.selected,
     required this.selectedColor,
     required this.onTap,
+    this.icon,
+    this.selectedBackground,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected
-              ? selectedColor.withValues(alpha:0.12)
-              : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: selected ? selectedColor : Colors.grey.shade300,
-            width: selected ? 1.5 : 1,
+    final radius = BorderRadius.circular(AppRadius.md);
+    final fg = selected ? selectedColor : textSecondary;
+    final bgColor = selected
+        ? (selectedBackground ?? selectedColor.withValues(alpha: 0.1))
+        : surface;
+
+    return Material(
+      color: bgColor,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          height: 48,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: Border.all(
+              color: selected ? selectedColor : border,
+              width: selected ? 1.5 : 1,
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? selectedColor : Colors.grey.shade500,
-            fontSize: 13,
-            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 18, color: selected ? selectedColor : textMuted),
+                const SizedBox(width: AppSpacing.sm),
+              ],
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: fg,
+                    fontSize: 14,
+                    fontFamily: selected ? "Bold" : "SemiBold",
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

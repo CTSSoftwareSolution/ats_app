@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
 
+import '../../../../utilities/app_theme.dart';
+import '../../../../utilities/color_data.dart';
 import '../../../provider/inspection_form_provider.dart';
 
 class ErrorScreen extends StatelessWidget {
@@ -10,60 +11,56 @@ class ErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.wifi_off_rounded, size: 64, color: Colors.red.shade300),
-            const SizedBox(height: 16),
-            Text(
-              'Failed to Load',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Colors.grey.shade800,
+            Container(
+              width: 64,
+              height: 64,
+              decoration: const BoxDecoration(
+                color: failLight,
+                shape: BoxShape.circle,
               ),
+              child: const Icon(Icons.wifi_off_rounded, size: 30, color: fail),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.lg),
+            const Text(
+              'Failed to Load',
+              textAlign: TextAlign.center,
+              style: AppText.sectionTitle,
+            ),
+            const SizedBox(height: AppSpacing.md),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AppSpacing.md),
               constraints: const BoxConstraints(maxHeight: 160),
               decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.red.shade200),
+                color: surface,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(color: border),
               ),
               child: SingleChildScrollView(
                 child: Text(
                   provider.errorMessage,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.red.shade800,
-                    height: 1.5,
-                  ),
+                  style: AppText.bodySecondary.copyWith(fontSize: 13),
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
+            const SizedBox(height: AppSpacing.sm),
+            const Text(
               'Check Flutter console for full stack trace',
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade400),
+              textAlign: TextAlign.center,
+              style: AppText.caption,
             ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
+            const SizedBox(height: AppSpacing.xl),
+            FilledButton.icon(
               onPressed: ()=>provider.fetchInspectionData(),
-              icon: const Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh_rounded, size: 20),
               label: const Text('Try Again'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1A3C6E),
-                foregroundColor: Colors.white,
-                padding:
-                const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
               ),
             ),
           ],

@@ -4,8 +4,7 @@ import 'package:ats_app/image_processing/MediaPicker/file_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
-import '../../../utilities/image_data.dart';
-import '../../../widgets/custom_text.dart';
+import '../../../widgets/app_ui.dart';
 
 class VehiclePartsScreen extends StatefulWidget {
   const VehiclePartsScreen({super.key});
@@ -42,17 +41,14 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
           }
         },
       child: Scaffold(
-        backgroundColor: background,
+        backgroundColor: bg,
         appBar: AppBar(
           titleSpacing: 0.0,
           backgroundColor: appColor,
-          title: CustomText(
-            text: "Vehicle Test Parameter",
-            fontSize: 20,
-            fontFamily: "SemiBold",
-            textColor: whiteColor,
-          ),
-          leading: IconButton(
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          title: const Text("Vehicle Test Parameter"),
+          leading: AppBackButton(
             onPressed: (){
               if(partsProvider.currentStep > 0){
                 context.read<VehiclePartsProvider>().previousPage();
@@ -60,16 +56,11 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
                 Navigator.pop(context);
               }
               },
-            icon: ImageIcon(
-              AssetImage(backArrowIcon),
-              color: whiteColor,
-              size: 20,
-            ),
           ),
         ),
-        body: SafeArea(
+        body: const SafeArea(
+          bottom: false,
           child: VehiclePartsResponsiveLayout(),
-
         ),
       ),
     );

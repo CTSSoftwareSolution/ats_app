@@ -131,26 +131,26 @@ class _AiResultScreenState extends State<AiResultScreen> {
 
     if (entity == null) {
       return _ScrollableState(
-        child: _StateCard(
+        child: AppStateView(
           icon: Icons.error_outline_rounded,
           color: fail,
           title: "Unable to load result",
           message: "Pull down or tap retry to try again.",
-          onRetry: _loadResult,
+          onAction: _loadResult,
         ),
       );
     }
 
     if (data.isEmpty) {
       return _ScrollableState(
-        child: _StateCard(
+        child: AppStateView(
           icon: Icons.schedule_rounded,
           color: warn,
           title: "Result Pending",
           message: _hasText(entity.message)
               ? entity.message!.trim()
               : "Processing pending. Please check again shortly.",
-          onRetry: _loadResult,
+          onAction: _loadResult,
         ),
       );
     }
@@ -337,32 +337,12 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: !_isUpdating,
-      child: Container(
-        padding: EdgeInsets.fromLTRB(20, 10, 20, 20 + MediaQuery.of(context).padding.bottom),
-        decoration: const BoxDecoration(
-          color: surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
-        ),
+      child: AppBottomSheet(
+        title: "Change Result",
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "Change Result",
-              style: TextStyle(fontFamily: "Bold", fontSize: 16, color: textPrimary),
-            ),
-            const SizedBox(height: 16),
             const _SectionLabel("Inspection Question"),
             const SizedBox(height: 6),
             Text(
@@ -598,15 +578,7 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text.toUpperCase(),
-      style: const TextStyle(
-        fontSize: 11,
-        fontFamily: "Bold",
-        color: textMuted,
-        letterSpacing: 0.8,
-      ),
-    );
+    return Text(text.toUpperCase(), style: AppText.overline);
   }
 }
 
@@ -637,62 +609,6 @@ class _InlineNotice extends StatelessWidget {
               style: const TextStyle(fontSize: 13.5, color: textSecondary, height: 1.4),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Full-screen state for load errors and missing results.
-class _StateCard extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final String title;
-  final String message;
-  final Future<void> Function()? onRetry;
-
-  const _StateCard({
-    required this.icon,
-    required this.color,
-    required this.title,
-    required this.message,
-    this.onRetry,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AppCard(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 32),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontFamily: "Bold", fontSize: 16, color: textPrimary),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 13.5, color: textSecondary, height: 1.4),
-          ),
-          if (onRetry != null) ...[
-            const SizedBox(height: 16),
-            OutlinedButton.icon(
-              onPressed: onRetry,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: appColor,
-                side: const BorderSide(color: border),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
-                ),
-              ),
-              icon: const Icon(Icons.refresh_rounded, size: 18),
-              label: const Text("Retry"),
-            ),
-          ],
         ],
       ),
     );

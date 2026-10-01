@@ -1,7 +1,9 @@
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_shimmer.dart';
+import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
 import '../../../new_manual_flow/new_screen/vehicle_details_screen.dart';
@@ -44,13 +46,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<VehicleClassProvider>();
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FB),
+    // Status bar blends into the brand header: same colour behind it (also on
+    // edge-to-edge Android, where statusBarColor is ignored) and light icons.
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: AppTheme.statusBarStyle,
+      child: Scaffold(
+      backgroundColor: bg,
 
       body: SafeArea(
+        top: false,
         child: Column(
           children: [
-            BuildHeaderHome(),
+            const ColoredBox(
+              color: appColor,
+              child: SafeArea(bottom: false, child: BuildHeaderHome()),
+            ),
             SearchFilterBarHome(provider: provider),
             Expanded(
               child: provider.isLoading ? ListView.builder(
@@ -63,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: 'No Appointments Found',
                 subtitle: 'Try changing the filter or search term',
               ) : ListView.builder(
-                padding: EdgeInsets.only(bottom: 100),
+                padding: const EdgeInsets.only(top: AppSpacing.xs, bottom: 100),
                 controller: _scrollController,
                 physics: const BouncingScrollPhysics(),
                 itemCount: provider.vehicleClassEntity!.data!.appointments!.length + (provider.isLoadMore ? 1 : 0),
@@ -83,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                   final item = appointments[index];
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page, vertical: 6),
                     child: VehicleClassScreenItem(
                       classDataModel: item,
                       onTap: () {
@@ -101,6 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    ),
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../utilities/color_data.dart';
+import 'utilities/app_theme.dart';
+import 'utilities/color_data.dart';
 
+/// Single-select category chip used by the Home filter row.
 class VehicleFilterChip extends StatelessWidget {
   final String label;
   final bool isSelected;
@@ -15,42 +17,43 @@ class VehicleFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? appColor : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? appColor : Colors.grey.shade300,
-            width: isSelected ? 2 : 1.5,
-          ),
-          boxShadow: isSelected
-              ? [
-            BoxShadow(
-              color: appColor.withOpacity(0.35),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ]
-              : [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
+    final radius = BorderRadius.circular(AppRadius.md);
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      child: Material(
+        color: isSelected ? appColor : surface,
+        animationDuration: const Duration(milliseconds: 200),
+        shape: RoundedRectangleBorder(
+          borderRadius: radius,
+          side: BorderSide(color: isSelected ? appColor : border),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            color: isSelected ? Colors.white : Colors.black87,
-            letterSpacing: 0.4,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isSelected) ...[
+                  const Icon(Icons.check_rounded, size: 16, color: Colors.white),
+                  const SizedBox(width: 6),
+                ],
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: "SemiBold",
+                    fontSize: 13,
+                    color: isSelected ? Colors.white : textPrimary,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

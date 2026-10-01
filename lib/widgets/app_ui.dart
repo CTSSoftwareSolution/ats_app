@@ -236,25 +236,45 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 
-/// Sticky bottom area that holds the primary action of a screen.
+/// Floating container at the bottom of a screen that holds its primary action.
+/// It takes its own space (placed after the scrolling content or in
+/// `Scaffold.bottomNavigationBar`), so it never covers content, and it stays
+/// clear of the system navigation area.
 class BottomActionBar extends StatelessWidget {
   final Widget child;
 
   const BottomActionBar({super.key, required this.child});
 
+  /// Inner padding; outer radius minus this equals the button radius (12),
+  /// so the button corners sit concentric with the container's.
+  static const double _inset = 8;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: surface,
-        border: Border(top: BorderSide(color: border)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          child: child,
-        ),
+    final radius = BorderRadius.circular(AppRadius.md + _inset);
+    return SafeArea(
+      top: false,
+      minimum: const EdgeInsets.only(bottom: AppSpacing.md),
+      child: Container(
+        padding: const EdgeInsets.only(bottom: _inset, left: _inset, right: _inset),
+        // decoration: BoxDecoration(
+        //   color: surface,
+        //   borderRadius: radius,
+        //   border: Border.all(color: border.withValues(alpha: 0.6)),
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: navy.withValues(alpha: 0.10),
+          //     blurRadius: 24,
+          //     offset: const Offset(0, 8),
+          //   ),
+          //   BoxShadow(
+          //     color: navy.withValues(alpha: 0.04),
+          //     blurRadius: 4,
+          //     offset: const Offset(0, 1),
+          //   ),
+          // ],
+       // ),
+        child: child,
       ),
     );
   }
@@ -377,6 +397,198 @@ class MetaRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Standard dialog body: icon, title, message and a row of actions.
+/// Shown with `showDialog(builder: (_) => AppDialog(...))`.
+class AppDialog extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String message;
+  final List<Widget> actions;
+  final VoidCallback? onClose;
+
+  const AppDialog({
+    super.key,
+    this.icon = Icons.info_outline_rounded,
+    this.iconColor = appColor,
+    required this.title,
+    required this.message,
+    required this.actions,
+    this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: iconColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                    ),
+                    child: Icon(icon, color: iconColor, size: 22),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: const TextStyle(
+                        fontFamily: "Bold",
+                        fontSize: 17,
+                        color: textPrimary,
+                      ),
+                    ),
+                  ),
+                  if (onClose != null)
+                    IconButton(
+                      tooltip: 'Close',
+                      onPressed: onClose,
+                      icon: const Icon(Icons.close_rounded, size: 20, color: textMuted),
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text(
+                message,
+                style: const TextStyle(fontSize: 14.5, color: textSecondary, height: 1.5),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              Row(
+                children: [
+                  for (var i = 0; i < actions.length; i++) ...[
+                    if (i > 0) const SizedBox(width: AppSpacing.md),
+                    Expanded(child: actions[i]),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Standard modal bottom sheet shell: drag handle, optional title/subtitle,
+/// content, and safe-area aware bottom padding (keyboard aware as well).
+/// Use with `showModalBottomSheet(backgroundColor: Colors.transparent, ...)`.
+class AppBottomSheet extends StatelessWidget {
+  final String? title;
+  final String? subtitle;
+  final Widget child;
+
+  const AppBottomSheet({super.key, this.title, this.subtitle, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    return Padding(
+      padding: EdgeInsets.only(bottom: media.viewInsets.bottom),
+      child: Container(
+        constraints: BoxConstraints(maxHeight: media.size.height * 0.9),
+        decoration: const BoxDecoration(
+          color: surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(20, 10, 20, 20 + media.padding.bottom),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: border,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              if (title != null) Text(title!, style: AppText.sectionTitle),
+              if (subtitle != null) ...[
+                const SizedBox(height: 2),
+                Text(subtitle!, style: AppText.bodySecondary),
+              ],
+              if (title != null || subtitle != null) const SizedBox(height: AppSpacing.lg),
+              child,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Centered empty / error / pending state with an optional retry action.
+class AppStateView extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String? message;
+  final String actionLabel;
+  final VoidCallback? onAction;
+
+  const AppStateView({
+    super.key,
+    required this.icon,
+    this.color = textMuted,
+    required this.title,
+    this.message,
+    this.actionLabel = 'Retry',
+    this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 30),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Text(title, textAlign: TextAlign.center, style: AppText.sectionTitle),
+          if (message != null) ...[
+            const SizedBox(height: 6),
+            Text(message!, textAlign: TextAlign.center, style: AppText.bodySecondary),
+          ],
+          if (onAction != null) ...[
+            const SizedBox(height: AppSpacing.lg),
+            OutlinedButton.icon(
+              onPressed: onAction,
+              icon: const Icon(Icons.refresh_rounded, size: 18),
+              label: Text(actionLabel),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

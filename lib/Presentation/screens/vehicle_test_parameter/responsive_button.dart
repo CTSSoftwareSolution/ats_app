@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../utilities/color_data.dart';
-import '../../../widgets/custom_button.dart';
+import '../../../widgets/app_ui.dart';
 
+/// Primary step action of the vehicle test parameter flow. Place it inside a
+/// [BottomActionBar] so it stays pinned to the bottom of the screen.
 class ResponsiveButton extends StatelessWidget {
   final double width;
   final String buttonText;
@@ -11,23 +12,9 @@ class ResponsiveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0),
-      child: CustomButton(
-        width: width,
-        height: 50.0,
-        buttonText: buttonText,
-        onPress: onPress,
-        backgroundColor: appColor,
-        foregroundColor: whiteColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.all(
-            Radius.circular(30.0),
-          ),
-        ),
-        fontSize: 20.0,
-        fontFamily: "Bold",
-      ),
+    return SizedBox(
+      width: width,
+      child: PrimaryButton(label: buttonText, onPressed: onPress),
     );
   }
 }

@@ -1,6 +1,9 @@
-
 import 'package:flutter/material.dart';
 
+import '../../../../utilities/app_theme.dart';
+import '../../../../utilities/color_data.dart';
+
+/// Tap target that asks for an evidence photo.
 class ImagePickerPrompt extends StatelessWidget {
   final VoidCallback onTap;
   final Color? titleColor;
@@ -12,43 +15,56 @@ class ImagePickerPrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: boxColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: borderColor!,
-            width: 1.5,
+    final radius = BorderRadius.circular(AppRadius.md);
+    return Material(
+      color: boxColor ?? surface2,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: Border.all(color: borderColor ?? border),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.add_a_photo_rounded,
-                color: iconColor,
-                size: 28),
-            const SizedBox(height: 6),
-            Text(
-              'Add Evidence Photo',
-              style: TextStyle(
-                color: titleColor,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: surface,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                child: Icon(Icons.add_a_photo_rounded,
+                    color: iconColor ?? appColor, size: 22),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              'Tap to capture or upload from gallery',
-              style: TextStyle(
-                color: subtitleColor,
-                fontSize: 11,
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Add Evidence Photo',
+                      style: AppText.title.copyWith(
+                          color: titleColor ?? textPrimary, fontSize: 14),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Tap to capture a photo',
+                      style: AppText.caption.copyWith(
+                          color: subtitleColor ?? textSecondary),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              Icon(Icons.chevron_right_rounded,
+                  color: iconColor ?? textMuted),
+            ],
+          ),
         ),
       ),
     );

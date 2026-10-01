@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
-import '../utilities/extension.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/custom_text.dart';
+import '../utilities/app_theme.dart';
+import '../widgets/app_ui.dart';
 
 class LocationProvider extends ChangeNotifier {
 
@@ -166,45 +164,15 @@ class LocationProvider extends ChangeNotifier {
 
       final openSettings = await showDialog<bool>(
         context: context,
-        builder: (context) => AlertDialog(
-          // title: const Text('Permission Required'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Align(
-              //   alignment: Alignment.topRight,
-              //   child: InkWell(
-              //       onTap: () => Navigator.pop(context, false),
-              //       child: const Icon(Icons.close_rounded)),
-              // ),
-              Lottie.asset(
-                'assets/Location.json',
-                width: 150,
-                height: 150,
-                fit: BoxFit.cover,
-              ),
-              const CustomText(text: 'Permission Required',fontWeight: FontWeight.w800,fontSize: 20),
-              5.height,
-              const CustomText(text:'Enable location permissions in app settings',textAlign: TextAlign.center),
-              20.height,
-              SizedBox(
-                width: double.infinity,
-                child: CustomButton(buttonText: "Open Settings",
-                    onPress: () async {
-                      Navigator.pop(context);
-                      await Future.delayed(const Duration(milliseconds: 200));
-                      await Geolocator.openAppSettings();
-                    },
-                    fontWeight: FontWeight.w600,
-                    backgroundColor: appColor,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                    fontSize: 15),
-              )
-            ],
-          ),
+        builder: (context) => _LocationPromptDialog(
+          title: 'Permission Required',
+          message: 'Enable location permissions in app settings',
+          actionLabel: "Open Settings",
+          onAction: () async {
+            Navigator.pop(context);
+            await Future.delayed(const Duration(milliseconds: 200));
+            await Geolocator.openAppSettings();
+          },
         ),
       );
       // if (openSettings == true) {
@@ -225,43 +193,14 @@ class LocationProvider extends ChangeNotifier {
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Align(
-            //   alignment: Alignment.topRight,
-            //   child: InkWell(
-            //       onTap: () => Navigator.pop(context, false),
-            //       child: const Icon(Icons.close_rounded)),
-            // ),
-            Lottie.asset(
-              'assets/Location.json',
-              width: 150,
-              height: 150,
-              fit: BoxFit.cover,
-            ),
-            const CustomText(text: 'Activate Location',fontWeight: FontWeight.w800,fontSize: 20),
-            5.height,
-            const CustomText(text:'Enable location services in your phone settings',textAlign: TextAlign.center),
-            20.height,
-            SizedBox(
-              width: double.infinity,
-              child: CustomButton(buttonText: "Enable",
-                  onPress: ()async{
-                    Navigator.pop(context);
-                    await Geolocator.openLocationSettings();
-                  },
-                  fontWeight: FontWeight.w600,
-                  backgroundColor: appColor,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
-                  fontSize: 15),
-            )
-          ],
-        ),
+      builder: (context) => _LocationPromptDialog(
+        title: 'Activate Location',
+        message: 'Enable location services in your phone settings',
+        actionLabel: "Enable",
+        onAction: () async {
+          Navigator.pop(context);
+          await Geolocator.openLocationSettings();
+        },
       ),
     );
     _isLocationDialogOpen = false;
@@ -296,4 +235,49 @@ class LocationProvider extends ChangeNotifier {
   }
 
 
+}
+
+/// Location prompt: animation, title, message and one primary action.
+class _LocationPromptDialog extends StatelessWidget {
+  final String title;
+  final String message;
+  final String actionLabel;
+  final VoidCallback onAction;
+
+  const _LocationPromptDialog({
+    required this.title,
+    required this.message,
+    required this.actionLabel,
+    required this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      insetPadding: const EdgeInsets.all(AppSpacing.xl),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Lottie.asset(
+                'assets/Location.json',
+                width: 120,
+                height: 120,
+                fit: BoxFit.cover,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(title, textAlign: TextAlign.center, style: AppText.pageTitle),
+              const SizedBox(height: 6),
+              Text(message, textAlign: TextAlign.center, style: AppText.bodySecondary),
+              const SizedBox(height: AppSpacing.xl),
+              PrimaryButton(label: actionLabel, onPressed: onAction),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

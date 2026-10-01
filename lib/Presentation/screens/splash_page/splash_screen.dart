@@ -1,6 +1,9 @@
 import 'package:ats_app/Presentation/provider/splash_provider.dart';
 import 'package:ats_app/Presentation/screens/splash_page/splash_screen_responsive.dart';
+import 'package:ats_app/utilities/app_theme.dart';
+import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 
@@ -22,20 +25,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: [
-              Color(0xff1c3e70), Color(0xff19162e)
-            ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        )
-      ),
+    return const AnnotatedRegion<SystemUiOverlayStyle>(
+      value: AppTheme.statusBarStyle,
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: appColor,
         body: SafeArea(
-            child: SplashScreenResponsiveLayout()
+          child: SplashScreenResponsiveLayout(),
         ),
       ),
     );

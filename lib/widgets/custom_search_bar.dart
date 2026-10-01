@@ -1,14 +1,12 @@
 import 'package:ats_app/utilities/input_formatters.dart';
-import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../Presentation/provider/vehicle_class_provider.dart';
 import '../utilities/color_data.dart';
-import '../utilities/image_data.dart';
 import 'custom_text_field.dart';
 
+/// Compact, themed search input used by the Home and Result lists.
 class CustomSearchTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final VoidCallback? onApplyClick;
@@ -26,38 +24,40 @@ class CustomSearchTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color scaffoldBgColor = Theme.of(context).scaffoldBackgroundColor;
-    final classProvider = context.watch<VehicleClassProvider>();
+    // Kept so the field keeps rebuilding with the vehicle list provider as before.
+    context.watch<VehicleClassProvider>();
     return CustomTextField(
       inputFormatters: InputFormatters.searchFieldValidation,
-      contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+      contentPadding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 12.0),
       maxLines: 1,
-      height: 43,
-      fillColor: scaffoldBgColor,
-      borderWidth: 2,
+      height: 48,
+      fillColor: surface,
+      borderWidth: 1,
       controller: controller,
       readOnly: false,
       obscureText: false,
       textCapitalization: TextCapitalization.characters,
       suffixIcon: suffixIcon,
-      // classProvider.searchValue.isEmpty
-      //     ? null
-      //     : IconButton(
-      //         icon: Container(
-      //           height: 18.0,
-      //           decoration: BoxDecoration(
-      //             borderRadius: BorderRadius.all(Radius.circular(40.0)),
-      //             color: greyLightColor,
-      //           ),
-      //           child: CustomImage(image: closeIcon, scale: 3.5),
-      //         ),
-      //         onPressed: onCloseClick,
-      //         color: blackColor,
-      //       ),
-      prefixIcon: CustomImage(image: searchIcon, scale: 4.2),
+      prefixIcon: const Icon(Icons.search_rounded, color: textMuted, size: 22),
       hint: 'Search...',
-      hintStyle: const TextStyle(fontSize: 15, fontFamily: "Medium"),
+      hintStyle: const TextStyle(fontSize: 15, fontFamily: "Medium", color: textMuted),
       onChanged: onChanged,
+    );
+  }
+}
+
+/// Trailing "clear" action for [CustomSearchTextField].
+class SearchClearButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const SearchClearButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      tooltip: 'Clear search',
+      onPressed: onPressed,
+      icon: const Icon(Icons.cancel_rounded, color: textMuted, size: 20),
     );
   }
 }

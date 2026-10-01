@@ -1,6 +1,7 @@
 import 'package:ats_app/Responsive/responsive_ext.dart';
+import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
-import 'package:ats_app/widgets/custom_button.dart';
+import 'package:ats_app/widgets/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../utilities/logo_screen_item.dart';
@@ -17,46 +18,64 @@ class LoginResponsiveLayout extends StatefulWidget {
 class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
   final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
 
+  void _submit() {
+    if (loginFormKey.currentState!.validate()) {
+      context.read<LoginProvider>().login(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return
-    LayoutBuilder(
+    return LayoutBuilder(
       builder: (context, constraints) {
+        final double gutter = constraints.isTablet ? AppSpacing.xl : AppSpacing.page;
         return Form(
           key: loginFormKey,
-          child: Center(
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: EdgeInsets.symmetric(horizontal: gutter, vertical: AppSpacing.xl),
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: constraints.contentMaxWidth),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    LogoScreenItem(),
-                    LoginScreenItem(),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: constraints.horizontalPadding,
-                        vertical: constraints.isTablet ? 24 : 16,
-                      ),
-                      child: CustomButton(
-                        height: constraints.isTablet ? 56.0 : 50.0,
-                        width: double.infinity,
-                        buttonText: "Login",
-                        onPress: () {
-                          if(loginFormKey.currentState!.validate()){
-                            context.read<LoginProvider>().login(context);
-                          }
-                        },
-                        backgroundColor: whiteColor,
-                        foregroundColor: blackColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(30.0),
-                          ),
+              // Keeps the content vertically centred on tall screens while
+              // still allowing it to scroll when the keyboard is open.
+              constraints: BoxConstraints(
+                minHeight: (constraints.maxHeight - AppSpacing.xl * 2).clamp(0, double.infinity),
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: constraints.isTablet ? 480 : double.infinity),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const LogoScreenItem(),
+                      const SizedBox(height: AppSpacing.xl + AppSpacing.sm),
+                      Container(
+                        padding: const EdgeInsets.all(AppSpacing.xl),
+                        decoration: BoxDecoration(
+                          color: surface,
+                          borderRadius: BorderRadius.circular(AppRadius.xl),
                         ),
-                        fontSize: constraints.isTablet ? 22.0 : 20.0,
-                        fontFamily: "Bold",
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const Text("Sign in", style: AppText.pageTitle),
+                            const SizedBox(height: AppSpacing.xs),
+                            const Text(
+                              "Enter your credentials to continue",
+                              style: AppText.bodySecondary,
+                            ),
+                            const SizedBox(height: AppSpacing.xl),
+                            const LoginScreenItem(),
+                            const SizedBox(height: AppSpacing.xl),
+                            PrimaryButton(
+                              label: "Login",
+                              onPressed: _submit,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

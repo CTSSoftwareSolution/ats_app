@@ -4,7 +4,8 @@ import 'package:ats_app/utilities/color_data.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../utilities/image_data.dart';
+import '../../../../utilities/app_theme.dart';
+import '../../../../widgets/app_ui.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../../provider/manual_inspection_list_provider.dart';
 import '../inspection_widgets/error_screen.dart';
@@ -100,20 +101,15 @@ class _InspectionPageState extends State<InspectionPage>
             elevation: 0,
             backgroundColor: appColor,
             title: const Text("Inspection"),
-            leading: IconButton(
+            leading: AppBackButton(
               onPressed: (){
                 context.pop();
                 },
-              icon: ImageIcon(
-                AssetImage(backArrowIcon),
-                color: whiteColor,
-                size: 20,
-              ),
             ),
           ),
-          backgroundColor: const Color(0xFFF4F6FA),
+          backgroundColor: bg,
           body: _buildBody(provider),
-          floatingActionButton: (!provider.isLoading && !provider.hasError)
+          bottomNavigationBar: (!provider.isLoading && !provider.hasError)
               ? SubmitFAB(provider: provider)
               : null,
         );
@@ -143,33 +139,43 @@ class _InspectionPageState extends State<InspectionPage>
             controller: _tabController,
             indicatorColor: Colors.white,
             indicatorWeight: 3,
-            indicatorAnimation: TabIndicatorAnimation.elastic,
-            indicatorSize: TabBarIndicatorSize.label,
+            indicatorSize: TabBarIndicatorSize.tab,
+            dividerColor: Colors.transparent,
             labelColor: Colors.white,
-            unselectedLabelColor: Colors.white54,
+            unselectedLabelColor: textWhiteSub,
             labelStyle: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.3,
+              fontSize: 12,
+              fontFamily: "SemiBold",
+              letterSpacing: 0.2,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontSize: 12,
+              fontFamily: "Medium",
+              letterSpacing: 0.2,
             ),
             tabs: List.generate(sections.length, (i) {
               final s = sections[i];
               return Tab(
+                height: 60,
+                iconMargin: const EdgeInsets.only(bottom: 4),
                 icon: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    Icon(s.icon, size: 18),
+                    Icon(s.icon, size: 20),
                     if (s.isComplete)
                       Positioned(
-                        right: -6,
-                        top: -4,
+                        right: -7,
+                        top: -5,
                         child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: Colors.greenAccent,
+                          width: 14,
+                          height: 14,
+                          decoration: BoxDecoration(
+                            color: pass,
                             shape: BoxShape.circle,
+                            border: Border.all(color: appColor, width: 1.5),
                           ),
+                          child: const Icon(Icons.check_rounded,
+                              size: 9, color: Colors.white),
                         ),
                       ),
                   ],
@@ -203,9 +209,13 @@ class _InspectionPageState extends State<InspectionPage>
     final no = provider.grandTotalNo;
 
     return Container(
-      color: Colors.white,
+      decoration: const BoxDecoration(
+        color: surface,
+        border: Border(bottom: BorderSide(color: border)),
+      ),
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.page, vertical: AppSpacing.sm),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -214,31 +224,31 @@ class _InspectionPageState extends State<InspectionPage>
               label: 'All',
               count: provider.visibleTotalQuestions,
               selected: provider.filter == QuestionFilter.all,
-              color: const Color(0xFF1A3C6E),
+              color: appColor,
               onTap: () => provider.setFilter(QuestionFilter.all),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             _FilterChip(
               label: 'Answered',
               count: answered,
               selected: provider.filter == QuestionFilter.answered,
-              color: Colors.green,
+              color: pass,
               onTap: () => provider.setFilter(QuestionFilter.answered),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             _FilterChip(
               label: 'Pending',
               count: unanswered,
               selected: provider.filter == QuestionFilter.unanswered,
-              color: Colors.orange,
+              color: warn,
               onTap: () => provider.setFilter(QuestionFilter.unanswered),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             _FilterChip(
               label: 'No',
               count: no,
               selected: provider.filter == QuestionFilter.no,
-              color: Colors.red,
+              color: fail,
               onTap: () => provider.setFilter(QuestionFilter.no),
             ),
           ],
@@ -263,28 +273,16 @@ class _InspectionPageState extends State<InspectionPage>
         : filter == QuestionFilter.unanswered
         ? 'All questions answered!'
         : filter == QuestionFilter.no
-        ? 'No failed questions found ✓'
+        ? 'No failed questions found'
         : 'No questions found';
 
-    final iconColor = filter == QuestionFilter.no
-        ? Colors.red.shade200
-        : Colors.grey.shade300;
+    final iconColor = filter == QuestionFilter.no || filter == QuestionFilter.unanswered
+        ? pass
+        : textMuted;
 
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 56, color: iconColor),
-          const SizedBox(height: 12),
-          Text(
-            message,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade500,
-            ),
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: AppStateView(icon: icon, color: iconColor, title: message),
       ),
     );
   }
@@ -307,48 +305,56 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: selected ? color.withValues(alpha:0.12) : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: selected ? color : Colors.grey.shade300,
-            width: selected ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: selected ? color : Colors.grey.shade500,
-              ),
+    final radius = BorderRadius.circular(100);
+    return Material(
+      color: selected ? color.withValues(alpha: 0.1) : surface,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: Border.all(
+              color: selected ? color : border,
+              width: selected ? 1.5 : 1,
             ),
-            const SizedBox(width: 6),
-            Container(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-              decoration: BoxDecoration(
-                color: selected ? color : Colors.grey.shade400,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '$count',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontFamily: "SemiBold",
+                  color: selected ? color : textSecondary,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(width: 6),
+              Container(
+                constraints: const BoxConstraints(minWidth: 22),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: selected ? color : surface2,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Text(
+                  '$count',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: selected ? Colors.white : textSecondary,
+                    fontSize: 11,
+                    fontFamily: "Bold",
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,7 +1,6 @@
-import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/widgets/custom_image.dart';
-import 'package:ats_app/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
+import 'app_theme.dart';
 import 'color_data.dart';
 import 'image_data.dart';
 
@@ -11,22 +10,32 @@ class LogoScreenItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CustomImage(image: appLogoImage, scale: 4),
-        5.height,
-        CustomText(
-          text: "ATS\nCORPORATION",
-          fontSize: 24,
-          fontFamily: "Black",
-          textColor: whiteColor,
+        const SizedBox(height: AppSpacing.sm),
+        const Text(
+          "ATS\nCORPORATION",
           textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 24,
+            fontFamily: "Black",
+            color: whiteColor,
+            height: 1.15,
+            letterSpacing: 0.5,
+          ),
         ),
-        CustomText(
-          text: "SCAN, DETECT DRIVE SAFE",
-          fontSize: 14,
-          fontFamily: "Regular",
-          textColor: whiteColor,
+        const SizedBox(height: AppSpacing.sm),
+        const Text(
+          "SCAN, DETECT DRIVE SAFE",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 12,
+            fontFamily: "SemiBold",
+            color: textWhiteSub,
+            letterSpacing: 1.6,
+          ),
         ),
       ],
     );

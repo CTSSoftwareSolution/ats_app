@@ -6,16 +6,16 @@ import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_page
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/responsive_button.dart';
 
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_responsive_item.dart';
-import 'package:ats_app/Responsive/responsive_ext.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
+import '../../../utilities/app_theme.dart';
+import '../../../utilities/color_data.dart';
 import '../../../utilities/custom_stepper.dart';
-import '../../../utilities/extension.dart';
+import '../../../widgets/app_ui.dart';
 import '../../../widgets/custom_loader.dart';
-import '../../../widgets/custom_text.dart';
 import '../../provider/ai_inspection_details_provider.dart';
 import '../../provider/ai_result_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
@@ -37,103 +37,151 @@ class _VehiclePartsResponsiveLayoutState
   @override
   Widget build(BuildContext context) {
     final partsProvider = context.watch<VehiclePartsProvider>();
-    //final fileProvider = context.watch<FileProvider>();
+    final fileProvider = context.watch<FileProvider>();
 
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.0),
-        child: partsProvider.isLoading
-            ? Center(child: CustomLoader.loader())
-            : partsProvider.vehiclePartsEntity!.data!.isEmpty
-            ? Center(
-                child: CustomText(
-                  text: partsProvider.vehiclePartsEntity!.message.toString(),
-                  fontFamily: "Bold",
-                ),
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    if (partsProvider.isLoading) {
+      return Center(child: CustomLoader.loader());
+    }
+    if (partsProvider.vehiclePartsEntity!.data!.isEmpty) {
+      return Center(
+        child: AppStateView(
+          icon: Icons.inventory_2_outlined,
+          title: "No parts to capture",
+          message: partsProvider.vehiclePartsEntity!.message.toString(),
+        ),
+      );
+    }
+
+    final allParts = partsProvider.vehiclePartsEntity!.data!;
+    int capturedCount = 0;
+    for (int i = 0; i < allParts.length; i++) {
+      if (VehiclePartsResponsiveItem.isCaptured(allParts[i], fileProvider.getMedia(i))) {
+        capturedCount++;
+      }
+    }
+    final allDone = capturedCount >= allParts.length;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Step indicator + overall capture progress
+        Container(
+          decoration: const BoxDecoration(
+            color: surface,
+            border: Border(bottom: BorderSide(color: border)),
+          ),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.page,
+            AppSpacing.md,
+            AppSpacing.page,
+            AppSpacing.lg,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  25.height,
-                  Center(
-                    child: CustomStepper(
-                      currentStep: partsProvider.currentStep,
-                      totalStep: partsProvider.totalPages,
-                      width: double.infinity,
-                    ),
-                  ),
-                  15.height,
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: partsProvider.currentPageData.length,
-                      itemBuilder: (context, index) {
-                        final item = partsProvider.currentPageData[index];
-                        allIndex =
-                            partsProvider.currentPage *
-                                partsProvider.itemsPerPage +
-                            index;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20.0),
-                          child: VehiclePartsResponsiveItem(
-                            item: item,
-                            allIndex: allIndex,
-                            isTablet: false,
-                          ),
-                        );
-                      },
+                    child: Text(
+                      "Step ${partsProvider.currentStep + 1} of ${partsProvider.totalPages}",
+                      style: AppText.sectionTitle,
                     ),
                   ),
-                  ResponsiveButton(
-                    width: double.infinity,
-                    buttonText:
-                        partsProvider.currentPage ==
-                            partsProvider.totalPages - 1
-                        ? "View Result"
-                        : "Next",
-                    onPress: () async {
-                      final error = partsProvider.validateMedia(
-                        context: context,
-                      );
-
-                      if (error != null) {
-                        CustomLoader.message(error);
-                      } else {
-                        context.read<VehiclePartsProvider>().nextStepper(
-                          partsProvider.totalPages,
-                        );
-
-                        if (partsProvider.currentPage <
-                            partsProvider.totalPages - 1) {
-                          context.read<VehiclePartsProvider>().nextPage(
-                            partsProvider.totalPages - 1,
-                          );
-                        } else {
-                           //aiMediaUpload(context: context);
-                          //  context.push(InspectionPage());
-                          //  context.read<VehiclePartsProvider>().resetStepper();
-                          CustomLoader.showLoader("Loading result...");
-                          final result = await context
-                              .read<AiResultProvider>()
-                              .aiResultDetails(context);
-                          if (!context.mounted) return;
-                          if (result == null || result.success == false) {
-                            CustomLoader.errorMessage(
-                              (result?.message?.trim().isNotEmpty ?? false)
-                                  ? result!.message!.trim()
-                                  : "Unable to load result. Please try again.",
-                            );
-                            return;
-                          }
-                          context.push(const AiResultScreen());
-                        }
-                      }
-                    },
-                  ),
+                  allDone
+                      ? StatusBadge.pass(label: "$capturedCount/${allParts.length} captured", dense: true)
+                      : StatusBadge(
+                          label: "$capturedCount/${allParts.length} captured",
+                          color: appColor,
+                          background: accentLight,
+                          dense: true,
+                        ),
                 ],
               ),
-      ),
+              const SizedBox(height: 2),
+              const Text(
+                "Capture the required media for each part below",
+                style: AppText.bodySecondary,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              CustomStepper(
+                currentStep: partsProvider.currentStep,
+                totalStep: partsProvider.totalPages,
+                width: double.infinity,
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.all(AppSpacing.page),
+            itemCount: partsProvider.currentPageData.length,
+            separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+            itemBuilder: (context, index) {
+              final item = partsProvider.currentPageData[index];
+              allIndex =
+                  partsProvider.currentPage *
+                      partsProvider.itemsPerPage +
+                  index;
+              return VehiclePartsResponsiveItem(
+                item: item,
+                allIndex: allIndex,
+                isTablet: false,
+              );
+            },
+          ),
+        ),
+        BottomActionBar(
+          child: ResponsiveButton(
+            width: double.infinity,
+            buttonText:
+                partsProvider.currentPage ==
+                    partsProvider.totalPages - 1
+                ? "View Result"
+                : "Next",
+            onPress: () async {
+              final error = partsProvider.validateMedia(
+                context: context,
+              );
+
+              if (error != null) {
+                CustomLoader.message(error);
+              } else {
+                context.read<VehiclePartsProvider>().nextStepper(
+                  partsProvider.totalPages,
+                );
+
+                if (partsProvider.currentPage <
+                    partsProvider.totalPages - 1) {
+                  context.read<VehiclePartsProvider>().nextPage(
+                    partsProvider.totalPages - 1,
+                  );
+                } else {
+                   //aiMediaUpload(context: context);
+                  //  context.push(InspectionPage());
+                  //  context.read<VehiclePartsProvider>().resetStepper();
+                  CustomLoader.showLoader("Loading result...");
+                  final result = await context
+                      .read<AiResultProvider>()
+                      .aiResultDetails(context);
+                  if (!context.mounted) return;
+                  if (result == null || result.success == false) {
+                    CustomLoader.errorMessage(
+                      (result?.message?.trim().isNotEmpty ?? false)
+                          ? result!.message!.trim()
+                          : "Unable to load result. Please try again.",
+                    );
+                    return;
+                  }
+                  context.push(const AiResultScreen());
+                }
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
+
 
   static Future<void> aiMediaUpload({required BuildContext context}) async {
     final createController = Provider.of<CreateBulkProvider>(

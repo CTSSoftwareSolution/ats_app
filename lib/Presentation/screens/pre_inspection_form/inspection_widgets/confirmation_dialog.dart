@@ -12,6 +12,8 @@ import '../../../provider/manual_inspection_list_provider.dart';
 import '../../../provider/vehicle_class_provider.dart';
 import '../../bottom_navigation/bottom_navigation_bar.dart';
 import '../pre_save_inspection_provider.dart';
+import '../../../../utilities/color_data.dart';
+import '../../../../widgets/app_ui.dart';
 
 class ConfirmationDialog {
   static void show({
@@ -22,72 +24,42 @@ class ConfirmationDialog {
   }) {
     showDialog(
       context: context,
-      builder: (_) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.85,
-        ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-              Row(
-                children: [
-                  Icon(
-                    isComplete ? Icons.check_circle : Icons.warning_amber_rounded,///242424
-                    color: isComplete ? Colors.green : Colors.orange,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(isComplete ? 'Submit Inspection?' : 'Incomplete!',style: TextStyle(fontSize: 20,fontFamily: "Medium"),),
-                ],
-              ),
-                const SizedBox(height: 15),
-          Text(
-              isComplete
-                  ? 'All ${provider.visibleTotalQuestions} questions answered. Ready to submit?'
-                  : '$unanswered question(s) still unanswered.',
-            style: TextStyle(fontSize: 16,fontFamily: "Regular"),
-            ), const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: unanswered==0? Text("Cancel",style: TextStyle(fontSize: 14,fontFamily: "Bold"),):Text("Got it",style: TextStyle(fontSize: 16,fontFamily: "Bold"),),
-                      ),
-                      unanswered==0?
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isComplete ? Colors.green : const Color(0xFF1A3C6E),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          if (isComplete) {
-                            final detailsProvider = context.read<AiInspectionDetailsProvider>();
-                            if (detailsProvider.isAIMode) {
-                              await aiPreInspectionSaveAPI(context: context);
-                            } else {
-                              preInspectionSaveAPI(context: context);
-                            }
-                          }
-                          },
-                        child: const Text('Submit'),
-                      ):SizedBox.shrink(),
-                  ],
+      builder: (_) => AppDialog(
+        icon: isComplete ? Icons.check_circle_rounded : Icons.warning_amber_rounded,
+        iconColor: isComplete ? pass : warn,
+        title: isComplete ? 'Submit Inspection?' : 'Incomplete!',
+        message: isComplete
+            ? 'All ${provider.visibleTotalQuestions} questions answered. Ready to submit?'
+            : '$unanswered question(s) still unanswered.',
+        actions: [
+          unanswered == 0
+              ? OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
                 )
-              ],
+              : FilledButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Got it"),
+                ),
+          if (unanswered == 0)
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: isComplete ? pass : appColor,
+              ),
+              onPressed: () async {
+                Navigator.pop(context);
+                if (isComplete) {
+                  final detailsProvider = context.read<AiInspectionDetailsProvider>();
+                  if (detailsProvider.isAIMode) {
+                    await aiPreInspectionSaveAPI(context: context);
+                  } else {
+                    preInspectionSaveAPI(context: context);
+                  }
+                }
+              },
+              child: const Text('Submit'),
             ),
-          ),
-        ),
+        ],
       ),
     );
   }

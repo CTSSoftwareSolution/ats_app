@@ -5,7 +5,6 @@ import 'package:ats_app/Presentation/screens/manual_inspection_images/document_m
 import 'package:ats_app/Presentation/screens/manual_inspection_images/manual_ins_image_provider.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_image_container.dart';
 import 'package:ats_app/location/location_provider.dart';
-import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:extensions_pro/extensions_pro.dart';
@@ -13,10 +12,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../image_processing/MediaPicker/file_provider.dart';
+import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
+import '../../../widgets/app_ui.dart';
 import '../../../utilities/image_data.dart';
 import '../../../widgets/custom_bottomsheet.dart';
-import '../../../widgets/custom_text.dart';
 import '../../provider/inspection_form_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../camera_page/camera_screen.dart';
@@ -118,89 +118,108 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
   @override
   Widget build(BuildContext context) {
     final fileProvider = context.watch<FileProvider>();
+    int capturedCount = 0;
+    for (int i = 0; i < labels.length; i++) {
+      final path = fileProvider.getMedia(i)?.image?.path;
+      if (path != null && path.isNotEmpty) capturedCount++;
+    }
     return Scaffold(
-      appBar:  AppBar(
+      backgroundColor: bg,
+      appBar: AppBar(
         backgroundColor: appColor,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         titleSpacing: 0,
-        title: const CustomText(
-          text: "Gather Vehicle Data",
-          fontFamily: "SemiBold",
-          fontSize: 20,
-        ),
-        leading: IconButton(
+        title: const Text("Gather Vehicle Data"),
+        leading: AppBackButton(
           onPressed: (){
             context.pop();
             fileProvider.clearAll();
           },
-          icon: ImageIcon(
-            AssetImage(backArrowIcon),
-            color: whiteColor,
-            size: 20,
-          ),
         ),
       ),
-          body: SafeArea(
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            CaptureProgressHeader(
+              title: "Vehicle photos",
+              subtitle: "Capture all ${labels.length} photos to continue",
+              done: capturedCount,
+              total: labels.length,
+              trailingLabel: "$capturedCount/${labels.length} captured",
+            ),
+            const Divider(height: 1, thickness: 1, color: border),
+            Expanded(
               child: GridView.builder(
-                shrinkWrap: true,
-                physics: BouncingScrollPhysics(),
-                padding: EdgeInsets.only(top: 15,left: 10,right: 10, bottom: 140),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 1.1
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(AppSpacing.page),
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 240,
+                  mainAxisExtent: 206,
+                  mainAxisSpacing: AppSpacing.md,
+                  crossAxisSpacing: AppSpacing.md,
                 ),
                 itemCount: labels.length,
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
+                  final path = fileProvider.getMedia(index)?.image?.path;
+                  final captured = path != null && path.isNotEmpty;
+                  return AppCard(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    borderColor: captured ? pass.withValues(alpha: 0.35) : null,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomText(
-                          text:labels[index],
-                          fontFamily: "Medium",
-                          fontSize: 15.0,
+                        Text(
+                          labels[index],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppText.title,
                         ),
-                        10.height,
-                        Expanded(child:
-                        UploadImageContainer(
-                          isVideo: false,
-                          width: double.infinity,
-                          buttonHeight: 28,
-                          buttonWidth: 80,
-                          iconSize: 40,
-                          iconScale: 6.5,
-                          onTap: () async {
-                            fileProvider.setVideo(false);
-                            fileProvider.setCurrentIndex(index);
-                           // await fileProvider.initCamera();
-                            await context.push(CameraScreen());
-                          },
+                        const SizedBox(height: AppSpacing.xs),
+                        // captured
+                        //     ?  StatusBadge.pass(label: "Captured", dense: true)
+                        //     : SizedBox.shrink(), //const StatusBadge.pending(label: "Required", dense: true),
+                        const SizedBox(height: AppSpacing.sm),
+                        Expanded(
+                          child: UploadImageContainer(
+                            isVideo: false,
+                            width: double.infinity,
+                            buttonHeight: 28,
+                            buttonWidth: 80,
+                            iconSize: 40,
+                            iconScale: 6.5,
+                            text: "Tap to capture",
+                            onTap: () async {
+                              fileProvider.setVideo(false);
+                              fileProvider.setCurrentIndex(index);
+                             // await fileProvider.initCamera();
+                              await context.push(CameraScreen());
+                            },
                             index: index,
                             isTablet: false,
-                          borderRadius: 5.0,
-                        ))
+                            borderRadius: 5.0,
+                          ),
+                        ),
                       ],
                     ),
                   );
                 },
-          ),
-    ),
-      floatingActionButton:
-      SizedBox(
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: FloatingActionButton.extended(
-            backgroundColor: appColor,
-              onPressed: (){
-              imageUpload();
-              },
-              label: CustomText(text: "Next", fontSize: 18.0, fontFamily: "Bold",)),
+              ),
+            ),
+            BottomActionBar(
+              child: PrimaryButton(
+                label: "Next",
+                icon: Icons.arrow_forward_rounded,
+                onPressed: (){
+                  imageUpload();
+                },
+              ),
+            ),
+          ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 

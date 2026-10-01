@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'color_data.dart';
 
@@ -9,6 +10,45 @@ class AppRadius {
   static const double md = 12;
   static const double lg = 16;
   static const double xl = 20;
+}
+
+/// Shared spacing scale; screens use these instead of ad-hoc values.
+class AppSpacing {
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
+  static const double xl = 24;
+
+  /// Standard horizontal page gutter.
+  static const double page = 16;
+
+  /// Height of primary/secondary action buttons.
+  static const double buttonHeight = 52;
+}
+
+/// Shared text styles on the Gilroy families declared in pubspec.yaml.
+class AppText {
+  static const TextStyle pageTitle =
+      TextStyle(fontFamily: "Bold", fontSize: 20, color: textPrimary, height: 1.25);
+  static const TextStyle sectionTitle =
+      TextStyle(fontFamily: "Bold", fontSize: 16, color: textPrimary, height: 1.3);
+  static const TextStyle title =
+      TextStyle(fontFamily: "SemiBold", fontSize: 15, color: textPrimary, height: 1.35);
+  static const TextStyle body =
+      TextStyle(fontFamily: "Medium", fontSize: 14, color: textPrimary, height: 1.45);
+  static const TextStyle bodySecondary =
+      TextStyle(fontFamily: "Medium", fontSize: 13.5, color: textSecondary, height: 1.4);
+  static const TextStyle caption =
+      TextStyle(fontFamily: "Medium", fontSize: 12, color: textMuted, height: 1.35);
+
+  /// Small uppercase label above a group of content.
+  static const TextStyle overline = TextStyle(
+    fontFamily: "Bold",
+    fontSize: 11,
+    color: textMuted,
+    letterSpacing: 0.8,
+  );
 }
 
 /// Centralised Material 3 theme built on the existing ATS brand colors.
@@ -57,7 +97,10 @@ class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
+      fontFamily: "Medium",
       colorScheme: colorScheme,
+      visualDensity: VisualDensity.standard,
+      materialTapTargetSize: MaterialTapTargetSize.padded,
       scaffoldBackgroundColor: bg,
       splashFactory: InkRipple.splashFactory,
       appBarTheme: const AppBarTheme(
@@ -71,9 +114,9 @@ class AppTheme {
         iconTheme: IconThemeData(color: whiteColor),
         titleTextStyle: TextStyle(
           fontFamily: "SemiBold",
-          fontSize: 19,
+          fontSize: 18,
           color: whiteColor,
-          letterSpacing: 0.2,
+          letterSpacing: 0.1,
         ),
         systemOverlayStyle: statusBarStyle,
       ),
@@ -93,6 +136,8 @@ class AppTheme {
           foregroundColor: whiteColor,
           elevation: 0,
           minimumSize: const Size(64, 48),
+          disabledBackgroundColor: surface2,
+          disabledForegroundColor: textMuted,
           shape: buttonShape,
           textStyle: buttonText,
         ),
@@ -102,6 +147,8 @@ class AppTheme {
           backgroundColor: appColor,
           foregroundColor: whiteColor,
           minimumSize: const Size(64, 48),
+          disabledBackgroundColor: surface2,
+          disabledForegroundColor: textMuted,
           shape: buttonShape,
           textStyle: buttonText,
         ),
@@ -195,6 +242,70 @@ class AppTheme {
         indicatorColor: whiteColor,
       ),
       iconTheme: const IconThemeData(color: textSecondary),
+      listTileTheme: const ListTileThemeData(
+        contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        minVerticalPadding: AppSpacing.md,
+        iconColor: textSecondary,
+        titleTextStyle: AppText.title,
+        subtitleTextStyle: AppText.bodySecondary,
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: surface2,
+        selectedColor: accentLight,
+        side: BorderSide.none,
+        labelStyle: const TextStyle(fontFamily: "SemiBold", fontSize: 13, color: textPrimary),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        side: const BorderSide(color: borderDark, width: 1.5),
+      ),
+      popupMenuTheme: PopupMenuThemeData(
+        color: surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 3,
+        textStyle: AppText.body,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+      ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: appColor,
+        selectionColor: appColor.withValues(alpha: 0.18),
+        selectionHandleColor: appColor,
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: accentLight,
+        elevation: 0,
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) => TextStyle(
+            fontFamily: "SemiBold",
+            fontSize: 12,
+            color: states.contains(WidgetState.selected) ? appColor : textSecondary,
+          ),
+        ),
+      ),
     );
+  }
+
+  /// Global EasyLoading look (used by CustomLoader) aligned with the theme.
+  static void configureLoader() {
+    EasyLoading.instance
+      ..loadingStyle = EasyLoadingStyle.custom
+      ..indicatorType = EasyLoadingIndicatorType.ring
+      ..indicatorSize = 36
+      ..lineWidth = 3
+      ..radius = AppRadius.lg
+      ..contentPadding = const EdgeInsets.symmetric(horizontal: 24, vertical: 20)
+      ..backgroundColor = surface
+      ..indicatorColor = appColor
+      ..progressColor = appColor
+      ..textColor = textPrimary
+      ..textStyle = const TextStyle(fontFamily: "SemiBold", fontSize: 14, color: textPrimary)
+      ..maskType = EasyLoadingMaskType.custom
+      ..maskColor = navy.withValues(alpha: 0.35)
+      ..boxShadow = const <BoxShadow>[]
+      ..userInteractions = false
+      ..dismissOnTap = false;
   }
 }
