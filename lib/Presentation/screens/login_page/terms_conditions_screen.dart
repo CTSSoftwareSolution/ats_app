@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
-import '../../../widgets/custom_text.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
 
 class TermsConditionsScreen extends StatelessWidget {
   const TermsConditionsScreen({super.key});
@@ -9,34 +10,38 @@ class TermsConditionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      top: false,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.page,
+          AppSpacing.sm,
+          AppSpacing.page,
+          AppSpacing.lg,
+        ),
         child: GestureDetector(
           onTap: () async {},
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: CustomText(
-                  text: "By continuing, you agree to our",
-                  fontSize: 14,
-                  textAlign: TextAlign.center,
-                  textColor: whiteColor,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: CustomText(
+          child: const Text.rich(
+            TextSpan(
+              text: "By continuing, you agree to our\n",
+              children: [
+                TextSpan(
                   text: "Terms & Conditions & Privacy Policy",
-                  fontSize: 14,
-                  textAlign: TextAlign.center,
-                  decoration: TextDecoration.underline,
-                  textColor: whiteColor,
-                  decorationColor: whiteColor,
+                  style: TextStyle(
+                    fontFamily: "SemiBold",
+                    color: whiteColor,
+                    decoration: TextDecoration.underline,
+                    decorationColor: whiteColor,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: "Medium",
+              fontSize: 12.5,
+              color: textWhiteSub,
+              height: 1.6,
+            ),
           ),
         ),
       ),

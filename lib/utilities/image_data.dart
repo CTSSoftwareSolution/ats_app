@@ -122,8 +122,9 @@ List<ProfileModel> profileGridValues = [
 List<BottomNavModel> bottomNavValue = [
   BottomNavModel(0, "Home", homeIcon),
   BottomNavModel(1, "Result", resultIcon),
-  BottomNavModel(2, "Type", vehicleIcon),
-  BottomNavModel(3, "Profile", profileIcon),
+  // Matches BottomNavigationProvider.pages, where VehicleNumberPlateScreen is disabled.
+  // BottomNavModel(2, "Type", vehicleIcon),
+  BottomNavModel(2, "Profile", profileIcon),
 ];
 
 List<String> labels = [

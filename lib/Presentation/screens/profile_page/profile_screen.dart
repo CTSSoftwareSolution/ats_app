@@ -1,15 +1,20 @@
 
 import 'package:ats_app/Presentation/screens/profile_page/profile_details_container.dart';
-import 'package:ats_app/utilities/profile_menu_widget.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../app_config/ip_address_bottom_sheet_screen.dart';
-import '../../../Data/model/profile_model.dart';
+import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
+import '../../../utilities/new_app_theme/app_radius.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
+import '../../provider/create_queue_provider.dart';
+import '../../provider/login_provider.dart';
 
 import '../login_page/login_screen.dart';
 
@@ -23,53 +28,52 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
 
+  /// Index of the "Logout" entry in [profileGridValues] (see [click]).
   static const int _logoutIndex = 5;
 
-  Widget _menuTile(int index) {
-    final item = profileGridValues[index];
-    final isLogout = index == _logoutIndex;
-    return InkWell(
-      onTap: (){
-        click(index,context);
-      },
-      child: buildTile(
-        leadingImage: item.image,
-        title: item.title,
-        subtitle: item.subtitle,
-        accent: isLogout ? fail : appColor,
-        child: item.trailingType == ProfileTrailingType.arrow
-            ? const Icon(Icons.chevron_right_rounded, color: textMuted)
-            : const SizedBox.shrink(),
-      ),
-    );
-  }
+  /// Index of the "Ip Config" entry in [profileGridValues] (see [click]).
+  static const int _ipConfigIndex = 4;
 
   @override
   Widget build(BuildContext context) {
-    final menuIndexes = [
-      for (int i = 0; i < profileGridValues.length; i++)
-        if (i != _logoutIndex) i,
-    ];
     return Scaffold(
       backgroundColor: bg,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        titleSpacing: 16,
+        titleSpacing: AppSpacing.page,
         title: const Text("Profile"),
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.page,
+            AppSpacing.lg,
+            AppSpacing.page,
+            100,
+          ),
           physics: const BouncingScrollPhysics(),
           children: [
             const ProfileDetailsContainer(),
-            const SizedBox(height: 20),
-            const _SectionLabel("Settings"),
-            buildSection(menuIndexes.map(_menuTile).toList()),
-            if (_logoutIndex < profileGridValues.length) ...[
-              const SizedBox(height: 16),
-              buildSection([_menuTile(_logoutIndex)]),
-            ],
+            const SizedBox(height: AppSpacing.xl),
+            const Padding(
+              padding: EdgeInsets.only(left: AppSpacing.xs, bottom: AppSpacing.sm),
+              child: Text("SETTINGS", style: AppText.overline),
+            ),
+            _ProfileMenuSection(
+              children: List.generate(profileGridValues.length, (index) {
+                final item = profileGridValues[index];
+                return _ProfileMenuTile(
+                  image: item.image,
+                  icon: index == _ipConfigIndex ? Icons.settings_ethernet_rounded : null,
+                  title: item.title,
+                  subtitle: item.subtitle,
+                  destructive: index == _logoutIndex,
+                  onTap: () {
+                    click(index, context);
+                  },
+                );
+              }),
+            ),
           ],
         ),
       ),
@@ -101,6 +105,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
           okClick: () {
             Preferences.clear();
+            context.read<CreateQueueProvider>().clearUploadedImages();
+            context.read<LoginProvider>().emailController.clear();
+            context.read<LoginProvider>().passwordController.clear();
             context.push(LoginScreen());
           },
         );
@@ -113,21 +120,109 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-class _SectionLabel extends StatelessWidget {
-  final String text;
-  const _SectionLabel(this.text);
+/// Flat white group with hairline dividers between its tiles.
+class _ProfileMenuSection extends StatelessWidget {
+  final List<Widget> children;
+
+  const _ProfileMenuSection({required this.children});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 8),
-      child: Text(
-        text.toUpperCase(),
-        style: const TextStyle(
-          fontSize: 11.5,
-          fontFamily: "Bold",
-          color: textMuted,
-          letterSpacing: 0.8,
+    final radius = BorderRadius.circular(AppRadius.lg);
+    return Container(
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: radius,
+        border: Border.all(color: border),
+      ),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: Material(
+          color: Colors.transparent,
+          child: Column(
+            children: [
+              for (int i = 0; i < children.length; i++) ...[
+                children[i],
+                if (i < children.length - 1)
+                  const Divider(indent: 68, height: 1),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileMenuTile extends StatelessWidget {
+  final String image;
+  final IconData? icon;
+  final String title;
+  final String subtitle;
+  final bool destructive;
+  final VoidCallback onTap;
+
+  const _ProfileMenuTile({
+    required this.image,
+    this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.destructive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Color tint = destructive ? fail : appColor;
+    return InkWell(
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 64),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: destructive ? failLight : accentLight,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                alignment: Alignment.center,
+                child: icon != null
+                    ? Icon(icon, size: 20, color: tint)
+                    : Image(
+                        image: AssetImage(image),
+                        width: 20,
+                        height: 20,
+                        color: tint,
+                      ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: AppText.title.copyWith(
+                        color: destructive ? fail : textPrimary,
+                      ),
+                    ),
+                    if (subtitle.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(subtitle, style: AppText.caption.copyWith(color: textSecondary)),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

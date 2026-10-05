@@ -4,9 +4,11 @@ import 'package:ats_app/utilities/color_data.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../EmptyStateWidget.dart';
+import '../../../../utilities/app_theme.dart';
+import '../../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../../widgets/app_ui.dart';
-import '../../../provider/vehicle_class_provider.dart';
+import '../../../../widgets/new_app_ui/app_back_button.dart';
+import '../../../../widgets/new_app_ui/app_state_view.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../../provider/manual_inspection_list_provider.dart';
 import '../inspection_widgets/error_screen.dart';
@@ -94,73 +96,23 @@ class _InspectionPageState extends State<InspectionPage>
 
   @override
   Widget build(BuildContext context) {
-    final manualProvider = context.watch<ManualInspectionListProvider>();
-    final isAIMode = context.watch<AiInspectionDetailsProvider>().isAIModeOn;
-    final regNo = (manualProvider.isManualInspectionScreen
-                ? manualProvider.selectedManualListData?.registrationNo
-                : context.watch<VehicleClassProvider>().selectedClass?.registrationNo)
-            ?.toString() ??
-        '';
     return Consumer<InspectionFormProvider>(
       builder: (context, provider, _) {
         return Scaffold(
           appBar: AppBar(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Inspection"),
-                if (regNo.isNotEmpty)
-                  Text(
-                    regNo.toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 12.5,
-                      fontFamily: "SemiBold",
-                      color: textWhiteSub,
-                      letterSpacing: 0.8,
-                    ),
-                  ),
-              ],
-            ),
+            titleSpacing: 0.0,
+            elevation: 0,
+            backgroundColor: appColor,
+            title: const Text("Inspection"),
             leading: AppBackButton(
               onPressed: (){
                 context.pop();
                 },
             ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isAIMode ? Icons.auto_awesome_rounded : Icons.edit_note_rounded,
-                        size: 15,
-                        color: whiteColor,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        isAIMode ? "AI Result" : "Manual",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: "SemiBold",
-                          color: whiteColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
           ),
           backgroundColor: bg,
           body: _buildBody(provider),
-          floatingActionButton: (!provider.isLoading && !provider.hasError)
+          bottomNavigationBar: (!provider.isLoading && !provider.hasError)
               ? SubmitFAB(provider: provider)
               : null,
         );
@@ -191,37 +143,42 @@ class _InspectionPageState extends State<InspectionPage>
             indicatorColor: Colors.white,
             indicatorWeight: 3,
             indicatorSize: TabBarIndicatorSize.tab,
+            dividerColor: Colors.transparent,
             labelColor: Colors.white,
             unselectedLabelColor: textWhiteSub,
             labelStyle: const TextStyle(
               fontSize: 12,
-              fontFamily: "Bold",
-              letterSpacing: 0.3,
+              fontFamily: "SemiBold",
+              letterSpacing: 0.2,
             ),
             unselectedLabelStyle: const TextStyle(
               fontSize: 12,
               fontFamily: "Medium",
-              letterSpacing: 0.3,
+              letterSpacing: 0.2,
             ),
             tabs: List.generate(sections.length, (i) {
               final s = sections[i];
               return Tab(
+                height: 60,
+                iconMargin: const EdgeInsets.only(bottom: 4),
                 icon: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    Icon(s.icon, size: 18),
+                    Icon(s.icon, size: 20),
                     if (s.isComplete)
                       Positioned(
-                        right: -6,
-                        top: -4,
+                        right: -7,
+                        top: -5,
                         child: Container(
-                          width: 8,
-                          height: 8,
+                          width: 14,
+                          height: 14,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF4ADE80),
+                            color: pass,
                             shape: BoxShape.circle,
                             border: Border.all(color: appColor, width: 1.5),
                           ),
+                          child: const Icon(Icons.check_rounded,
+                              size: 9, color: Colors.white),
                         ),
                       ),
                   ],
@@ -254,82 +211,51 @@ class _InspectionPageState extends State<InspectionPage>
     final unanswered = provider.visibleTotalQuestions - answered;
     final no = provider.grandTotalNo;
 
-    final total = provider.visibleTotalQuestions;
     return Container(
       decoration: const BoxDecoration(
         color: surface,
         border: Border(bottom: BorderSide(color: border)),
       ),
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: total == 0 ? 0 : answered / total,
-                    minHeight: 6,
-                    backgroundColor: surface2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        provider.isFullyComplete ? pass : appColor),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                '$answered/$total answered',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontFamily: "SemiBold",
-                  color: textSecondary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _FilterChip(
-                  label: 'All',
-                  count: total,
-                  selected: provider.filter == QuestionFilter.all,
-                  color: appColor,
-                  onTap: () => provider.setFilter(QuestionFilter.all),
-                ),
-                const SizedBox(width: 8),
-                _FilterChip(
-                  label: 'Answered',
-                  count: answered,
-                  selected: provider.filter == QuestionFilter.answered,
-                  color: pass,
-                  onTap: () => provider.setFilter(QuestionFilter.answered),
-                ),
-                const SizedBox(width: 8),
-                _FilterChip(
-                  label: 'Pending',
-                  count: unanswered,
-                  selected: provider.filter == QuestionFilter.unanswered,
-                  color: warn,
-                  onTap: () => provider.setFilter(QuestionFilter.unanswered),
-                ),
-                const SizedBox(width: 8),
-                _FilterChip(
-                  label: 'No',
-                  count: no,
-                  selected: provider.filter == QuestionFilter.no,
-                  color: fail,
-                  onTap: () => provider.setFilter(QuestionFilter.no),
-                ),
-              ],
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.page, vertical: AppSpacing.sm),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            _FilterChip(
+              label: 'All',
+              count: provider.visibleTotalQuestions,
+              selected: provider.filter == QuestionFilter.all,
+              color: appColor,
+              onTap: () => provider.setFilter(QuestionFilter.all),
             ),
-          ),
-        ],
+            const SizedBox(width: AppSpacing.sm),
+            _FilterChip(
+              label: 'Answered',
+              count: answered,
+              selected: provider.filter == QuestionFilter.answered,
+              color: pass,
+              onTap: () => provider.setFilter(QuestionFilter.answered),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            _FilterChip(
+              label: 'Pending',
+              count: unanswered,
+              selected: provider.filter == QuestionFilter.unanswered,
+              color: warn,
+              onTap: () => provider.setFilter(QuestionFilter.unanswered),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            _FilterChip(
+              label: 'No',
+              count: no,
+              selected: provider.filter == QuestionFilter.no,
+              color: fail,
+              onTap: () => provider.setFilter(QuestionFilter.no),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -340,9 +266,9 @@ class _InspectionPageState extends State<InspectionPage>
     final icon = filter == QuestionFilter.answered
         ? Icons.check_circle_outline
         : filter == QuestionFilter.unanswered
-        ? Icons.task_alt_rounded
+        ? Icons.pending_outlined
         : filter == QuestionFilter.no
-        ? Icons.verified_outlined
+        ? Icons.cancel_outlined
         : Icons.inbox_outlined;
 
     final message = filter == QuestionFilter.answered
@@ -353,12 +279,14 @@ class _InspectionPageState extends State<InspectionPage>
         ? 'No failed questions found'
         : 'No questions found';
 
-    return EmptyStateWidget(
-      icon: icon,
-      title: message,
-      subtitle: filter == QuestionFilter.all
-          ? 'There are no inspection items to show'
-          : 'Switch the filter above to see other items',
+    final iconColor = filter == QuestionFilter.no || filter == QuestionFilter.unanswered
+        ? pass
+        : textMuted;
+
+    return Center(
+      child: SingleChildScrollView(
+        child: AppStateView(icon: icon, color: iconColor, title: message),
+      ),
     );
   }
 }
@@ -380,17 +308,24 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(100);
     return Material(
-      color: selected ? color.withValues(alpha: 0.10) : surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100),
-        side: BorderSide(color: selected ? color : border, width: selected ? 1.5 : 1),
-      ),
+      color: selected ? color.withValues(alpha: 0.1) : surface,
+      borderRadius: radius,
       child: InkWell(
         onTap: onTap,
-        customBorder: const StadiumBorder(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        borderRadius: radius,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: Border.all(
+              color: selected ? color : border,
+              width: selected ? 1.5 : 1,
+            ),
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -398,23 +333,24 @@ class _FilterChip extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontSize: 13,
-                  fontFamily: selected ? "Bold" : "SemiBold",
+                  fontFamily: "SemiBold",
                   color: selected ? color : textSecondary,
                 ),
               ),
               const SizedBox(width: 6),
               Container(
                 constraints: const BoxConstraints(minWidth: 22),
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: selected ? color : surface2,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(100),
                 ),
                 child: Text(
                   '$count',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: selected ? whiteColor : textSecondary,
+                    color: selected ? Colors.white : textSecondary,
                     fontSize: 11,
                     fontFamily: "Bold",
                   ),

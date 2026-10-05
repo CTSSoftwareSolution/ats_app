@@ -2,6 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../../../../utilities/app_theme.dart';
+import '../../../../utilities/color_data.dart';
+import '../../../../utilities/new_app_theme/app_radius.dart';
+import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../utilities/new_app_theme/app_text.dart';
+
 class ImagePreview extends StatelessWidget {
   final File? imageFile;
   final String? imageUrl;
@@ -17,131 +23,90 @@ class ImagePreview extends StatelessWidget {
   }) : assert(imageFile != null || imageUrl != null,
   'Either imageFile or imageUrl must be provided');
 
+  static const double _height = 180;
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: imageFile != null
-              ? Image.file(
-            imageFile!,
-            width: double.infinity,
-            height: 160,
-            fit: BoxFit.cover,
-          )
-              : Image.network(
-            imageUrl!,
-            width: double.infinity,
-            height: 160,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Container(
-                width: double.infinity,
-                height: 160,
-                color: Colors.grey.shade200,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                        : null,
-                    strokeWidth: 2,
-                    color: Colors.grey.shade500,
-                  ),
-                ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) => Container(
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            border: Border.all(color: border),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppRadius.md - 1),
+            child: imageFile != null
+                ? Image.file(
+              imageFile!,
               width: double.infinity,
-              height: 160,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.broken_image_rounded,
-                      color: Colors.grey.shade400, size: 36),
-                  const SizedBox(height: 6),
-                  Text('Could not load image',
-                      style: TextStyle(
-                          color: Colors.grey.shade500, fontSize: 12)),
-                ],
+              height: _height,
+              fit: BoxFit.cover,
+            )
+                : Image.network(
+              imageUrl!,
+              width: double.infinity,
+              height: _height,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  width: double.infinity,
+                  height: _height,
+                  color: surface2,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                          : null,
+                      strokeWidth: 2,
+                      color: appColor,
+                    ),
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) => Container(
+                width: double.infinity,
+                height: _height,
+                color: surface2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.broken_image_rounded,
+                        color: textMuted, size: 32),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text('Could not load image', style: AppText.caption),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius:
-              const BorderRadius.vertical(bottom: Radius.circular(10)),
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  Colors.black.withValues(alpha:0.7),
-                  Colors.transparent,
-                ],
+        const SizedBox(height: AppSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: onReplace,
+                icon: const Icon(Icons.photo_camera_outlined, size: 18),
+                label: const Text('Replace'),
               ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: onReplace,
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.edit_rounded, color: Colors.white, size: 14),
-                        SizedBox(width: 4),
-                        Text(
-                          'Replace',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: onRemove,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: fail,
+                  side: BorderSide(color: fail.withValues(alpha: 0.4)),
                 ),
-                GestureDetector(
-                  onTap: onRemove,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade600,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.delete_rounded,
-                            color: Colors.white, size: 14),
-                        SizedBox(width: 4),
-                        Text(
-                          'Remove',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+                icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                label: const Text('Remove'),
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );

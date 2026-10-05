@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import '../utilities/app_theme.dart';
 import '../utilities/color_data.dart';
+import '../utilities/new_app_theme/app_radius.dart';
 
 class CustomTextField extends StatelessWidget {
   final String hint;
@@ -65,14 +64,15 @@ class CustomTextField extends StatelessWidget {
     this.cursorColor,
   });
 
-  OutlineInputBorder _border(Color color, double width) => OutlineInputBorder(
-        borderSide: BorderSide(color: color, width: width),
-        borderRadius: const BorderRadius.all(Radius.circular(AppRadius.md)),
-      );
-
   @override
   Widget build(BuildContext context) {
-    final double stroke = borderWidth ?? 1;
+    final radius = BorderRadius.circular(AppRadius.md);
+    OutlineInputBorder outline(Color color, double width) => OutlineInputBorder(
+          borderRadius: radius,
+          borderSide: BorderSide(color: color, width: width),
+        );
+    final restingWidth = borderWidth ?? 1;
+
     return SizedBox(
       height: height,
       width: width,
@@ -92,7 +92,7 @@ class CustomTextField extends StatelessWidget {
         style: const TextStyle(
           color: textPrimary,
           fontSize: 15,
-          fontWeight: FontWeight.w500,
+          fontFamily: "SemiBold",
         ),
         textAlign: textAlign ?? TextAlign.start,
         cursorColor: cursorColor ?? appColor,
@@ -101,14 +101,14 @@ class CustomTextField extends StatelessWidget {
           fillColor: fillColor ?? surface,
           filled: true,
           hintTextDirection: TextDirection.ltr,
-          hintStyle: hintStyle.copyWith(color: hintStyle.color ?? textMuted),
+          hintStyle: hintStyle,
           focusColor: appColor,
-          enabledBorder: _border(borderColor ?? border, stroke),
-          disabledBorder: disabledBorder,
-          focusedBorder: _border(borderColor ?? appColor, stroke + 0.5),
-          focusedErrorBorder: focusedErrorBorder ?? _border(fail, stroke + 0.5),
-          border: _border(borderColor ?? border, stroke),
-          errorBorder: _border(fail, stroke),
+          enabledBorder: outline(borderColor ?? border, restingWidth),
+          disabledBorder: disabledBorder ?? outline(border, restingWidth),
+          focusedBorder: outline(borderColor ?? appColor, 1.5),
+          focusedErrorBorder: focusedErrorBorder ?? outline(errorColor ?? fail, 1.5),
+          border: outline(borderColor ?? border, restingWidth),
+          errorBorder: outline(errorColor ?? fail, restingWidth),
           errorStyle: TextStyle(color: errorColor ?? fail, fontSize: 12),
           hintText: hint,
           suffixIcon: suffixIcon,

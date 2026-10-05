@@ -2,13 +2,13 @@ import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dar
 import 'package:ats_app/Presentation/provider/manual_inspection_list_provider.dart';
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_shimmer.dart';
 import 'package:ats_app/Presentation/screens/result_page/result_screen_item.dart';
+import 'package:ats_app/utilities/app_theme.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
 import '../../../utilities/color_data.dart';
-import '../../../utilities/image_data.dart';
-import '../../../widgets/custom_image.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../widgets/custom_search_bar.dart';
 import '../pre_inspection_form/inspection_page/inspection_page.dart';
 
@@ -49,35 +49,27 @@ class _ResultScreenState extends State<ResultScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: appColor,
-        titleSpacing: 16,
-        title: const Text("Result")
+        title: const Text("Result"),
       ),
-      body: SafeArea(child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-        child:      Column(
+      body: SafeArea(
+        child: Column(
           children: [
-            CustomSearchTextField(
-              onChanged: (v) => provider.onSearchChanged(context, v),
-              controller: provider.searchController,
-              suffixIcon: provider.searchValue.isEmpty
-                  ? null
-                  : IconButton(
-                      icon: Container(
-                        height: 18.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(40.0)),
-                          color: greyLightColor,
-                        ),
-                        child: CustomImage(image: closeIcon, scale: 3.5),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.page, AppSpacing.md, AppSpacing.page, AppSpacing.sm),
+              child: CustomSearchTextField(
+                onChanged: (v) => provider.onSearchChanged(context, v),
+                controller: provider.searchController,
+                suffixIcon: provider.searchValue.isEmpty
+                    ? null
+                    : SearchClearButton(
+                        onPressed: () {
+                          provider.searchController.clear();
+                          provider.onFilterChanged(context);
+                        },
                       ),
-                      onPressed: () {
-                        provider.searchController.clear();
-                        provider.onFilterChanged(context);
-                      },
-                      color: blackColor,
-                    )
+              ),
             ),
-            const SizedBox(height: 6),
             Expanded(
               child: provider.isLoading ? ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
@@ -89,7 +81,8 @@ class _ResultScreenState extends State<ResultScreen> {
                 title: 'No Appointments Found',
                 subtitle: 'Try changing the filter or search term',
               ) : ListView.builder(
-                padding: EdgeInsets.only(bottom: 100),
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.page, AppSpacing.xs, AppSpacing.page, 100),
                 controller: _scrollController,
                 physics: const BouncingScrollPhysics(),
                 itemCount: provider.manualInspectionEntity!.data!.appointments!.length + (provider.isLoadMore ? 1 : 0),
@@ -120,7 +113,7 @@ class _ResultScreenState extends State<ResultScreen> {
             ),
           ],
         ),
-      ))
+      ),
     );
   }
 }

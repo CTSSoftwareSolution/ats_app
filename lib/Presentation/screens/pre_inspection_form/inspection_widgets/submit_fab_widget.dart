@@ -2,9 +2,13 @@ import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dar
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/confirmation_dialog.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/validation_dialog.dart';
 import 'package:flutter/material.dart';
-import '../../../../utilities/color_data.dart';
 import 'package:provider/provider.dart';
+import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../widgets/new_app_ui/bottom_action_bar.dart';
 import '../../../provider/inspection_form_provider.dart';
+import '../../../../utilities/app_theme.dart';
+import '../../../../utilities/color_data.dart';
+import '../../../../widgets/app_ui.dart';
 
 
 class SubmitFAB extends StatelessWidget {
@@ -21,35 +25,61 @@ class SubmitFAB extends StatelessWidget {
     final detailsProvider = context.watch<AiInspectionDetailsProvider>();
 
 
-    return FloatingActionButton.extended(
-      onPressed: () => _handleSubmit(context),
-      backgroundColor:
-      provider.isFullyComplete ? pass : appColor,
-      elevation: 3,
-      icon: Icon(
-        provider.isFullyComplete ? Icons.check_circle : Icons.send_rounded,
-        color: Colors.white,
-      ),
-      label: (questionsWithNoButNoImage.isNotEmpty && !detailsProvider.isAIMode) ?
-      Text(
-        provider.isFullyComplete
+    final label = (questionsWithNoButNoImage.isNotEmpty && !detailsProvider.isAIMode)
+        ? (provider.isFullyComplete
             ? 'Report is not ready'
-            : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered',
-        style: const TextStyle(
-          color: Colors.white,
-          fontFamily: "Bold",
-          fontSize: 15,
-        ),
-      ):
-      Text(
-        provider.isFullyComplete
+            : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered')
+        : (provider.isFullyComplete
             ? 'Submit Report'
-            : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered',
-        style: const TextStyle(
-          color: Colors.white,
-          fontFamily: "Bold",
-          fontSize: 15,
-        ),
+            : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered');
+
+    // Every question answered but a failed one still lacks evidence.
+    final notReady = provider.isFullyComplete &&
+        questionsWithNoButNoImage.isNotEmpty &&
+        !detailsProvider.isAIMode;
+
+    final total = provider.visibleTotalQuestions;
+    final progress =
+        total == 0 ? 0.0 : (provider.visibleAnsweredQuestions / total).clamp(0.0, 1.0);
+
+    // Sticky bottom action bar (kept under the original SubmitFAB name).
+    return BottomActionBar(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (!provider.isFullyComplete) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 4,
+                backgroundColor: surface2,
+                valueColor: const AlwaysStoppedAnimation<Color>(appColor),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
+          SizedBox(
+            height: AppSpacing.buttonHeight,
+            child: FilledButton.icon(
+              onPressed: () => _handleSubmit(context),
+              style: FilledButton.styleFrom(
+                backgroundColor: notReady ? warn : (provider.isFullyComplete ? pass : appColor),
+              ),
+              icon: Icon(
+                notReady
+                    ? Icons.error_outline_rounded
+                    : (provider.isFullyComplete ? Icons.check_circle_rounded : Icons.send_rounded),
+                size: 20,
+              ),
+              label: Text(
+                label,
+                style: const TextStyle(fontFamily: "Bold", fontSize: 15),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

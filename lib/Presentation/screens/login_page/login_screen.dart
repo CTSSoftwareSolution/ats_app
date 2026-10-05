@@ -1,7 +1,10 @@
 
 import 'package:ats_app/Presentation/screens/login_page/terms_conditions_screen.dart';
+import 'package:ats_app/utilities/app_theme.dart';
+import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../utilities/new_app_theme/app_theme.dart';
 import 'login_screen_responsive.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -15,16 +18,10 @@ class LoginScreen extends StatelessWidget {
         if (didPop) return;
         SystemNavigator.pop();
       },
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xff1c3e70), Color(0xff19162e)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: const Scaffold(
-          backgroundColor: Colors.transparent,
+      child: const AnnotatedRegion<SystemUiOverlayStyle>(
+        value: AppTheme.statusBarStyle,
+        child: Scaffold(
+          backgroundColor: appColor,
           bottomNavigationBar: TermsConditionsScreen(),
           body: SafeArea(
             child: LoginResponsiveLayout(),

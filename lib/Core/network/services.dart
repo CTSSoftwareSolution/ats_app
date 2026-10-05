@@ -48,6 +48,11 @@ String get aiUpdateQuestionResultUrl           => "${newBaseUrl}Inspection/updat
 
 String get newInspectionQuestionsList           => "${newBaseUrl}inspection/inspection-questions-list-new";
 
+// new create-api
+String get createQueueUrl           => "${newBaseUrl}queue/create";
+//String get aiResultUrl           => "${newBaseUrl}generate-ai-response/getResult";
+String get aiResultUrl           => "${newBaseUrl}generate-ai-response/getAiResult";
+
 
 
 

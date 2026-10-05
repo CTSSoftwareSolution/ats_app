@@ -10,9 +10,9 @@ import '../../../../Core/network/services.dart';
 import '../../../../aws_images/aws_signedurl_provider.dart';
 import '../../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../../utilities/change_status_bottom_sheet.dart';
-import '../../../../utilities/image_data.dart';
-import '../../../../widgets/app_ui.dart';
-import '../../../../widgets/custom_image.dart';
+import '../../../../utilities/app_theme.dart';
+import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../utilities/new_app_theme/app_text.dart';
 import '../../../provider/ai_inspection_details_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../camera_page/camera_screen.dart';
@@ -129,194 +129,136 @@ class _QuestionTileState extends State<QuestionTile> {
 
         final isNo = question.answer == AnswerState.Fail;
         var isYes = question.answer == AnswerState.Pass;
+        final items = question.carData.items ?? const [];
 
-        return AnimatedContainer(
+        return Container(
           key: _tileKey,
-          duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: isReadOnly ? Colors.transparent : ( isNo ? failLight : isYes ? passLight.withValues(alpha: 0.6) :  Colors.transparent),
+            color: surface,
             border: widget.isLast
                 ? null
-                : Border(
+                : const Border(
               bottom: BorderSide(color: border),
             ),
           ),
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Container(
-                  //   margin: const EdgeInsets.only(top: 1, right: 10),
-                  //   width: 26,
-                  //   height: 22,
-                  //   decoration: BoxDecoration(
-                  //     color: widget.accentColor.withValues(alpha: 0.1),
-                  //     borderRadius: BorderRadius.circular(6),
-                  //   ),
-                  //   child: Center(
-                  //     child: Text(
-                  //       'Q${widget.questionIndex + 1}',
-                  //       style: TextStyle(
-                  //         color: widget.accentColor,
-                  //         fontSize: 9,
-                  //         fontWeight: FontWeight.w800,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: List.generate(
-                        question.carData.items?.length ?? 0,
-                            (index) {
-                          final item = question.carData.items![index];
-
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2),
-                                  child: CustomImage(image: checkCircleImage,scale: 38, color: widget.accentColor,)
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    item.itemText ?? '',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: textPrimary,
-                                      height: 1.4,
-                                      fontFamily: "SemiBold"
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  // Expanded(
-                  //   child: Text(
-                  //     question.carData.questionText ?? '',
-                  //     style: TextStyle(
-                  //       fontSize: 13.5,
-                  //       color: Colors.grey.shade700,
-                  //       height: 1.4,
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              // isReadOnly ?
-              // _buildAnswerDisplay(question.answer) :
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (isReadOnly)
-                    Row(
-                      children: [
-                        const Text(
-                          'AI result',
-                          style: TextStyle(
-                            fontSize: 12.5,
-                            fontFamily: "SemiBold",
-                            color: textSecondary,
+              // ── Question text ──
+              ...List.generate(items.length, (index) {
+                final item = items[index];
+                return Padding(
+                  padding: EdgeInsets.only(
+                      bottom: index == items.length - 1 ? 0 : AppSpacing.sm),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (items.length > 1) ...[
+                        Container(
+                          margin: const EdgeInsets.only(top: 8),
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: borderDark,
+                            shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        isYes
-                            ? const StatusBadge.pass()
-                            : isNo
-                                ? const StatusBadge.fail()
-                                : const StatusBadge.pending(),
+                        const SizedBox(width: AppSpacing.sm),
                       ],
-                    )
-                  else
-                  Row(
-                    children: [
-                      AnswerButton(
-                        label: 'Yes',
-                        icon: Icons.check_rounded,
-                        selected: isYes,
-                        selectedColor: pass,
-                        onTap: isReadOnly ? null :
-                      () {
-                          provider.answerQuestion(
-                            sectionIndex: origSec,
-                            categoryIndex: origCat,
-                            questionIndex: origQue,
-                            answer: AnswerState.Pass,
-                          );
-                          // Auto-scroll to next unanswered question
-                          _scrollToNext(provider, origSec, origCat, origQue);
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      AnswerButton(
-                        label: 'No',
-                        icon: Icons.close_rounded,
-                        selected: isNo,
-                        selectedColor: fail,
-                        onTap: isReadOnly ? null :
-                            () {
-                          provider.answerQuestion(
-                            sectionIndex: origSec,
-                            categoryIndex: origCat,
-                            questionIndex: origQue,
-                            answer: AnswerState.Fail,
-                          );
-                          // No auto-scroll on Fail — user must fill remark/image
-                        },
+                      Expanded(
+                        child: Text(
+                          item.itemText ?? '',
+                          style: AppText.title.copyWith(fontSize: 14.5),
+                        ),
                       ),
                     ],
                   ),
-                  aiDetailsProvider.isAIModeOn ?
-                  OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(0, 38),
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      side: const BorderSide(color: appColor),
-                      textStyle: const TextStyle(fontSize: 13, fontFamily: "SemiBold"),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                );
+              }),
+              const SizedBox(height: AppSpacing.md),
+
+              // ── Answer selector ──
+              Row(
+                children: [
+                  Expanded(
+                    child: AnswerButton(
+                      label: 'Yes',
+                      icon: Icons.check_rounded,
+                      selected: isYes,
+                      selectedColor: isReadOnly ? na : pass,
+                      selectedBackground: isReadOnly ? naLight : passLight,
+                      onTap: isReadOnly ? null :
+                          () {
+                        provider.answerQuestion(
+                          sectionIndex: origSec,
+                          categoryIndex: origCat,
+                          questionIndex: origQue,
+                          answer: AnswerState.Pass,
+                        );
+                        // Auto-scroll to next unanswered question
+                        _scrollToNext(provider, origSec, origCat, origQue);
+                      },
                     ),
-                    icon: const Icon(Icons.edit_outlined, size: 16),
-                    label: const Text("Change Status"),
-                    onPressed: (){
-                      aiDetailsProvider.setSelectedQueId(int.parse(question.carData.questionId.toString()));
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (_) => ChangeStatusSheet(
-                          isPass: isYes,
-                          onSubmit: (v) => setState(() => isYes = v),
-                        ),
-                      );
-                    },
-                  )
-                      : SizedBox.shrink()
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: AnswerButton(
+                      label: 'No',
+                      icon: Icons.close_rounded,
+                      selected: isNo,
+                      selectedColor: isReadOnly ? na : fail,
+                      selectedBackground: isReadOnly ? naLight : failLight,
+                      onTap: isReadOnly ? null :
+                          () {
+                        provider.answerQuestion(
+                          sectionIndex: origSec,
+                          categoryIndex: origCat,
+                          questionIndex: origQue,
+                          answer: AnswerState.Fail,
+                        );
+                        // No auto-scroll on Fail — user must fill remark/image
+                      },
+                    ),
+                  ),
                 ],
               ),
+
+              if (aiDetailsProvider.isAIModeOn) ...[
+                const SizedBox(height: AppSpacing.sm),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    aiDetailsProvider.setSelectedQueId(int.parse(question.carData.questionId.toString()));
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => ChangeStatusSheet(
+                        isPass: isYes,
+                        onSubmit: (v) => setState(() => isYes = v),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.swap_horiz_rounded, size: 20),
+                  label: const Text("Change Status"),
+                ),
+              ],
+
+              // ── Evidence + remark (Fail only, manual mode) ──
               AnimatedCrossFade(
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 250),
                 crossFadeState:
                // isNo || isYes ? CrossFadeState.showSecond : CrossFadeState.showFirst,
                 (!aiDetailsProvider.isAIModeOn && isNo) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-                firstChild: const SizedBox.shrink(),
+                firstChild: const SizedBox(width: double.infinity),
                 secondChild: Padding(
-                  padding: const EdgeInsets.only(top: 12),
+                  padding: const EdgeInsets.only(top: AppSpacing.md),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      const Text('EVIDENCE', style: AppText.overline),
+                      const SizedBox(height: AppSpacing.sm),
                           () {
                         final hasLocalImage = question.imagePath != null;
                         final hasExistingUrl = question.existingEvidenceUrl != null &&
@@ -357,8 +299,10 @@ class _QuestionTileState extends State<QuestionTile> {
                           );
                         } else {
                           return ImagePickerPrompt(
-                            boxColor: surface,
-                            borderColor: isNo ? fail.withValues(alpha: 0.45) : pass.withValues(alpha: 0.45),
+                            boxColor: isNo ? failLight : passLight,
+                            borderColor: isNo
+                                ? fail.withValues(alpha: 0.35)
+                                : pass.withValues(alpha: 0.35),
                             iconColor: isNo ? fail : pass,
                             titleColor: isNo ? fail : pass,
                             subtitleColor: textSecondary,
@@ -373,13 +317,18 @@ class _QuestionTileState extends State<QuestionTile> {
                           );
                         }
                       }(),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.md),
+                      const Text('REMARK', style: AppText.overline),
+                      const SizedBox(height: AppSpacing.sm),
                       CustomTextField(
                         cursorColor: appColor,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 14),
                         fillColor: surface,
-                        hint: "Add a remark (optional)",
+                        hint: "Add a remark",
                         controller: controller,
+                        minLines: 1,
+                        maxLines: 4,
                         onChanged: (value) {
                           provider.setQuestionRemark(
                             sectionIndex: origSec,
@@ -388,9 +337,9 @@ class _QuestionTileState extends State<QuestionTile> {
                             remark: value,
                           );
                         },
-                        hintStyle: TextStyle(
+                        hintStyle: const TextStyle(
                           color: textMuted,
-                          fontSize: 13,
+                          fontSize: 14,
                         ),
                         readOnly: false,
                         textCapitalization: TextCapitalization.sentences,

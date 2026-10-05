@@ -2,7 +2,10 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../utilities/app_theme.dart';
 import '../utilities/color_data.dart';
+import '../utilities/new_app_theme/app_radius.dart';
+import '../utilities/new_app_theme/app_spacing.dart';
 
 class CustomLoader {
   static showToast(
@@ -12,198 +15,130 @@ class CustomLoader {
     EasyLoading.showToast(message!, toastPosition: position);
   }
 
+
   static showLoader(String message) {
-    EasyLoading.show(
-      status: message,
-      dismissOnTap: false,
-      maskType: EasyLoadingMaskType.black,
-    );
+    EasyLoading.show(status: message, dismissOnTap: false);
   }
 
   static closeLoader() {
     EasyLoading.dismiss();
   }
 
+
   static message(String msg) {
-    Fluttertoast.showToast(
-      msg: msg,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: appColor,
-      textColor: whiteColor,
-      fontSize: 16.0,
-    );
-    Future.delayed(Duration(milliseconds: 750), () {
-      Fluttertoast.cancel();
-    });
+    _toast(msg, background: appColor);
   }
 
   static errorMessage(String msg) {
+    _toast(msg, background: fail);
+  }
+
+  static void _toast(String msg, {required Color background}) {
     Fluttertoast.showToast(
       msg: msg,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: redColor,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 2,
+      backgroundColor: background,
       textColor: whiteColor,
       fontSize: 14.0,
     );
-    Future.delayed(Duration(milliseconds: 1000), () {
-      Fluttertoast.cancel();
-    });
   }
 
   static internetMessage({required String msg, required BuildContext context}) {
     context.showCustomSnackBar(
       message: "No Internet",
-      backgroundColor: redColor,
+      backgroundColor: fail,
     );
   }
 
   static Widget loader() {
-    return const Center(child: CircularProgressIndicator(color: appColor));
+    return const Center(
+      child: SizedBox(
+        width: 32,
+        height: 32,
+        child: CircularProgressIndicator(color: appColor, strokeWidth: 3),
+      ),
+    );
   }
 
   static showSuccessSnackBar(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Container(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Icon(
-                  Icons.check_circle_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Success!',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      'IP address saved successfully',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        backgroundColor: const Color(0xFF10B981),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        elevation: 6,
-        duration: const Duration(seconds: 3),
-      ),
+    _showSnackBar(
+      context,
+      icon: Icons.check_circle_rounded,
+      color: pass,
+      title: 'Success!',
+      message: 'IP address saved successfully',
     );
   }
 
   static showErrorSnackBar(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Container(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Icon(
-                  Icons.error_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Error!',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      'Failed to save IP address',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        backgroundColor: const Color(0xFFEF4444),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-        elevation: 6,
-        duration: const Duration(seconds: 3),
-      ),
+    _showSnackBar(
+      context,
+      icon: Icons.error_rounded,
+      color: fail,
+      title: 'Error!',
+      message: 'Failed to save IP address',
     );
   }
 
   static showCustomErrorSnackBar(String message, BuildContext context) {
-    final snackBar = SnackBar(
-      content: Row(
-        children: [
-          Icon(
-            Icons.error_outline,
-            color: Colors.white,
-            size: 24.0,
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              message,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-              overflow: TextOverflow.visible,
-            ),
-          ),
-        ],
-      ),
-      backgroundColor: Colors.red,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
-      margin: EdgeInsets.only(top: 50, left: 10, right: 10),
-      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-      duration: Duration(seconds: 4),
+    _showSnackBar(
+      context,
+      icon: Icons.error_outline_rounded,
+      color: fail,
+      message: message,
+      duration: const Duration(seconds: 4),
     );
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  static void _showSnackBar(
+    BuildContext context, {
+    required IconData icon,
+    required Color color,
+    required String message,
+    String? title,
+    Duration duration = const Duration(seconds: 3),
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(icon, color: whiteColor, size: 22),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (title != null) ...[
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontFamily: "Bold",
+                        fontSize: 14,
+                        color: whiteColor,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                  ],
+                  Text(
+                    message,
+                    style: const TextStyle(fontSize: 13, color: whiteColor, height: 1.35),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: color,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+        margin: const EdgeInsets.all(AppSpacing.lg),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 14),
+        elevation: 2,
+        duration: duration,
+      ),
+    );
   }
 }

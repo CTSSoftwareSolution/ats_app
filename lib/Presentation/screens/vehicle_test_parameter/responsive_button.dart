@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../widgets/app_ui.dart';
+import '../../../widgets/new_app_ui/primary_button.dart';
 
+/// Primary step action of the vehicle test parameter flow. Place it inside a
+/// [BottomActionBar] so it stays pinned to the bottom of the screen.
 class ResponsiveButton extends StatelessWidget {
   final double width;
   final String buttonText;
@@ -12,11 +15,7 @@ class ResponsiveButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      child: PrimaryButton(
-        label: buttonText,
-        onPressed: onPress,
-        icon: buttonText == "Submit" ? Icons.cloud_upload_outlined : Icons.arrow_forward_rounded,
-      ),
+      child: PrimaryButton(label: buttonText, onPressed: onPress),
     );
   }
 }

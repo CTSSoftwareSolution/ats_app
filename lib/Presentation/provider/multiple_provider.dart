@@ -1,6 +1,12 @@
+import 'package:ats_app/Core/network/api_services.dart';
+import 'package:ats_app/Data/datasource/create_queue_remote_datasource.dart';
 import 'package:ats_app/Data/repositories_impl/ai_inspection_details_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/ai_update_result_repo_impl.dart';
+import 'package:ats_app/Data/repositories_impl/ai_result_repo_impl.dart';
+import 'package:ats_app/Domain/usecases/ai_result_usecases.dart';
+import 'package:ats_app/Presentation/provider/ai_result_provider.dart';
 import 'package:ats_app/Data/repositories_impl/create_bulk_repo_impl.dart';
+import 'package:ats_app/Data/repositories_impl/create_queue_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/lane_list_impl.dart';
 import 'package:ats_app/Data/repositories_impl/login_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/manual_inspection_list_impl.dart';
@@ -19,6 +25,7 @@ import 'package:ats_app/Domain/usecases/pre_save_inspection_usecase.dart';
 import 'package:ats_app/Domain/usecases/vehicle_parts_usecases.dart';
 import 'package:ats_app/Presentation/provider/ai_update_result_provider.dart';
 import 'package:ats_app/Presentation/provider/create_bulk_provider.dart';
+import 'package:ats_app/Presentation/provider/create_queue_provider.dart';
 import 'package:ats_app/Presentation/provider/inspection_form_provider.dart';
 import 'package:ats_app/Presentation/provider/inspection_result_provider.dart';
 import 'package:ats_app/Presentation/provider/login_provider.dart';
@@ -88,6 +95,8 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AiSaveInspectionProvider( useCase : AISaveInspectionUseCase( repository: AiSaveInspectionRepoImpl()))),
         ChangeNotifierProvider(create: (_) => AppProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => CreateQueueProvider(repository: CreateQueueRepositoryImpl(remoteDataSource: CreateQueueRemoteDataSourceImpl(apiService: ApiService())))),
+        ChangeNotifierProvider(create: (_) => AiResultProvider(aiResultUseCases: AiResultUseCases(resultRepository: AiResultRepoImpl()))),
 
       ],
       child: const MyApp(),

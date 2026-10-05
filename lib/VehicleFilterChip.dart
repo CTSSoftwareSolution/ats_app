@@ -1,5 +1,9 @@
+
+
+import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/new_app_theme/app_radius.dart';
 import 'package:flutter/material.dart';
-import '../../../utilities/color_data.dart';
+
 
 class VehicleFilterChip extends StatelessWidget {
   final String label;
@@ -15,34 +19,43 @@ class VehicleFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: isSelected ? appColor : surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100),
-        side: BorderSide(color: isSelected ? appColor : border),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const StadiumBorder(),
-        child: AnimatedPadding(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (isSelected) ...[
-                const Icon(Icons.check_rounded, size: 15, color: whiteColor),
-                const SizedBox(width: 4),
-              ],
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontFamily: "SemiBold",
-                  color: isSelected ? whiteColor : textSecondary,
+    final radius = BorderRadius.circular(AppRadius.md);
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      child: Material(
+        color: isSelected ? appColor : surface,
+        animationDuration: const Duration(milliseconds: 200),
+        shape: RoundedRectangleBorder(
+          borderRadius: radius,
+          side: BorderSide(color: isSelected ? appColor : border),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isSelected) ...[
+                  const Icon(Icons.check_rounded, size: 16, color: Colors.white),
+                  const SizedBox(width: 6),
+                ],
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: "SemiBold",
+                    fontSize: 13,
+                    color: isSelected ? Colors.white : textPrimary,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

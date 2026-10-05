@@ -10,13 +10,23 @@ import 'package:ats_app/utilities/preferences.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../EmptyStateWidget.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
+import '../../../utilities/app_theme.dart';
+import '../../../utilities/color_data.dart';
+import '../../../utilities/custom_stepper.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/app_ui.dart';
 import '../../../widgets/custom_loader.dart';
+import '../../../widgets/new_app_ui/app_state_view.dart';
+import '../../../widgets/new_app_ui/bottom_action_bar.dart';
+import '../../../widgets/new_app_ui/status_badge.dart';
 import '../../provider/ai_inspection_details_provider.dart';
+import '../../provider/ai_result_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../../provider/vehicle_parts_provider.dart';
+import '../inspection_result/inspection_result_screen.dart';
+import '../ai_result/ai_result_screen.dart';
 
 class VehiclePartsResponsiveLayout extends StatefulWidget {
   const VehiclePartsResponsiveLayout({super.key});
@@ -29,26 +39,6 @@ class VehiclePartsResponsiveLayout extends StatefulWidget {
 class _VehiclePartsResponsiveLayoutState
     extends State<VehiclePartsResponsiveLayout> {
   int allIndex = 0;
-
-  /// Number of test items whose required image/video has been captured.
-  int _capturedCount(VehiclePartsProvider partsProvider, FileProvider fileProvider) {
-    final data = partsProvider.vehiclePartsEntity?.data ?? [];
-    int count = 0;
-    for (int i = 0; i < data.length; i++) {
-      final media = fileProvider.getMedia(i);
-      final hasImage = media?.image != null;
-      final hasVideo = media?.video != null;
-      final type = data[i].type;
-      final done = type == 1
-          ? hasImage
-          : type == 2
-              ? hasVideo
-              : hasImage && hasVideo;
-      if (done) count++;
-    }
-    return count;
-  }
-
   @override
   Widget build(BuildContext context) {
     final partsProvider = context.watch<VehiclePartsProvider>();
@@ -58,86 +48,145 @@ class _VehiclePartsResponsiveLayoutState
       return Center(child: CustomLoader.loader());
     }
     if (partsProvider.vehiclePartsEntity!.data!.isEmpty) {
-      return EmptyStateWidget(
-        icon: Icons.fact_check_outlined,
-        title: 'No test parameters',
-        subtitle: partsProvider.vehiclePartsEntity!.message.toString(),
+      return Center(
+        child: AppStateView(
+          icon: Icons.inventory_2_outlined,
+          title: "No parts to capture",
+          message: partsProvider.vehiclePartsEntity!.message.toString(),
+        ),
       );
     }
 
-    final totalItems = partsProvider.vehiclePartsEntity!.data!.length;
-    final isLastPage = partsProvider.currentPage == partsProvider.totalPages - 1;
-    final firstItem = partsProvider.currentPage * partsProvider.itemsPerPage + 1;
-    final lastItem = firstItem + partsProvider.currentPageData.length - 1;
+    final allParts = partsProvider.vehiclePartsEntity!.data!;
+    int capturedCount = 0;
+    for (int i = 0; i < allParts.length; i++) {
+      if (VehiclePartsResponsiveItem.isCaptured(allParts[i], fileProvider.getMedia(i))) {
+        capturedCount++;
+      }
+    }
+    final allDone = capturedCount >= allParts.length;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        CaptureProgressHeader(
-          title: "Step ${partsProvider.currentPage + 1} of ${partsProvider.totalPages}",
-          subtitle: "Items $firstItem–$lastItem of $totalItems  •  "
-              "${_capturedCount(partsProvider, fileProvider)} captured",
-          done: partsProvider.currentPage + 1,
-          total: partsProvider.totalPages,
-          trailingLabel: "${partsProvider.currentPage + 1}/${partsProvider.totalPages}",
+        // Step indicator + overall capture progress
+        Container(
+          decoration: const BoxDecoration(
+            color: surface,
+            border: Border(bottom: BorderSide(color: border)),
+          ),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.page,
+            AppSpacing.md,
+            AppSpacing.page,
+            AppSpacing.lg,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Step ${partsProvider.currentStep + 1} of ${partsProvider.totalPages}",
+                      style: AppText.sectionTitle,
+                    ),
+                  ),
+                  allDone
+                      ? StatusBadge.pass(label: "$capturedCount/${allParts.length} captured", dense: true)
+                      : StatusBadge(
+                          label: "$capturedCount/${allParts.length} captured",
+                          color: appColor,
+                          background: accentLight,
+                          dense: true,
+                        ),
+                ],
+              ),
+              const SizedBox(height: 2),
+              const Text(
+                "Capture the required media for each part below",
+                style: AppText.bodySecondary,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              CustomStepper(
+                currentStep: partsProvider.currentStep,
+                totalStep: partsProvider.totalPages,
+                width: double.infinity,
+              ),
+            ],
+          ),
         ),
-        const Divider(),
         Expanded(
           child: ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                  itemCount:
-                      partsProvider.currentPageData.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 14),
-                  itemBuilder: (context, index) {
-                    final item =
-                        partsProvider.currentPageData[index];
-                    allIndex =
-                        partsProvider.currentPage *
-                            partsProvider.itemsPerPage +
-                        index;
-                    return VehiclePartsResponsiveItem(
-                      item: item,
-                      allIndex: allIndex,
-                      isTablet: false,
-                    );
-                  },
-                ),
+            padding: const EdgeInsets.all(AppSpacing.page),
+            itemCount: partsProvider.currentPageData.length,
+            separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+            itemBuilder: (context, index) {
+              final item = partsProvider.currentPageData[index];
+              allIndex =
+                  partsProvider.currentPage *
+                      partsProvider.itemsPerPage +
+                  index;
+              return VehiclePartsResponsiveItem(
+                item: item,
+                allIndex: allIndex,
+                isTablet: false,
+              );
+            },
+          ),
         ),
         BottomActionBar(
           child: ResponsiveButton(
-                width: double.infinity,
-                buttonText: isLastPage ? "Submit" : "Next",
-                onPress: () {
-                  final error = partsProvider.validateMedia(
-                    context: context,
+            width: double.infinity,
+            buttonText:
+                partsProvider.currentPage ==
+                    partsProvider.totalPages - 1
+                ? "View Result"
+                : "Next",
+            onPress: () async {
+              final error = partsProvider.validateMedia(
+                context: context,
+              );
+
+              if (error != null) {
+                CustomLoader.message(error);
+              } else {
+                context.read<VehiclePartsProvider>().nextStepper(
+                  partsProvider.totalPages,
+                );
+
+                if (partsProvider.currentPage <
+                    partsProvider.totalPages - 1) {
+                  context.read<VehiclePartsProvider>().nextPage(
+                    partsProvider.totalPages - 1,
                   );
-
-                  if (error != null) {
-                    CustomLoader.message(error);
-                  } else {
-                    context.read<VehiclePartsProvider>().nextStepper(
-                          partsProvider.totalPages,
-                        );
-
-                    if (partsProvider.currentPage <
-                        partsProvider.totalPages - 1) {
-                      context.read<VehiclePartsProvider>()
-                          .nextPage(
-                            partsProvider.totalPages - 1,
-                          );
-                    } else {
-                      aiMediaUpload(context: context);
-                    }
+                } else {
+                   //aiMediaUpload(context: context);
+                  //  context.push(InspectionPage());
+                  //  context.read<VehiclePartsProvider>().resetStepper();
+                  CustomLoader.showLoader("Loading result...");
+                  final result = await context
+                      .read<AiResultProvider>()
+                      .aiResultDetails(context);
+                  if (!context.mounted) return;
+                  if (result == null || result.success == false) {
+                    CustomLoader.errorMessage(
+                      (result?.message?.trim().isNotEmpty ?? false)
+                          ? result!.message!.trim()
+                          : "Unable to load result. Please try again.",
+                    );
+                    return;
                   }
-                },
-              ),
+                  context.push(const AiResultScreen());
+                }
+              }
+            },
+          ),
         ),
       ],
     );
-
-
-
   }
+
 
   static Future<void> aiMediaUpload({required BuildContext context}) async {
     final createController = Provider.of<CreateBulkProvider>(

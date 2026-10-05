@@ -1,9 +1,11 @@
 import 'package:ats_app/app_config/app_config.dart';
+import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
-import 'package:ats_app/utilities/extension.dart';
 import 'package:ats_app/utilities/validators.dart';
-import 'package:ats_app/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
+import '../utilities/new_app_theme/app_radius.dart';
+import '../utilities/new_app_theme/app_spacing.dart';
+import '../utilities/new_app_theme/app_text.dart';
 import 'build_server_page.dart';
 
 
@@ -59,135 +61,81 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
     return AnimatedBuilder(
       animation: animationController,
-      builder: (context,child) {
+      builder: (context, child) {
         return FadeTransition(
           opacity: fadeAnimation,
           child: SlideTransition(
             position: slideAnimation,
             child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.blue[50]!,
-                    Colors.white,
-                    Colors.white,
-                  ],
+              constraints: BoxConstraints(maxHeight: media.size.height * 0.9),
+              decoration: const BoxDecoration(
+                color: surface,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(AppRadius.xl),
                 ),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(28),
-                  topRight: Radius.circular(28),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha:0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, -5),
-                  ),
-                ],
               ),
               child: Padding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom +
-                      MediaQuery.of(context).padding.bottom
+                  bottom: media.viewInsets.bottom + media.padding.bottom,
                 ),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      const SizedBox(height: 10),
                       Container(
-                        margin: const EdgeInsets.only(top: 12),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 4,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    appColor.withValues(alpha:0.55),
-                                    appColor.withValues(alpha:0.65),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Container(
-                              width: 28,
-                              height: 3,
-                              decoration: BoxDecoration(
-                                color: appColor.withValues(alpha:0.45),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          ],
+                        width: 36,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: border,
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                         child: Form(
                           key: formKey,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      appColor.withValues(alpha:0.85),
-                                      appColor.withValues(alpha:0.95),
-                                      appColor,
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.blue.withValues(alpha:0.3),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 4),
-                                      spreadRadius: 1,
-                                    )
-                                  ]
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: cardBackgroundColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                          color: cardBackgroundColor,
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                      child: Icon(Icons.router_rounded,color: Colors.white,size: 24,),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: accentLight,
+                                      borderRadius: BorderRadius.circular(AppRadius.md),
                                     ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                    child: const Icon(
+                                      Icons.router_rounded,
+                                      color: appColor,
+                                      size: 22,
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppSpacing.md),
+                                  const Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        CustomText(
-                                          text: "Server Configuration",
-                                          fontSize: 18.0,
-                                          fontFamily: "Bold",
-                                          textColor: whiteColor,
+                                        Text(
+                                          "Server Configuration",
+                                          style: AppText.sectionTitle,
                                         ),
                                         SizedBox(height: 2),
-                                        CustomText(text: "Configure your server IP address",
-                                        fontSize: 12, textColor: whiteColor,fontFamily: "Medium",)
+                                        Text(
+                                          "Configure your server IP address",
+                                          style: AppText.bodySecondary,
+                                        ),
                                       ],
-                                    ))
-                                  ],
-                                ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: AppSpacing.xl),
                               buildServerField(
                                 title: "Main Server IPv4 Address",
                                 controller: mainIPController,
@@ -200,10 +148,11 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                   },
                                 suffixIcon: mainIPController.text.isNotEmpty
                                     ? IconButton(
-                                  icon: Icon(
+                                  tooltip: "Clear",
+                                  icon: const Icon(
                                     Icons.cancel_rounded,
                                     size: 20,
-                                    color: Colors.grey[400],
+                                    color: textMuted,
                                   ),
                                   onPressed: () {
                                     setState(() {
@@ -211,33 +160,49 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                     });
                                   },
                                 )
-                                    : Icon(
+                                    : const Icon(
                                   Icons.lan_rounded,
                                   size: 20,
-                                  color: Colors.grey[300],
+                                  color: textMuted,
                                 ),
                               ),
 
-                              SwitchListTile(
-                                activeThumbColor: appColor,
-                                title: const Text("Enable Backup Server"),
-                                value: enableBackup,
-                                onChanged: (val) {
-                                  setState(() => enableBackup = val);
-                                },
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: bg,
+                                  borderRadius: BorderRadius.circular(AppRadius.md),
+                                  border: Border.all(color: border),
+                                ),
+                                child: SwitchListTile(
+                                  activeThumbColor: appColor,
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(AppRadius.md),
+                                  ),
+                                  title: const Text(
+                                    "Enable Backup Server",
+                                    style: AppText.title,
+                                  ),
+                                  value: enableBackup,
+                                  onChanged: (val) {
+                                    setState(() => enableBackup = val);
+                                  },
+                                ),
                               ),
 
-                              if (enableBackup)
+                              if (enableBackup) ...[
+                                const SizedBox(height: AppSpacing.lg),
                                 buildServerField(
                                   title: "Secondary Server IPv4 Address",
                                   controller: secondaryIPController,
                                   validator: (value) => Validators.validateIpAddress(value!),
                                   suffixIcon: secondaryIPController.text.isNotEmpty
                                       ? IconButton(
-                                    icon: Icon(
+                                    tooltip: "Clear",
+                                    icon: const Icon(
                                       Icons.cancel_rounded,
                                       size: 20,
-                                      color: Colors.grey[400],
+                                      color: textMuted,
                                     ),
                                     onPressed: () {
                                       setState(() {
@@ -245,169 +210,90 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                                       });
                                     },
                                   )
-                                      : Icon(
+                                      : const Icon(
                                     Icons.lan_rounded,
                                     size: 20,
-                                    color: Colors.grey[300],
+                                    color: textMuted,
                                   ),
                                 ),
+                              ],
 
-                              const SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            appColor.withValues(alpha:0.85),
-                                            appColor.withValues(alpha:0.95),
-                                            appColor,
-                                          ],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: appColor.withValues(alpha:0.4),
-                                            blurRadius: 12,
-                                            offset: const Offset(0, 4),
-                                            spreadRadius: 0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: ElevatedButton(
-                                        onPressed:
-                                            () async {
-                                          mainIPController.text=defaultBaseUrl;
-                                          if (enableBackup) {
-                                            secondaryIPController.clear();
-                                          }
-                                          appConfig.updateBaseUrl(context: context, newUrl: defaultBaseUrl);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.transparent,
-                                          shadowColor: Colors.transparent,
-                                          foregroundColor:whiteColor,
-                                          padding: const EdgeInsets.symmetric(vertical: 12),
-                                          elevation: 0,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'Reset',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 0.3,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  20.width,
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            appColor.withValues(alpha:0.85),
-                                            appColor.withValues(alpha:0.95),
-                                            appColor,
-                                          ],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: appColor.withValues(alpha:0.4),
-                                            blurRadius: 12,
-                                            offset: const Offset(0, 4),
-                                            spreadRadius: 0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: ElevatedButton(
-                                        onPressed: () async {
-                                          if (formKey.currentState!.validate()) {
-
-                                            String newUrl = mainIPController.text.isNotEmpty
-                                                ? mainIPController.text
-                                                : (enableBackup && secondaryIPController.text.isNotEmpty
-                                                ? secondaryIPController.text
-                                                : defaultBaseUrl);
-
-                                            await appConfig.updateBaseUrl(
-                                              context: context,
-                                              newUrl: newUrl,
-                                            );
-                                          }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.transparent,
-                                          shadowColor: Colors.transparent,
-                                          foregroundColor: whiteColor,
-                                          padding: const EdgeInsets.symmetric(vertical: 12),
-                                          elevation: 0,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                        ),
-                                        child: const Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(Icons.save_rounded, size: 18),
-                                            SizedBox(width: 8),
-                                            Text(
-                                              'Save Address',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w700,
-                                                letterSpacing: 0.3,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: AppSpacing.lg),
                               Container(
-                                padding: const EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(AppSpacing.md),
                                 decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      cardBackgroundColor,
-                                      appColor.withValues(alpha:0.08),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: appColor.withValues(alpha:0.3),
-                                    width: 1,
-                                  ),
+                                  color: accentLight,
+                                  borderRadius: BorderRadius.circular(AppRadius.md),
                                 ),
-                                child: Row(
+                                child: const Row(
                                   children: [
                                     Icon(
                                       Icons.info_outline_rounded,
                                       color: appColor,
                                       size: 18,
                                     ),
-                                    const SizedBox(width: 10),
+                                    SizedBox(width: 10),
                                     Expanded(
-                                      child: CustomText(text: "Changes will take effect immediately for all API requests",
-                                      fontSize: 11.0, textColor: Colors.blue[900],fontFamily: "Medium",),
-                                    )
+                                      child: Text(
+                                        "Changes will take effect immediately for all API requests",
+                                        style: TextStyle(
+                                          fontFamily: "Medium",
+                                          fontSize: 12.5,
+                                          color: appColor,
+                                          height: 1.35,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: AppSpacing.xl),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      onPressed:
+                                          () async {
+                                        mainIPController.text=defaultBaseUrl;
+                                        if (enableBackup) {
+                                          secondaryIPController.clear();
+                                        }
+                                        appConfig.updateBaseUrl(context: context, newUrl: defaultBaseUrl);
+                                      },
+                                      style: OutlinedButton.styleFrom(
+                                        minimumSize: const Size.fromHeight(AppSpacing.buttonHeight),
+                                      ),
+                                      child: const Text('Reset'),
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppSpacing.md),
+                                  Expanded(
+                                    flex: 2,
+                                    child: FilledButton.icon(
+                                      onPressed: () async {
+                                        if (formKey.currentState!.validate()) {
 
+                                          String newUrl = mainIPController.text.isNotEmpty
+                                              ? mainIPController.text
+                                              : (enableBackup && secondaryIPController.text.isNotEmpty
+                                              ? secondaryIPController.text
+                                              : defaultBaseUrl);
+
+                                          await appConfig.updateBaseUrl(
+                                            context: context,
+                                            newUrl: newUrl,
+                                          );
+                                        }
+                                      },
+                                      style: FilledButton.styleFrom(
+                                        minimumSize: const Size.fromHeight(AppSpacing.buttonHeight),
+                                      ),
+                                      icon: const Icon(Icons.save_rounded, size: 20),
+                                      label: const Text('Save Address'),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),

@@ -3,20 +3,37 @@ import 'dart:io';
 
 import 'package:ats_app/Core/network/services.dart';
 import 'package:ats_app/utilities/preferences.dart';
-import 'package:ats_app/widgets/custom_loader.dart';
-import 'package:extensions_pro/extensions_pro.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_alice/model/alice_form_data_file.dart';
+import 'package:flutter_alice/model/alice_from_data_field.dart';
+import 'package:flutter_alice/model/alice_http_call.dart';
+import 'package:flutter_alice/model/alice_http_error.dart';
+import 'package:flutter_alice/model/alice_http_request.dart';
+import 'package:flutter_alice/model/alice_http_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:provider/provider.dart';
 
 import '../../Data/model/request_model/create_bulk_req_model.dart';
 import '../../Data/model/response_model/inspection_pre_save_req_model.dart';
+import '../../Presentation/provider/create_queue_provider.dart';
 import '../../Presentation/screens/login_page/login_screen.dart';
 import '../../Presentation/screens/manual_inspection_images/document_manual_doc_models.dart';
 
 class ApiService {
+  /// On session expiry (401), drop stored queue image paths so they don't
+  /// carry over to the next login.
+  static Future<void> _clearUploadedQueueImages() async {
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+    try {
+      await context.read<CreateQueueProvider>().clearUploadedImages();
+    } catch (e) {
+      debugPrint('[MEDIA] Failed to clear stored image paths on 401: $e');
+    }
+  }
+
   // static Future<Map<String, dynamic>> post(dynamic body, String apiUrl) async {
   //   final response = await http.post(Uri.parse(apiUrl),
   //       headers: authHeader, body: jsonEncode(body));
@@ -54,6 +71,7 @@ class ApiService {
       }
 
       await Preferences.clear();
+      await _clearUploadedQueueImages();
 
       navigatorKey.currentState?.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),
@@ -111,6 +129,7 @@ class ApiService {
     if (response.statusCode == 401) {
 
       await Preferences.clear();
+      await _clearUploadedQueueImages();
 
       navigatorKey.currentState?.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),
@@ -165,6 +184,7 @@ class ApiService {
     }
     if (response.statusCode == 401) {
       await Preferences.clear();
+      await _clearUploadedQueueImages();
       navigatorKey.currentState?.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),
             (route) => false,
@@ -221,6 +241,7 @@ class ApiService {
     if (response.statusCode == 401) {
 
       await Preferences.clear();
+      await _clearUploadedQueueImages();
 
       navigatorKey.currentState?.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),
@@ -341,6 +362,7 @@ class ApiService {
     if (response.statusCode == 401) {
 
       await Preferences.clear();
+      await _clearUploadedQueueImages();
 
       navigatorKey.currentState?.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => LoginScreen()),
@@ -352,6 +374,118 @@ class ApiService {
 
     final responseBody = await compute(_decodeResponse, response.bodyBytes);
     return responseBody;
+  }
+
+
+  Future<http.Response> postMultipart({
+    required String apiUrl,
+    required Map<String, String> fields,
+    String? imagePath,
+    String? videoPath,
+  }) async {
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse(apiUrl),
+    );
+
+    request.headers.addAll(authHeader);
+    request.fields.addAll(fields);
+
+    if (imagePath != null && imagePath.isNotEmpty) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          imagePath,
+        ),
+      );
+    }
+
+    if (videoPath != null && videoPath.isNotEmpty) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'video',
+          videoPath,
+        ),
+      );
+    }
+
+    final stopwatch = Stopwatch()..start();
+    final http.Response response;
+    try {
+      final streamedResponse = await request.send();
+      response = await http.Response.fromStream(streamedResponse);
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        _logMultipartToAlice(request, stopwatch.elapsedMilliseconds,
+            error: e, stackTrace: stackTrace);
+      }
+      rethrow;
+    }
+
+    if (kDebugMode) {
+      _logMultipartToAlice(request, stopwatch.elapsedMilliseconds,
+          response: response);
+      debugPrint("Create Queue => ${request.method} ${request.url}");
+      debugPrint("Fields: ${request.fields}");
+      debugPrint("Status: ${response.statusCode}");
+      debugPrint("Response: ${response.body}");
+    }
+
+    return response;
+  }
+
+  /// Alice's built-in http adapter drops headers / files for MultipartRequest,
+  /// so build the call manually to see the complete request in the inspector.
+  static void _logMultipartToAlice(
+    http.MultipartRequest request,
+    int durationMs, {
+    http.Response? response,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    final call = AliceHttpCall(request.hashCode)
+      ..client = "HttpClient (http package)"
+      ..method = request.method
+      ..uri = request.url.toString()
+      ..endpoint = request.url.path.isEmpty ? "/" : request.url.path
+      ..server = request.url.host
+      ..secure = request.url.scheme == "https"
+      ..duration = durationMs
+      ..loading = false;
+
+    // Headers are read after send() so they include the multipart boundary.
+    call.request = AliceHttpRequest()
+      ..headers = Map<String, dynamic>.from(request.headers)
+      ..contentType = request.headers[HttpHeaders.contentTypeHeader] ??
+          request.headers['Content-Type']
+      ..body = request.fields
+      ..size = request.contentLength
+      ..queryParameters = request.url.queryParameters
+      ..formDataFields = request.fields.entries
+          .map((e) => AliceFormDataField(e.key, e.value))
+          .toList()
+      ..formDataFiles = request.files
+          .map((f) => AliceFormDataFile(
+                '${f.field}: ${f.filename ?? ''}',
+                f.contentType.toString(),
+                f.length,
+              ))
+          .toList();
+
+    if (response != null) {
+      call.response = AliceHttpResponse()
+        ..status = response.statusCode
+        ..body = response.body
+        ..size = response.bodyBytes.length
+        ..headers = Map<String, String>.from(response.headers);
+    } else {
+      call.response = AliceHttpResponse()..status = -1;
+      call.error = AliceHttpError()
+        ..error = error
+        ..stackTrace = stackTrace;
+    }
+
+    alice.addHttpCall(call);
   }
 
 

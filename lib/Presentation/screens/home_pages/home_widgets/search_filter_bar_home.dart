@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../VehicleFilterChip.dart';
+import '../../../../utilities/app_theme.dart';
 import '../../../../utilities/color_data.dart';
-import '../../../../utilities/image_data.dart';
-import '../../../../widgets/custom_image.dart';
+import '../../../../utilities/new_app_theme/app_radius.dart';
+import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../utilities/new_app_theme/app_text.dart';
 import '../../../../widgets/custom_search_bar.dart';
 import '../../../provider/vehicle_class_provider.dart';
 
@@ -33,7 +35,8 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
     final chipsProvider = context.watch<LaneListProvider>();
     return Container(
       color: bg,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.page, AppSpacing.md, AppSpacing.page, AppSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -42,23 +45,14 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
               controller: widget.provider.searchController,
               suffixIcon: widget.provider.searchValue.isEmpty
                   ? null
-                  : IconButton(
-                icon: Container(
-                  height: 18.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(40.0)),
-                    color: greyLightColor,
-                  ),
-                  child: CustomImage(image: closeIcon, scale: 3.5),
-                ),
+                  : SearchClearButton(
                 onPressed: () {
                   widget.provider.searchController.clear();
                   widget.provider.vehicleClassApi(context: context, loadMore: false);
                 },
-                color: blackColor,
               )
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
           _FilterRow(
             vehicleProvider: widget.provider,
             chipsProvider: chipsProvider,
@@ -84,16 +78,8 @@ class _FilterRow extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'FILTER BY CATEGORY',
-          style: TextStyle(
-            fontSize: 11.5,
-            fontFamily: "Bold",
-            color: textMuted,
-            letterSpacing: 0.8,
-          ),
-        ),
-        const SizedBox(height: 8),
+        const Text('CATEGORY', style: AppText.overline),
+        const SizedBox(height: AppSpacing.sm),
         chipsProvider.isLoading ? const ChipShimmer() : SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
@@ -101,7 +87,7 @@ class _FilterRow extends StatelessWidget {
             children: chipsProvider.laneMap.keys.map((laneName) {
               final laneCode = chipsProvider.laneMap[laneName];
               return Padding(
-                padding: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.only(right: AppSpacing.sm),
                 child: VehicleFilterChip(
                   label: laneName,
                   isSelected:
@@ -125,25 +111,26 @@ class ChipShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 36,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: 6,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          return Shimmer.fromColors(
-            baseColor: Colors.grey.shade300,
-            highlightColor: Colors.grey.shade100,
-            child: Container(
+      height: 40,
+      child: Shimmer.fromColors(
+        baseColor: surface2,
+        highlightColor: surface,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 6,
+          separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+          itemBuilder: (context, index) {
+            return Container(
               width: 80,
-              height: 36,
+              height: 40,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppRadius.md),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

@@ -2,6 +2,12 @@ import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widg
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../utilities/app_theme.dart';
+import '../../../../utilities/color_data.dart';
+import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../widgets/app_ui.dart';
+
+import '../../../../widgets/new_app_ui/app_state_view.dart';
 import '../../../provider/inspection_form_provider.dart';
 import 'category_card.dart';
 
@@ -51,7 +57,7 @@ class SectionTabView extends StatelessWidget {
                 childCount: section.categories.length,
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
+            const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xl)),
           ],
         );
       },
@@ -62,31 +68,20 @@ class SectionTabView extends StatelessWidget {
     final isAnsweredFilter = provider.filter == QuestionFilter.answered;
     final isPendingFilter = provider.filter == QuestionFilter.unanswered;
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(isAnsweredFilter
-                ? Icons.check_circle_outline
-                : isPendingFilter
-                ? Icons.pending_outlined
-                : Icons.inbox_outlined,
-            size: 56,
-            color: Colors.grey.shade300,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            isAnsweredFilter
-                ? 'No answered questions in this section'
-                : isPendingFilter
-                ? 'All questions answered in this section!'
-                : 'No questions found',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade500,
-            ),
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: AppStateView(
+          icon: isAnsweredFilter
+              ? Icons.check_circle_outline
+              : isPendingFilter
+              ? Icons.pending_outlined
+              : Icons.inbox_outlined,
+          color: isPendingFilter ? pass : textMuted,
+          title: isAnsweredFilter
+              ? 'No answered questions in this section'
+              : isPendingFilter
+              ? 'All questions answered in this section!'
+              : 'No questions found',
+        ),
       ),
     );
   }

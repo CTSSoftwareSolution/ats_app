@@ -4,8 +4,15 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
+import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/app_ui.dart';
+import '../../../widgets/custom_loader.dart';
+import '../../../widgets/new_app_ui/app_card.dart';
+import '../../provider/create_queue_provider.dart';
+import '../../provider/vehicle_class_provider.dart';
 import '../camera_page/camera_screen.dart';
 
 class VehiclePartsResponsiveItem extends StatelessWidget {
@@ -21,123 +28,141 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final media = context.watch<FileProvider>().getMedia(allIndex);
-    final needsImage = item.type != 2;
-    final needsVideo = item.type != 1;
-    final isDone = (!needsImage || media?.image != null) &&
-        (!needsVideo || media?.video != null);
-
     Widget buildImageContainer({required bool isVideo}) {
       return Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (needsImage && needsVideo) ...[
-              Text(
-                isVideo ? "Video" : "Photo",
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontFamily: "SemiBold",
-                  color: textSecondary,
-                ),
-              ),
-              const SizedBox(height: 6),
-            ],
-            UploadImageContainer(
-              isVideo: isVideo,
-              width: double.infinity,
-              index: allIndex,
-              image: isVideo ? videoUploadImage : pictureUploadImage,
-              imageHeight: 22.0, imageWidth: 22.0,
-              text: isVideo ? "Tap to capture video" : "Tap to capture image",
-              onTap: () async {
-                context.read<FileProvider>().setCurrentIndex(allIndex);
-                context.read<FileProvider>().setVideo(isVideo);
-                await context.push(CameraScreen());
-              },
-              isTablet: isTablet,
-            ),
-          ],
+        child: UploadImageContainer(
+          isVideo: isVideo,
+          width: 180,
+          index: allIndex,
+          image: isVideo ? videoUploadImage : pictureUploadImage,
+          imageHeight: 25.0,
+          imageWidth: 25.0,
+          text: isVideo ? "Capture video" : "Capture photo",
+          onTap: () async {
+            debugPrint("[MEDIA] onTap triggered (index: $allIndex, isVideo: $isVideo)");
+            final fileProvider = context.read<FileProvider>();
+
+            fileProvider.setCurrentIndex(allIndex);
+            fileProvider.setVideo(isVideo);
+
+            debugPrint("[MEDIA] Opening CameraScreen");
+            final result = await context.push(CameraScreen());
+            debugPrint("[MEDIA] Camera result: $result");
+
+            if (result == null) {
+              debugPrint("[MEDIA] Early return: result is null");
+              return;
+            }
+
+            final filePath = result.toString();
+            debugPrint("[MEDIA] File path: $filePath");
+
+            if (filePath.isEmpty) {
+              debugPrint("[MEDIA] Early return: filePath is empty");
+              return;
+            }
+
+            if (!context.mounted) {
+              debugPrint("[MEDIA] Early return: context not mounted");
+              return;
+            }
+
+            try {
+              final classProvider = context.read<VehicleClassProvider>();
+
+              final queueProvider = context.read<CreateQueueProvider>();
+
+              final registrationNo =
+                  classProvider.selectedClass!.registrationNo.toString();
+              final applicationNo =
+                  classProvider.selectedClass!.bookingId.toString();
+              final questionId = item.questionId.toString();
+              final inspectionId = item.id.toString();
+              final imagePath = isVideo ? null : filePath;
+              final videoPath = isVideo ? filePath : null;
+
+              debugPrint("[MEDIA] Calling uploadMedia");
+              debugPrint("[MEDIA] registrationNo: $registrationNo");
+              debugPrint("[MEDIA] applicationNo: $applicationNo");
+              debugPrint("[MEDIA] questionId: $questionId");
+              debugPrint("[MEDIA] inspectionId: $inspectionId");
+              debugPrint("[MEDIA] imagePath: $imagePath");
+              debugPrint("[MEDIA] videoPath: $videoPath");
+
+              final queueResult = await queueProvider.uploadMedia(
+                registrationNo: registrationNo,
+                applicationNo: applicationNo,
+                questionId: questionId,
+                inspectionId: inspectionId,
+                imagePath: imagePath,
+                videoPath: videoPath,
+              );
+
+              debugPrint(
+                "[MEDIA] uploadMedia completed: success=${queueResult?.success}, "
+                "error=${queueProvider.errorMessage}",
+              );
+
+              if (queueResult?.success != true && context.mounted) {
+                CustomLoader.message(
+                  queueProvider.errorMessage ?? 'Media upload failed',
+                );
+              }
+            } catch (e, st) {
+              debugPrint("[MEDIA] Exception before/while calling uploadMedia: $e\n$st");
+            }
+          },
+          //     () async {
+          //   context.read<FileProvider>().setCurrentIndex(allIndex);
+          //   context.read<FileProvider>().setVideo(isVideo);
+          //   await context.push(CameraScreen());
+          // },
+          isTablet: isTablet,
         ),
       );
     }
 
+    final media = context.watch<FileProvider>().getMedia(allIndex);
+    final captured = isCaptured(item, media);
+    final partName = item.vehiclePartName.toString();
+    final String requirement = item.type == 1
+        ? "Photo required"
+        : item.type == 2
+            ? "Video required"
+            : "Photo and video required";
+
     return AppCard(
-      borderColor: isDone ? pass.withValues(alpha: 0.35) : null,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      borderColor: captured ? pass.withValues(alpha: 0.35) : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 30,
-                height: 30,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: isDone ? pass : accentLight,
-                  shape: BoxShape.circle,
-                ),
-                child: isDone
-                    ? const Icon(Icons.check_rounded, size: 18, color: whiteColor)
-                    : Text(
-                        "${allIndex + 1}",
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontFamily: "Bold",
-                          color: appColor,
-                        ),
-                      ),
-              ),
-              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.vehiclePartName.toString(),
-                      style: const TextStyle(
-                        fontFamily: "Bold",
-                        fontSize: 16,
-                        color: textPrimary,
-                      ),
+                      partName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppText.sectionTitle,
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      "Capture or upload the ${item.vehiclePartName}",
-                      style: const TextStyle(
-                        fontFamily: "Medium",
-                        fontSize: 13,
-                        color: textSecondary,
-                      ),
-                    ),
-                    // const SizedBox(height: 8),
-                    // Wrap(
-                    //   spacing: 6,
-                    //   runSpacing: 6,
-                    //   children: [
-                    //     if (needsImage)
-                    //       _RequirementChip(
-                    //         icon: Icons.photo_camera_outlined,
-                    //         label: "Photo required",
-                    //         done: media?.image != null,
-                    //       ),
-                    //     if (needsVideo)
-                    //       _RequirementChip(
-                    //         icon: Icons.videocam_outlined,
-                    //         label: "Video required",
-                    //         done: media?.video != null,
-                    //       ),
-                    //   ],
-                    // ),
+                    Text(requirement, style: AppText.caption),
                   ],
                 ),
               ),
+              // const SizedBox(width: AppSpacing.sm),
+              // captured
+              //     ? const StatusBadge.pass(label: "Captured", dense: true)
+              //     : const StatusBadge.pending(label: "Required", dense: true),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: AppSpacing.md),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (item.type == 1) ...[
                 buildImageContainer(isVideo: false),
@@ -145,7 +170,7 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
                 buildImageContainer(isVideo: true),
               ] else ...[
                 buildImageContainer(isVideo: false),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSpacing.md),
                 buildImageContainer(isVideo: true),
               ],
             ],
@@ -155,31 +180,16 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
     );
   }
 
-}
-
-class _RequirementChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool done;
-
-  const _RequirementChip({required this.icon, required this.label, required this.done});
-
-  @override
-  Widget build(BuildContext context) {
-    return done
-        ? StatusBadge(
-            label: label.replaceFirst("required", "captured"),
-            color: pass,
-            background: passLight,
-            icon: Icons.check_circle_rounded,
-            dense: true,
-          )
-        : StatusBadge(
-            label: label,
-            color: warn,
-            background: warnLight,
-            icon: icon,
-            dense: true,
-          );
+  /// Whether every media type required by [item] has been captured.
+  /// Mirrors the rule used by `VehiclePartsProvider.validateMedia`.
+  static bool isCaptured(dynamic item, MediaFile? media) {
+    switch (item.type) {
+      case 1:
+        return media?.image != null;
+      case 2:
+        return media?.video != null;
+      default:
+        return media?.image != null && media?.video != null;
+    }
   }
 }
