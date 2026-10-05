@@ -5,6 +5,8 @@ import 'package:ats_app/utilities/preferences.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../utilities/new_app_theme/app_spacing.dart';
+
 
 /// Flat brand header for the Home tab: logo and the current centre location.
 class BuildHeaderHome extends StatelessWidget {

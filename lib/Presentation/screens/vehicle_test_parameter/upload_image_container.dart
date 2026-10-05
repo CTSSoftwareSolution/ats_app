@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../image_processing/MediaPicker/file_provider.dart';
+import '../../../utilities/new_app_theme/app_radius.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
 import 'image_dialog_box.dart';
 
 /// Capture slot: a dashed placeholder until media is captured, then a

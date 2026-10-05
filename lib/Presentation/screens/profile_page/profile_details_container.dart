@@ -6,6 +6,9 @@ import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utilities/image_data.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
+import '../../../widgets/new_app_ui/app_card.dart';
 
 class ProfileDetailsContainer extends StatelessWidget {
   const ProfileDetailsContainer({super.key});

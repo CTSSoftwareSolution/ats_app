@@ -9,9 +9,15 @@ import 'package:provider/provider.dart';
 import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
+import '../../../utilities/new_app_theme/app_radius.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/app_ui.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/custom_text.dart';
+import '../../../widgets/new_app_ui/app_bottom_sheet.dart';
+import '../../../widgets/new_app_ui/app_card.dart';
+import '../../../widgets/new_app_ui/app_state_view.dart';
+import '../../../widgets/new_app_ui/status_badge.dart';
 
 /// Full-screen AI result opened from the "View Result" button of the
 /// vehicle test parameter flow.
@@ -198,7 +204,9 @@ class _AiResultScreenState extends State<AiResultScreen> {
         questionId: item.labelId,
         question: item.questionText,
         current: _availableResult(item),
-        onUpdated: (result) => provider.updateQuestionResult(item, result),
+        currentRemark: item.aiRemark,
+        onUpdated: (result, remark) =>
+            provider.updateQuestionResult(item, result, remark: remark),
       ),
     );
   }
@@ -214,7 +222,7 @@ class _QuestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
+    return  AppCard(
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,14 +293,16 @@ class _ChangeResultSheet extends StatefulWidget {
   final num? questionId;
   final String? question;
   final String? current;
+  final String? currentRemark;
 
-  /// Called with the new result once the API has accepted it.
-  final ValueChanged<String> onUpdated;
+  /// Called with the new result and remark once the API has accepted them.
+  final void Function(String result, String remark) onUpdated;
 
   const _ChangeResultSheet({
     this.questionId,
     this.question,
     this.current,
+    this.currentRemark,
     required this.onUpdated,
   });
 
@@ -302,24 +312,40 @@ class _ChangeResultSheet extends StatefulWidget {
 
 class _ChangeResultSheetState extends State<_ChangeResultSheet> {
   late String? _selected = widget.current?.trim().toUpperCase();
+  late final TextEditingController _remarkController =
+      TextEditingController(text: widget.currentRemark?.trim() ?? '');
   bool _isUpdating = false;
 
+  String get _remark => _remarkController.text.trim();
+
   bool get _canUpdate =>
-      !_isUpdating && _selected != null && _selected != widget.current?.trim().toUpperCase();
+      !_isUpdating &&
+      _selected != null &&
+      (_selected != widget.current?.trim().toUpperCase() ||
+          _remark != (widget.currentRemark?.trim() ?? ''));
+
+  @override
+  void dispose() {
+    _remarkController.dispose();
+    super.dispose();
+  }
 
   Future<void> _update() async {
     if (!_canUpdate) return;
+    FocusScope.of(context).unfocus();
     final result = _selected!;
+    final remark = _remark;
     setState(() => _isUpdating = true);
 
     final response = await context.read<AiUpdateResultProvider>().updateQuestionResult(
           context,
           questionId: widget.questionId,
           statusResult: result == "PASS",
+          remark: remark,
         );
 
     if (response?.success == true) {
-      widget.onUpdated(result);
+      widget.onUpdated(result, remark);
       CustomLoader.message(
         _hasText(response!.message) ? response.message!.trim() : "Result updated successfully",
       );
@@ -384,6 +410,14 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 20),
+            const _SectionLabel("Remark"),
+            const SizedBox(height: 10),
+            _RemarkField(
+              controller: _remarkController,
+              enabled: !_isUpdating,
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 20),
             SizedBox(
@@ -460,6 +494,55 @@ class _ResultOption extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Optional multiline remark sent along with the changed result.
+class _RemarkField extends StatelessWidget {
+  final TextEditingController controller;
+  final bool enabled;
+  final ValueChanged<String> onChanged;
+
+  const _RemarkField({
+    required this.controller,
+    required this.enabled,
+    required this.onChanged,
+  });
+
+  static const _maxLength = 250;
+
+  @override
+  Widget build(BuildContext context) {
+    OutlineInputBorder outline(Color color, [double width = 1]) => OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: BorderSide(color: color, width: width),
+        );
+
+    return TextField(
+      controller: controller,
+      enabled: enabled,
+      onChanged: onChanged,
+      minLines: 3,
+      maxLines: 5,
+      maxLength: _maxLength,
+      keyboardType: TextInputType.multiline,
+      textCapitalization: TextCapitalization.sentences,
+      cursorColor: appColor,
+      style: const TextStyle(fontSize: 14, color: textPrimary, height: 1.4),
+      decoration: InputDecoration(
+        hintText: "Add a remark (optional)",
+        hintStyle: const TextStyle(fontSize: 14, color: textMuted),
+        counterStyle: const TextStyle(fontSize: 11.5, color: textMuted),
+        filled: true,
+        fillColor: surface,
+        isDense: true,
+        contentPadding: const EdgeInsets.all(12),
+        border: outline(border),
+        enabledBorder: outline(border),
+        disabledBorder: outline(border),
+        focusedBorder: outline(appColor, 1.5),
       ),
     );
   }

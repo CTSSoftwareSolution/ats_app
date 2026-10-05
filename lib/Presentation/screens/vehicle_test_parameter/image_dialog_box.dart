@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import '../../../utilities/app_theme.dart';
+import '../../../utilities/new_app_theme/app_radius.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
 
 /// Full-width image preview with pinch-to-zoom and a single close action.
 class ImageDialogBox extends StatelessWidget {

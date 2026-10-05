@@ -1,18 +1,10 @@
+
+import 'package:ats_app/widgets/new_app_ui/app_state_view.dart';
 import 'package:flutter/material.dart';
-
 import 'utilities/color_data.dart';
-import 'widgets/app_ui.dart';
 
-/// Empty / no-results state used by the Home and Result lists.
-///
-/// Usage:
-/// ```dart
-/// EmptyStateWidget(
-///   icon: Icons.search_off_rounded,
-///   title: 'No Results Found',
-///   subtitle: 'Try changing the filter or search term',
-/// )
-/// ```
+
+
 class EmptyStateWidget extends StatelessWidget {
   final IconData icon;
   final String title;

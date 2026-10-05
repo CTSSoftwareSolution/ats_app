@@ -1,7 +1,7 @@
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
-import 'app_ui.dart';
+import 'new_app_ui/app_dialog.dart';
 
 customShowDialog({
   required BuildContext context,

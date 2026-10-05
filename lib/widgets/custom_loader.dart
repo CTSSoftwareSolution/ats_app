@@ -4,6 +4,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../utilities/app_theme.dart';
 import '../utilities/color_data.dart';
+import '../utilities/new_app_theme/app_radius.dart';
+import '../utilities/new_app_theme/app_spacing.dart';
 
 class CustomLoader {
   static showToast(
@@ -13,7 +15,7 @@ class CustomLoader {
     EasyLoading.showToast(message!, toastPosition: position);
   }
 
-  /// Blocking loader; look is configured once in [AppTheme.configureLoader].
+
   static showLoader(String message) {
     EasyLoading.show(status: message, dismissOnTap: false);
   }
@@ -22,7 +24,7 @@ class CustomLoader {
     EasyLoading.dismiss();
   }
 
-  /// Neutral info toast (also used for validation hints by some callers).
+
   static message(String msg) {
     _toast(msg, background: appColor);
   }

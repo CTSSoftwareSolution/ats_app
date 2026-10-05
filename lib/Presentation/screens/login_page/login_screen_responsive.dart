@@ -1,10 +1,13 @@
 import 'package:ats_app/Responsive/responsive_ext.dart';
 import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
-import 'package:ats_app/widgets/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../utilities/logo_screen_item.dart';
+import '../../../utilities/new_app_theme/app_radius.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
+import '../../../widgets/new_app_ui/primary_button.dart';
 import '../../provider/login_provider.dart';
 import 'login_screen_item.dart';
 

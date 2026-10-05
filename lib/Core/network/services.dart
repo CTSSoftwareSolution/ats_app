@@ -50,7 +50,8 @@ String get newInspectionQuestionsList           => "${newBaseUrl}inspection/insp
 
 // new create-api
 String get createQueueUrl           => "${newBaseUrl}queue/create";
-String get aiResultUrl           => "${newBaseUrl}generate-ai-response/getResult";
+//String get aiResultUrl           => "${newBaseUrl}generate-ai-response/getResult";
+String get aiResultUrl           => "${newBaseUrl}generate-ai-response/getAiResult";
 
 
 

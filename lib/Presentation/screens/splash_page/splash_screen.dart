@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../../utilities/new_app_theme/app_theme.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

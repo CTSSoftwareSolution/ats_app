@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../EmptyStateWidget.dart';
 import '../../../new_manual_flow/new_screen/vehicle_details_screen.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_theme.dart';
 import '../../provider/manual_inspection_list_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../manual_inspection_images/manual_inspection_image_screen.dart';

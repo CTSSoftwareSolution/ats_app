@@ -1,8 +1,8 @@
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
-import 'app_theme.dart';
 import 'color_data.dart';
 import 'image_data.dart';
+import 'new_app_theme/app_spacing.dart';
 
 class LogoScreenItem extends StatelessWidget {
   const LogoScreenItem({super.key});

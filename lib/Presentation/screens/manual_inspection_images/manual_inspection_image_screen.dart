@@ -14,13 +14,19 @@ import 'package:provider/provider.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
-import '../../../widgets/app_ui.dart';
+
 import '../../../utilities/image_data.dart';
-import '../../../widgets/custom_bottomsheet.dart';
-import '../../provider/inspection_form_provider.dart';
+
+import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
+import '../../../widgets/new_app_ui/app_back_button.dart';
+import '../../../widgets/new_app_ui/app_card.dart';
+import '../../../widgets/new_app_ui/bottom_action_bar.dart';
+import '../../../widgets/new_app_ui/circular_progress_header.dart';
+import '../../../widgets/new_app_ui/primary_button.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../camera_page/camera_screen.dart';
-import '../pre_inspection_form/inspection_page/inspection_page.dart';
+
 import '../vehicle_test_parameter/vehicle_parts_screen.dart';
 
 
@@ -57,7 +63,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     final cameraController = Provider.of<FileProvider>(context, listen: false);
     final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
     final location = Provider.of<LocationProvider>(context, listen: false);
-    final detailsProvider = Provider.of<AiInspectionDetailsProvider>(context, listen: false);
+
 
     List<DocumentManualDocModels> docs = [];
     for (int i = 0; i < cameraController.mediaFile.length; i++) {
@@ -91,28 +97,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     if (!mounted) return;
 
     context.push(VehiclePartsScreen());
-      // showInspectionSheet(context,
-      //   onSelect: (value) {
-      //     final provider = context.read<InspectionFormProvider>();
-      //
-      //     if (value == 'Visual Inspection') {
-      //       debugPrint('Visual Inspection');
-      //       provider.setInspectionMode(InspectionMode.visualInspection,);
-      //       context.push(InspectionPage(isEditMode: false),);
-      //     } else if (value == 'Under-PIT Inspection') {
-      //       debugPrint('Under PIT Inspection');
-      //       provider.setInspectionMode(InspectionMode.underPitInspection,);
-      //       context.push(InspectionPage(isEditMode: false),);
-      //     }
-      //   },
-      // );
 
-
-    //cameraController.clearAll();
-    //if(!mounted) return;
-    // detailsProvider.setAIMode(false);
-    // context.push(InspectionPage(isEditMode: false,));
-      //context.push(VehiclePartsScreen());
   }
 
   @override
@@ -194,7 +179,6 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
                             onTap: () async {
                               fileProvider.setVideo(false);
                               fileProvider.setCurrentIndex(index);
-                             // await fileProvider.initCamera();
                               await context.push(CameraScreen());
                             },
                             index: index,

@@ -11,6 +11,8 @@ import '../../../../aws_images/aws_signedurl_provider.dart';
 import '../../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../../utilities/change_status_bottom_sheet.dart';
 import '../../../../utilities/app_theme.dart';
+import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../utilities/new_app_theme/app_text.dart';
 import '../../../provider/ai_inspection_details_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../camera_page/camera_screen.dart';

@@ -5,6 +5,7 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Data/model/response_model/inspection_pre_save_req_model.dart';
+import '../../../../widgets/new_app_ui/app_dialog.dart';
 import '../../../provider/ai_inspection_details_provider.dart';
 import '../../../provider/ai_save_inspection_provider.dart';
 import '../../../provider/inspection_form_provider.dart';

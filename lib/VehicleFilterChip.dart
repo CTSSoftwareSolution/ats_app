@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
-import 'utilities/app_theme.dart';
-import 'utilities/color_data.dart';
 
-/// Single-select category chip used by the Home filter row.
+
+import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/new_app_theme/app_radius.dart';
+import 'package:flutter/material.dart';
+
+
 class VehicleFilterChip extends StatelessWidget {
   final String label;
   final bool isSelected;

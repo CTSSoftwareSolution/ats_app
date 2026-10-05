@@ -5,6 +5,9 @@ import 'package:shimmer/shimmer.dart';
 import '../../../../VehicleFilterChip.dart';
 import '../../../../utilities/app_theme.dart';
 import '../../../../utilities/color_data.dart';
+import '../../../../utilities/new_app_theme/app_radius.dart';
+import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../utilities/new_app_theme/app_text.dart';
 import '../../../../widgets/custom_search_bar.dart';
 import '../../../provider/vehicle_class_provider.dart';
 

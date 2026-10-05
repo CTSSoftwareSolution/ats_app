@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:ats_app/Presentation/screens/camera_page/camera_screen.dart';
-import 'package:camera/camera.dart';
+
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

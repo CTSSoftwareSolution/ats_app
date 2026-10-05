@@ -58,13 +58,14 @@ class AiResultProvider extends ChangeNotifier{
 
   /// Overrides the result of a single question in the loaded data so every
   /// widget reading it rebuilds with the new value.
-  void updateQuestionResult(ResultData item, String result) {
+  void updateQuestionResult(ResultData item, String result, {String? remark}) {
     final data = aiResultEntity?.data;
     if (data == null) return;
     final index = data.indexOf(item);
     if (index == -1) return;
     data[index] = item.copyWith(
       aiResult: result,
+      aiRemark: remark,
       aiResponse: (item.aiResponse ?? AiResponse()).copyWith(overallResult: result),
     );
     notifyListeners();

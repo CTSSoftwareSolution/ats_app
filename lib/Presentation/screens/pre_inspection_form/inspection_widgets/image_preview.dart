@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../utilities/app_theme.dart';
 import '../../../../utilities/color_data.dart';
+import '../../../../utilities/new_app_theme/app_radius.dart';
+import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../utilities/new_app_theme/app_text.dart';
 
 class ImagePreview extends StatelessWidget {
   final File? imageFile;

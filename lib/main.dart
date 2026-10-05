@@ -1,5 +1,5 @@
 import 'package:ats_app/Presentation/provider/multiple_provider.dart';
-import 'package:ats_app/utilities/app_theme.dart';
+import 'package:ats_app/utilities/new_app_theme/app_theme.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +9,7 @@ import 'Core/network/services.dart';
 import 'Presentation/provider/permission_provider.dart';
 import 'Presentation/screens/splash_page/splash_screen.dart';
 import 'app_config/app_config.dart';
-import 'demo_bottomsheet.dart';
+
 
 List<CameraDescription>? cameras;
 

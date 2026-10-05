@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../widgets/app_ui.dart';
+import '../../../widgets/new_app_ui/primary_button.dart';
 
 /// Primary step action of the vehicle test parameter flow. Place it inside a
 /// [BottomActionBar] so it stays pinned to the bottom of the screen.

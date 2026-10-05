@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../utilities/color_data.dart';
 import '../../../utilities/logo_screen_item.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
 
 class SplashScreenResponsiveLayout extends StatefulWidget {
   const SplashScreenResponsiveLayout({super.key});

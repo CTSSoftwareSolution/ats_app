@@ -79,7 +79,8 @@ class ResultData {
       String? questionText, 
       String? inspectionResult, 
       String? aiResult, 
-      AiResponse? aiResponse,}){
+      AiResponse? aiResponse,
+      String? aiRemark,}){
     _id = id;
     _vehicleId = vehicleId;
     _appointmentId = appointmentId;
@@ -89,6 +90,7 @@ class ResultData {
     _inspectionResult = inspectionResult;
     _aiResult = aiResult;
     _aiResponse = aiResponse;
+    _aiRemark = aiRemark;
 }
 
   ResultData.fromJson(dynamic json) {
@@ -101,6 +103,7 @@ class ResultData {
     _inspectionResult = json['inspection_result'];
     _aiResult = json['ai_result'];
     _aiResponse = json['ai_response'] != null ? AiResponse.fromJson(json['ai_response']) : null;
+    _aiRemark = json['ai_remark']?.toString();
   }
   num? _id;
   String? _vehicleId;
@@ -111,6 +114,7 @@ class ResultData {
   String? _inspectionResult;
   String? _aiResult;
   AiResponse? _aiResponse;
+  String? _aiRemark;
   ResultData copyWith({  num? id,
   String? vehicleId,
   String? appointmentId,
@@ -120,6 +124,7 @@ class ResultData {
   String? inspectionResult,
   String? aiResult,
   AiResponse? aiResponse,
+  String? aiRemark,
 }) => ResultData(  id: id ?? _id,
   vehicleId: vehicleId ?? _vehicleId,
   appointmentId: appointmentId ?? _appointmentId,
@@ -129,6 +134,7 @@ class ResultData {
   inspectionResult: inspectionResult ?? _inspectionResult,
   aiResult: aiResult ?? _aiResult,
   aiResponse: aiResponse ?? _aiResponse,
+  aiRemark: aiRemark ?? _aiRemark,
 );
   num? get id => _id;
   String? get vehicleId => _vehicleId;
@@ -139,6 +145,7 @@ class ResultData {
   String? get inspectionResult => _inspectionResult;
   String? get aiResult => _aiResult;
   AiResponse? get aiResponse => _aiResponse;
+  String? get aiRemark => _aiRemark;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -153,6 +160,7 @@ class ResultData {
     if (_aiResponse != null) {
       map['ai_response'] = _aiResponse?.toJson();
     }
+    map['ai_remark'] = _aiRemark;
     return map;
   }
 

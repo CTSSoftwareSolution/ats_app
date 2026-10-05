@@ -2,6 +2,7 @@ import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/app_ui.dart';
+import '../widgets/new_app_ui/app_dialog.dart';
 
 class DialogButton {
   final String text;

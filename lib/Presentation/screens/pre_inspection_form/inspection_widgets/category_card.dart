@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../../../../utilities/app_theme.dart';
 import '../../../../utilities/color_data.dart';
+import '../../../../utilities/new_app_theme/app_radius.dart';
+import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../utilities/new_app_theme/app_text.dart';
 import '../../../provider/inspection_form_provider.dart';
 
 class CategoryCard extends StatelessWidget {
