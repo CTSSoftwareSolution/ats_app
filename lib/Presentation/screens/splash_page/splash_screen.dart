@@ -1,6 +1,5 @@
 import 'package:ats_app/Presentation/provider/splash_provider.dart';
 import 'package:ats_app/Presentation/screens/splash_page/splash_screen_responsive.dart';
-import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

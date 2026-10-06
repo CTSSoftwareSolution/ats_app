@@ -1,5 +1,4 @@
 import 'package:ats_app/app_config/app_config.dart';
-import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/validators.dart';
 import 'package:flutter/material.dart';

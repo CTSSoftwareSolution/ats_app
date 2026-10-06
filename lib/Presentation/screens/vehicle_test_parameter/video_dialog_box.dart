@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../../utilities/app_theme.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 

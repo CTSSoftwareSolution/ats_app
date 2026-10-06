@@ -4,9 +4,7 @@ import 'package:ats_app/utilities/color_data.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../utilities/app_theme.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
-import '../../../../widgets/app_ui.dart';
 import '../../../../widgets/new_app_ui/app_back_button.dart';
 import '../../../../widgets/new_app_ui/app_state_view.dart';
 import '../../../provider/inspection_form_provider.dart';
@@ -183,7 +181,13 @@ class _InspectionPageState extends State<InspectionPage>
                       ),
                   ],
                 ),
-                text: 'Step ${i + 1}',
+                // Section name ("Under-PIT Inspection" -> "Under-PIT") so the
+                // inspector sees which inspection each tab holds.
+                child: Text(
+                  s.label.replaceFirst(RegExp(r'\s+Inspection$'), ''),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               );
             }),
           ),

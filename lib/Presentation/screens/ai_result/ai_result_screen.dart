@@ -6,17 +6,16 @@ import 'package:ats_app/Presentation/screens/bottom_navigation/bottom_navigation
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
-import '../../../utilities/image_data.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
-import '../../../widgets/app_ui.dart';
 import '../../../widgets/custom_loader.dart';
-import '../../../widgets/custom_text.dart';
+import '../../../widgets/new_app_ui/app_back_button.dart';
 import '../../../widgets/new_app_ui/app_bottom_sheet.dart';
 import '../../../widgets/new_app_ui/app_card.dart';
 import '../../../widgets/new_app_ui/app_state_view.dart';
+import '../../../widgets/new_app_ui/bottom_action_bar.dart';
+import '../../../widgets/new_app_ui/primary_button.dart';
 import '../../../widgets/new_app_ui/status_badge.dart';
 
 /// Full-screen AI result opened from the "View Result" button of the
@@ -33,7 +32,26 @@ class _AiResultScreenState extends State<AiResultScreen> {
   /// for pull-to-refresh and retry.
   Future<void> _loadResult() async {
     if (!mounted) return;
-    await context.read<AiResultProvider>().aiResultDetails(context);
+    final provider = context.read<AiResultProvider>();
+    // Skip while a request is already running (no duplicate calls).
+    if (provider.isLoading || _isRefreshing) return;
+    await provider.aiResultDetails(context);
+  }
+
+  /// True while a pull-to-refresh request is in flight. The list stays on
+  /// screen under the refresh indicator instead of the full-screen loader.
+  bool _isRefreshing = false;
+
+  Future<void> _onRefresh() async {
+    if (!mounted) return;
+    final provider = context.read<AiResultProvider>();
+    if (provider.isLoading || _isRefreshing) return;
+    setState(() => _isRefreshing = true);
+    try {
+      await provider.aiResultDetails(context);
+    } finally {
+      if (mounted) setState(() => _isRefreshing = false);
+    }
   }
 
   bool _isNavigating = false;
@@ -75,57 +93,26 @@ class _AiResultScreenState extends State<AiResultScreen> {
     final provider = context.watch<AiResultProvider>();
 
     return Scaffold(
-      backgroundColor: background,
+      backgroundColor: bg,
       appBar: AppBar(
-        titleSpacing: 0.0,
-        backgroundColor: appColor,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: CustomText(
-          text: "AI Result",
-          fontSize: 18,
-          fontFamily: "SemiBold",
-          textColor: whiteColor,
-        ),
-        leading: IconButton(
-          tooltip: 'Back',
-          onPressed: () => Navigator.pop(context),
-          icon: ImageIcon(
-            AssetImage(backArrowIcon),
-            color: whiteColor,
-            size: 20,
-          ),
-        ),
+        title: const Text("AI Result"),
+        leading: AppBackButton(onPressed: () => Navigator.pop(context)),
       ),
       body: SafeArea(
-        child: provider.isLoading
+        bottom: false,
+        child: provider.isLoading && !_isRefreshing
             ? Center(child: CustomLoader.loader())
             : RefreshIndicator(
                 color: appColor,
-                onRefresh: _loadResult,
+                backgroundColor: surface,
+                onRefresh: _onRefresh,
                 child: _buildBody(provider),
               ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: FilledButton(
-            onPressed: _isNavigating ? null : _goToDashboard,
-            style: FilledButton.styleFrom(
-              backgroundColor: appColor,
-              foregroundColor: whiteColor,
-              elevation: 6,
-              shadowColor: navy.withValues(alpha: 0.35),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              textStyle: const TextStyle(fontFamily: "SemiBold", fontSize: 16),
-            ),
-            child: const Text("Done"),
-          ),
+      bottomNavigationBar: BottomActionBar(
+        child: PrimaryButton(
+          label: "Done",
+          onPressed: _isNavigating ? null : _goToDashboard,
         ),
       ),
     );
@@ -165,7 +152,7 @@ class _AiResultScreenState extends State<AiResultScreen> {
 
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, _fabClearance),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       itemCount: records.length,
       separatorBuilder: (_, __) => const Padding(
         padding: EdgeInsets.symmetric(vertical: 24),
@@ -180,7 +167,10 @@ class _AiResultScreenState extends State<AiResultScreen> {
                 ? "Inspection Question ${index + 1} of ${records.length}"
                 : "Inspection Question",
             result: _availableResult(records[index]),
-            onTap: () => _showChangeResultSheet(provider, records[index]),
+            // Not while refreshing: the record is about to be replaced.
+            onTap: _isRefreshing
+                ? null
+                : () => _showChangeResultSheet(provider, records[index]),
           ),
           const SizedBox(height: 16),
           const Text(
@@ -216,7 +206,7 @@ class _QuestionCard extends StatelessWidget {
   final String? text;
   final String label;
   final String? result;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const _QuestionCard({this.text, required this.label, this.result, required this.onTap});
 
@@ -708,7 +698,7 @@ class _ScrollableState extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, _fabClearance),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       children: [const SizedBox(height: 40), child],
     );
   }
@@ -775,5 +765,3 @@ Widget _valueBadge(dynamic value) {
   );
 }
 
-/// Bottom list padding so the floating Done button never covers content.
-const double _fabClearance = 96;

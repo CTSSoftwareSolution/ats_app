@@ -2,7 +2,6 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../utilities/app_theme.dart';
 import '../utilities/color_data.dart';
 import '../utilities/new_app_theme/app_radius.dart';
 import '../utilities/new_app_theme/app_spacing.dart';

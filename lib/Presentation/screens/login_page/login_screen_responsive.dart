@@ -1,5 +1,4 @@
 import 'package:ats_app/Responsive/responsive_ext.dart';
-import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

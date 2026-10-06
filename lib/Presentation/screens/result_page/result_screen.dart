@@ -2,7 +2,6 @@ import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dar
 import 'package:ats_app/Presentation/provider/manual_inspection_list_provider.dart';
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_shimmer.dart';
 import 'package:ats_app/Presentation/screens/result_page/result_screen_item.dart';
-import 'package:ats_app/utilities/app_theme.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +9,7 @@ import '../../../EmptyStateWidget.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../widgets/custom_search_bar.dart';
+import '../../../widgets/new_app_ui/pull_to_refresh_fill.dart';
 import '../pre_inspection_form/inspection_page/inspection_page.dart';
 
 class ResultScreen extends StatefulWidget {
@@ -23,16 +23,34 @@ class _ResultScreenState extends State<ResultScreen> {
 
   final ScrollController _scrollController = ScrollController();
 
+  /// True while a pull-to-refresh request is in flight.
+  bool _isRefreshing = false;
+
   @override
   void initState() {
     super.initState();
     context.read<ManualInspectionListProvider>().manualInspectionListAPI(context: context);
     _scrollController.addListener(() {
+      // No paging while the first page is being reloaded (the pull's
+      // overscroll on a short list would otherwise trigger it).
+      if (_isRefreshing) return;
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {
         context.read<ManualInspectionListProvider>().manualInspectionListAPI(context: context, loadMore: true);
       }
     });
+  }
+
+  /// Reloads the first page with the current search text.
+  Future<void> _onRefresh() async {
+    final provider = context.read<ManualInspectionListProvider>();
+    if (_isRefreshing || provider.isLoading) return;
+    _isRefreshing = true;
+    try {
+      await provider.manualInspectionListAPI(context: context);
+    } finally {
+      _isRefreshing = false;
+    }
   }
 
   @override
@@ -71,20 +89,30 @@ class _ResultScreenState extends State<ResultScreen> {
               ),
             ),
             Expanded(
+              // Wraps every state so the indicator stays mounted while the
+              // list is swapped for the shimmer during a reload.
+              child: RefreshIndicator(
+              color: appColor,
+              backgroundColor: surface,
+              onRefresh: _onRefresh,
               child: provider.isLoading ? ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: 6,
                 itemBuilder: (_, __) => const HomeShimmer(),
               ) : (provider.manualInspectionEntity?.data?.appointments?.isEmpty ?? true)
-                  ? const EmptyStateWidget(
+                  ? const PullToRefreshFill(
+                child: EmptyStateWidget(
                 icon: Icons.search_off_rounded,
                 title: 'No Appointments Found',
                 subtitle: 'Try changing the filter or search term',
+              ),
               ) : ListView.builder(
                 padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.page, AppSpacing.xs, AppSpacing.page, 100),
+                    AppSpacing.page, AppSpacing.xs, AppSpacing.page, AppSpacing.lg),
                 controller: _scrollController,
-                physics: const BouncingScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
                 itemCount: provider.manualInspectionEntity!.data!.appointments!.length + (provider.isLoadMore ? 1 : 0),
                 itemBuilder: (context, index) {
                   final appointments = provider.manualInspectionEntity!.data!.appointments!;
@@ -109,6 +137,7 @@ class _ResultScreenState extends State<ResultScreen> {
                     context.push(InspectionPage(isEditMode: true));
                   });
                 },
+              ),
               ),
             ),
           ],

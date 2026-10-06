@@ -84,28 +84,6 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
             child: VideoPlayer(videoPlayerController!),
           ),
         ),
-        Positioned(
-          top: 8,
-          left: 8,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.55),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.videocam_rounded, size: 12, color: Colors.white),
-                SizedBox(width: 4),
-                Text(
-                  "Video",
-                  style: TextStyle(fontFamily: "SemiBold", fontSize: 11, color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ),
         Center(
           child: Tooltip(
             message: 'Play video',

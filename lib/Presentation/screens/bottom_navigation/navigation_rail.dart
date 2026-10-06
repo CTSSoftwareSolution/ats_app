@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
+import '../../../utilities/new_app_theme/app_radius.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
 import '../../../widgets/custom_image.dart';
@@ -12,70 +14,74 @@ import '../../provider/bottom_navigation_provider.dart';
 import '../../provider/create_queue_provider.dart';
 import '../login_page/login_screen.dart';
 
+/// Tablet navigation: flat brand-coloured rail with logo, labelled
+/// destinations and log out at the bottom.
 class TabletNavigationRail extends StatelessWidget {
-
-
-  const TabletNavigationRail({
-    super.key,
-
-  });
+  const TabletNavigationRail({super.key});
 
   @override
   Widget build(BuildContext context) {
     final navigationProvider = context.watch<BottomNavigationProvider>();
     return Padding(
-      padding: EdgeInsets.only(top: 40, bottom: 15, left: 20),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.xl,
+        0,
+        AppSpacing.lg,
+      ),
       child: Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            gradient: LinearGradient(
-              colors: [Color(0xff345afa), Color(0xff19162e)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: appColor,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
         child: NavigationRail(
           selectedIndex: navigationProvider.pageIndex,
           onDestinationSelected: navigationProvider.updateIndex,
-          minWidth: 70,
+          minWidth: 80,
           backgroundColor: Colors.transparent,
-          labelType: NavigationRailLabelType.none,
+          labelType: NavigationRailLabelType.all,
           useIndicator: false,
           leadingAtTop: true,
           trailingAtBottom: true,
+          selectedLabelTextStyle: const TextStyle(
+            fontFamily: "Bold",
+            fontSize: 11.5,
+            color: whiteColor,
+          ),
+          unselectedLabelTextStyle: const TextStyle(
+            fontFamily: "Medium",
+            fontSize: 11.5,
+            color: textWhiteSub,
+          ),
           leading: Padding(
-            padding: const EdgeInsets.only(bottom: 25.0),
+            padding: const EdgeInsets.only(
+              top: AppSpacing.md,
+              bottom: AppSpacing.xl,
+            ),
             child: Container(
               decoration: BoxDecoration(
                 color: whiteColor,
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(AppRadius.sm),
               ),
               padding: const EdgeInsets.all(8),
-              child: CustomImage(
-                image: logoImage,
-                height: 28,
-                width: 28,
-              ),
+              child: CustomImage(image: logoImage, height: 28, width: 28),
             ),
           ),
 
           destinations: bottomNavValue.map((item) {
             return NavigationRailDestination(
-              icon: CustomImage(
-                image: item.image,
-                height: 22,
-                width: 22,
-                color: whiteColor.withValues(alpha:0.6),
-              ),
+              icon: AnimatedRailIcon(icon: item.image, isActive: false),
               selectedIcon: AnimatedRailIcon(icon: item.image, isActive: true),
-              label: const SizedBox.shrink(),
+              label: Text(item.title),
             );
           }).toList(),
 
           trailing: Padding(
-            padding: const EdgeInsets.only(bottom: 40),
-            child: InkWell(
-              onTap: () {
+            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+            child: IconButton(
+              tooltip: 'Log out',
+              onPressed: () {
                 customShowDialog(
                   context: context,
                   title: "Log out",
@@ -92,10 +98,10 @@ class TabletNavigationRail extends StatelessWidget {
                   },
                 );
               },
-              child: CustomImage(
+              icon: CustomImage(
                 image: logoutIcon,
-                height: 25,
-                width: 25,
+                height: 22,
+                width: 22,
                 color: whiteColor,
               ),
             ),

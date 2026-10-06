@@ -1,5 +1,4 @@
 import 'package:ats_app/Presentation/provider/login_provider.dart';
-import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/input_formatters.dart';
 import 'package:ats_app/utilities/validators.dart';

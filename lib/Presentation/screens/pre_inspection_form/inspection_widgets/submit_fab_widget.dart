@@ -6,9 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../../widgets/new_app_ui/bottom_action_bar.dart';
 import '../../../provider/inspection_form_provider.dart';
-import '../../../../utilities/app_theme.dart';
 import '../../../../utilities/color_data.dart';
-import '../../../../widgets/app_ui.dart';
 
 
 class SubmitFAB extends StatelessWidget {

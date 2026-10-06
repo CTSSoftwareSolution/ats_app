@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../image_processing/MediaPicker/file_provider.dart';
-import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
 
 import '../../../utilities/image_data.dart';

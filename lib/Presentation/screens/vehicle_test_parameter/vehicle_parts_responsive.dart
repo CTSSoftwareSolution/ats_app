@@ -6,17 +6,16 @@ import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_page
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/responsive_button.dart';
 
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_responsive_item.dart';
+import 'package:ats_app/Presentation/screens/vehicle_test_parameter/media_upload_tracker.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
-import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/custom_stepper.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
-import '../../../widgets/app_ui.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/new_app_ui/app_state_view.dart';
 import '../../../widgets/new_app_ui/bottom_action_bar.dart';
@@ -39,6 +38,14 @@ class VehiclePartsResponsiveLayout extends StatefulWidget {
 class _VehiclePartsResponsiveLayoutState
     extends State<VehiclePartsResponsiveLayout> {
   int allIndex = 0;
+  final MediaUploadTracker _uploadTracker = MediaUploadTracker();
+
+  @override
+  void dispose() {
+    _uploadTracker.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final partsProvider = context.watch<VehiclePartsProvider>();
@@ -102,6 +109,30 @@ class _VehiclePartsResponsiveLayoutState
                         ),
                 ],
               ),
+              ListenableBuilder(
+                listenable: _uploadTracker,
+                builder: (context, _) {
+                  final failedCount = _uploadTracker.failedCount;
+                  if (failedCount == 0) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.sm),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.error_rounded, size: 16, color: fail),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            failedCount == 1
+                                ? "1 upload failed. Tap Retry on the highlighted media."
+                                : "$failedCount uploads failed. Tap Retry on the highlighted media.",
+                            style: AppText.caption.copyWith(color: fail, fontFamily: "SemiBold"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
               const SizedBox(height: 2),
               const Text(
                 "Capture the required media for each part below",
@@ -131,6 +162,7 @@ class _VehiclePartsResponsiveLayoutState
                 item: item,
                 allIndex: allIndex,
                 isTablet: false,
+                tracker: _uploadTracker,
               );
             },
           ),

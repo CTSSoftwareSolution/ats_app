@@ -1,6 +1,8 @@
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 
+/// One destination of the docked bottom navigation bar: icon inside a tinted
+/// pill when active, with a label underneath.
 Widget navigationIcon(
   String icon,
   int index,
@@ -9,7 +11,7 @@ Widget navigationIcon(
   ValueChanged<int> onTabSelected,
 ) {
   final bool isActive = currentIndex == index;
-  final Color color = isActive ? whiteColor : textWhiteSub;
+  final Color color = isActive ? appColor : textMuted;
 
   return Expanded(
     child: Semantics(
@@ -20,34 +22,31 @@ Widget navigationIcon(
         onTap: () => onTabSelected.call(index),
         borderRadius: BorderRadius.circular(14),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
-                  color: isActive
-                      ? Colors.white.withValues(alpha: 0.16)
-                      : Colors.transparent,
+                  color: isActive ? accentLight : Colors.transparent,
                   borderRadius: BorderRadius.circular(100),
                 ),
-                child: ImageIcon(
-                  AssetImage(icon),
-                  size: 20,
-                  color: color,
-                ),
+                child: ImageIcon(AssetImage(icon), size: 20, color: color),
               ),
-              const SizedBox(height: 3),
+              const SizedBox(height: 4),
               Text(
                 title,
                 maxLines: 1,
                 style: TextStyle(
                   fontSize: 11.5,
                   fontFamily: isActive ? "Bold" : "Medium",
-                  color: color,
+                  color: isActive ? appColor : textSecondary,
                 ),
               ),
             ],

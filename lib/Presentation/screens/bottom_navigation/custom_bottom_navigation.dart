@@ -5,40 +5,52 @@ import 'package:provider/provider.dart';
 import '../../../widgets/widget_navigation_icon.dart';
 import '../../provider/bottom_navigation_provider.dart';
 
-
+/// Docked bottom navigation bar: flat white surface with a hairline top
+/// border. It takes its own space so page content is never covered.
 class CustomBottomNavigation extends StatelessWidget {
-
   const CustomBottomNavigation({super.key});
 
   @override
   Widget build(BuildContext context) {
     final navigationProvider = context.watch<BottomNavigationProvider>();
-    return Container(
-      height: 64,
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      decoration: BoxDecoration(
-        color: appColor,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: navy.withValues(alpha: 0.18),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: surface,
+        border: Border(top: BorderSide(color: border)),
       ),
-      child: Row(
-        children: [
-          navigationIcon(homeIcon, 0, 'Home',
-              navigationProvider.pageIndex,
-              navigationProvider.updateIndex),
-          navigationIcon(resultIcon, 1, 'Result',
-              navigationProvider.pageIndex,
-              navigationProvider.updateIndex),
-          navigationIcon(profileIcon, 2, 'Profile',
-              navigationProvider.pageIndex,
-              navigationProvider.updateIndex),
-        ],
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 64,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              children: [
+                navigationIcon(
+                  homeIcon,
+                  0,
+                  'Home',
+                  navigationProvider.pageIndex,
+                  navigationProvider.updateIndex,
+                ),
+                navigationIcon(
+                  resultIcon,
+                  1,
+                  'Result',
+                  navigationProvider.pageIndex,
+                  navigationProvider.updateIndex,
+                ),
+                navigationIcon(
+                  profileIcon,
+                  2,
+                  'Profile',
+                  navigationProvider.pageIndex,
+                  navigationProvider.updateIndex,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

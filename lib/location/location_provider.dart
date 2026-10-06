@@ -2,10 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
-import '../utilities/app_theme.dart';
 import '../utilities/new_app_theme/app_spacing.dart';
 import '../utilities/new_app_theme/app_text.dart';
-import '../widgets/app_ui.dart';
 import '../widgets/new_app_ui/primary_button.dart';
 
 class LocationProvider extends ChangeNotifier {

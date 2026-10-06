@@ -4,10 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../Presentation/provider/ai_inspection_details_provider.dart';
 import '../Presentation/provider/ai_update_result_provider.dart';
-import '../widgets/app_ui.dart';
 import '../widgets/new_app_ui/app_bottom_sheet.dart';
 import '../widgets/new_app_ui/status_badge.dart';
-import 'app_theme.dart';
 import 'color_data.dart';
 import 'new_app_theme/app_radius.dart';
 import 'new_app_theme/app_spacing.dart';

@@ -1,4 +1,3 @@
-import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/image_data.dart';
 import 'package:ats_app/utilities/preferences.dart';

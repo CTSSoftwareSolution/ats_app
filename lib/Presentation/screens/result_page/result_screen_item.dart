@@ -2,10 +2,8 @@
 import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 import '../../../Data/model/response_model/manual_inspection_list_model.dart';
-import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
-import '../../../widgets/app_ui.dart';
 import '../../../widgets/new_app_ui/app_card.dart';
 import '../../../widgets/new_app_ui/info_chip.dart';
 import '../../../widgets/new_app_ui/meta_row.dart';

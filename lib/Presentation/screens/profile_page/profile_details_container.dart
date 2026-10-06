@@ -1,7 +1,5 @@
-import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/preferences.dart';
-import 'package:ats_app/widgets/app_ui.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
 

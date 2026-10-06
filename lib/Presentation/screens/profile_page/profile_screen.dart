@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app_config/ip_address_bottom_sheet_screen.dart';
-import '../../../utilities/app_theme.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
@@ -49,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             AppSpacing.page,
             AppSpacing.lg,
             AppSpacing.page,
-            100,
+            AppSpacing.xl,
           ),
           physics: const BouncingScrollPhysics(),
           children: [

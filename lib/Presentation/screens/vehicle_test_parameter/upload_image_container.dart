@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/video_preview_widget.dart';
-import 'package:ats_app/utilities/app_theme.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/image_data.dart';
 import 'package:ats_app/widgets/custom_image.dart';
@@ -13,7 +12,9 @@ import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
+import '../../../widgets/new_app_ui/status_badge.dart';
 import 'image_dialog_box.dart';
+import 'package:ats_app/Presentation/screens/vehicle_test_parameter/media_upload_tracker.dart';
 
 /// Capture slot: a dashed placeholder until media is captured, then a
 /// thumbnail with "preview" and "retake" affordances.
@@ -33,6 +34,13 @@ class UploadImageContainer extends StatelessWidget {
   final double? imageHeight;
   final double? imageWidth;
 
+  /// Queue upload state of this slot; null when the slot is not uploaded on
+  /// capture (the thumbnail then shows "Captured").
+  final SlotUploadState? uploadState;
+
+  /// Re-sends the captured file; shown as "Retry" when the upload failed.
+  final VoidCallback? onRetry;
+
   const UploadImageContainer({
     super.key,
     required this.onTap,
@@ -49,6 +57,8 @@ class UploadImageContainer extends StatelessWidget {
     this.imageHeight,
     this.imageWidth,
     this.text = "Tap to capture image",
+    this.uploadState,
+    this.onRetry,
   });
 
   @override
@@ -61,12 +71,19 @@ class UploadImageContainer extends StatelessWidget {
     // Slots follow the design system radius regardless of the legacy value.
     const double radius = AppRadius.md;
 
+    final failed = mediaFile != null && uploadState == SlotUploadState.failed;
+
     return SizedBox(
       width: width,
       height: height,
       child: Material(
         color: mediaFile != null ? surface2 : bg,
-        borderRadius: BorderRadius.circular(radius),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+          side: failed
+              ? const BorderSide(color: fail, width: 1.5)
+              : BorderSide.none,
+        ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: mediaFile == null ? onTap : null,
@@ -82,6 +99,8 @@ class UploadImageContainer extends StatelessWidget {
                     path: mediaFile.path,
                     isVideo: isVideo,
                     onRetake: onTap,
+                    uploadState: uploadState,
+                    onRetry: onRetry,
                   )
                 : _EmptySlot(
                     key: const ValueKey('empty'),
@@ -105,22 +124,46 @@ class _CapturedSlot extends StatelessWidget {
   final String path;
   final bool isVideo;
   final VoidCallback onRetake;
+  final SlotUploadState? uploadState;
+  final VoidCallback? onRetry;
 
   const _CapturedSlot({
     super.key,
     required this.path,
     required this.isVideo,
     required this.onRetake,
+    this.uploadState,
+    this.onRetry,
   });
+
+  Widget _badge() {
+    switch (uploadState) {
+      case SlotUploadState.uploading:
+        return const StatusBadge.uploading(dense: true);
+      case SlotUploadState.uploaded:
+        return const StatusBadge.uploaded(dense: true);
+      case SlotUploadState.failed:
+        return const StatusBadge.error(label: 'Upload failed', dense: true);
+      case null:
+        return const StatusBadge.captured(dense: true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final failed = uploadState == SlotUploadState.failed && onRetry != null;
     return Stack(
       fit: StackFit.expand,
       children: [
         isVideo
             ? VideoPreviewWidget(path: path)
             : Image.file(File(path), fit: BoxFit.cover),
+        Positioned(
+          top: 6,
+          left: 6,
+          right: isVideo ? 6 : 50, // clear of the Preview button
+          child: Align(alignment: Alignment.centerLeft, child: _badge()),
+        ),
         if (!isVideo)
           Positioned(
             top: 6,
@@ -137,39 +180,104 @@ class _CapturedSlot extends StatelessWidget {
             ),
           ),
         Positioned(
-          bottom: 8,
+          left: 8,
           right: 8,
-          child: Material(
-            color: surface,
-            shape: const StadiumBorder(),
-            elevation: 1,
-            shadowColor: Colors.black26,
-            child: InkWell(
-              customBorder: const StadiumBorder(),
-              onTap: onRetake,
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.refresh_rounded, size: 14, color: appColor),
-                    SizedBox(width: 4),
-                    Text(
-                      "Retake",
-                      style: TextStyle(
-                        fontFamily: "SemiBold",
-                        fontSize: 12,
-                        color: appColor,
-                      ),
-                    ),
-                  ],
+          bottom: 8,
+          child: Row(
+            children: [
+              if (failed)
+                _PillButton(
+                  icon: Icons.refresh_rounded,
+                  label: "Retry",
+                  color: fail,
+                  onTap: onRetry!,
                 ),
-              ),
-            ),
+              const Spacer(),
+              // When Retry is shown the slot is narrow, so Retake becomes icon-only.
+              failed
+                  ? _PillButton(
+                      icon: Icons.photo_camera_outlined,
+                      tooltip: "Retake",
+                      color: appColor,
+                      onTap: onRetake,
+                    )
+                  : _PillButton(
+                      icon: Icons.photo_camera_outlined,
+                      label: "Retake",
+                      color: appColor,
+                      onTap: onRetake,
+                    ),
+            ],
           ),
         ),
+        if (uploadState == SlotUploadState.uploading)
+          const Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: LinearProgressIndicator(
+              minHeight: 3,
+              backgroundColor: Colors.transparent,
+              color: accent,
+            ),
+          ),
       ],
     );
+  }
+}
+
+/// White pill action laid over a thumbnail (Retake / Retry).
+class _PillButton extends StatelessWidget {
+  final IconData icon;
+  final String? label;
+  final String? tooltip;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _PillButton({
+    required this.icon,
+    this.label,
+    this.tooltip,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final button = Material(
+      color: surface,
+      shape: const StadiumBorder(),
+      elevation: 1,
+      shadowColor: Colors.black26,
+      child: InkWell(
+        customBorder: const StadiumBorder(),
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: label == null ? 8 : 12,
+            vertical: 8,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 15, color: color),
+              if (label != null) ...[
+                const SizedBox(width: 4),
+                Text(
+                  label!,
+                  style: TextStyle(
+                    fontFamily: "SemiBold",
+                    fontSize: 12,
+                    color: color,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+    return tooltip == null ? button : Tooltip(message: tooltip!, child: button);
   }
 }
 
@@ -248,7 +356,10 @@ class _EmptySlot extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 14),
                           backgroundColor: accentLight,
                           foregroundColor: appColor,
-                          textStyle: const TextStyle(fontFamily: "SemiBold", fontSize: 12.5),
+                          textStyle: const TextStyle(
+                            fontFamily: "SemiBold",
+                            fontSize: 12.5,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(AppRadius.sm),
                           ),
@@ -274,7 +385,11 @@ class _OverlayIconButton extends StatelessWidget {
   final String tooltip;
   final VoidCallback onTap;
 
-  const _OverlayIconButton({required this.icon, required this.tooltip, required this.onTap});
+  const _OverlayIconButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -312,10 +427,12 @@ class _DashedBorderPainter extends CustomPainter {
     const double dashSpace = 4;
 
     final path = Path()
-      ..addRRect(RRect.fromRectAndRadius(
-        Rect.fromLTWH(0.6, 0.6, size.width - 1.2, size.height - 1.2),
-        Radius.circular(radius),
-      ));
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(0.6, 0.6, size.width - 1.2, size.height - 1.2),
+          Radius.circular(radius),
+        ),
+      );
 
     final PathMetrics pathMetrics = path.computeMetrics();
     for (final PathMetric metric in pathMetrics) {

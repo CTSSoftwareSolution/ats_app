@@ -14,7 +14,6 @@ import '../../../provider/vehicle_class_provider.dart';
 import '../../bottom_navigation/bottom_navigation_bar.dart';
 import '../pre_save_inspection_provider.dart';
 import '../../../../utilities/color_data.dart';
-import '../../../../widgets/app_ui.dart';
 
 class ConfirmationDialog {
   static void show({

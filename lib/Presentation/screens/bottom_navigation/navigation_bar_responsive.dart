@@ -9,10 +9,12 @@ class NavigationBarResponsiveLayout extends StatefulWidget {
   const NavigationBarResponsiveLayout({super.key});
 
   @override
-  State<NavigationBarResponsiveLayout> createState() => _NavigationBarResponsiveLayoutState();
+  State<NavigationBarResponsiveLayout> createState() =>
+      _NavigationBarResponsiveLayoutState();
 }
 
-class _NavigationBarResponsiveLayoutState extends State<NavigationBarResponsiveLayout> {
+class _NavigationBarResponsiveLayoutState
+    extends State<NavigationBarResponsiveLayout> {
   @override
   Widget build(BuildContext context) {
     final navigationProvider = context.watch<BottomNavigationProvider>();
@@ -25,23 +27,23 @@ class _NavigationBarResponsiveLayoutState extends State<NavigationBarResponsiveL
                   children: [
                     TabletNavigationRail(),
                     Expanded(
-                      child: navigationProvider.pages[navigationProvider.pageIndex],
+                      child: navigationProvider
+                          .pages[navigationProvider.pageIndex],
                     ),
                   ],
                 )
-              : Stack(
+              : Column(
                   children: [
-                    Positioned.fill(
-                      child: navigationProvider.pages[navigationProvider.pageIndex],
-                    ),
-                    Positioned(
-                      left: 16,
-                      right: 16,
-                      bottom: 12,
-                      child: SafeArea(
-                        child: CustomBottomNavigation(),
+                    // The docked bar below owns the system bottom inset.
+                    Expanded(
+                      child: MediaQuery.removePadding(
+                        context: context,
+                        removeBottom: true,
+                        child: navigationProvider
+                            .pages[navigationProvider.pageIndex],
                       ),
                     ),
+                    const CustomBottomNavigation(),
                   ],
                 ),
         );
