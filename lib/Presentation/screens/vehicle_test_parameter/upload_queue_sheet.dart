@@ -29,10 +29,8 @@ void showUploadQueueSheet({
   required List<dynamic> parts,
   required MediaUploadTracker tracker,
 }) {
-  showModalBottomSheet(
+  showAppBottomSheet(
     context: screenContext,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
     builder: (_) => _UploadQueueSheet(
       screenContext: screenContext,
       parts: parts,
@@ -89,17 +87,19 @@ class _UploadQueueSheetState extends State<_UploadQueueSheet> {
         final file = isVideo ? media?.video : media?.image;
         if (file == null) continue;
         final name = part.vehiclePartName?.toString().trim() ?? '';
-        items.add(_QueueItem(
-          index: i,
-          isVideo: isVideo,
-          partName: name.isEmpty || name == 'null' ? 'Part ${i + 1}' : name,
-          // Retry re-sends the file that was last sent for the slot.
-          path: widget.tracker.pathOf(i, isVideo) ?? file.path,
-          status: CaptureStatus.ofSlot(
-            hasFile: true,
-            upload: widget.tracker.stateOf(i, isVideo),
+        items.add(
+          _QueueItem(
+            index: i,
+            isVideo: isVideo,
+            partName: name.isEmpty || name == 'null' ? 'Part ${i + 1}' : name,
+            // Retry re-sends the file that was last sent for the slot.
+            path: widget.tracker.pathOf(i, isVideo) ?? file.path,
+            status: CaptureStatus.ofSlot(
+              hasFile: true,
+              upload: widget.tracker.stateOf(i, isVideo),
+            ),
           ),
-        ));
+        );
       }
     }
     const order = {
@@ -171,8 +171,9 @@ class _UploadQueueSheetState extends State<_UploadQueueSheet> {
         }
         final uploaded = count[CaptureStatus.uploaded] ?? 0;
         final uploading = count[CaptureStatus.uploading] ?? 0;
-        final failedItems =
-            items.where((i) => i.status == CaptureStatus.failed).toList();
+        final failedItems = items
+            .where((i) => i.status == CaptureStatus.failed)
+            .toList();
         final visible = items.where(_matches).toList();
 
         return AppBottomSheet(
@@ -180,7 +181,7 @@ class _UploadQueueSheetState extends State<_UploadQueueSheet> {
           subtitle: items.isEmpty
               ? 'Captured photos and videos appear here'
               : '$uploaded of ${items.length} uploaded'
-                  '${uploading > 0 ? ' · $uploading in progress' : ''}',
+                    '${uploading > 0 ? ' · $uploading in progress' : ''}',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -194,7 +195,8 @@ class _UploadQueueSheetState extends State<_UploadQueueSheet> {
                     minHeight: 6,
                     backgroundColor: surface2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                        uploaded == items.length ? pass : appColor),
+                      uploaded == items.length ? pass : appColor,
+                    ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.md),
@@ -208,7 +210,8 @@ class _UploadQueueSheetState extends State<_UploadQueueSheet> {
                           child: VehicleFilterChip(
                             label: switch (f) {
                               _QueueFilter.all => 'All ${items.length}',
-                              _QueueFilter.failed => 'Failed ${failedItems.length}',
+                              _QueueFilter.failed =>
+                                'Failed ${failedItems.length}',
                               _QueueFilter.uploading => 'Uploading $uploading',
                               _QueueFilter.uploaded => 'Uploaded $uploaded',
                             },
@@ -232,7 +235,8 @@ class _UploadQueueSheetState extends State<_UploadQueueSheet> {
                 const AppStateView.empty(
                   icon: Icons.cloud_upload_outlined,
                   title: 'Nothing captured yet',
-                  message: 'Each photo or video starts uploading as soon as you capture it.',
+                  message:
+                      'Each photo or video starts uploading as soon as you capture it.',
                 )
               else if (visible.isEmpty)
                 Padding(
@@ -281,14 +285,23 @@ class _FailedBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.xs, AppSpacing.xs, AppSpacing.xs),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.xs,
+        AppSpacing.xs,
+        AppSpacing.xs,
+      ),
       decoration: BoxDecoration(
         color: failLight,
         borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline_rounded, size: AppIconSize.md, color: fail),
+          const Icon(
+            Icons.error_outline_rounded,
+            size: AppIconSize.md,
+            color: fail,
+          ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
@@ -314,7 +327,11 @@ class _QueueRow extends StatelessWidget {
   final int totalParts;
   final VoidCallback onRetry;
 
-  const _QueueRow({required this.item, required this.totalParts, required this.onRetry});
+  const _QueueRow({
+    required this.item,
+    required this.totalParts,
+    required this.onRetry,
+  });
 
   void _preview(BuildContext context) {
     showDialog(
@@ -350,7 +367,11 @@ class _QueueRow extends StatelessWidget {
         trailing = const SizedBox(
           width: 48,
           height: 48,
-          child: Icon(Icons.check_circle_rounded, color: pass, size: AppIconSize.lg),
+          child: Icon(
+            Icons.check_circle_rounded,
+            color: pass,
+            size: AppIconSize.lg,
+          ),
         );
       // Uploading is shown by the badge + progress bar in the row itself.
       case CaptureStatus.uploading:
@@ -363,7 +384,12 @@ class _QueueRow extends StatelessWidget {
       container: true,
       label: '${item.partName}, $kind, ${status.label}',
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.sm, AppSpacing.sm),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md,
+          AppSpacing.sm,
+          AppSpacing.sm,
+          AppSpacing.sm,
+        ),
         child: Row(
           children: [
             _Thumbnail(item: item, onTap: () => _preview(context)),
@@ -427,7 +453,9 @@ class _Thumbnail extends StatelessWidget {
         color: item.isVideo ? textPrimary : surface2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.sm + 2),
-          side: failed ? const BorderSide(color: fail, width: 1.5) : BorderSide.none,
+          side: failed
+              ? const BorderSide(color: fail, width: 1.5)
+              : BorderSide.none,
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -436,14 +464,20 @@ class _Thumbnail extends StatelessWidget {
             width: 52,
             height: 52,
             child: item.isVideo
-                ? const Icon(Icons.play_circle_outline_rounded,
-                    color: textWhite, size: AppIconSize.lg + 4)
+                ? const Icon(
+                    Icons.play_circle_outline_rounded,
+                    color: textWhite,
+                    size: AppIconSize.lg + 4,
+                  )
                 : Image.file(
                     File(item.path),
                     fit: BoxFit.cover,
                     cacheWidth: 156,
                     errorBuilder: (_, __, ___) => const Icon(
-                        Icons.broken_image_outlined, color: na, size: AppIconSize.md),
+                      Icons.broken_image_outlined,
+                      color: na,
+                      size: AppIconSize.md,
+                    ),
                   ),
           ),
         ),

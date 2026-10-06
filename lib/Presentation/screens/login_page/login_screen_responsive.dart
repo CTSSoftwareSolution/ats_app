@@ -32,21 +32,31 @@ class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
     final isLoading = context.select<LoginProvider, bool>((p) => p.isLoading);
     return LayoutBuilder(
       builder: (context, constraints) {
-        final double gutter = constraints.isTablet ? AppSpacing.xl : AppSpacing.page;
+        final double gutter = constraints.isTablet
+            ? AppSpacing.xl
+            : AppSpacing.page;
         return Form(
           key: loginFormKey,
           child: SingleChildScrollView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            padding: EdgeInsets.symmetric(horizontal: gutter, vertical: AppSpacing.xl),
+            padding: EdgeInsets.symmetric(
+              horizontal: gutter,
+              vertical: AppSpacing.xl,
+            ),
             child: ConstrainedBox(
               // Keeps the content vertically centred on tall screens while
               // still allowing it to scroll when the keyboard is open.
               constraints: BoxConstraints(
-                minHeight: (constraints.maxHeight - AppSpacing.xl * 2).clamp(0, double.infinity),
+                minHeight: (constraints.maxHeight - AppSpacing.xl * 2).clamp(
+                  0,
+                  double.infinity,
+                ),
               ),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: constraints.isTablet ? 480 : double.infinity),
+                  constraints: BoxConstraints(
+                    maxWidth: constraints.isTablet ? 480 : double.infinity,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,

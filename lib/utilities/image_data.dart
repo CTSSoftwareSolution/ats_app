@@ -53,7 +53,10 @@ const checkCircleImage = "assets/check-circle.png";
 const manualInspectionIcon = "assets/manual-inspection.png";
 const machineInspectionIcon = "assets/machine-inspection.png";
 
-final List<String> inspectionTypeTitles = <String>["Manual Inspection", "Machine Inspection"];
+final List<String> inspectionTypeTitles = <String>[
+  "Manual Inspection",
+  "Machine Inspection",
+];
 
 final List<String> inspectionTypeImage = <String>[
   manualInspectionIcon,
@@ -73,7 +76,6 @@ List<ListModel> mediaSource = [
 ];
 
 List<ProfileModel> profileGridValues = [
-
   const ProfileModel(
     0,
     'Notification',
@@ -116,7 +118,13 @@ List<ProfileModel> profileGridValues = [
     logoutIcon,
     ProfileTrailingType.none,
   ),
-  const ProfileModel(6, 'Version', 'Check your version', versionControlIcon, ProfileTrailingType.none),
+  const ProfileModel(
+    6,
+    'Version',
+    'Check your version',
+    versionControlIcon,
+    ProfileTrailingType.none,
+  ),
 ];
 
 List<BottomNavModel> bottomNavValue = [

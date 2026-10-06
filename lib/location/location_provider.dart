@@ -5,9 +5,9 @@ import 'package:lottie/lottie.dart';
 import '../utilities/new_app_theme/app_spacing.dart';
 import '../utilities/new_app_theme/app_text.dart';
 import '../widgets/new_app_ui/primary_button.dart';
+import '../widgets/new_app_ui/app_dialog.dart';
 
 class LocationProvider extends ChangeNotifier {
-
   Position? _currentPosition;
   String? _currentAddress;
   String? _placeName;
@@ -42,14 +42,16 @@ class LocationProvider extends ChangeNotifier {
 
   Future<void> initializeLocation(BuildContext context) async {
     //await _getLastKnownPosition(context);
-     await getCurrentLocation(context);
-     _listenToLocationService(context);
+    await getCurrentLocation(context);
+    _listenToLocationService(context);
   }
 
-  void _listenToLocationService(BuildContext context){
+  void _listenToLocationService(BuildContext context) {
     streamSubscription?.cancel();
-    streamSubscription = Geolocator.getServiceStatusStream().listen((ServiceStatus status) async{
-      if(status == ServiceStatus.enabled){
+    streamSubscription = Geolocator.getServiceStatusStream().listen((
+      ServiceStatus status,
+    ) async {
+      if (status == ServiceStatus.enabled) {
         _isLocationServiceDisabled = false;
         _errorMessage = null;
 
@@ -57,19 +59,14 @@ class LocationProvider extends ChangeNotifier {
           Navigator.pop(context);
         }
 
-
         await getCurrentLocation(context);
-
-      }else if(status == ServiceStatus.disabled){
+      } else if (status == ServiceStatus.disabled) {
         _isLocationServiceDisabled = true;
         _errorMessage = "Location services are disabled on your device.";
         notifyListeners();
       }
-
     });
   }
-
-
 
   Future<void> _getLastKnownPosition(BuildContext context) async {
     try {
@@ -114,7 +111,8 @@ class LocationProvider extends ChangeNotifier {
         }
         _isLocationServiceDisabled = false; // Services were enabled
       } else {
-        _isLocationServiceDisabled = false; // Ensure flag is reset if services are enabled
+        _isLocationServiceDisabled =
+            false; // Ensure flag is reset if services are enabled
       }
 
       // Check permissions
@@ -187,7 +185,6 @@ class LocationProvider extends ChangeNotifier {
     return true;
   }
 
-
   Future<bool> _showLocationServiceDialog(BuildContext context) async {
     _isLocationDialogOpen = true;
 
@@ -212,15 +209,16 @@ class LocationProvider extends ChangeNotifier {
     return await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('Location Permission'),
-        content: const Text('This app needs location permission to work properly'),
+      builder: (context) => AppDialog(
+        icon: Icons.location_on_outlined,
+        title: 'Location Permission',
+        message: 'This app needs location permission to work properly',
         actions: [
           // TextButton(
           //   onPressed: () => Navigator.pop(context, false),
           //   child: const Text('Deny'),
           // ),
-          TextButton(
+          FilledButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Allow'),
           ),
@@ -234,8 +232,6 @@ class LocationProvider extends ChangeNotifier {
     streamSubscription?.cancel();
     super.dispose();
   }
-
-
 }
 
 /// Location prompt: animation, title, message and one primary action.
@@ -270,9 +266,17 @@ class _LocationPromptDialog extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
               const SizedBox(height: AppSpacing.sm),
-              Text(title, textAlign: TextAlign.center, style: AppText.pageTitle),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: AppText.pageTitle,
+              ),
               const SizedBox(height: 6),
-              Text(message, textAlign: TextAlign.center, style: AppText.bodySecondary),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: AppText.bodySecondary,
+              ),
               const SizedBox(height: AppSpacing.xl),
               PrimaryButton(label: actionLabel, onPressed: onAction),
             ],

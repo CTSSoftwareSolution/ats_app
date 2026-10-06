@@ -7,17 +7,16 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
-
 class BottomNavigationBarScreen extends StatefulWidget {
   const BottomNavigationBarScreen({super.key});
 
   @override
-  State<BottomNavigationBarScreen> createState() => _BottomNavigationBarScreenState();
+  State<BottomNavigationBarScreen> createState() =>
+      _BottomNavigationBarScreenState();
 }
 
-class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> with WidgetsBindingObserver {
-
+class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
@@ -36,10 +35,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> w
 
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
-
     if (state == AppLifecycleState.resumed) {
       final locationProvider = context.read<LocationProvider>();
-
 
       Future.delayed(const Duration(milliseconds: 300), () {
         if (mounted) {
@@ -48,7 +45,6 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> w
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +74,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> w
         }
       },
       child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: NavigationBarResponsiveLayout()),
+        resizeToAvoidBottomInset: false,
+        body: NavigationBarResponsiveLayout(),
+      ),
     );
   }
 }

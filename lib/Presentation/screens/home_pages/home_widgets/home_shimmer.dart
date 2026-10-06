@@ -9,7 +9,11 @@ import '../../../../utilities/new_app_theme/app_spacing.dart';
 class HomeShimmer extends StatelessWidget {
   const HomeShimmer({super.key});
 
-  Widget _block({double? width, required double height, double radius = AppRadius.sm}) {
+  Widget _block({
+    double? width,
+    required double height,
+    double radius = AppRadius.sm,
+  }) {
     return Container(
       width: width,
       height: height,
@@ -23,7 +27,10 @@ class HomeShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.page,
+        vertical: 6,
+      ),
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(

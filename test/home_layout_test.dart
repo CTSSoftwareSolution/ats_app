@@ -61,22 +61,30 @@ void main() {
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({
       Preferences.name: 'Venkatanarasimharajuvaripeta Subramanyam',
-      Preferences.location: 'Regional Transport Office Automated Testing Station, Pune',
+      Preferences.location:
+          'Regional Transport Office Automated Testing Station, Pune',
     });
     await Preferences.setPreferences();
   });
 
   for (final width in [320.0, 360.0, 412.0, 600.0]) {
     for (final scale in [1.0, 1.3]) {
-      testWidgets('appointment card fits at ${width}dp, text x$scale',
-          (tester) async {
+      testWidgets('appointment card fits at ${width}dp, text x$scale', (
+        tester,
+      ) async {
         await pump(
           tester,
           Column(
             children: [
-              VehicleClassScreenItem(classDataModel: longAppointment, onTap: () {}),
+              VehicleClassScreenItem(
+                classDataModel: longAppointment,
+                onTap: () {},
+              ),
               const SizedBox(height: 12),
-              VehicleClassScreenItem(classDataModel: emptyAppointment, onTap: () {}),
+              VehicleClassScreenItem(
+                classDataModel: emptyAppointment,
+                onTap: () {},
+              ),
             ],
           ),
           width: width,
@@ -87,28 +95,33 @@ void main() {
         expect(find.text('Not started'), findsNWidgets(2));
       });
 
-      testWidgets('header, summary and shimmer fit at ${width}dp, text x$scale',
-          (tester) async {
-        await pump(
-          tester,
-          const Column(
-            children: [
-              BuildHeaderHome(),
-              HomeListSummary(
-                totalRecords: 12840,
-                loadedCount: 20,
-                category: 'Heavy Goods Vehicle',
-                search: 'MH12 very long search query text',
-              ),
-              AppointmentCardShimmer(),
-            ],
-          ),
-          width: width,
-          textScale: scale,
-        );
-        expect(tester.takeException(), isNull);
-        expect(find.text('Hello, Venkatanarasimharajuvaripeta'), findsOneWidget);
-      });
+      testWidgets(
+        'header, summary and shimmer fit at ${width}dp, text x$scale',
+        (tester) async {
+          await pump(
+            tester,
+            const Column(
+              children: [
+                BuildHeaderHome(),
+                HomeListSummary(
+                  totalRecords: 12840,
+                  loadedCount: 20,
+                  category: 'Heavy Goods Vehicle',
+                  search: 'MH12 very long search query text',
+                ),
+                AppointmentCardShimmer(),
+              ],
+            ),
+            width: width,
+            textScale: scale,
+          );
+          expect(tester.takeException(), isNull);
+          expect(
+            find.text('Hello, Venkatanarasimharajuvaripeta'),
+            findsOneWidget,
+          );
+        },
+      );
     }
   }
 

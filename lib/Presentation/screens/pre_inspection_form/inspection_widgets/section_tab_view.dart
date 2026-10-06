@@ -8,11 +8,14 @@ import '../../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../../widgets/new_app_ui/app_state_view.dart';
 import '../../../provider/inspection_form_provider.dart';
 import 'category_card.dart';
+import 'inspection_view_rules.dart';
 
+/// One tab of the inspection (Pre / Post / Under-PIT): section summary
+/// followed by its categories, filtered by the active question filter.
 class SectionTabView extends StatelessWidget {
   final int sectionIndex;
 
-  const SectionTabView({super.key, required this.sectionIndex,});
+  const SectionTabView({super.key, required this.sectionIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -20,41 +23,36 @@ class SectionTabView extends StatelessWidget {
       builder: (context, provider, _) {
         final sections = provider.visibleSections;
 
-        if (sections.isEmpty ||
-            sectionIndex >= sections.length) {
+        if (sections.isEmpty || sectionIndex >= sections.length) {
           return _buildEmptyState(provider);
         }
 
-        final section = provider.visibleSections[sectionIndex];
-        debugPrint("SECTION NAME = ${section.label}");
-        debugPrint("CATEGORY COUNT = ${section.categories.length}");
-        // if (provider.filteredSections.isEmpty ||
-        //     sectionIndex >= provider.filteredSections.length) {
-        //   return _buildEmptyState(provider);
-        // }
-        //
-        // final section = provider.filteredSections[sectionIndex];
-        debugPrint('→ Section: ${section.label}');
-        debugPrint('→ Section: ${sectionIndex}');
+        final section = sections[sectionIndex];
 
         if (section.categories.isEmpty) {
           return _buildEmptyState(provider);
         }
 
+        final anyShown = section.categories.any(
+          (c) =>
+              c.questions.any((q) => matchesQuestionFilter(q, provider.filter)),
+        );
+
         return CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(
-              child: SectionSummaryCard(section: section),
-            ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                    (context, catIndex) => CategoryCard(
-                  sectionIndex: sectionIndex,
-                  categoryIndex: catIndex,
+            SliverToBoxAdapter(child: SectionSummaryCard(section: section)),
+            if (!anyShown)
+              SliverToBoxAdapter(child: _buildEmptyState(provider))
+            else
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, catIndex) => CategoryCard(
+                    sectionIndex: sectionIndex,
+                    categoryIndex: catIndex,
+                  ),
+                  childCount: section.categories.length,
                 ),
-                childCount: section.categories.length,
               ),
-            ),
             const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xl)),
           ],
         );
@@ -63,22 +61,45 @@ class SectionTabView extends StatelessWidget {
   }
 
   Widget _buildEmptyState(InspectionFormProvider provider) {
-    final isAnsweredFilter = provider.filter == QuestionFilter.answered;
-    final isPendingFilter = provider.filter == QuestionFilter.unanswered;
+    final filter = provider.filter;
+    final (
+      IconData icon,
+      Color color,
+      String title,
+      String? message,
+    ) = switch (filter) {
+      QuestionFilter.answered => (
+        Icons.pending_actions_outlined,
+        na,
+        'Nothing answered yet',
+        'Answers you give in this section will show here.',
+      ),
+      QuestionFilter.unanswered => (
+        Icons.task_alt_rounded,
+        pass,
+        'All questions answered',
+        'Every check in this section has an answer.',
+      ),
+      QuestionFilter.no => (
+        Icons.verified_outlined,
+        pass,
+        'No failed checks',
+        'Nothing in this section was answered "No".',
+      ),
+      QuestionFilter.all => (
+        Icons.inbox_outlined,
+        na,
+        'No questions found',
+        null,
+      ),
+    };
     return Center(
       child: SingleChildScrollView(
         child: AppStateView(
-          icon: isAnsweredFilter
-              ? Icons.check_circle_outline
-              : isPendingFilter
-              ? Icons.pending_outlined
-              : Icons.inbox_outlined,
-          color: isPendingFilter ? pass : na,
-          title: isAnsweredFilter
-              ? 'No answered questions in this section'
-              : isPendingFilter
-              ? 'All questions answered in this section!'
-              : 'No questions found',
+          icon: icon,
+          color: color,
+          title: title,
+          message: message,
         ),
       ),
     );

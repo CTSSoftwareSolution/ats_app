@@ -49,7 +49,9 @@ class TabletNavigationRail extends StatelessWidget {
             fontFamily: "Bold",
             color: textWhite,
           ),
-          unselectedLabelTextStyle: AppText.navLabel.copyWith(color: textWhiteSub),
+          unselectedLabelTextStyle: AppText.navLabel.copyWith(
+            color: textWhiteSub,
+          ),
           leading: Padding(
             padding: const EdgeInsets.only(
               top: AppSpacing.md,

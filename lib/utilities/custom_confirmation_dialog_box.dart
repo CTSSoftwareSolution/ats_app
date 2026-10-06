@@ -38,10 +38,20 @@ customConfirmationDialogBox({
                 backgroundColor: button.backgroundColor ?? appColor,
                 foregroundColor: button.textColor ?? textWhite,
                 minimumSize: const Size(0, 48),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                textStyle: const TextStyle(fontFamily: "SemiBold", fontSize: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                textStyle: const TextStyle(
+                  fontFamily: "SemiBold",
+                  fontSize: 14,
+                ),
               ),
-              child: Text(button.text, textAlign: TextAlign.center, maxLines: 2),
+              child: Text(
+                button.text,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+              ),
             ),
         ],
       );

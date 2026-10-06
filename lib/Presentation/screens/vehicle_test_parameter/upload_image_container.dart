@@ -142,107 +142,122 @@ class _CapturedSlot extends StatelessWidget {
   Widget build(BuildContext context) {
     final status = CaptureStatus.ofSlot(hasFile: true, upload: uploadState);
     final failed = status == CaptureStatus.failed && onRetry != null;
-    final retakeIcon = isVideo ? Icons.videocam_outlined : Icons.photo_camera_outlined;
+    final retakeIcon = isVideo
+        ? Icons.videocam_outlined
+        : Icons.photo_camera_outlined;
     return Semantics(
       container: true,
       label: '${isVideo ? 'Video' : 'Photo'}: ${status.label}',
       child: Stack(
-      fit: StackFit.expand,
-      children: [
-        isVideo
-            ? VideoPreviewWidget(path: path)
-            : Image.file(
-                File(path),
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Center(
-                  child: Icon(Icons.broken_image_outlined, color: na, size: AppIconSize.xl),
-                ),
-              ),
-        // While uploading, dim the thumbnail and say so in the middle.
-        if (status == CaptureStatus.uploading)
-          ColoredBox(
-            color: Colors.black.withValues(alpha: 0.35),
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(strokeWidth: 2.5, color: textWhite),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text('Uploading…', style: AppText.caption.copyWith(color: textWhite)),
-                ],
-              ),
-            ),
-          ),
-        Positioned(
-          top: 6,
-          left: 6,
-          right: isVideo ? 6 : 52, // clear of the Preview button
-          child: Align(alignment: Alignment.centerLeft, child: status.badge()),
-        ),
-        if (!isVideo)
-          Positioned(
-            top: 0,
-            right: 0,
-            child: _OverlayIconButton(
-              icon: Icons.open_in_full_rounded,
-              tooltip: 'Preview',
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => ImageDialogBox(path: path),
-                );
-              },
-            ),
-          ),
-        // Pills sit 8dp from the edges; their [_PillButton] hit area extends
-        // into that margin.
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: Row(
-            children: [
-              if (failed)
-                _PillButton(
-                  icon: Icons.refresh_rounded,
-                  label: "Retry",
-                  color: fail,
-                  onTap: onRetry!,
-                ),
-              const Spacer(),
-              // When Retry is shown the slot is narrow, so Retake becomes icon-only.
-              failed
-                  ? _PillButton(
-                      icon: retakeIcon,
-                      tooltip: "Retake",
-                      color: appColor,
-                      onTap: onRetake,
-                    )
-                  : _PillButton(
-                      icon: retakeIcon,
-                      label: "Retake",
-                      color: appColor,
-                      onTap: onRetake,
+        fit: StackFit.expand,
+        children: [
+          isVideo
+              ? VideoPreviewWidget(path: path)
+              : Image.file(
+                  File(path),
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const Center(
+                    child: Icon(
+                      Icons.broken_image_outlined,
+                      color: na,
+                      size: AppIconSize.xl,
                     ),
-            ],
+                  ),
+                ),
+          // While uploading, dim the thumbnail and say so in the middle.
+          if (status == CaptureStatus.uploading)
+            ColoredBox(
+              color: Colors.black.withValues(alpha: 0.35),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: textWhite,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      'Uploading…',
+                      style: AppText.caption.copyWith(color: textWhite),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          Positioned(
+            top: 6,
+            left: 6,
+            right: isVideo ? 6 : 52, // clear of the Preview button
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: status.badge(),
+            ),
           ),
-        ),
-        if (status == CaptureStatus.uploading)
-          const Positioned(
+          if (!isVideo)
+            Positioned(
+              top: 0,
+              right: 0,
+              child: _OverlayIconButton(
+                icon: Icons.open_in_full_rounded,
+                tooltip: 'Preview',
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => ImageDialogBox(path: path),
+                  );
+                },
+              ),
+            ),
+          // Pills sit 8dp from the edges; their [_PillButton] hit area extends
+          // into that margin.
+          Positioned(
             left: 0,
             right: 0,
             bottom: 0,
-            child: LinearProgressIndicator(
-              minHeight: 3,
-              backgroundColor: Colors.transparent,
-              color: accent,
+            child: Row(
+              children: [
+                if (failed)
+                  _PillButton(
+                    icon: Icons.refresh_rounded,
+                    label: "Retry",
+                    color: fail,
+                    onTap: onRetry!,
+                  ),
+                const Spacer(),
+                // When Retry is shown the slot is narrow, so Retake becomes icon-only.
+                failed
+                    ? _PillButton(
+                        icon: retakeIcon,
+                        tooltip: "Retake",
+                        color: appColor,
+                        onTap: onRetake,
+                      )
+                    : _PillButton(
+                        icon: retakeIcon,
+                        label: "Retake",
+                        color: appColor,
+                        onTap: onRetake,
+                      ),
+              ],
             ),
           ),
-      ],
+          if (status == CaptureStatus.uploading)
+            const Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: LinearProgressIndicator(
+                minHeight: 3,
+                backgroundColor: Colors.transparent,
+                color: accent,
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -296,7 +311,9 @@ class _PillButton extends StatelessWidget {
       ),
     );
     final hitArea = _ExpandedHitArea(onTap: onTap, child: button);
-    return tooltip == null ? hitArea : Tooltip(message: tooltip!, child: hitArea);
+    return tooltip == null
+        ? hitArea
+        : Tooltip(message: tooltip!, child: hitArea);
   }
 }
 
@@ -331,77 +348,86 @@ class _EmptySlot extends StatelessWidget {
       label: '${isVideo ? 'Video' : 'Photo'}: Not captured. $text',
       excludeSemantics: true,
       child: CustomPaint(
-      painter: _DashedBorderPainter(color: borderDark, radius: radius),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Drop secondary content when the slot is short so nothing overflows.
-          final showText = constraints.maxHeight >= 96;
-          final showButton = constraints.maxHeight >= 136;
-          final double circle = iconSize.clamp(36.0, 44.0);
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.sm),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: circle,
-                    height: circle,
-                    decoration: const BoxDecoration(
-                      color: accentLight,
-                      shape: BoxShape.circle,
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    child: CustomImage(
-                      image: image,
-                      scale: iconScale,
-                      height: imageHeight,
-                      width: imageWidth,
-                      color: appColor,
-                    ),
-                  ),
-                  if (showText) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      text,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppText.caption.copyWith(color: textSecondary),
-                    ),
-                  ],
-                  if (showButton) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    SizedBox(
-                      height: 32,
-                      child: FilledButton.tonalIcon(
-                        onPressed: onTap,
-                        style: FilledButton.styleFrom(
-                          minimumSize: const Size(0, 32),
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                          backgroundColor: accentLight,
-                          foregroundColor: appColor,
-                          textStyle: const TextStyle(
-                            fontFamily: "SemiBold",
-                            fontSize: 12.5,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.sm),
-                          ),
-                        ),
-                        icon: Icon(
-                            isVideo ? Icons.videocam_outlined : Icons.photo_camera_outlined,
-                            size: 16),
-                        label: Text(isVideo ? "Record" : "Capture"),
+        painter: _DashedBorderPainter(color: borderDark, radius: radius),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Drop secondary content when the slot is short so nothing overflows.
+            // The thresholds grow with the user's text size: the caption is up
+            // to two 12pt lines and the button label is 12.5pt.
+            final scaler = MediaQuery.textScalerOf(context);
+            final captionExtra = (scaler.scale(12) - 12) * 2 * 1.35;
+            final buttonExtra = scaler.scale(12.5) - 12.5;
+            final showText = constraints.maxHeight >= 96 + captionExtra;
+            final showButton =
+                constraints.maxHeight >= 136 + captionExtra + buttonExtra;
+            final double circle = iconSize.clamp(36.0, 44.0);
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: circle,
+                      height: circle,
+                      decoration: const BoxDecoration(
+                        color: accentLight,
+                        shape: BoxShape.circle,
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: CustomImage(
+                        image: image,
+                        scale: iconScale,
+                        height: imageHeight,
+                        width: imageWidth,
+                        color: appColor,
                       ),
                     ),
+                    if (showText) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        text,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.caption.copyWith(color: textSecondary),
+                      ),
+                    ],
+                    if (showButton) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      SizedBox(
+                        height: 32,
+                        child: FilledButton.tonalIcon(
+                          onPressed: onTap,
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size(0, 32),
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            backgroundColor: accentLight,
+                            foregroundColor: appColor,
+                            textStyle: const TextStyle(
+                              fontFamily: "SemiBold",
+                              fontSize: 12.5,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppRadius.sm),
+                            ),
+                          ),
+                          icon: Icon(
+                            isVideo
+                                ? Icons.videocam_outlined
+                                : Icons.photo_camera_outlined,
+                            size: 16,
+                          ),
+                          label: Text(isVideo ? "Record" : "Capture"),
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+        ),
       ),
     );
   }

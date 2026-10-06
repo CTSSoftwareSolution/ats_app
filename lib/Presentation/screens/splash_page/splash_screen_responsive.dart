@@ -9,10 +9,12 @@ class SplashScreenResponsiveLayout extends StatefulWidget {
   const SplashScreenResponsiveLayout({super.key});
 
   @override
-  State<SplashScreenResponsiveLayout> createState() => _SplashScreenResponsiveLayoutState();
+  State<SplashScreenResponsiveLayout> createState() =>
+      _SplashScreenResponsiveLayoutState();
 }
 
-class _SplashScreenResponsiveLayoutState extends State<SplashScreenResponsiveLayout> {
+class _SplashScreenResponsiveLayoutState
+    extends State<SplashScreenResponsiveLayout> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -21,7 +23,9 @@ class _SplashScreenResponsiveLayoutState extends State<SplashScreenResponsiveLay
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: constraints.contentMaxWidth),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: constraints.horizontalPadding),
+              padding: EdgeInsets.symmetric(
+                horizontal: constraints.horizontalPadding,
+              ),
               child: Column(
                 children: [
                   const Expanded(child: Center(child: LogoScreenItem())),
@@ -37,7 +41,9 @@ class _SplashScreenResponsiveLayoutState extends State<SplashScreenResponsiveLay
                       ),
                     ),
                   ),
-                  SizedBox(height: constraints.isTablet ? 96 : AppSpacing.xl * 2.5),
+                  SizedBox(
+                    height: constraints.isTablet ? 96 : AppSpacing.xl * 2.5,
+                  ),
                 ],
               ),
             ),

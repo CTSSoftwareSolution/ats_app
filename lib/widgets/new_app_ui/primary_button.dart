@@ -38,7 +38,10 @@ class PrimaryButton extends StatelessWidget {
           child: const SizedBox(
             width: 22,
             height: 22,
-            child: CircularProgressIndicator(strokeWidth: 2.5, color: textMuted),
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              color: textMuted,
+            ),
           ),
         ),
       );
@@ -46,10 +49,10 @@ class PrimaryButton extends StatelessWidget {
     return icon == null
         ? FilledButton(onPressed: handler, style: style, child: Text(label))
         : FilledButton.icon(
-      onPressed: handler,
-      style: style,
-      icon: Icon(icon, size: AppIconSize.md),
-      label: Text(label),
-    );
+            onPressed: handler,
+            style: style,
+            icon: Icon(icon, size: AppIconSize.md),
+            label: Text(label),
+          );
   }
 }

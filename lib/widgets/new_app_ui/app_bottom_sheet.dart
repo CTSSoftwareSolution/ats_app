@@ -4,12 +4,38 @@ import '../../utilities/new_app_theme/app_radius.dart';
 import '../../utilities/new_app_theme/app_spacing.dart';
 import '../../utilities/new_app_theme/app_text.dart';
 
+/// Opens a modal bottom sheet with the app's standard options: full-height
+/// capable (keyboard-safe), transparent route background so [AppBottomSheet]
+/// draws the rounded surface, themed scrim.
+Future<T?> showAppBottomSheet<T>({
+  required BuildContext context,
+  required WidgetBuilder builder,
+  bool isDismissible = true,
+  bool enableDrag = true,
+}) {
+  return showModalBottomSheet<T>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    isDismissible: isDismissible,
+    enableDrag: enableDrag,
+    builder: builder,
+  );
+}
+
+/// Standard bottom sheet surface: drag handle, optional title / subtitle,
+/// scrollable content that stays above the keyboard.
 class AppBottomSheet extends StatelessWidget {
   final String? title;
   final String? subtitle;
   final Widget child;
 
-  const AppBottomSheet({super.key, this.title, this.subtitle, required this.child});
+  const AppBottomSheet({
+    super.key,
+    this.title,
+    this.subtitle,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +46,9 @@ class AppBottomSheet extends StatelessWidget {
         constraints: BoxConstraints(maxHeight: media.size.height * 0.9),
         decoration: const BoxDecoration(
           color: surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppRadius.xl),
+          ),
         ),
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(20, 10, 20, 20 + media.padding.bottom),
@@ -44,7 +72,8 @@ class AppBottomSheet extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(subtitle!, style: AppText.bodySecondary),
               ],
-              if (title != null || subtitle != null) const SizedBox(height: AppSpacing.lg),
+              if (title != null || subtitle != null)
+                const SizedBox(height: AppSpacing.lg),
               child,
             ],
           ),

@@ -25,35 +25,40 @@ Widget navigationIcon(
       child: InkWell(
         onTap: () => onTabSelected.call(index),
         borderRadius: BorderRadius.circular(AppRadius.md),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 4,
+        // The bar has a fixed height, so labels follow the system text size
+        // only up to 1.2× (as Material's NavigationBar does) to avoid clipping.
+        child: MediaQuery.withClampedTextScaling(
+          maxScaleFactor: 1.2,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isActive ? accentLight : Colors.transparent,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: ImageIcon(AssetImage(icon), size: 20, color: color),
                 ),
-                decoration: BoxDecoration(
-                  color: isActive ? accentLight : Colors.transparent,
-                  borderRadius: BorderRadius.circular(100),
+                const SizedBox(height: 4),
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.navLabel.copyWith(
+                    fontFamily: isActive ? "Bold" : "SemiBold",
+                    color: isActive ? appColor : textSecondary,
+                  ),
                 ),
-                child: ImageIcon(AssetImage(icon), size: 20, color: color),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppText.navLabel.copyWith(
-                  fontFamily: isActive ? "Bold" : "SemiBold",
-                  color: isActive ? appColor : textSecondary,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

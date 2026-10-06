@@ -15,13 +15,11 @@ class VideoPreviewWidget extends StatefulWidget {
 }
 
 class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
-
   VideoPlayerController? videoPlayerController;
 
   /// True when the file could not be opened; shows a placeholder instead of
   /// an endless spinner.
   bool _loadFailed = false;
-
 
   @override
   void initState() {
@@ -80,13 +78,18 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
             SizedBox(height: 4),
             Text(
               'Preview unavailable',
-              style: TextStyle(fontFamily: "SemiBold", fontSize: 12, color: textSecondary),
+              style: TextStyle(
+                fontFamily: "SemiBold",
+                fontSize: 12,
+                color: textSecondary,
+              ),
             ),
           ],
         ),
       );
     }
-    if (videoPlayerController == null || !videoPlayerController!.value.isInitialized) {
+    if (videoPlayerController == null ||
+        !videoPlayerController!.value.isInitialized) {
       return const Center(
         child: SizedBox(
           width: 22,
@@ -126,7 +129,11 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(10),
-                  child: Icon(Icons.play_arrow_rounded, size: 28, color: textWhite),
+                  child: Icon(
+                    Icons.play_arrow_rounded,
+                    size: 28,
+                    color: textWhite,
+                  ),
                 ),
               ),
             ),

@@ -45,7 +45,11 @@ class HomeListSummary extends StatelessWidget {
       excludeSemantics: true,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
-            AppSpacing.page, AppSpacing.md, AppSpacing.page, AppSpacing.sm),
+          AppSpacing.page,
+          AppSpacing.md,
+          AppSpacing.page,
+          AppSpacing.sm,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -61,7 +65,10 @@ class HomeListSummary extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: accentLight,
                     borderRadius: BorderRadius.circular(100),

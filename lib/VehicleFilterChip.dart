@@ -47,7 +47,11 @@ class VehicleFilterChip extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (isSelected) ...[
-                      const Icon(Icons.check_rounded, size: 16, color: textWhite),
+                      const Icon(
+                        Icons.check_rounded,
+                        size: 16,
+                        color: textWhite,
+                      ),
                       const SizedBox(width: 6),
                     ],
                     Text(

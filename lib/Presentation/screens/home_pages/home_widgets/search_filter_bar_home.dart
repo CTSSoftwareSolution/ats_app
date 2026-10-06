@@ -9,7 +9,6 @@ import '../../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../../widgets/custom_search_bar.dart';
 import '../../../provider/vehicle_class_provider.dart';
 
-
 class SearchFilterBarHome extends StatefulWidget {
   final VehicleClassProvider provider;
   const SearchFilterBarHome({super.key, required this.provider});
@@ -19,7 +18,6 @@ class SearchFilterBarHome extends StatefulWidget {
 }
 
 class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
-
   @override
   void initState() {
     super.initState();
@@ -45,18 +43,21 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
             child: CustomSearchTextField(
-            hint: 'Search appointments',
-            onChanged: (v) => widget.provider.onSearchChanged(context, v),
+              hint: 'Search appointments',
+              onChanged: (v) => widget.provider.onSearchChanged(context, v),
               controller: widget.provider.searchController,
               suffixIcon: widget.provider.searchValue.isEmpty
                   ? null
                   : SearchClearButton(
-                onPressed: () {
-                  widget.provider.searchController.clear();
-                  widget.provider.vehicleClassApi(context: context, loadMore: false);
-                },
-              )
-          ),
+                      onPressed: () {
+                        widget.provider.searchController.clear();
+                        widget.provider.vehicleClassApi(
+                          context: context,
+                          loadMore: false,
+                        );
+                      },
+                    ),
+            ),
           ),
           // Chips carry 4dp of vertical tap padding, so this reads as 12dp.
           const SizedBox(height: AppSpacing.sm),
@@ -71,7 +72,6 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
 }
 
 class _FilterRow extends StatelessWidget {
-
   final VehicleClassProvider vehicleProvider;
   final LaneListProvider chipsProvider;
 
@@ -88,33 +88,38 @@ class _FilterRow extends StatelessWidget {
       label: 'Category filter',
       container: true,
       child: chipsProvider.isLoading
-            ? const Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: AppSpacing.page, vertical: AppSpacing.xs),
-          child: ChipShimmer(),
-        )
-            : SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.only(left: AppSpacing.page, right: AppSpacing.sm),
-          child: Row(
-            children: chipsProvider.laneMap.keys.map((laneName) {
-              final laneCode = chipsProvider.laneMap[laneName];
-              return Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.sm),
-                child: VehicleFilterChip(
-                  label: laneName,
-                  isSelected:
-                  chipsProvider.selectedFilter == laneName,
-                  onTap: () => chipsProvider.onChipSelected(
-                    laneName,
-                    onChanged: () => vehicleProvider.onFilterChanged(context, laneCode!),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
+          ? const Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSpacing.page,
+                vertical: AppSpacing.xs,
+              ),
+              child: ChipShimmer(),
+            )
+          : SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(
+                left: AppSpacing.page,
+                right: AppSpacing.sm,
+              ),
+              child: Row(
+                children: chipsProvider.laneMap.keys.map((laneName) {
+                  final laneCode = chipsProvider.laneMap[laneName];
+                  return Padding(
+                    padding: const EdgeInsets.only(right: AppSpacing.sm),
+                    child: VehicleFilterChip(
+                      label: laneName,
+                      isSelected: chipsProvider.selectedFilter == laneName,
+                      onTap: () => chipsProvider.onChipSelected(
+                        laneName,
+                        onChanged: () =>
+                            vehicleProvider.onFilterChanged(context, laneCode!),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
     );
   }
 }

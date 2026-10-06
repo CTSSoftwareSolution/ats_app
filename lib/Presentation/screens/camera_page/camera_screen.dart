@@ -17,7 +17,6 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
-
   /// True while a shutter action is running; further taps are ignored so a
   /// photo isn't taken twice.
   bool _shutterBusy = false;
@@ -33,7 +32,7 @@ class _CameraScreenState extends State<CameraScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    final provider = Provider.of<FileProvider>(context,listen: false);
+    final provider = Provider.of<FileProvider>(context, listen: false);
     provider.disposeCamera();
     super.dispose();
   }
@@ -62,12 +61,17 @@ class _CameraScreenState extends State<CameraScreen>
                     const SizedBox(
                       width: 32,
                       height: 32,
-                      child: CircularProgressIndicator(color: textWhite, strokeWidth: 3),
+                      child: CircularProgressIndicator(
+                        color: textWhite,
+                        strokeWidth: 3,
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     Text(
                       "Starting camera…",
-                      style: AppText.bodySecondary.copyWith(color: textWhiteSub),
+                      style: AppText.bodySecondary.copyWith(
+                        color: textWhiteSub,
+                      ),
                     ),
                   ],
                 ),
@@ -101,7 +105,7 @@ class _CameraScreenState extends State<CameraScreen>
         if (context.mounted) {
           Navigator.pop(context);
         }
-        },
+      },
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Stack(
@@ -140,7 +144,11 @@ class _CameraScreenState extends State<CameraScreen>
                             AnimatedOpacity(
                               opacity: fileProvider.showBlink ? 1.0 : 0.2,
                               duration: const Duration(milliseconds: 150),
-                              child: const Icon(Icons.circle, color: Colors.red, size: 10),
+                              child: const Icon(
+                                Icons.circle,
+                                color: Colors.red,
+                                size: 10,
+                              ),
                             ),
                             const SizedBox(width: 6),
                             Text(
@@ -148,7 +156,9 @@ class _CameraScreenState extends State<CameraScreen>
                               style: AppText.titleOnDark.copyWith(
                                 fontSize: 14,
                                 height: 1.2,
-                                fontFeatures: const [FontFeature.tabularFigures()],
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
                               ),
                             ),
                           ],
@@ -186,7 +196,9 @@ class _CameraScreenState extends State<CameraScreen>
                   _CameraPill(
                     child: Text(
                       fileProvider.isVideo
-                          ? (isRecording ? "Tap to stop recording" : "Tap to start recording")
+                          ? (isRecording
+                                ? "Tap to stop recording"
+                                : "Tap to start recording")
                           : "Tap to capture photo",
                       style: AppText.caption.copyWith(color: textWhite),
                     ),
@@ -210,7 +222,9 @@ class _CameraScreenState extends State<CameraScreen>
                               await fileProvider.stopVideoRecording();
                               if (!context.mounted) return;
                               final after = _capturedPath(fileProvider);
-                              debugPrint("[MEDIA] CameraScreen returning video: $after");
+                              debugPrint(
+                                "[MEDIA] CameraScreen returning video: $after",
+                              );
                               context.pop(after != before ? after : null);
                             } else {
                               await fileProvider.startVideoRecording();
@@ -219,7 +233,9 @@ class _CameraScreenState extends State<CameraScreen>
                             await fileProvider.takePicture(context);
                             if (!context.mounted) return;
                             final after = _capturedPath(fileProvider);
-                            debugPrint("[MEDIA] CameraScreen returning image: $after");
+                            debugPrint(
+                              "[MEDIA] CameraScreen returning image: $after",
+                            );
                             context.pop(after != before ? after : null);
                           }
                         } finally {
@@ -252,7 +268,11 @@ class _CameraRoundButton extends StatelessWidget {
   final String tooltip;
   final VoidCallback onTap;
 
-  const _CameraRoundButton({required this.icon, required this.tooltip, required this.onTap});
+  const _CameraRoundButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -310,7 +330,7 @@ class _ShutterButton extends StatelessWidget {
       height: 76,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 4),
+        border: Border.all(color: textWhite, width: 4),
       ),
       alignment: Alignment.center,
       child: AnimatedContainer(
@@ -318,7 +338,7 @@ class _ShutterButton extends StatelessWidget {
         width: inner,
         height: inner,
         decoration: BoxDecoration(
-          color: isVideo ? Colors.red : Colors.white,
+          color: isVideo ? Colors.red : textWhite,
           borderRadius: BorderRadius.circular(isRecording ? 6 : inner / 2),
         ),
       ),

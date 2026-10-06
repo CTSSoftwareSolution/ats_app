@@ -16,10 +16,15 @@ class LoginScreenItem extends StatelessWidget {
 
   const LoginScreenItem({super.key, this.onSubmit});
 
-  static const EdgeInsets _fieldPadding =
-      EdgeInsets.symmetric(horizontal: 14, vertical: 14);
-  static const TextStyle _hintStyle =
-      TextStyle(fontSize: 14, fontFamily: "Medium", color: textMuted);
+  static const EdgeInsets _fieldPadding = EdgeInsets.symmetric(
+    horizontal: 14,
+    vertical: 14,
+  );
+  static const TextStyle _hintStyle = TextStyle(
+    fontSize: 14,
+    fontFamily: "Medium",
+    color: textMuted,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +45,14 @@ class LoginScreenItem extends StatelessWidget {
             textCapitalization: TextCapitalization.none,
             textInputAction: TextInputAction.next,
             autofillHints: const [AutofillHints.username],
-            validator: (value) => Validators.userNameValidation(value!, context),
+            validator: (value) =>
+                Validators.userNameValidation(value!, context),
             inputFormatters: InputFormatters.specialRestrictions,
-            prefixIcon: const Icon(Icons.person_outline_rounded, size: 20, color: textSecondary),
+            prefixIcon: const Icon(
+              Icons.person_outline_rounded,
+              size: 20,
+              color: textSecondary,
+            ),
           ),
           const SizedBox(height: AppSpacing.lg),
           const FieldLabel("Password"),
@@ -59,12 +69,19 @@ class LoginScreenItem extends StatelessWidget {
             textInputAction: TextInputAction.done,
             autofillHints: const [AutofillHints.password],
             onFieldSubmitted: onSubmit == null ? null : (_) => onSubmit!(),
-            validator: (value) => Validators.passwordValidation(value!, context),
+            validator: (value) =>
+                Validators.passwordValidation(value!, context),
             inputFormatters: InputFormatters.spaceNotAllowed,
-            prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20, color: textSecondary),
+            prefixIcon: const Icon(
+              Icons.lock_outline_rounded,
+              size: 20,
+              color: textSecondary,
+            ),
             suffixIcon: IconButton(
               color: textSecondary,
-              tooltip: loginProvider.passwordVisible == true ? "Show password" : "Hide password",
+              tooltip: loginProvider.passwordVisible == true
+                  ? "Show password"
+                  : "Hide password",
               onPressed: () {
                 context.read<LoginProvider>().passwordVisibility();
               },

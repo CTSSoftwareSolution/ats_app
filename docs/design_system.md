@@ -98,6 +98,19 @@ Icons on their own need a `tooltip` (on `IconButton`) or a `Semantics` label.
 
 ## Components
 
+### App bars: `AppTopBar`
+- Every screen uses `AppTopBar(title: …)`. Pushed screens pass `onBack` and get the shared back button; tab roots omit it, and the title lines up with the page gutter.
+- Inspection-flow screens pass `subtitle: vehicleSubtitle(context)` so the vehicle's registration number is always visible.
+- Actions are icon buttons with a `tooltip`.
+
+### Bottom navigation
+- **Phone:** a docked white bar with a hairline top border. The active tab shows a tinted pill behind its icon and a bold label; inactive tabs use `textSecondary` for contrast.
+- **Tablet:** a brand-colour navigation rail.
+- Destinations and behaviour are defined in `BottomNavigationProvider`. This is a visual layer only.
+
+### Floating action buttons
+- Not used: the primary action lives in a `BottomActionBar`. If one is ever needed, the theme gives it the brand colour, 16 radius and no elevation.
+
 ### Buttons
 - **`PrimaryButton`:** one per screen or sheet; 52dp, full width. Pass `loading: true` while it runs. Pass `color: fail` for destructive actions.
 - **`SecondaryButton`:** an outlined 52dp button. Use it for the second action of a pair (Cancel, Reset). Place it to the left of the primary button, usually with `flex: 1` against the primary's `flex: 2`.
@@ -126,12 +139,17 @@ Use the named constructors so a status always looks the same:
 
 `StatusBadge.fromResult` converts API "Pass"/"Fail" strings. Badges always pair an icon with text, so status never relies on colour alone.
 
+### List cards
+- Vehicle and appointment cards follow one layout: `RegistrationPlate` with `AppointmentTime` on the right, then the title and booking ID, then `InfoChip`s. A footer row holds status and the action.
+- Inspection stages use `StageStatusTable` / `stageStatusBadge`: Pass, Fail, "Not started", or the API value shown as pending.
+- Media capture uses `CaptureStatus`: Not captured → Captured → Uploading → Uploaded / Upload failed.
+
 ### Section labels: `SectionHeader`
 UPPERCASE overline above a group ("Settings", "Category", "Remark"). It's marked as a header for screen readers.
 
 ### Bottom sheets: `AppBottomSheet`
 - Drag handle, optional title and subtitle. It scrolls and stays above the keyboard.
-- Open it with `showModalBottomSheet(isScrollControlled: true, backgroundColor: Colors.transparent)`. The theme supplies the scrim.
+- Open it with `showAppBottomSheet(context: …, builder: …)`, which sets the standard options. The theme supplies the scrim.
 - Actions go at the bottom: `SecondaryButton` + `PrimaryButton`.
 
 ### Dialogs: `AppDialog` (via `customShowDialog` / `customConfirmationDialogBox`)
@@ -145,7 +163,7 @@ UPPERCASE overline above a group ("Settings", "Category", "Remark"). It's marked
 | First load of a list | Shimmer placeholders shaped like the cards (`HomeShimmer`) |
 | First load of a screen or panel | `AppLoadingView(message: …)` / `CustomLoader.loader()` |
 | Blocking action (save, upload, sign in) | `CustomLoader.showLoader` overlay, plus `PrimaryButton(loading: true)` |
-| Load more | Small spinner at the end of the list |
+| Load more / end of list | `ListFooter`: a small spinner while paging, then "All N … shown" |
 | Pull to refresh | `RefreshIndicator`; wrap empty and error states in `PullToRefreshFill` |
 
 ### Empty and error states: `AppStateView`

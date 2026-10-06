@@ -26,11 +26,17 @@ class ImageDialogBox extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.xl),
       ),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: size.height * 0.85, maxWidth: 560),
+        constraints: BoxConstraints(
+          maxHeight: size.height * 0.85,
+          maxWidth: 560,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            MediaPreviewHeader(title: "Image preview", onClose: () => Navigator.pop(context)),
+            MediaPreviewHeader(
+              title: "Image preview",
+              onClose: () => Navigator.pop(context),
+            ),
             Flexible(
               child: InteractiveViewer(
                 minScale: 1,
@@ -44,11 +50,17 @@ class ImageDialogBox extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.broken_image_outlined, color: textWhiteSub, size: 32),
+                          const Icon(
+                            Icons.broken_image_outlined,
+                            color: textWhiteSub,
+                            size: 32,
+                          ),
                           const SizedBox(height: AppSpacing.sm),
                           Text(
                             "This image can't be displayed",
-                            style: AppText.bodySecondary.copyWith(color: textWhiteSub),
+                            style: AppText.bodySecondary.copyWith(
+                              color: textWhiteSub,
+                            ),
                           ),
                         ],
                       ),

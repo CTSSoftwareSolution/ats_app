@@ -72,7 +72,11 @@ class AppStateView extends StatelessWidget {
           Text(title, textAlign: TextAlign.center, style: AppText.sectionTitle),
           if (message != null) ...[
             const SizedBox(height: 6),
-            Text(message!, textAlign: TextAlign.center, style: AppText.bodySecondary),
+            Text(
+              message!,
+              textAlign: TextAlign.center,
+              style: AppText.bodySecondary,
+            ),
           ],
           if (onAction != null) ...[
             const SizedBox(height: AppSpacing.lg),
@@ -112,7 +116,11 @@ class AppLoadingView extends StatelessWidget {
             ),
             if (message != null) ...[
               const SizedBox(height: AppSpacing.lg),
-              Text(message!, textAlign: TextAlign.center, style: AppText.bodySecondary),
+              Text(
+                message!,
+                textAlign: TextAlign.center,
+                style: AppText.bodySecondary,
+              ),
             ],
           ],
         ),

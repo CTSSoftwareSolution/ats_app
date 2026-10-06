@@ -35,7 +35,11 @@ class AppDialog extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 420),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
-            AppSpacing.xl - 4, AppSpacing.xl - 4, AppSpacing.xl - 4, AppSpacing.lg),
+            AppSpacing.xl - 4,
+            AppSpacing.xl - 4,
+            AppSpacing.xl - 4,
+            AppSpacing.lg,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,7 +53,11 @@ class AppDialog extends StatelessWidget {
                       color: iconColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
-                    child: Icon(icon, color: iconColor, size: AppIconSize.md + 2),
+                    child: Icon(
+                      icon,
+                      color: iconColor,
+                      size: AppIconSize.md + 2,
+                    ),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
@@ -62,7 +70,11 @@ class AppDialog extends StatelessWidget {
                     IconButton(
                       tooltip: 'Close',
                       onPressed: onClose,
-                      icon: const Icon(Icons.close_rounded, size: AppIconSize.md, color: na),
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        size: AppIconSize.md,
+                        color: na,
+                      ),
                     ),
                 ],
               ),

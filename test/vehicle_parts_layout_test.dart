@@ -16,12 +16,18 @@ void main() {
     test('slot status follows file + upload state', () {
       expect(CaptureStatus.ofSlot(hasFile: false), CaptureStatus.notCaptured);
       expect(CaptureStatus.ofSlot(hasFile: true), CaptureStatus.captured);
-      expect(CaptureStatus.ofSlot(hasFile: true, upload: SlotUploadState.uploading),
-          CaptureStatus.uploading);
-      expect(CaptureStatus.ofSlot(hasFile: true, upload: SlotUploadState.uploaded),
-          CaptureStatus.uploaded);
-      expect(CaptureStatus.ofSlot(hasFile: true, upload: SlotUploadState.failed),
-          CaptureStatus.failed);
+      expect(
+        CaptureStatus.ofSlot(hasFile: true, upload: SlotUploadState.uploading),
+        CaptureStatus.uploading,
+      );
+      expect(
+        CaptureStatus.ofSlot(hasFile: true, upload: SlotUploadState.uploaded),
+        CaptureStatus.uploaded,
+      );
+      expect(
+        CaptureStatus.ofSlot(hasFile: true, upload: SlotUploadState.failed),
+        CaptureStatus.failed,
+      );
     });
 
     test('part status surfaces what needs attention first', () {
@@ -37,18 +43,49 @@ void main() {
   // Part 0: photo + video, nothing captured. Parts 1-4: photo captured, then
   // no upload / uploading / uploaded / failed.
   final parts = [
-    PartsDataModel(id: 1, vehiclePartName: 'Front number plate and registration mark lighting', type: 3, questionId: 11),
-    PartsDataModel(id: 2, vehiclePartName: 'Head lamp', type: 1, questionId: 12),
-    PartsDataModel(id: 3, vehiclePartName: 'Rear view mirror (left)', type: 1, questionId: 13),
-    PartsDataModel(id: 4, vehiclePartName: 'Tail lamp', type: 1, questionId: 14),
-    PartsDataModel(id: 5, vehiclePartName: 'Speed governor seal', type: 1, questionId: 15),
+    PartsDataModel(
+      id: 1,
+      vehiclePartName: 'Front number plate and registration mark lighting',
+      type: 3,
+      questionId: 11,
+    ),
+    PartsDataModel(
+      id: 2,
+      vehiclePartName: 'Head lamp',
+      type: 1,
+      questionId: 12,
+    ),
+    PartsDataModel(
+      id: 3,
+      vehiclePartName: 'Rear view mirror (left)',
+      type: 1,
+      questionId: 13,
+    ),
+    PartsDataModel(
+      id: 4,
+      vehiclePartName: 'Tail lamp',
+      type: 1,
+      questionId: 14,
+    ),
+    PartsDataModel(
+      id: 5,
+      vehiclePartName: 'Speed governor seal',
+      type: 1,
+      questionId: 15,
+    ),
   ];
 
-  Future<void> pump(WidgetTester tester, {required double width, double textScale = 1.0}) async {
+  Future<void> pump(
+    WidgetTester tester, {
+    required double width,
+    double textScale = 1.0,
+  }) async {
     final files = FileProvider();
     files.mediaFile.add(MediaFile());
     for (var i = 1; i < parts.length; i++) {
-      files.mediaFile.add(MediaFile()..image = XFile('assets/default-image.png'));
+      files.mediaFile.add(
+        MediaFile()..image = XFile('assets/default-image.png'),
+      );
     }
     final tracker = MediaUploadTracker()
       ..set(2, false, SlotUploadState.uploading, path: 'a')
@@ -64,7 +101,10 @@ void main() {
         child: MaterialApp(
           theme: AppTheme.light,
           home: MediaQuery(
-            data: MediaQueryData(size: Size(width, 3200), textScaler: TextScaler.linear(textScale)),
+            data: MediaQueryData(
+              size: Size(width, 3200),
+              textScaler: TextScaler.linear(textScale),
+            ),
             child: Scaffold(
               body: ListView.separated(
                 padding: const EdgeInsets.all(16),
@@ -87,7 +127,9 @@ void main() {
 
   for (final width in [320.0, 360.0, 412.0, 600.0]) {
     for (final scale in [1.0, 1.3]) {
-      testWidgets('capture cards fit at ${width}dp, text x$scale', (tester) async {
+      testWidgets('capture cards fit at ${width}dp, text x$scale', (
+        tester,
+      ) async {
         await pump(tester, width: width, textScale: scale);
         expect(tester.takeException(), isNull);
         // Each state is spelled out (part badge + slot badge for captured ones).

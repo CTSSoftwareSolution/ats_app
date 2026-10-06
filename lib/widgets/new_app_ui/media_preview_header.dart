@@ -9,12 +9,21 @@ class MediaPreviewHeader extends StatelessWidget {
   final String title;
   final VoidCallback onClose;
 
-  const MediaPreviewHeader({super.key, required this.title, required this.onClose});
+  const MediaPreviewHeader({
+    super.key,
+    required this.title,
+    required this.onClose,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.xs, AppSpacing.xs, AppSpacing.xs),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.xs,
+        AppSpacing.xs,
+        AppSpacing.xs,
+      ),
       child: Row(
         children: [
           Expanded(

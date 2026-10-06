@@ -11,7 +11,8 @@ class InspectionTile extends StatelessWidget {
   final String description;
   final VoidCallback onTap;
 
-  const InspectionTile({super.key,
+  const InspectionTile({
+    super.key,
     required this.icon,
     required this.label,
     required this.description,
@@ -22,7 +23,10 @@ class InspectionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 14),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: 14,
+      ),
       child: Row(
         children: [
           Container(
@@ -47,7 +51,11 @@ class InspectionTile extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, color: textSecondary, size: 22),
+          const Icon(
+            Icons.chevron_right_rounded,
+            color: textSecondary,
+            size: 22,
+          ),
         ],
       ),
     );

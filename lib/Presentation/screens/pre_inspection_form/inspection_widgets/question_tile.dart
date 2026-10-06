@@ -18,7 +18,9 @@ import '../../camera_page/camera_screen.dart';
 import 'image_picker_prompt.dart';
 import 'image_preview.dart';
 import '../../../../widgets/new_app_ui/section_header.dart';
-
+import '../../../../widgets/new_app_ui/app_bottom_sheet.dart';
+import '../../../../widgets/new_app_ui/status_badge.dart';
+import 'inspection_view_rules.dart';
 
 class QuestionTile extends StatefulWidget {
   final int sectionIndex;
@@ -27,7 +29,6 @@ class QuestionTile extends StatefulWidget {
   final Color accentColor;
   final bool isLast;
 
-
   const QuestionTile({
     super.key,
     required this.sectionIndex,
@@ -35,7 +36,6 @@ class QuestionTile extends StatefulWidget {
     required this.questionIndex,
     required this.accentColor,
     required this.isLast,
-
   });
 
   @override
@@ -43,7 +43,6 @@ class QuestionTile extends StatefulWidget {
 }
 
 class _QuestionTileState extends State<QuestionTile> {
-
   // Each tile registers this key in the provider so other tiles can scroll to it
   final GlobalKey _tileKey = GlobalKey();
   TextEditingController controller = TextEditingController();
@@ -63,11 +62,11 @@ class _QuestionTileState extends State<QuestionTile> {
   // Called after answering Yes. Finds the next unanswered question via the
   // provider's key registry and smoothly scrolls to it.
   void _scrollToNext(
-      InspectionFormProvider provider,
-      int origSec,
-      int origCat,
-      int origQue,
-      ) {
+    InspectionFormProvider provider,
+    int origSec,
+    int origCat,
+    int origQue,
+  ) {
     // Small delay so notifyListeners() rebuild completes before we scroll
     Future.delayed(const Duration(milliseconds: 200), () {
       if (!mounted) return;
@@ -85,14 +84,17 @@ class _QuestionTileState extends State<QuestionTile> {
 
   // ── Image Picker ──────────────────────────────
   Future<void> _pickImage(
-      BuildContext context,
-      InspectionFormProvider provider,
-      ImageSource source,
-      int origSec,
-      int origCat,
-      int origQue,
-      ) async {
-    final awsProvider = Provider.of<AwsSignedUrlProvider>(context, listen: false);
+    BuildContext context,
+    InspectionFormProvider provider,
+    ImageSource source,
+    int origSec,
+    int origCat,
+    int origQue,
+  ) async {
+    final awsProvider = Provider.of<AwsSignedUrlProvider>(
+      context,
+      listen: false,
+    );
     final fileProvider = Provider.of<FileProvider>(context, listen: false);
     //await fileProvider.initCamera();
     fileProvider.clearOverlayImage();
@@ -104,7 +106,8 @@ class _QuestionTileState extends State<QuestionTile> {
         final file = File(fileProvider.overlayImage!.path);
         final imagePath = file.path.split(Platform.pathSeparator).last;
         await awsProvider.awsUploadedFile(imagePath, file, context);
-        final fileImagePath = awsImagePathUrl + awsProvider.stringRandomNumber + imagePath;
+        final fileImagePath =
+            awsImagePathUrl + awsProvider.stringRandomNumber + imagePath;
         provider.setQuestionImage(
           sectionIndex: origSec,
           categoryIndex: origCat,
@@ -119,8 +122,6 @@ class _QuestionTileState extends State<QuestionTile> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final aiDetailsProvider = context.watch<AiInspectionDetailsProvider>();
@@ -128,12 +129,17 @@ class _QuestionTileState extends State<QuestionTile> {
     return Consumer<InspectionFormProvider>(
       builder: (context, provider, _) {
         final origSec = provider.originalSectionIndex(widget.sectionIndex);
-        final origCat = provider.originalCategoryIndex(widget.sectionIndex, widget.categoryIndex);
-        final origQue = provider.originalQuestionIndex(widget.sectionIndex, widget.categoryIndex, widget.questionIndex);
-        final question = provider
-            .sections[origSec]
-            .categories[origCat]
-            .questions[origQue];
+        final origCat = provider.originalCategoryIndex(
+          widget.sectionIndex,
+          widget.categoryIndex,
+        );
+        final origQue = provider.originalQuestionIndex(
+          widget.sectionIndex,
+          widget.categoryIndex,
+          widget.questionIndex,
+        );
+        final question =
+            provider.sections[origSec].categories[origCat].questions[origQue];
 
         // Register this tile's key so the provider can find it for scrolling
         provider.registerQuestionKey(origSec, origCat, origQue, _tileKey);
@@ -151,24 +157,45 @@ class _QuestionTileState extends State<QuestionTile> {
         return Container(
           key: _tileKey,
           decoration: BoxDecoration(
-            color: surface,
+            // A faint red wash makes failed questions easy to spot when
+            // scrolling back through a long category.
+            color: isNo && !isReadOnly ? fail.withValues(alpha: 0.03) : surface,
             border: widget.isLast
                 ? null
-                : const Border(
-              bottom: BorderSide(color: border),
-            ),
+                : const Border(bottom: BorderSide(color: border)),
           ),
           padding: const EdgeInsets.fromLTRB(
-              AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
+            AppSpacing.lg,
+            AppSpacing.md,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // ── Question number + severity ──
+              Row(
+                children: [
+                  Text('Q${widget.questionIndex + 1}', style: AppText.overline),
+                  const Spacer(),
+                  if (severityLabel(question.answer) != null)
+                    StatusBadge(
+                      label: severityLabel(question.answer)!,
+                      color: fail,
+                      background: failLight,
+                      icon: Icons.priority_high_rounded,
+                      dense: true,
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.xs),
               // ── Question text ──
               ...List.generate(items.length, (index) {
                 final item = items[index];
                 return Padding(
                   padding: EdgeInsets.only(
-                      bottom: index == items.length - 1 ? 0 : AppSpacing.sm),
+                    bottom: index == items.length - 1 ? 0 : AppSpacing.sm,
+                  ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -185,10 +212,7 @@ class _QuestionTileState extends State<QuestionTile> {
                         const SizedBox(width: AppSpacing.sm),
                       ],
                       Expanded(
-                        child: Text(
-                          item.itemText ?? '',
-                          style: AppText.title.copyWith(fontSize: 14.5),
-                        ),
+                        child: Text(item.itemText ?? '', style: AppText.title),
                       ),
                     ],
                   ),
@@ -206,17 +230,23 @@ class _QuestionTileState extends State<QuestionTile> {
                       selected: isYes,
                       selectedColor: isReadOnly ? na : pass,
                       selectedBackground: isReadOnly ? naLight : passLight,
-                      onTap: isReadOnly ? null :
-                          () {
-                        provider.answerQuestion(
-                          sectionIndex: origSec,
-                          categoryIndex: origCat,
-                          questionIndex: origQue,
-                          answer: AnswerState.Pass,
-                        );
-                        // Auto-scroll to next unanswered question
-                        _scrollToNext(provider, origSec, origCat, origQue);
-                      },
+                      onTap: isReadOnly
+                          ? null
+                          : () {
+                              provider.answerQuestion(
+                                sectionIndex: origSec,
+                                categoryIndex: origCat,
+                                questionIndex: origQue,
+                                answer: AnswerState.Pass,
+                              );
+                              // Auto-scroll to next unanswered question
+                              _scrollToNext(
+                                provider,
+                                origSec,
+                                origCat,
+                                origQue,
+                              );
+                            },
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
@@ -227,16 +257,17 @@ class _QuestionTileState extends State<QuestionTile> {
                       selected: isNo,
                       selectedColor: isReadOnly ? na : fail,
                       selectedBackground: isReadOnly ? naLight : failLight,
-                      onTap: isReadOnly ? null :
-                          () {
-                        provider.answerQuestion(
-                          sectionIndex: origSec,
-                          categoryIndex: origCat,
-                          questionIndex: origQue,
-                          answer: AnswerState.Fail,
-                        );
-                        // No auto-scroll on Fail — user must fill remark/image
-                      },
+                      onTap: isReadOnly
+                          ? null
+                          : () {
+                              provider.answerQuestion(
+                                sectionIndex: origSec,
+                                categoryIndex: origCat,
+                                questionIndex: origQue,
+                                answer: AnswerState.Fail,
+                              );
+                              // No auto-scroll on Fail — user must fill remark/image
+                            },
                     ),
                   ),
                 ],
@@ -246,11 +277,11 @@ class _QuestionTileState extends State<QuestionTile> {
                 const SizedBox(height: AppSpacing.sm),
                 OutlinedButton.icon(
                   onPressed: () {
-                    aiDetailsProvider.setSelectedQueId(int.parse(question.carData.questionId.toString()));
-                    showModalBottomSheet(
+                    aiDetailsProvider.setSelectedQueId(
+                      int.parse(question.carData.questionId.toString()),
+                    );
+                    showAppBottomSheet(
                       context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
                       builder: (_) => ChangeStatusSheet(
                         isPass: isYes,
                         onSubmit: (v) => setState(() => isYes = v),
@@ -266,18 +297,32 @@ class _QuestionTileState extends State<QuestionTile> {
               AnimatedCrossFade(
                 duration: const Duration(milliseconds: 250),
                 crossFadeState:
-               // isNo || isYes ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-                (!aiDetailsProvider.isAIModeOn && isNo) ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                    // isNo || isYes ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                    (!aiDetailsProvider.isAIModeOn && isNo)
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
                 firstChild: const SizedBox(width: double.infinity),
                 secondChild: Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.md),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SectionHeader('EVIDENCE'),
-                          () {
+                      const SectionHeader(
+                        'Evidence photo',
+                        trailing: Text(
+                          'REQUIRED',
+                          style: TextStyle(
+                            fontFamily: "Bold",
+                            fontSize: 11,
+                            color: fail,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ),
+                      () {
                         final hasLocalImage = question.imagePath != null;
-                        final hasExistingUrl = question.existingEvidenceUrl != null &&
+                        final hasExistingUrl =
+                            question.existingEvidenceUrl != null &&
                             question.existingEvidenceUrl!.isNotEmpty;
                         if (hasLocalImage) {
                           return ImagePreview(
@@ -334,13 +379,18 @@ class _QuestionTileState extends State<QuestionTile> {
                         }
                       }(),
                       const SizedBox(height: AppSpacing.md),
-                      const SectionHeader('REMARK'),
+                      const SectionHeader(
+                        'Remark',
+                        trailing: Text('OPTIONAL', style: AppText.overline),
+                      ),
                       CustomTextField(
                         cursorColor: appColor,
                         contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 14),
+                          horizontal: 14,
+                          vertical: 14,
+                        ),
                         fillColor: surface,
-                        hint: "Add a remark",
+                        hint: "Describe the defect (optional)",
                         controller: controller,
                         minLines: 1,
                         maxLines: 4,

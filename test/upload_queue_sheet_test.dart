@@ -12,22 +12,53 @@ import 'package:provider/provider.dart';
 /// stays readable with many items, and never overflows.
 void main() {
   final parts = [
-    PartsDataModel(id: 1, vehiclePartName: 'Front number plate and registration mark lighting', type: 3, questionId: 11),
-    PartsDataModel(id: 2, vehiclePartName: 'Head lamp', type: 1, questionId: 12),
-    PartsDataModel(id: 3, vehiclePartName: 'Rear view mirror (left)', type: 1, questionId: 13),
-    PartsDataModel(id: 4, vehiclePartName: 'Tail lamp', type: 2, questionId: 14),
-    PartsDataModel(id: 5, vehiclePartName: 'Speed governor seal', type: 1, questionId: 15),
+    PartsDataModel(
+      id: 1,
+      vehiclePartName: 'Front number plate and registration mark lighting',
+      type: 3,
+      questionId: 11,
+    ),
+    PartsDataModel(
+      id: 2,
+      vehiclePartName: 'Head lamp',
+      type: 1,
+      questionId: 12,
+    ),
+    PartsDataModel(
+      id: 3,
+      vehiclePartName: 'Rear view mirror (left)',
+      type: 1,
+      questionId: 13,
+    ),
+    PartsDataModel(
+      id: 4,
+      vehiclePartName: 'Tail lamp',
+      type: 2,
+      questionId: 14,
+    ),
+    PartsDataModel(
+      id: 5,
+      vehiclePartName: 'Speed governor seal',
+      type: 1,
+      questionId: 15,
+    ),
     PartsDataModel(id: 6, vehiclePartName: 'Wipers', type: 1, questionId: 16),
   ];
 
-  Future<void> openSheet(WidgetTester tester, {required double width, double textScale = 1.0}) async {
+  Future<void> openSheet(
+    WidgetTester tester, {
+    required double width,
+    double textScale = 1.0,
+  }) async {
     final files = FileProvider();
     // Part 0: photo + video captured; parts 1, 2, 4: photo; part 3: video;
     // part 5: nothing captured (must not be listed).
     files.mediaFile
-      ..add(MediaFile()
-        ..image = XFile('a.jpg')
-        ..video = XFile('a.mp4'))
+      ..add(
+        MediaFile()
+          ..image = XFile('a.jpg')
+          ..video = XFile('a.mp4'),
+      )
       ..add(MediaFile()..image = XFile('b.jpg'))
       ..add(MediaFile()..image = XFile('c.jpg'))
       ..add(MediaFile()..video = XFile('d.mp4'))
@@ -50,13 +81,19 @@ void main() {
         child: MaterialApp(
           theme: AppTheme.light,
           home: MediaQuery(
-            data: MediaQueryData(size: Size(width, 2400), textScaler: TextScaler.linear(textScale)),
+            data: MediaQueryData(
+              size: Size(width, 2400),
+              textScaler: TextScaler.linear(textScale),
+            ),
             child: Builder(
               builder: (context) => Scaffold(
                 body: Center(
                   child: TextButton(
                     onPressed: () => showUploadQueueSheet(
-                        screenContext: context, parts: parts, tracker: tracker),
+                      screenContext: context,
+                      parts: parts,
+                      tracker: tracker,
+                    ),
                     child: const Text('open'),
                   ),
                 ),
@@ -75,7 +112,9 @@ void main() {
 
   for (final width in [320.0, 360.0, 412.0, 600.0]) {
     for (final scale in [1.0, 1.3]) {
-      testWidgets('upload sheet fits at ${width}dp, text x$scale', (tester) async {
+      testWidgets('upload sheet fits at ${width}dp, text x$scale', (
+        tester,
+      ) async {
         await openSheet(tester, width: width, textScale: scale);
         expect(tester.takeException(), isNull);
         expect(find.text('Uploads'), findsOneWidget);

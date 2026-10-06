@@ -1,7 +1,7 @@
-
 import 'package:ats_app/Presentation/screens/profile_page/profile_details_container.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:ats_app/widgets/new_app_ui/app_top_bar.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +19,6 @@ import '../../provider/login_provider.dart';
 
 import '../login_page/login_screen.dart';
 
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -28,7 +27,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
   /// Index of the "Logout" entry in [profileGridValues] (see [click]).
   static const int _logoutIndex = 5;
 
@@ -48,11 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bg,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        titleSpacing: AppSpacing.page,
-        title: const Text("Profile"),
-      ),
+      appBar: const AppTopBar(title: "Profile"),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(
@@ -67,7 +61,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: AppSpacing.xl),
             const SectionHeader(
               "Settings",
-              padding: EdgeInsets.only(left: AppSpacing.xs, bottom: AppSpacing.sm),
+              padding: EdgeInsets.only(
+                left: AppSpacing.xs,
+                bottom: AppSpacing.sm,
+              ),
             ),
             _ProfileMenuSection(
               children: List.generate(profileGridValues.length, (index) {
@@ -75,15 +72,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 final isAction = _actionIndexes.contains(index);
                 final tile = _ProfileMenuTile(
                   image: item.image,
-                  icon: index == _ipConfigIndex ? Icons.settings_ethernet_rounded : null,
+                  icon: index == _ipConfigIndex
+                      ? Icons.settings_ethernet_rounded
+                      : null,
                   title: item.title,
                   subtitle: item.subtitle,
                   destructive: index == _logoutIndex,
                   showChevron: index == _ipConfigIndex,
                   onTap: isAction
                       ? () {
-                    click(index, context);
-                  }
+                          click(index, context);
+                        }
                       : null,
                 );
                 if (index != _versionIndex) return tile;
@@ -112,10 +111,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 1:
         break;
       case 2:
-
         break;
       case 3:
-
         break;
       case 4:
         showIpAddressBottomSheet(context);
@@ -210,14 +207,14 @@ class _ProfileMenuTile extends StatelessWidget {
   });
 
   _ProfileMenuTile copyWithSubtitle(String newSubtitle) => _ProfileMenuTile(
-        image: image,
-        icon: icon,
-        title: title,
-        subtitle: newSubtitle,
-        destructive: destructive,
-        showChevron: showChevron,
-        onTap: onTap,
-      );
+    image: image,
+    icon: icon,
+    title: title,
+    subtitle: newSubtitle,
+    destructive: destructive,
+    showChevron: showChevron,
+    onTap: onTap,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -264,14 +261,21 @@ class _ProfileMenuTile extends StatelessWidget {
                     ),
                     if (subtitle.isNotEmpty) ...[
                       const SizedBox(height: 2),
-                      Text(subtitle, style: AppText.caption.copyWith(color: textSecondary)),
+                      Text(
+                        subtitle,
+                        style: AppText.caption.copyWith(color: textSecondary),
+                      ),
                     ],
                   ],
                 ),
               ),
               if (showChevron) ...[
                 const SizedBox(width: AppSpacing.sm),
-                const Icon(Icons.chevron_right_rounded, size: 22, color: textSecondary),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  size: 22,
+                  color: textSecondary,
+                ),
               ],
             ],
           ),

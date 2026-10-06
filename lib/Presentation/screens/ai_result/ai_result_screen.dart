@@ -5,13 +5,14 @@ import 'package:ats_app/Presentation/provider/bottom_navigation_provider.dart';
 import 'package:ats_app/Presentation/screens/bottom_navigation/bottom_navigation_bar.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:ats_app/Presentation/screens/common/vehicle_subtitle.dart';
+import 'package:ats_app/widgets/new_app_ui/app_top_bar.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/custom_loader.dart';
-import '../../../widgets/new_app_ui/app_back_button.dart';
 import '../../../widgets/new_app_ui/app_bottom_sheet.dart';
 import '../../../widgets/new_app_ui/app_card.dart';
 import '../../../widgets/new_app_ui/app_state_view.dart';
@@ -57,6 +58,9 @@ class _AiResultScreenState extends State<AiResultScreen> {
 
   bool _isNavigating = false;
 
+  /// Questions whose "Result Details" are open (by [_keyOf]).
+  final Set<String> _expanded = {};
+
   /// Clears the inspection flow and returns to the dashboard tab.
   void _goToDashboard() {
     if (_isNavigating) return;
@@ -95,14 +99,15 @@ class _AiResultScreenState extends State<AiResultScreen> {
 
     return Scaffold(
       backgroundColor: bg,
-      appBar: AppBar(
-        title: const Text("AI Result"),
-        leading: AppBackButton(onPressed: () => Navigator.pop(context)),
+      appBar: AppTopBar(
+        title: "AI Result",
+        subtitle: vehicleSubtitle(context),
+        onBack: () => Navigator.pop(context),
       ),
       body: SafeArea(
         bottom: false,
         child: provider.isLoading && !_isRefreshing
-            ? Center(child: CustomLoader.loader())
+            ? CustomLoader.loader(message: "Loading result…")
             : RefreshIndicator(
                 color: appColor,
                 backgroundColor: surface,
@@ -151,41 +156,47 @@ class _AiResultScreenState extends State<AiResultScreen> {
 
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(AppSpacing.page),
-      itemCount: records.length,
-      separatorBuilder: (_, __) => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        child: Divider(height: 1, thickness: 1, color: borderDark),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.page,
+        AppSpacing.lg,
+        AppSpacing.page,
+        AppSpacing.xl,
       ),
-      itemBuilder: (context, index) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _QuestionCard(
-            text: records[index].questionText,
-            label: records.length > 1
-                ? "Inspection Question ${index + 1} of ${records.length}"
-                : "Inspection Question",
-            result: _availableResult(records[index]),
-            // Not while refreshing: the record is about to be replaced.
-            onTap: _isRefreshing
-                ? null
-                : () => _showChangeResultSheet(provider, records[index]),
-          ),
-          const SizedBox(height: 16),
-          const Text("Result Details", style: AppText.sectionTitle),
-          const SizedBox(height: 12),
-          _ResultDetails(item: records[index]),
-        ],
-      ),
+      // Summary first, then one card per question.
+      itemCount: records.length + 1,
+      separatorBuilder: (_, index) =>
+          SizedBox(height: index == 0 ? AppSpacing.lg : AppSpacing.md),
+      itemBuilder: (context, index) {
+        if (index == 0) return _ResultSummary(records: records);
+        final item = records[index - 1];
+        final key = _keyOf(item);
+        // A single question opens with its details visible.
+        final expanded = records.length == 1 || _expanded.contains(key);
+        return _QuestionCard(
+          item: item,
+          label: records.length > 1
+              ? "Inspection Question $index of ${records.length}"
+              : "Inspection Question",
+          result: _availableResult(item),
+          expanded: expanded,
+          onToggleDetails: records.length == 1
+              ? null
+              : () => setState(() {
+                  if (!_expanded.remove(key)) _expanded.add(key);
+                }),
+          // Not while refreshing: the record is about to be replaced.
+          onTap: _isRefreshing
+              ? null
+              : () => _showChangeResultSheet(provider, item),
+        );
+      },
     );
   }
 
   /// Opens the result editor for [item] only.
   void _showChangeResultSheet(AiResultProvider provider, ResultData item) {
-    showModalBottomSheet(
+    showAppBottomSheet(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (_) => _ChangeResultSheet(
         questionId: item.labelId,
         question: item.questionText,
@@ -198,34 +209,104 @@ class _AiResultScreenState extends State<AiResultScreen> {
   }
 }
 
-class _QuestionCard extends StatelessWidget {
-  final String? text;
-  final String label;
-  final String? result;
-  final VoidCallback? onTap;
+/// Overview of every question's AI result: Pass / Fail / Not Available
+/// counts, a proportional bar, and how to change a result.
+class _ResultSummary extends StatelessWidget {
+  final List<ResultData> records;
 
-  const _QuestionCard({this.text, required this.label, this.result, required this.onTap});
+  const _ResultSummary({required this.records});
 
   @override
   Widget build(BuildContext context) {
-    return  AppCard(
-      onTap: onTap,
+    int passCount = 0, failCount = 0, otherCount = 0;
+    for (final r in records) {
+      final result = _availableResult(r)?.trim().toLowerCase();
+      if (result == 'pass') {
+        passCount++;
+      } else if (result == 'fail') {
+        failCount++;
+      } else {
+        otherCount++;
+      }
+    }
+    final total = records.length;
+
+    return AppCard(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
-              Expanded(child: _SectionLabel(label)),
-              const SizedBox(width: 8),
-              _resultBadge(result),
-              const SizedBox(width: 4),
-              const Icon(Icons.chevron_right_rounded, size: 20, color: textSecondary),
+              const Expanded(
+                child: Text("AI Result", style: AppText.sectionTitle),
+              ),
+              Text(
+                total == 1 ? "1 question" : "$total questions",
+                style: AppText.caption,
+              ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            _hasText(text) ? text!.trim() : '—',
-            style: AppText.title.copyWith(height: 1.4),
+          const SizedBox(height: AppSpacing.md),
+          // Proportional Pass / Fail / Not Available bar.
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: SizedBox(
+              height: 8,
+              child: Row(
+                // Stretch so the childless colour boxes get the bar height.
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (passCount > 0)
+                    Expanded(
+                      flex: passCount,
+                      child: const ColoredBox(color: pass),
+                    ),
+                  if (failCount > 0)
+                    Expanded(
+                      flex: failCount,
+                      child: const ColoredBox(color: fail),
+                    ),
+                  if (otherCount > 0)
+                    Expanded(
+                      flex: otherCount,
+                      child: const ColoredBox(color: surface2),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Row(
+            children: [
+              Expanded(
+                child: _Tally(value: passCount, label: "Pass", color: pass),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: _Tally(value: failCount, label: "Fail", color: fail),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: _Tally(
+                  value: otherCount,
+                  label: "Not Available",
+                  color: na,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Row(
+            children: [
+              const Icon(Icons.touch_app_outlined, size: 16, color: na),
+              const SizedBox(width: AppSpacing.xs + 2),
+              Expanded(
+                child: Text(
+                  "Tap a question to change its result.",
+                  style: AppText.caption,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -233,6 +314,203 @@ class _QuestionCard extends StatelessWidget {
   }
 }
 
+class _Tally extends StatelessWidget {
+  final int value;
+  final String label;
+  final Color color;
+
+  const _Tally({required this.value, required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final active = value > 0;
+    return Semantics(
+      label: '$value $label',
+      excludeSemantics: true,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm + 2,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: active ? color.withValues(alpha: 0.08) : surface2,
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '$value',
+              style: AppText.sectionTitle.copyWith(
+                color: active ? color : textSecondary,
+              ),
+            ),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppText.caption.copyWith(color: active ? color : na),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// One question: number + result, question text, a "Change result"
+/// affordance (the whole card opens the sheet for this question only) and
+/// collapsible Result Details.
+class _QuestionCard extends StatelessWidget {
+  final ResultData item;
+  final String label;
+  final String? result;
+  final bool expanded;
+
+  /// Null when the details can't be collapsed (single question).
+  final VoidCallback? onToggleDetails;
+  final VoidCallback? onTap;
+
+  const _QuestionCard({
+    required this.item,
+    required this.label,
+    this.result,
+    required this.expanded,
+    required this.onToggleDetails,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final text = item.questionText;
+    final lower = result?.trim().toLowerCase();
+    final Color? tint = lower == 'fail'
+        ? fail.withValues(alpha: 0.45)
+        : lower == 'pass'
+        ? pass.withValues(alpha: 0.35)
+        : null;
+
+    return AppCard(
+      padding: EdgeInsets.zero,
+      borderColor: tint,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Tappable part: opens the Change Result sheet for this question.
+          Semantics(
+            button: true,
+            label:
+                '$label. ${_hasText(text) ? text!.trim() : ''}. '
+                'Result: ${result ?? 'Not Available'}. Change result',
+            excludeSemantics: true,
+            child: InkWell(
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.card,
+                  AppSpacing.card,
+                  AppSpacing.card,
+                  AppSpacing.md,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: _SectionLabel(label)),
+                        const SizedBox(width: AppSpacing.sm),
+                        result == null
+                            ? const StatusBadge.neutral(label: 'Not Available')
+                            : StatusBadge.fromResult(result),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      _hasText(text) ? text!.trim() : '—',
+                      style: AppText.title.copyWith(height: 1.4),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.edit_outlined,
+                          size: 16,
+                          color: appColor,
+                        ),
+                        const SizedBox(width: AppSpacing.xs + 2),
+                        Expanded(
+                          child: Text(
+                            "Change result",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppText.chip.copyWith(color: appColor),
+                          ),
+                        ),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          size: 20,
+                          color: appColor,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const Divider(height: 1),
+          // Result Details header (toggle) + content.
+          InkWell(
+            onTap: onToggleDetails,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: AppSpacing.minTouchTarget,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.card,
+                ),
+                child: Row(
+                  children: [
+                    const Expanded(child: _SectionLabel("Result Details")),
+                    if (onToggleDetails != null)
+                      AnimatedRotation(
+                        turns: expanded ? 0.5 : 0,
+                        duration: const Duration(milliseconds: 200),
+                        child: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: textSecondary,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 200),
+            crossFadeState: expanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: const SizedBox(width: double.infinity),
+            secondChild: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.card,
+                0,
+                AppSpacing.card,
+                AppSpacing.sm,
+              ),
+              child: _ResultDetails(item: item),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// "Overall Result" and "Analysis" rows of one question, laid out inline
+/// inside its card.
 class _ResultDetails extends StatelessWidget {
   final ResultData item;
 
@@ -254,15 +532,11 @@ class _ResultDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _KeyValueCard(
-          rows: [
-            _DetailRow(
-              label: "Overall Result",
-              child: StatusBadge.fromResult(overall, dense: true),
-            ),
-          ],
+        _DetailRow(
+          label: "Overall Result",
+          child: StatusBadge.fromResult(overall, dense: true),
         ),
-        const SizedBox(height: 16),
+        const Divider(height: 1, thickness: 1, color: border),
         _AnalysisCard(analysis: response.analysis, message: response.message),
       ],
     );
@@ -293,8 +567,9 @@ class _ChangeResultSheet extends StatefulWidget {
 
 class _ChangeResultSheetState extends State<_ChangeResultSheet> {
   late String? _selected = widget.current?.trim().toUpperCase();
-  late final TextEditingController _remarkController =
-      TextEditingController(text: widget.currentRemark?.trim() ?? '');
+  late final TextEditingController _remarkController = TextEditingController(
+    text: widget.currentRemark?.trim() ?? '',
+  );
   bool _isUpdating = false;
 
   String get _remark => _remarkController.text.trim();
@@ -318,7 +593,9 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
     final remark = _remark;
     setState(() => _isUpdating = true);
 
-    final response = await context.read<AiUpdateResultProvider>().updateQuestionResult(
+    final response = await context
+        .read<AiUpdateResultProvider>()
+        .updateQuestionResult(
           context,
           questionId: widget.questionId,
           statusResult: result == "PASS",
@@ -328,14 +605,18 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
     if (response?.success == true) {
       widget.onUpdated(result, remark);
       CustomLoader.message(
-        _hasText(response!.message) ? response.message!.trim() : "Result updated successfully",
+        _hasText(response!.message)
+            ? response.message!.trim()
+            : "Result updated successfully",
       );
       if (mounted) Navigator.pop(context);
       return;
     }
 
     CustomLoader.errorMessage(
-      _hasText(response?.message) ? response!.message!.trim() : "Unable to update result",
+      _hasText(response?.message)
+          ? response!.message!.trim()
+          : "Unable to update result",
     );
     if (mounted) setState(() => _isUpdating = false);
   }
@@ -350,16 +631,36 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const _SectionLabel("Inspection Question"),
-            const SizedBox(height: 6),
-            Text(
-              _hasText(widget.question) ? widget.question!.trim() : '—',
-              style: AppText.title.copyWith(height: 1.4),
+            // The one question this sheet edits, with its current result.
+            Container(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.md,
+                AppSpacing.md,
+                0,
+              ),
+              decoration: BoxDecoration(
+                color: surface2,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const _SectionLabel("Inspection Question"),
+                  const SizedBox(height: 6),
+                  Text(
+                    _hasText(widget.question) ? widget.question!.trim() : '—',
+                    style: AppText.title.copyWith(height: 1.4),
+                  ),
+                  const SizedBox(height: 4),
+                  _DetailRow(
+                    label: "Current Result",
+                    child: _resultBadge(widget.current),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 4),
-            _DetailRow(label: "Current Result", child: _resultBadge(widget.current)),
-            const Divider(height: 1, thickness: 1, color: border),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.xl),
             const _SectionLabel("Change To"),
             const SizedBox(height: 10),
             Row(
@@ -371,7 +672,9 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
                     color: pass,
                     background: passLight,
                     selected: _selected == "PASS",
-                    onTap: _isUpdating ? null : () => setState(() => _selected = "PASS"),
+                    onTap: _isUpdating
+                        ? null
+                        : () => setState(() => _selected = "PASS"),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -382,7 +685,9 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
                     color: fail,
                     background: failLight,
                     selected: _selected == "FAIL",
-                    onTap: _isUpdating ? null : () => setState(() => _selected = "FAIL"),
+                    onTap: _isUpdating
+                        ? null
+                        : () => setState(() => _selected = "FAIL"),
                   ),
                 ),
               ],
@@ -427,29 +732,39 @@ class _ResultOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Selected = solid fill with white text, so the choice reads at a glance.
     final radius = BorderRadius.circular(AppRadius.md);
-    return Material(
-      color: selected ? background : surface,
-      borderRadius: radius,
-      child: InkWell(
-        onTap: onTap,
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      excludeSemantics: true,
+      child: Material(
+        color: selected ? color : surface,
         borderRadius: radius,
-        child: Container(
-          height: 52,
-          decoration: BoxDecoration(
-            borderRadius: radius,
-            border: Border.all(color: selected ? color : border, width: selected ? 1.5 : 1),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 18, color: color),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(fontFamily: "Bold", fontSize: 14, color: color),
-              ),
-            ],
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: radius,
+          child: Container(
+            height: AppSpacing.buttonHeight,
+            decoration: BoxDecoration(
+              borderRadius: radius,
+              border: Border.all(color: selected ? color : borderDark),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 20, color: selected ? textWhite : color),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  label,
+                  style: AppText.button.copyWith(
+                    fontFamily: "Bold",
+                    color: selected ? textWhite : color,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -473,7 +788,8 @@ class _RemarkField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    OutlineInputBorder outline(Color color, [double width = 1]) => OutlineInputBorder(
+    OutlineInputBorder outline(Color color, [double width = 1]) =>
+        OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
           borderSide: BorderSide(color: color, width: width),
         );
@@ -518,9 +834,11 @@ class _AnalysisCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final analysis = this.analysis is Map
-        ? Map.fromEntries((this.analysis as Map)
-            .entries
-            .where((e) => !_hiddenKeys.contains(e.key.toString())))
+        ? Map.fromEntries(
+            (this.analysis as Map).entries.where(
+              (e) => !_hiddenKeys.contains(e.key.toString()),
+            ),
+          )
         : this.analysis;
 
     if (_isEmptyValue(analysis)) {
@@ -529,7 +847,9 @@ class _AnalysisCard extends StatelessWidget {
         rows: const [],
         footer: _InlineNotice(
           icon: Icons.info_outline_rounded,
-          text: _hasText(message) ? message!.trim() : "No analysis data returned.",
+          text: _hasText(message)
+              ? message!.trim()
+              : "No analysis data returned.",
         ),
       );
     }
@@ -537,11 +857,18 @@ class _AnalysisCard extends StatelessWidget {
     final rows = <Widget>[];
     if (analysis is Map) {
       analysis.forEach((key, value) {
-        rows.add(_DetailRow(label: _humanize(key.toString()), child: _valueBadge(value)));
+        rows.add(
+          _DetailRow(
+            label: _humanize(key.toString()),
+            child: _valueBadge(value),
+          ),
+        );
       });
     } else if (analysis is List) {
       for (var i = 0; i < analysis.length; i++) {
-        rows.add(_DetailRow(label: 'Item ${i + 1}', child: _valueBadge(analysis[i])));
+        rows.add(
+          _DetailRow(label: 'Item ${i + 1}', child: _valueBadge(analysis[i])),
+        );
       }
     } else {
       rows.add(_DetailRow(label: 'Analysis', child: _valueBadge(analysis)));
@@ -551,7 +878,8 @@ class _AnalysisCard extends StatelessWidget {
   }
 }
 
-/// Card of key-value rows separated by hairline dividers.
+/// Titled group of key-value rows separated by hairline dividers, laid out
+/// inline (it sits inside the question card).
 class _KeyValueCard extends StatelessWidget {
   final String? title;
   final List<Widget> rows;
@@ -563,13 +891,17 @@ class _KeyValueCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final children = <Widget>[];
     if (title != null) {
-      children.add(Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: _SectionLabel(title!),
-      ));
+      children.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: _SectionLabel(title!),
+        ),
+      );
     }
     for (var i = 0; i < rows.length; i++) {
-      if (i > 0) children.add(const Divider(height: 1, thickness: 1, color: border));
+      if (i > 0) {
+        children.add(const Divider(height: 1, thickness: 1, color: border));
+      }
       children.add(rows[i]);
     }
     if (footer != null) {
@@ -577,14 +909,15 @@ class _KeyValueCard extends StatelessWidget {
       children.add(footer!);
     }
 
-    return AppCard(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: title != null
-            ? [const SizedBox(height: 8), ...children, const SizedBox(height: 4)]
-            : children,
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: title != null
+          ? [
+              const SizedBox(height: AppSpacing.md),
+              ...children,
+              const SizedBox(height: AppSpacing.xs),
+            ]
+          : children,
     );
   }
 }
@@ -605,7 +938,9 @@ class _DetailRow extends StatelessWidget {
         children: [
           Expanded(child: Text(label, style: _labelStyle)),
           const SizedBox(width: 16),
-          Flexible(child: Align(alignment: Alignment.centerRight, child: child)),
+          Flexible(
+            child: Align(alignment: Alignment.centerRight, child: child),
+          ),
         ],
       ),
     );
@@ -644,12 +979,7 @@ class _InlineNotice extends StatelessWidget {
         children: [
           Icon(icon, size: 18, color: na),
           const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: AppText.bodySecondary,
-            ),
-          ),
+          Expanded(child: Text(text, style: AppText.bodySecondary)),
         ],
       ),
     );
@@ -677,7 +1007,9 @@ bool _hasText(String? value) => value != null && value.trim().isNotEmpty;
 /// The question's overall result, or null when it is missing or still pending.
 String? _availableResult(ResultData item) {
   final overall = item.aiResponse?.overallResult;
-  if (!_hasText(overall) || overall!.trim().toLowerCase() == 'pending') return null;
+  if (!_hasText(overall) || overall!.trim().toLowerCase() == 'pending') {
+    return null;
+  }
   return overall;
 }
 
@@ -722,14 +1054,15 @@ Widget _valueBadge(dynamic value) {
     }
   }
   final text = value is Map
-      ? value.entries.map((e) => '${_humanize(e.key.toString())}: ${e.value}').join('\n')
+      ? value.entries
+            .map((e) => '${_humanize(e.key.toString())}: ${e.value}')
+            .join('\n')
       : value is List
-          ? value.join(', ')
-          : value.toString();
+      ? value.join(', ')
+      : value.toString();
   return Text(
     text,
     textAlign: TextAlign.right,
     style: AppText.title.copyWith(fontSize: 14),
   );
 }
-

@@ -16,7 +16,6 @@ class CustomLoader {
     EasyLoading.showToast(message!, toastPosition: position);
   }
 
-
   static showLoader(String message) {
     EasyLoading.show(status: message, dismissOnTap: false);
   }
@@ -24,7 +23,6 @@ class CustomLoader {
   static closeLoader() {
     EasyLoading.dismiss();
   }
-
 
   static message(String msg) {
     _toast(msg, background: appColor);
@@ -47,10 +45,7 @@ class CustomLoader {
   }
 
   static internetMessage({required String msg, required BuildContext context}) {
-    context.showCustomSnackBar(
-      message: "No Internet",
-      backgroundColor: fail,
-    );
+    context.showCustomSnackBar(message: "No Internet", backgroundColor: fail);
   }
 
   /// Inline full-area spinner; same as [AppLoadingView].
@@ -110,7 +105,10 @@ class CustomLoader {
                   if (title != null) ...[
                     Text(
                       title,
-                      style: AppText.title.copyWith(fontSize: 14, color: textWhite),
+                      style: AppText.title.copyWith(
+                        fontSize: 14,
+                        color: textWhite,
+                      ),
                     ),
                     const SizedBox(height: 2),
                   ],
@@ -125,9 +123,14 @@ class CustomLoader {
         ),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
         margin: const EdgeInsets.all(AppSpacing.lg),
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 14),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: 14,
+        ),
         elevation: 0,
         duration: duration,
       ),

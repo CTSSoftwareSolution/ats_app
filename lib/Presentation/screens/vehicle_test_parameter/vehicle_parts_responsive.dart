@@ -62,7 +62,8 @@ class _VehiclePartsResponsiveLayoutState
       return Center(
         child: AppStateView.error(
           title: "Couldn't load vehicle parts",
-          onAction: () => context.read<VehiclePartsProvider>().vehiclePartsApi(context),
+          onAction: () =>
+              context.read<VehiclePartsProvider>().vehiclePartsApi(context),
         ),
       );
     }
@@ -73,7 +74,8 @@ class _VehiclePartsResponsiveLayoutState
           icon: Icons.inventory_2_outlined,
           title: "No parts to capture",
           message: message.isEmpty || message == 'null' ? null : message,
-          onAction: () => context.read<VehiclePartsProvider>().vehiclePartsApi(context),
+          onAction: () =>
+              context.read<VehiclePartsProvider>().vehiclePartsApi(context),
         ),
       );
     }
@@ -81,7 +83,10 @@ class _VehiclePartsResponsiveLayoutState
     final allParts = partsProvider.vehiclePartsEntity!.data!;
     int capturedCount = 0;
     for (int i = 0; i < allParts.length; i++) {
-      if (VehiclePartsResponsiveItem.isCaptured(allParts[i], fileProvider.getMedia(i))) {
+      if (VehiclePartsResponsiveItem.isCaptured(
+        allParts[i],
+        fileProvider.getMedia(i),
+      )) {
         capturedCount++;
       }
     }
@@ -92,11 +97,14 @@ class _VehiclePartsResponsiveLayoutState
     for (int i = 0; i < partsProvider.currentPageData.length; i++) {
       final index = partsProvider.currentPage * partsProvider.itemsPerPage + i;
       if (!VehiclePartsResponsiveItem.isCaptured(
-          partsProvider.currentPageData[i], fileProvider.getMedia(index))) {
+        partsProvider.currentPageData[i],
+        fileProvider.getMedia(index),
+      )) {
         pageMissing++;
       }
     }
-    final isLastStep = partsProvider.currentPage == partsProvider.totalPages - 1;
+    final isLastStep =
+        partsProvider.currentPage == partsProvider.totalPages - 1;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -163,8 +171,7 @@ class _VehiclePartsResponsiveLayoutState
             itemBuilder: (context, index) {
               final item = partsProvider.currentPageData[index];
               allIndex =
-                  partsProvider.currentPage *
-                      partsProvider.itemsPerPage +
+                  partsProvider.currentPage * partsProvider.itemsPerPage +
                   index;
               return VehiclePartsResponsiveItem(
                 item: item,
@@ -183,11 +190,11 @@ class _VehiclePartsResponsiveLayoutState
               if (pageMissing > 0)
                 pageMissing == 1 ? "1 part left" : "$pageMissing parts left",
             ].join(' · '),
-            icon: isLastStep ? Icons.fact_check_outlined : Icons.arrow_forward_rounded,
+            icon: isLastStep
+                ? Icons.fact_check_outlined
+                : Icons.arrow_forward_rounded,
             onPressed: () async {
-              final error = partsProvider.validateMedia(
-                context: context,
-              );
+              final error = partsProvider.validateMedia(context: context);
 
               if (error != null) {
                 CustomLoader.message(error);
@@ -196,13 +203,12 @@ class _VehiclePartsResponsiveLayoutState
                   partsProvider.totalPages,
                 );
 
-                if (partsProvider.currentPage <
-                    partsProvider.totalPages - 1) {
+                if (partsProvider.currentPage < partsProvider.totalPages - 1) {
                   context.read<VehiclePartsProvider>().nextPage(
                     partsProvider.totalPages - 1,
                   );
                 } else {
-                   //aiMediaUpload(context: context);
+                  //aiMediaUpload(context: context);
                   //  context.push(InspectionPage());
                   //  context.read<VehiclePartsProvider>().resetStepper();
                   CustomLoader.showLoader("Loading result...");
@@ -227,7 +233,6 @@ class _VehiclePartsResponsiveLayoutState
       ],
     );
   }
-
 
   static Future<void> aiMediaUpload({required BuildContext context}) async {
     final createController = Provider.of<CreateBulkProvider>(
@@ -311,13 +316,16 @@ class _UploadSummary extends StatelessWidget {
           // Tappable row: counts on the left, "View uploads" on the right.
           Semantics(
             button: true,
-            label: 'Uploads: $uploaded uploaded, $uploading uploading, $failed failed. View uploads',
+            label:
+                'Uploads: $uploaded uploaded, $uploading uploading, $failed failed. View uploads',
             excludeSemantics: true,
             child: InkWell(
               onTap: onViewAll,
               borderRadius: BorderRadius.circular(AppRadius.sm),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: AppSpacing.minTouchTarget),
+                constraints: const BoxConstraints(
+                  minHeight: AppSpacing.minTouchTarget,
+                ),
                 child: Row(
                   children: [
                     Expanded(
@@ -326,17 +334,33 @@ class _UploadSummary extends StatelessWidget {
                         runSpacing: AppSpacing.xs,
                         children: [
                           if (uploaded > 0)
-                            StatusBadge.uploaded(label: "$uploaded uploaded", dense: true),
+                            StatusBadge.uploaded(
+                              label: "$uploaded uploaded",
+                              dense: true,
+                            ),
                           if (uploading > 0)
-                            StatusBadge.uploading(label: "$uploading uploading", dense: true),
+                            StatusBadge.uploading(
+                              label: "$uploading uploading",
+                              dense: true,
+                            ),
                           if (failed > 0)
-                            StatusBadge.error(label: "$failed failed", dense: true),
+                            StatusBadge.error(
+                              label: "$failed failed",
+                              dense: true,
+                            ),
                         ],
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    Text("View uploads", style: AppText.chip.copyWith(color: appColor)),
-                    const Icon(Icons.chevron_right_rounded, color: appColor, size: AppIconSize.md),
+                    Text(
+                      "View uploads",
+                      style: AppText.chip.copyWith(color: appColor),
+                    ),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      color: appColor,
+                      size: AppIconSize.md,
+                    ),
                   ],
                 ),
               ),
@@ -347,7 +371,9 @@ class _UploadSummary extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm,
+              ),
               decoration: BoxDecoration(
                 color: failLight,
                 borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -355,14 +381,21 @@ class _UploadSummary extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.error_outline_rounded, size: AppIconSize.sm + 2, color: fail),
+                  const Icon(
+                    Icons.error_outline_rounded,
+                    size: AppIconSize.sm + 2,
+                    color: fail,
+                  ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Text(
                       failed == 1
                           ? "1 upload failed. Tap Retry on the part marked in red, or open View uploads."
                           : "$failed uploads failed. Retry them from View uploads, or on the parts marked in red.",
-                      style: AppText.caption.copyWith(color: fail, fontFamily: "SemiBold"),
+                      style: AppText.caption.copyWith(
+                        color: fail,
+                        fontFamily: "SemiBold",
+                      ),
                     ),
                   ),
                 ],

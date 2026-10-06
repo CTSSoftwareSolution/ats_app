@@ -38,20 +38,25 @@ class _VideoDialogState extends State<VideoDialog>
       duration: const Duration(milliseconds: 250),
       value: 1.0,
     );
-    _fadeAnim =
-        CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut);
+    _fadeAnim = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeInOut,
+    );
 
     controller = VideoPlayerController.file(File(widget.path));
-    controller.initialize().then((_) {
-      // The dialog may already be closed (and the controller disposed).
-      if (!mounted) return;
-      setState(() => isInitialized = true);
-      controller.play();
-      _scheduleHideControls();
-    }).catchError((_) {
-      if (!mounted) return;
-      setState(() => _loadFailed = true);
-    });
+    controller
+        .initialize()
+        .then((_) {
+          // The dialog may already be closed (and the controller disposed).
+          if (!mounted) return;
+          setState(() => isInitialized = true);
+          controller.play();
+          _scheduleHideControls();
+        })
+        .catchError((_) {
+          if (!mounted) return;
+          setState(() => _loadFailed = true);
+        });
 
     controller.addListener(() {
       if (mounted) setState(() {});
@@ -85,7 +90,8 @@ class _VideoDialogState extends State<VideoDialog>
   void _seekTo(double value) {
     final duration = controller.value.duration;
     controller.seekTo(
-        Duration(milliseconds: (value * duration.inMilliseconds).round()));
+      Duration(milliseconds: (value * duration.inMilliseconds).round()),
+    );
   }
 
   String _formatDuration(Duration d) {
@@ -148,11 +154,17 @@ class _VideoDialogState extends State<VideoDialog>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.videocam_off_outlined, color: textWhiteSub, size: 32),
+                        const Icon(
+                          Icons.videocam_off_outlined,
+                          color: textWhiteSub,
+                          size: 32,
+                        ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
                           "This video can't be played",
-                          style: AppText.bodySecondary.copyWith(color: textWhiteSub),
+                          style: AppText.bodySecondary.copyWith(
+                            color: textWhiteSub,
+                          ),
                         ),
                       ],
                     ),
@@ -162,7 +174,10 @@ class _VideoDialogState extends State<VideoDialog>
                 const SizedBox(
                   height: 220,
                   child: Center(
-                    child: CircularProgressIndicator(color: textWhite, strokeWidth: 2),
+                    child: CircularProgressIndicator(
+                      color: textWhite,
+                      strokeWidth: 2,
+                    ),
                   ),
                 ),
             ],
@@ -196,7 +211,7 @@ class _VideoDialogState extends State<VideoDialog>
                     controller.value.isPlaying
                         ? Icons.pause_rounded
                         : Icons.play_arrow_rounded,
-                    color: Colors.white,
+                    color: textWhite,
                     size: 32,
                   ),
                 ),
@@ -216,21 +231,28 @@ class _VideoDialogState extends State<VideoDialog>
         : 0.0;
     const timeStyle = TextStyle(
       fontFamily: "Medium",
-      color: Colors.white70,
+      color: textWhiteSub,
       fontSize: 12,
       fontFeatures: [FontFeature.tabularFigures()],
     );
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.xs, AppSpacing.xs, AppSpacing.xs, AppSpacing.sm),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.xs,
+        AppSpacing.xs,
+        AppSpacing.xs,
+        AppSpacing.sm,
+      ),
       child: Row(
         children: [
           IconButton(
             tooltip: controller.value.isPlaying ? 'Pause' : 'Play',
             onPressed: togglePlayPause,
             icon: Icon(
-              controller.value.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-              color: Colors.white,
+              controller.value.isPlaying
+                  ? Icons.pause_rounded
+                  : Icons.play_arrow_rounded,
+              color: textWhite,
             ),
           ),
           Text(_formatDuration(position), style: timeStyle),
@@ -240,10 +262,10 @@ class _VideoDialogState extends State<VideoDialog>
                 trackHeight: 3,
                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
                 overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
-                activeTrackColor: Colors.white,
-                inactiveTrackColor: Colors.white.withValues(alpha: 0.2),
-                thumbColor: Colors.white,
-                overlayColor: Colors.white.withValues(alpha: 0.12),
+                activeTrackColor: textWhite,
+                inactiveTrackColor: textWhite.withValues(alpha: 0.2),
+                thumbColor: textWhite,
+                overlayColor: textWhite.withValues(alpha: 0.12),
               ),
               child: Slider(
                 value: progress.clamp(0.0, 1.0),
@@ -255,7 +277,11 @@ class _VideoDialogState extends State<VideoDialog>
           IconButton(
             tooltip: 'Replay',
             onPressed: () => controller.seekTo(Duration.zero),
-            icon: const Icon(Icons.replay_rounded, color: Colors.white70, size: 20),
+            icon: const Icon(
+              Icons.replay_rounded,
+              color: textWhiteSub,
+              size: 20,
+            ),
           ),
         ],
       ),

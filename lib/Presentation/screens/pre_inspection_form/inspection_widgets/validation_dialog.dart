@@ -14,7 +14,9 @@ class ValidationDialog {
       context: context,
       builder: (_) => Dialog(
         insetPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.xl, vertical: AppSpacing.xl),
+          horizontal: AppSpacing.xl,
+          vertical: AppSpacing.xl,
+        ),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 420),
           child: Padding(
@@ -32,8 +34,11 @@ class ValidationDialog {
                         color: failLight,
                         borderRadius: BorderRadius.circular(AppRadius.md),
                       ),
-                      child: const Icon(Icons.error_outline_rounded,
-                          color: fail, size: 22),
+                      child: const Icon(
+                        Icons.error_outline_rounded,
+                        color: fail,
+                        size: 22,
+                      ),
                     ),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
@@ -78,7 +83,9 @@ class ValidationDialog {
                               Expanded(
                                 child: Text(
                                   q,
-                                  style: AppText.caption.copyWith(color: textPrimary),
+                                  style: AppText.caption.copyWith(
+                                    color: textPrimary,
+                                  ),
                                 ),
                               ),
                             ],

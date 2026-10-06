@@ -20,7 +20,10 @@ enum CaptureStatus {
 
   /// Status of one photo/video slot. A slot that is not uploaded on capture
   /// (no tracker state) stays "Captured".
-  static CaptureStatus ofSlot({required bool hasFile, SlotUploadState? upload}) {
+  static CaptureStatus ofSlot({
+    required bool hasFile,
+    SlotUploadState? upload,
+  }) {
     if (!hasFile) return CaptureStatus.notCaptured;
     switch (upload) {
       case SlotUploadState.uploading:
@@ -41,7 +44,9 @@ enum CaptureStatus {
     if (slots.isEmpty) return CaptureStatus.notCaptured;
     if (slots.contains(CaptureStatus.failed)) return CaptureStatus.failed;
     if (slots.contains(CaptureStatus.uploading)) return CaptureStatus.uploading;
-    if (slots.contains(CaptureStatus.notCaptured)) return CaptureStatus.notCaptured;
+    if (slots.contains(CaptureStatus.notCaptured)) {
+      return CaptureStatus.notCaptured;
+    }
     if (slots.contains(CaptureStatus.captured)) return CaptureStatus.captured;
     return CaptureStatus.uploaded;
   }

@@ -76,9 +76,9 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(AppRadius.md);
     OutlineInputBorder outline(Color color, double width) => OutlineInputBorder(
-          borderRadius: radius,
-          borderSide: BorderSide(color: color, width: width),
-        );
+      borderRadius: radius,
+      borderSide: BorderSide(color: color, width: width),
+    );
     final restingWidth = borderWidth ?? 1;
 
     return SizedBox(
@@ -118,7 +118,8 @@ class CustomTextField extends StatelessWidget {
           enabledBorder: outline(borderColor ?? border, restingWidth),
           disabledBorder: disabledBorder ?? outline(border, restingWidth),
           focusedBorder: outline(borderColor ?? appColor, 1.5),
-          focusedErrorBorder: focusedErrorBorder ?? outline(errorColor ?? fail, 1.5),
+          focusedErrorBorder:
+              focusedErrorBorder ?? outline(errorColor ?? fail, 1.5),
           border: outline(borderColor ?? border, restingWidth),
           errorBorder: outline(errorColor ?? fail, restingWidth),
           errorStyle: TextStyle(color: errorColor ?? fail, fontSize: 12),

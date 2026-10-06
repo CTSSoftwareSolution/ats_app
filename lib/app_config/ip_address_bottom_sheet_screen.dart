@@ -10,24 +10,23 @@ import '../widgets/new_app_ui/primary_button.dart';
 import '../widgets/new_app_ui/secondary_button.dart';
 import 'build_server_page.dart';
 
-
-
 class IpAddressBottomSheetScreen extends StatefulWidget {
   const IpAddressBottomSheetScreen({super.key});
 
   @override
-  State<IpAddressBottomSheetScreen> createState() => _IpAddressBottomSheetScreenState();
+  State<IpAddressBottomSheetScreen> createState() =>
+      _IpAddressBottomSheetScreenState();
 }
 
-class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen> {
-
+class _IpAddressBottomSheetScreenState
+    extends State<IpAddressBottomSheetScreen> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController mainIPController = TextEditingController();
   final TextEditingController secondaryIPController = TextEditingController();
   bool enableBackup = false;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     mainIPController.text = appConfig.baseUrl;
 
@@ -84,10 +83,7 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Server Configuration",
-                        style: AppText.sectionTitle,
-                      ),
+                      Text("Server Configuration", style: AppText.sectionTitle),
                       SizedBox(height: AppSpacing.xs),
                       Text(
                         "Configure your server IP address",
@@ -102,7 +98,7 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
             buildServerField(
               title: "Main Server IPv4 Address",
               controller: mainIPController,
-              validator: (value){
+              validator: (value) {
                 if ((value == null || value.isEmpty) &&
                     (!enableBackup || secondaryIPController.text.isEmpty)) {
                   return 'Please enter an IP address';
@@ -112,21 +108,21 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
               suffixIcon: _fieldSuffix(mainIPController),
             ),
 
-            Container(
-              decoration: BoxDecoration(
-                color: bg,
+            // A Material (not a decorated Container) so the tile's ripple is
+            // painted on the tinted background.
+            Material(
+              color: bg,
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppRadius.md),
-                border: Border.all(color: border),
+                side: const BorderSide(color: border),
               ),
               child: SwitchListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
-                title: const Text(
-                  "Enable Backup Server",
-                  style: AppText.title,
-                ),
+                title: const Text("Enable Backup Server", style: AppText.title),
                 value: enableBackup,
                 onChanged: (val) {
                   setState(() => enableBackup = val);
@@ -174,13 +170,15 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                 Expanded(
                   child: SecondaryButton(
                     label: 'Reset',
-                    onPressed:
-                        () async {
-                      mainIPController.text=defaultBaseUrl;
+                    onPressed: () async {
+                      mainIPController.text = defaultBaseUrl;
                       if (enableBackup) {
                         secondaryIPController.clear();
                       }
-                      appConfig.updateBaseUrl(context: context, newUrl: defaultBaseUrl);
+                      appConfig.updateBaseUrl(
+                        context: context,
+                        newUrl: defaultBaseUrl,
+                      );
                     },
                   ),
                 ),
@@ -190,12 +188,12 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
                   child: PrimaryButton(
                     onPressed: () async {
                       if (formKey.currentState!.validate()) {
-
                         String newUrl = mainIPController.text.isNotEmpty
                             ? mainIPController.text
-                            : (enableBackup && secondaryIPController.text.isNotEmpty
-                            ? secondaryIPController.text
-                            : defaultBaseUrl);
+                            : (enableBackup &&
+                                      secondaryIPController.text.isNotEmpty
+                                  ? secondaryIPController.text
+                                  : defaultBaseUrl);
 
                         await appConfig.updateBaseUrl(
                           context: context,
@@ -217,12 +215,8 @@ class _IpAddressBottomSheetScreenState extends State<IpAddressBottomSheetScreen>
 }
 
 void showIpAddressBottomSheet(BuildContext context) {
-  showModalBottomSheet(
+  showAppBottomSheet(
     context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    enableDrag: true,
-    isDismissible: true,
     builder: (context) => const IpAddressBottomSheetScreen(),
     // builder: (context) => const IpAddressBottomSheet(),
   );

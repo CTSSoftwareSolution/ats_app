@@ -23,26 +23,27 @@ class AppTheme {
   );
 
   static ThemeData get light {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: appColor,
-      brightness: Brightness.light,
-    ).copyWith(
-      primary: appColor,
-      onPrimary: textWhite,
-      primaryContainer: accentLight,
-      onPrimaryContainer: appColor,
-      secondary: navyAccent,
-      onSecondary: textWhite,
-      error: fail,
-      onError: textWhite,
-      surface: surface,
-      onSurface: textPrimary,
-      onSurfaceVariant: textSecondary,
-      outline: borderDark,
-      outlineVariant: border,
-      scrim: scrim,
-      surfaceTint: Colors.transparent,
-    );
+    final colorScheme =
+        ColorScheme.fromSeed(
+          seedColor: appColor,
+          brightness: Brightness.light,
+        ).copyWith(
+          primary: appColor,
+          onPrimary: textWhite,
+          primaryContainer: accentLight,
+          onPrimaryContainer: appColor,
+          secondary: navyAccent,
+          onSecondary: textWhite,
+          error: fail,
+          onError: textWhite,
+          surface: surface,
+          onSurface: textPrimary,
+          onSurfaceVariant: textSecondary,
+          outline: borderDark,
+          outlineVariant: border,
+          scrim: scrim,
+          surfaceTint: Colors.transparent,
+        );
 
     final buttonShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(AppRadius.md),
@@ -170,8 +171,10 @@ class AppTheme {
         filled: true,
         fillColor: surface,
         isDense: true,
-        contentPadding:
-        const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 14,
+        ),
         hintStyle: AppText.body.copyWith(color: textMuted),
         labelStyle: AppText.fieldLabel,
         helperStyle: AppText.caption,
@@ -196,7 +199,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppRadius.xl),
         ),
         titleTextStyle: AppText.sectionTitle.copyWith(fontSize: 17),
-        contentTextStyle: AppText.body.copyWith(color: textSecondary, height: 1.5),
+        contentTextStyle: AppText.body.copyWith(
+          color: textSecondary,
+          height: 1.5,
+        ),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: surface,
@@ -206,7 +212,9 @@ class AppTheme {
         modalBarrierColor: scrim,
         showDragHandle: false,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppRadius.xl),
+          ),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
@@ -246,7 +254,10 @@ class AppTheme {
         labelStyle: AppText.navLabel,
         unselectedLabelStyle: AppText.navLabel.copyWith(fontFamily: "Medium"),
       ),
-      iconTheme: const IconThemeData(color: textSecondary, size: AppIconSize.md),
+      iconTheme: const IconThemeData(
+        color: textSecondary,
+        size: AppIconSize.md,
+      ),
       listTileTheme: const ListTileThemeData(
         contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         minVerticalPadding: AppSpacing.md,
@@ -259,7 +270,9 @@ class AppTheme {
         selectedColor: accentLight,
         side: BorderSide.none,
         labelStyle: AppText.chip,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+        ),
       ),
       checkboxTheme: CheckboxThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
@@ -267,13 +280,16 @@ class AppTheme {
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.selected) ? textWhite : borderDark,
+          (states) =>
+              states.contains(WidgetState.selected) ? textWhite : borderDark,
         ),
         trackColor: WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.selected) ? appColor : surface2,
+          (states) =>
+              states.contains(WidgetState.selected) ? appColor : surface2,
         ),
         trackOutlineColor: WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.selected) ? appColor : borderDark,
+          (states) =>
+              states.contains(WidgetState.selected) ? appColor : borderDark,
         ),
       ),
       popupMenuTheme: PopupMenuThemeData(
@@ -299,8 +315,10 @@ class AppTheme {
         indicatorColor: accentLight,
         elevation: 0,
         labelTextStyle: WidgetStateProperty.resolveWith(
-              (states) => AppText.navLabel.copyWith(
-            color: states.contains(WidgetState.selected) ? appColor : textSecondary,
+          (states) => AppText.navLabel.copyWith(
+            color: states.contains(WidgetState.selected)
+                ? appColor
+                : textSecondary,
           ),
         ),
       ),
@@ -315,7 +333,10 @@ class AppTheme {
       ..indicatorSize = 36
       ..lineWidth = 3
       ..radius = AppRadius.lg
-      ..contentPadding = const EdgeInsets.symmetric(horizontal: 24, vertical: 20)
+      ..contentPadding = const EdgeInsets.symmetric(
+        horizontal: 24,
+        vertical: 20,
+      )
       ..backgroundColor = surface
       ..indicatorColor = appColor
       ..progressColor = appColor

@@ -40,15 +40,14 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
     BuildContext context,
     String filePath,
     bool isVideo,
-  ) =>
-      uploadMedia(
-        context: context,
-        item: item,
-        allIndex: allIndex,
-        tracker: tracker,
-        filePath: filePath,
-        isVideo: isVideo,
-      );
+  ) => uploadMedia(
+    context: context,
+    item: item,
+    allIndex: allIndex,
+    tracker: tracker,
+    filePath: filePath,
+    isVideo: isVideo,
+  );
 
   /// The one upload path for a capture slot, shared by the part card and the
   /// uploads sheet (retry). Calls [CreateQueueProvider.uploadMedia] and
@@ -180,22 +179,25 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
 
     /// A labelled slot: "PHOTO" / "VIDEO" above the capture area.
     Widget slot(bool isVideo) => Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  Icon(isVideo ? Icons.videocam_outlined : Icons.photo_camera_outlined,
-                      size: AppIconSize.sm, color: na),
-                  const SizedBox(width: AppSpacing.xs),
-                  Text(isVideo ? 'VIDEO' : 'PHOTO', style: AppText.overline),
-                ],
+              Icon(
+                isVideo ? Icons.videocam_outlined : Icons.photo_camera_outlined,
+                size: AppIconSize.sm,
+                color: na,
               ),
-              const SizedBox(height: AppSpacing.sm),
-              Row(children: [buildImageContainer(isVideo: isVideo)]),
+              const SizedBox(width: AppSpacing.xs),
+              Text(isVideo ? 'VIDEO' : 'PHOTO', style: AppText.overline),
             ],
           ),
-        );
+          const SizedBox(height: AppSpacing.sm),
+          Row(children: [buildImageContainer(isVideo: isVideo)]),
+        ],
+      ),
+    );
 
     return ListenableBuilder(
       listenable: tracker,
@@ -243,9 +245,15 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
                 runSpacing: AppSpacing.xs,
                 children: [
                   if (slots.contains(false))
-                    const InfoChip(icon: Icons.photo_camera_outlined, label: 'Photo required'),
+                    const InfoChip(
+                      icon: Icons.photo_camera_outlined,
+                      label: 'Photo required',
+                    ),
                   if (slots.contains(true))
-                    const InfoChip(icon: Icons.videocam_outlined, label: 'Video required'),
+                    const InfoChip(
+                      icon: Icons.videocam_outlined,
+                      label: 'Video required',
+                    ),
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -273,10 +281,10 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
   /// Slots required by [item]: type 1 = photo, 2 = video, otherwise both.
   /// (false = photo, true = video.)
   static List<bool> requiredSlots(dynamic item) => switch (item.type) {
-        1 => const [false],
-        2 => const [true],
-        _ => const [false, true],
-      };
+    1 => const [false],
+    2 => const [true],
+    _ => const [false, true],
+  };
 
   /// Combined [CaptureStatus] of all slots of [item].
   static CaptureStatus partStatus(

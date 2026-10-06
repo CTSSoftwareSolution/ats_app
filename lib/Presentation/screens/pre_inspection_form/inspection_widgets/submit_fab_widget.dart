@@ -8,40 +8,38 @@ import '../../../../widgets/new_app_ui/bottom_action_bar.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../../../utilities/color_data.dart';
 
-
 class SubmitFAB extends StatelessWidget {
   final InspectionFormProvider provider;
 
-  const SubmitFAB({
-    super.key,
-    required this.provider,
-  });
+  const SubmitFAB({super.key, required this.provider});
 
   @override
   Widget build(BuildContext context) {
     final questionsWithNoButNoImage = _validateQuestionsWithNoAnswer();
     final detailsProvider = context.watch<AiInspectionDetailsProvider>();
 
-
     final missingEvidence = questionsWithNoButNoImage.length;
-    final label = (questionsWithNoButNoImage.isNotEmpty && !detailsProvider.isAIMode)
+    final label =
+        (questionsWithNoButNoImage.isNotEmpty && !detailsProvider.isAIMode)
         ? (provider.isFullyComplete
-            ? (missingEvidence == 1
-                ? 'Add a photo for 1 failed item'
-                : 'Add photos for $missingEvidence failed items')
-            : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered')
+              ? (missingEvidence == 1
+                    ? 'Add a photo for 1 failed item'
+                    : 'Add photos for $missingEvidence failed items')
+              : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered')
         : (provider.isFullyComplete
-            ? 'Submit Report'
-            : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered');
+              ? 'Submit Report'
+              : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered');
 
     // Every question answered but a failed one still lacks evidence.
-    final notReady = provider.isFullyComplete &&
+    final notReady =
+        provider.isFullyComplete &&
         questionsWithNoButNoImage.isNotEmpty &&
         !detailsProvider.isAIMode;
 
     final total = provider.visibleTotalQuestions;
-    final progress =
-        total == 0 ? 0.0 : (provider.visibleAnsweredQuestions / total).clamp(0.0, 1.0);
+    final progress = total == 0
+        ? 0.0
+        : (provider.visibleAnsweredQuestions / total).clamp(0.0, 1.0);
 
     // Sticky bottom action bar (kept under the original SubmitFAB name).
     return BottomActionBar(
@@ -66,12 +64,16 @@ class SubmitFAB extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: () => _handleSubmit(context),
               style: FilledButton.styleFrom(
-                backgroundColor: notReady ? warn : (provider.isFullyComplete ? pass : appColor),
+                backgroundColor: notReady
+                    ? warn
+                    : (provider.isFullyComplete ? pass : appColor),
               ),
               icon: Icon(
                 notReady
                     ? Icons.error_outline_rounded
-                    : (provider.isFullyComplete ? Icons.check_circle_rounded : Icons.send_rounded),
+                    : (provider.isFullyComplete
+                          ? Icons.check_circle_rounded
+                          : Icons.send_rounded),
                 size: 20,
               ),
               label: Text(
@@ -89,21 +91,25 @@ class SubmitFAB extends StatelessWidget {
 
   Future<void> _handleSubmit(BuildContext context) async {
     final questionsWithNoButNoImage = _validateQuestionsWithNoAnswer();
-    final detailsProvider = Provider.of<AiInspectionDetailsProvider>(context,listen: false);
+    final detailsProvider = Provider.of<AiInspectionDetailsProvider>(
+      context,
+      listen: false,
+    );
 
-    if(!detailsProvider.isAIMode){
-    if (questionsWithNoButNoImage.isNotEmpty) {
-      ValidationDialog.show(
-        context: context,
-        questions: questionsWithNoButNoImage,
-      );
-      return;
-    }
+    if (!detailsProvider.isAIMode) {
+      if (questionsWithNoButNoImage.isNotEmpty) {
+        ValidationDialog.show(
+          context: context,
+          questions: questionsWithNoButNoImage,
+        );
+        return;
+      }
     }
     // Show confirmation dialog if validation passes
     final isComplete = provider.isFullyComplete;
     //final unanswered = provider.grandTotalQuestions - provider.grandTotalAnswered;
-    final unanswered = provider.visibleTotalQuestions - provider.visibleAnsweredQuestions;
+    final unanswered =
+        provider.visibleTotalQuestions - provider.visibleAnsweredQuestions;
     ConfirmationDialog.show(
       context: context,
       provider: provider,
@@ -114,22 +120,38 @@ class SubmitFAB extends StatelessWidget {
 
   List<String> _validateQuestionsWithNoAnswer() {
     final questionsWithNoButNoImage = <String>[];
-    for (var sectionIndex = 0; sectionIndex < provider.sections.length; sectionIndex++) {
+    for (
+      var sectionIndex = 0;
+      sectionIndex < provider.sections.length;
+      sectionIndex++
+    ) {
       final section = provider.sections[sectionIndex];
 
-      for (var categoryIndex = 0; categoryIndex < section.categories.length; categoryIndex++) {
+      for (
+        var categoryIndex = 0;
+        categoryIndex < section.categories.length;
+        categoryIndex++
+      ) {
         final category = section.categories[categoryIndex];
 
-        for (var questionIndex = 0; questionIndex < category.questions.length; questionIndex++) {
+        for (
+          var questionIndex = 0;
+          questionIndex < category.questions.length;
+          questionIndex++
+        ) {
           final question = category.questions[questionIndex];
 
           if (question.answer == AnswerState.Fail) {
             final hasLocalImage = question.imagePath != null;
-            final hasUploadedUrl = question.uploadedImageUrl != null && question.uploadedImageUrl!.isNotEmpty;
-            final hasExistingUrl = question.existingEvidenceUrl != null && question.existingEvidenceUrl!.isNotEmpty;
+            final hasUploadedUrl =
+                question.uploadedImageUrl != null &&
+                question.uploadedImageUrl!.isNotEmpty;
+            final hasExistingUrl =
+                question.existingEvidenceUrl != null &&
+                question.existingEvidenceUrl!.isNotEmpty;
             if (!hasLocalImage && !hasUploadedUrl && !hasExistingUrl) {
               questionsWithNoButNoImage.add(
-                  '${section.label} → ${category.title} → Q${questionIndex + 1}'
+                '${section.label} → ${category.title} → Q${questionIndex + 1}',
               );
             }
           }
@@ -138,5 +160,4 @@ class SubmitFAB extends StatelessWidget {
     }
     return questionsWithNoButNoImage;
   }
-
 }

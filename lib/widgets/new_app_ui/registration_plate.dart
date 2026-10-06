@@ -9,7 +9,11 @@ class RegistrationPlate extends StatelessWidget {
   final String number;
   final double fontSize;
 
-  const RegistrationPlate({super.key, required this.number, this.fontSize = 17});
+  const RegistrationPlate({
+    super.key,
+    required this.number,
+    this.fontSize = 17,
+  });
 
   @override
   Widget build(BuildContext context) {

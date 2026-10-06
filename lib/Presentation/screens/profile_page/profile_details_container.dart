@@ -13,6 +13,8 @@ class ProfileDetailsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final photo = (Preferences.getImage() ?? '').toString().trim();
+    final hasPhoto = photo.isNotEmpty && photo != 'null';
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Row(
@@ -25,22 +27,26 @@ class ProfileDetailsContainer extends StatelessWidget {
               height: 64,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: surface2,
+                color: hasPhoto ? surface2 : accentLight,
                 border: Border.all(color: border),
               ),
-              child: ClipOval(
-                // Inset keeps the default person placeholder clear of the
-                // circular clip.
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child: CustomImage(
-                    image: Preferences.getImage(),
-                    fit: BoxFit.cover,
-                    switchToNetwork: true,
-                    defaultImage: userImage,
-                  ),
-                ),
-              ),
+              // No stored photo: a brand-tinted person icon instead of the
+              // bright default image asset.
+              child: !hasPhoto
+                  ? const Icon(Icons.person_rounded, size: 34, color: appColor)
+                  : ClipOval(
+                      // Inset keeps the default person placeholder clear of the
+                      // circular clip.
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: CustomImage(
+                          image: Preferences.getImage(),
+                          fit: BoxFit.cover,
+                          switchToNetwork: true,
+                          defaultImage: userImage,
+                        ),
+                      ),
+                    ),
             ),
           ),
           const SizedBox(width: AppSpacing.lg),

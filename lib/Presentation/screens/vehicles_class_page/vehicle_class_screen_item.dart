@@ -1,5 +1,4 @@
 import 'package:ats_app/Data/model/response_model/vehicle_class_res_model.dart';
-import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utilities/color_data.dart';
@@ -10,7 +9,8 @@ import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/new_app_ui/app_card.dart';
 import '../../../widgets/new_app_ui/info_chip.dart';
 import '../../../widgets/new_app_ui/registration_plate.dart';
-import '../../../widgets/new_app_ui/status_badge.dart';
+import '../../../widgets/new_app_ui/appointment_time.dart';
+import '../../../widgets/new_app_ui/stage_status.dart';
 
 /// Appointment card shown in the Home list.
 ///
@@ -41,12 +41,12 @@ class VehicleClassScreenItem extends StatelessWidget {
         : _text(item.regNo);
     final bookingId = _text(item.bookingId);
     final rawDate = _text(item.appointmentDate);
-    final hasDate = DateTime.tryParse(rawDate) != null;
 
     // "Maruti Suzuki Swift · 2019" – built only from the fields present.
-    final vehicleName = [_text(item.make), _text(item.model)]
-        .where((s) => s.isNotEmpty)
-        .join(' ');
+    final vehicleName = [
+      _text(item.make),
+      _text(item.model),
+    ].where((s) => s.isNotEmpty).join(' ');
     final year = _text(item.mfgYear);
     final title = [vehicleName, year].where((s) => s.isNotEmpty).join(' · ');
 
@@ -55,9 +55,15 @@ class VehicleClassScreenItem extends StatelessWidget {
         InfoChip(icon: Icons.tag_rounded, label: _text(item.vehicleClass)),
       if (_text(item.vehicleCategory).isNotEmpty &&
           _text(item.vehicleCategory) != _text(item.vehicleClass))
-        InfoChip(icon: Icons.category_outlined, label: _text(item.vehicleCategory)),
+        InfoChip(
+          icon: Icons.category_outlined,
+          label: _text(item.vehicleCategory),
+        ),
       if (_text(item.fuelType).isNotEmpty)
-        InfoChip(icon: Icons.local_gas_station_outlined, label: _text(item.fuelType)),
+        InfoChip(
+          icon: Icons.local_gas_station_outlined,
+          label: _text(item.fuelType),
+        ),
     ];
 
     return Semantics(
@@ -73,7 +79,11 @@ class VehicleClassScreenItem extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.card, AppSpacing.card, AppSpacing.card, AppSpacing.md),
+                AppSpacing.card,
+                AppSpacing.card,
+                AppSpacing.card,
+                AppSpacing.md,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -84,11 +94,13 @@ class VehicleClassScreenItem extends StatelessWidget {
                       Flexible(
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: RegistrationPlate(number: regNo.isEmpty ? '—' : regNo),
+                          child: RegistrationPlate(
+                            number: regNo.isEmpty ? '—' : regNo,
+                          ),
                         ),
                       ),
                       const SizedBox(width: AppSpacing.md),
-                      _AppointmentTime(raw: rawDate, hasDate: hasDate),
+                      AppointmentTime(raw: rawDate),
                     ],
                   ),
                   if (title.isNotEmpty) ...[
@@ -124,21 +136,20 @@ class VehicleClassScreenItem extends StatelessWidget {
             // Inspection stages + primary action
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.card, AppSpacing.sm, AppSpacing.sm, AppSpacing.sm),
+                AppSpacing.card,
+                AppSpacing.sm,
+                AppSpacing.sm,
+                AppSpacing.sm,
+              ),
               child: Row(
                 children: [
                   // Stages stacked in a table so labels and badges line up and
                   // each badge keeps a usable width on narrow phones.
                   Expanded(
-                    child: Table(
-                      columnWidths: const {
-                        0: IntrinsicColumnWidth(),
-                        1: FlexColumnWidth(),
-                      },
-                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                      children: [
-                        _stageRow('Manual', item.manualPreInspectionStatus),
-                        _stageRow('Machine', item.machineInspectonStatus, top: AppSpacing.xs),
+                    child: StageStatusTable(
+                      stages: [
+                        ('Manual', item.manualPreInspectionStatus),
+                        ('Machine', item.machineInspectonStatus),
                       ],
                     ),
                   ),
@@ -152,7 +163,9 @@ class VehicleClassScreenItem extends StatelessWidget {
                         backgroundColor: accentLight,
                         foregroundColor: appColor,
                         minimumSize: const Size(0, 40),
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                        ),
                         tapTargetSize: MaterialTapTargetSize.padded,
                         textStyle: AppText.button.copyWith(fontSize: 14),
                         shape: RoundedRectangleBorder(
@@ -164,7 +177,10 @@ class VehicleClassScreenItem extends StatelessWidget {
                         children: [
                           Text('Inspect'),
                           SizedBox(width: AppSpacing.xs),
-                          Icon(Icons.arrow_forward_rounded, size: AppIconSize.sm + 2),
+                          Icon(
+                            Icons.arrow_forward_rounded,
+                            size: AppIconSize.sm + 2,
+                          ),
                         ],
                       ),
                     ),
@@ -177,69 +193,4 @@ class VehicleClassScreenItem extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Date and time of the appointment, right-aligned next to the plate.
-class _AppointmentTime extends StatelessWidget {
-  final String raw;
-  final bool hasDate;
-
-  const _AppointmentTime({required this.raw, required this.hasDate});
-
-  @override
-  Widget build(BuildContext context) {
-    if (!hasDate) {
-      return const Text('Date not set', style: AppText.caption);
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-          formatTime(raw),
-          style: AppText.chip.copyWith(
-            fontFeatures: const [FontFeature.tabularFigures()],
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(formatDate(raw), style: AppText.caption),
-      ],
-    );
-  }
-}
-
-/// One inspection stage ("Manual" / "Machine") and its status badge.
-TableRow _stageRow(String label, String? value, {double top = 0}) {
-  return TableRow(
-    children: [
-      Padding(
-        padding: EdgeInsets.only(top: top, right: AppSpacing.sm),
-        child: Text(label, maxLines: 1, style: AppText.caption),
-      ),
-      Padding(
-        padding: EdgeInsets.only(top: top),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: _stageBadge(value),
-        ),
-      ),
-    ],
-  );
-}
-
-/// Pass / Fail map to their badges, an empty value means the stage hasn't
-/// started, and any other value from the API is shown as pending.
-StatusBadge _stageBadge(String? value) {
-  final text = (value ?? '').trim();
-  final lower = text.toLowerCase();
-  if (text.isEmpty || lower == 'null') {
-    return const StatusBadge.neutral(
-      label: 'Not started',
-      icon: Icons.radio_button_unchecked_rounded,
-      dense: true,
-    );
-  }
-  if (lower == 'pass' || lower == 'fail') {
-    return StatusBadge.fromResult(text, dense: true);
-  }
-  return StatusBadge.pending(label: text, dense: true);
 }

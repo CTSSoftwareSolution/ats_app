@@ -8,7 +8,6 @@ import '../../../../utilities/new_app_theme/app_icon_size.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../../utilities/new_app_theme/app_text.dart';
 
-
 /// Compact brand header for the Home tab: logo, then a greeting with the
 /// signed-in inspector's name and the current centre location.
 class BuildHeaderHome extends StatelessWidget {
@@ -31,7 +30,11 @@ class BuildHeaderHome extends StatelessWidget {
       width: double.infinity,
       color: appColor,
       padding: const EdgeInsets.fromLTRB(
-          AppSpacing.page, AppSpacing.md, AppSpacing.page, AppSpacing.lg),
+        AppSpacing.page,
+        AppSpacing.md,
+        AppSpacing.page,
+        AppSpacing.lg,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -49,7 +52,10 @@ class BuildHeaderHome extends StatelessWidget {
                   firstName.isEmpty ? 'Welcome' : 'Hello, $firstName',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppText.sectionTitle.copyWith(color: textWhite, fontSize: 17),
+                  style: AppText.sectionTitle.copyWith(
+                    color: textWhite,
+                    fontSize: 17,
+                  ),
                 ),
               ),
               if (location.isNotEmpty) ...[
@@ -89,15 +95,21 @@ class _LocationPill extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.location_on_outlined,
-                color: textWhiteSub, size: AppIconSize.sm),
+            const Icon(
+              Icons.location_on_outlined,
+              color: textWhiteSub,
+              size: AppIconSize.sm,
+            ),
             const SizedBox(width: AppSpacing.xs),
             Flexible(
               child: Text(
                 location,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppText.caption.copyWith(color: textWhite, fontFamily: "SemiBold"),
+                style: AppText.caption.copyWith(
+                  color: textWhite,
+                  fontFamily: "SemiBold",
+                ),
               ),
             ),
           ],

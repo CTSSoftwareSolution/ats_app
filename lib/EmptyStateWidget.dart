@@ -1,8 +1,5 @@
-
 import 'package:ats_app/widgets/new_app_ui/app_state_view.dart';
 import 'package:flutter/material.dart';
-
-
 
 /// Scrollable, centred [AppStateView.empty]. Kept for existing call sites;
 /// new code can use [AppStateView.empty] directly.

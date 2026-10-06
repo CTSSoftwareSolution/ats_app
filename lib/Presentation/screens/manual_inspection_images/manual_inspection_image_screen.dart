@@ -9,6 +9,8 @@ import 'package:ats_app/utilities/preferences.dart';
 import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:ats_app/Presentation/screens/common/vehicle_subtitle.dart';
+import 'package:ats_app/widgets/new_app_ui/app_top_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../../../image_processing/MediaPicker/file_provider.dart';
@@ -18,7 +20,6 @@ import '../../../utilities/image_data.dart';
 
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
-import '../../../widgets/new_app_ui/app_back_button.dart';
 import '../../../widgets/new_app_ui/app_card.dart';
 import '../../../widgets/new_app_ui/bottom_action_bar.dart';
 import '../../../widgets/new_app_ui/circular_progress_header.dart';
@@ -28,28 +29,28 @@ import '../camera_page/camera_screen.dart';
 
 import '../vehicle_test_parameter/vehicle_parts_screen.dart';
 
-
 class ManualInspectionImageScreen extends StatefulWidget {
   const ManualInspectionImageScreen({super.key});
 
   @override
-  State<ManualInspectionImageScreen> createState() => _ManualInspectionImageScreenState();
+  State<ManualInspectionImageScreen> createState() =>
+      _ManualInspectionImageScreenState();
 }
 
-class _ManualInspectionImageScreenState extends State<ManualInspectionImageScreen>  with WidgetsBindingObserver{
-
+class _ManualInspectionImageScreenState
+    extends State<ManualInspectionImageScreen>
+    with WidgetsBindingObserver {
   int missingCount = 0;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_)async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       context.read<FileProvider>().clearImages();
       context.read<FileProvider>().clearAll();
     });
   }
-
 
   @override
   void dispose() {
@@ -58,19 +59,26 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
   }
 
   void imageUpload() async {
-    final provider = Provider.of<ManualInsImageProvider>(context, listen: false);
+    final provider = Provider.of<ManualInsImageProvider>(
+      context,
+      listen: false,
+    );
     final cameraController = Provider.of<FileProvider>(context, listen: false);
-    final vehicleClassProvider = Provider.of<VehicleClassProvider>(context, listen: false);
+    final vehicleClassProvider = Provider.of<VehicleClassProvider>(
+      context,
+      listen: false,
+    );
     final location = Provider.of<LocationProvider>(context, listen: false);
-
 
     List<DocumentManualDocModels> docs = [];
     for (int i = 0; i < cameraController.mediaFile.length; i++) {
       final image = cameraController.mediaFile[i];
-      if(image != null && image.image != null && image.image!.path.isNotEmpty){
+      if (image != null &&
+          image.image != null &&
+          image.image!.path.isNotEmpty) {
         docs.add(
           DocumentManualDocModels(
-            labelId: "${i+1}",
+            labelId: "${i + 1}",
             latitude: location.currentPosition!.latitude.toString(),
             longitude: location.currentPosition!.longitude.toString(),
             file: File(image.image!.path),
@@ -87,8 +95,9 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
       CustomLoader.message(message);
       return;
     }
-     await provider.uploadDocuments(
-      appointmentId: vehicleClassProvider.selectedClass!.appointmentId.toString(),
+    await provider.uploadDocuments(
+      appointmentId: vehicleClassProvider.selectedClass!.appointmentId
+          .toString(),
       createdBy: Preferences.getUserId().toString(),
       vehicleId: vehicleClassProvider.selectedClass!.vehicleKey.toString(),
       documents: docs,
@@ -96,7 +105,6 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     if (!mounted) return;
 
     context.push(VehiclePartsScreen());
-
   }
 
   @override
@@ -109,14 +117,13 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     }
     return Scaffold(
       backgroundColor: bg,
-      appBar: AppBar(
-        title: const Text("Gather Vehicle Data"),
-        leading: AppBackButton(
-          onPressed: (){
-            context.pop();
-            fileProvider.clearAll();
-          },
-        ),
+      appBar: AppTopBar(
+        title: "Gather Vehicle Data",
+        subtitle: vehicleSubtitle(context),
+        onBack: () {
+          context.pop();
+          fileProvider.clearAll();
+        },
       ),
       body: SafeArea(
         bottom: false,
@@ -193,7 +200,7 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
                     ? "Next"
                     : "Next · ${labels.length - capturedCount} left",
                 icon: Icons.arrow_forward_rounded,
-                onPressed: (){
+                onPressed: () {
                   imageUpload();
                 },
               ),
@@ -203,6 +210,4 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
       ),
     );
   }
-
-
 }

@@ -3,10 +3,11 @@ import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widg
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:ats_app/Presentation/screens/common/vehicle_subtitle.dart';
+import 'package:ats_app/widgets/new_app_ui/app_top_bar.dart';
 import 'package:provider/provider.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../../utilities/new_app_theme/app_text.dart';
-import '../../../../widgets/new_app_ui/app_back_button.dart';
 import '../../../../widgets/new_app_ui/app_state_view.dart';
 import '../../../provider/inspection_form_provider.dart';
 import '../../../provider/manual_inspection_list_provider.dart';
@@ -17,7 +18,7 @@ import '../inspection_widgets/section_tab_view.dart';
 class InspectionPage extends StatefulWidget {
   final bool? isEditMode;
 
-  const InspectionPage({super.key, this.isEditMode,});
+  const InspectionPage({super.key, this.isEditMode});
 
   @override
   State<InspectionPage> createState() => _InspectionPageState();
@@ -27,7 +28,7 @@ class InspectionPage extends StatefulWidget {
 // recreated whenever the number of visible sections changes.
 class _InspectionPageState extends State<InspectionPage>
     with TickerProviderStateMixin {
-   TabController? _tabController;
+  TabController? _tabController;
 
   @override
   void dispose() {
@@ -38,14 +39,17 @@ class _InspectionPageState extends State<InspectionPage>
   @override
   void initState() {
     super.initState();
-  //  _tabController = TabController(length: 3, vsync: this);
+    //  _tabController = TabController(length: 3, vsync: this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<InspectionFormProvider>();
       final detailsProvider = context.read<AiInspectionDetailsProvider>();
 
-      final manualProvider = Provider.of<ManualInspectionListProvider>(context, listen: false);
-       provider.fetchInspectionData();
+      final manualProvider = Provider.of<ManualInspectionListProvider>(
+        context,
+        listen: false,
+      );
+      provider.fetchInspectionData();
       // if(detailsProvider.isAIModeOn){
       //   detailsProvider.aiInspectionDetails(context);
       // }
@@ -86,33 +90,31 @@ class _InspectionPageState extends State<InspectionPage>
   //   super.dispose();
   // }
 
-   void _updateTabController(int length) {
-     if (length <= 0) return;
+  void _updateTabController(int length) {
+    if (length <= 0) return;
 
-     if (_tabController?.length != length) {
-       _tabController?.dispose();
+    if (_tabController?.length != length) {
+      _tabController?.dispose();
 
-       _tabController = TabController(
-         length: length,
-         vsync: this,
-       );
+      _tabController = TabController(length: length, vsync: this);
 
-       setState(() {});
-     }
-   }
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<InspectionFormProvider>(
       builder: (context, provider, _) {
         return Scaffold(
-          appBar: AppBar(
-            title: const Text("Inspection"),
-            leading: AppBackButton(
-              onPressed: (){
-                context.pop();
-                },
-            ),
+          appBar: AppTopBar(
+            title: provider.inspectionMode == InspectionMode.underPitInspection
+                ? "Under-PIT Inspection"
+                : "Visual Inspection",
+            subtitle: vehicleSubtitle(context, fromResultList: true),
+            onBack: () {
+              context.pop();
+            },
           ),
           backgroundColor: bg,
           body: _buildBody(provider),
@@ -132,7 +134,7 @@ class _InspectionPageState extends State<InspectionPage>
     //   return const Center(child: Text("No sections available"));
     // }
 
-   // final sections = provider.filteredSections;
+    // final sections = provider.filteredSections;
     final sections = provider.visibleSections;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateTabController(sections.length);
@@ -141,73 +143,95 @@ class _InspectionPageState extends State<InspectionPage>
     // The controller is (re)created after this frame; until it matches the
     // sections, a same-height placeholder keeps the layout from jumping and
     // avoids building TabBar/TabBarView without a valid controller.
-    final tabsReady = sections.isNotEmpty &&
+    final tabsReady =
+        sections.isNotEmpty &&
         _tabController != null &&
         _tabController!.length == sections.length;
 
+    // A single section (Under-PIT) needs no tab strip.
+    final showTabs = sections.length > 1;
+
     return Column(
       children: [
-        Container(
-          color: appColor,
-          child: !tabsReady
-              ? const SizedBox(height: 60, width: double.infinity)
-              : TabBar(
-            controller: _tabController,
-            isScrollable: sections.length > 3,
-            tabAlignment: sections.length > 3 ? TabAlignment.start : null,
-            indicatorColor: textWhite,
-            indicatorWeight: 3,
-            indicatorSize: TabBarIndicatorSize.tab,
-            dividerColor: Colors.transparent,
-            labelColor: textWhite,
-            unselectedLabelColor: textWhiteSub,
-            labelStyle: AppText.navLabel.copyWith(letterSpacing: 0.2),
-            unselectedLabelStyle: AppText.navLabel.copyWith(
-              fontFamily: "Medium",
-              letterSpacing: 0.2,
-            ),
-            tabs: List.generate(sections.length, (i) {
-              final s = sections[i];
-              return Tab(
-                height: 60,
-                iconMargin: const EdgeInsets.only(bottom: 4),
-                icon: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Icon(s.icon, size: 20),
-                    if (s.isComplete)
-                      Positioned(
-                        right: -7,
-                        top: -5,
-                        child: Container(
-                          width: 14,
-                          height: 14,
-                          decoration: BoxDecoration(
-                            color: pass,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: appColor, width: 1.5),
+        if (showTabs)
+          Container(
+            color: appColor,
+            child: !tabsReady
+                ? const SizedBox(height: 52, width: double.infinity)
+                : TabBar(
+                    controller: _tabController,
+                    isScrollable: sections.length > 3,
+                    tabAlignment: sections.length > 3
+                        ? TabAlignment.start
+                        : null,
+                    indicatorColor: textWhite,
+                    indicatorWeight: 3,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    labelColor: textWhite,
+                    unselectedLabelColor: textWhiteSub,
+                    labelStyle: AppText.chip.copyWith(letterSpacing: 0.2),
+                    unselectedLabelStyle: AppText.chip.copyWith(
+                      fontFamily: "Medium",
+                      letterSpacing: 0.2,
+                    ),
+                    tabs: List.generate(sections.length, (i) {
+                      final s = sections[i];
+                      return Tab(
+                        height: 52,
+                        // "Pre-Inspection  12/20" – name plus progress, or a check
+                        // once the section is complete.
+                        child: Semantics(
+                          label: s.isComplete
+                              ? '${s.label}, complete'
+                              : '${s.label}, ${s.totalAnswered} of ${s.totalQuestions} answered',
+                          excludeSemantics: true,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  s.label,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              s.isComplete
+                                  ? const Icon(
+                                      Icons.check_circle_rounded,
+                                      size: 16,
+                                      color: textWhite,
+                                    )
+                                  : Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 1,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: textWhite.withValues(
+                                          alpha: 0.16,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          100,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        '${s.totalAnswered}/${s.totalQuestions}',
+                                        style: AppText.caption.copyWith(
+                                          color: textWhite,
+                                          fontFamily: "SemiBold",
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ),
+                            ],
                           ),
-                          child: const Icon(Icons.check_rounded,
-                              size: 9, color: textWhite),
                         ),
-                      ),
-                  ],
-                ),
-                // Section name ("Under-PIT Inspection" -> "Under-PIT") so the
-                // inspector sees which inspection each tab holds.
-                child: Semantics(
-                  label: s.isComplete ? '${s.label}, complete' : s.label,
-                  excludeSemantics: true,
-                  child: Text(
-                    s.label.replaceFirst(RegExp(r'\s+Inspection$'), ''),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                      );
+                    }),
                   ),
-                ),
-              );
-            }),
           ),
-        ),
 
         _buildFilterBar(provider),
 
@@ -217,12 +241,12 @@ class _InspectionPageState extends State<InspectionPage>
               : !tabsReady
               ? const LoadingScreen()
               : TabBarView(
-            controller: _tabController,
-            children: List.generate(
-              sections.length,
-                  (i) => SectionTabView(sectionIndex: i,),
-            ),
-          ),
+                  controller: _tabController,
+                  children: List.generate(
+                    sections.length,
+                    (i) => SectionTabView(sectionIndex: i),
+                  ),
+                ),
         ),
       ],
     );
@@ -231,7 +255,19 @@ class _InspectionPageState extends State<InspectionPage>
   Widget _buildFilterBar(InspectionFormProvider provider) {
     final answered = provider.visibleAnsweredQuestions;
     final unanswered = provider.visibleTotalQuestions - answered;
-    final no = provider.grandTotalNo;
+    // Failed answers in the sections on screen (grandTotalNo counts every
+    // section, including ones hidden in this mode).
+    final no = provider.visibleSections.fold<int>(
+      0,
+      (sum, s) =>
+          sum +
+          s.categories.fold<int>(
+            0,
+            (c, cat) =>
+                c +
+                cat.questions.where((q) => q.answer == AnswerState.Fail).length,
+          ),
+    );
 
     return Container(
       decoration: const BoxDecoration(
@@ -240,7 +276,9 @@ class _InspectionPageState extends State<InspectionPage>
       ),
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.page, vertical: AppSpacing.sm),
+        horizontal: AppSpacing.page,
+        vertical: AppSpacing.sm,
+      ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -301,7 +339,8 @@ class _InspectionPageState extends State<InspectionPage>
         ? 'No failed questions found'
         : 'No questions found';
 
-    final iconColor = filter == QuestionFilter.no || filter == QuestionFilter.unanswered
+    final iconColor =
+        filter == QuestionFilter.no || filter == QuestionFilter.unanswered
         ? pass
         : na;
 
@@ -337,54 +376,56 @@ class _FilterChip extends StatelessWidget {
       label: '$label, $count',
       excludeSemantics: true,
       child: Material(
-      color: selected ? color.withValues(alpha: 0.1) : surface,
-      borderRadius: radius,
-      child: InkWell(
-        onTap: onTap,
+        color: selected ? color.withValues(alpha: 0.1) : surface,
         borderRadius: radius,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          decoration: BoxDecoration(
-            borderRadius: radius,
-            border: Border.all(
-              color: selected ? color : border,
-              width: selected ? 1.5 : 1,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: AppText.chip.copyWith(
-                  color: selected ? color : textSecondary,
-                ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: radius,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            height: 44,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            decoration: BoxDecoration(
+              borderRadius: radius,
+              border: Border.all(
+                color: selected ? color : border,
+                width: selected ? 1.5 : 1,
               ),
-              const SizedBox(width: 6),
-              Container(
-                constraints: const BoxConstraints(minWidth: 22),
-                padding:
-                const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: selected ? color : surface2,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Text(
-                  '$count',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: selected ? textWhite : textSecondary,
-                    fontSize: 11,
-                    fontFamily: "Bold",
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: AppText.chip.copyWith(
+                    color: selected ? color : textSecondary,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 6),
+                Container(
+                  constraints: const BoxConstraints(minWidth: 22),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: selected ? color : surface2,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Text(
+                    '$count',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: selected ? textWhite : textSecondary,
+                      fontSize: 11,
+                      fontFamily: "Bold",
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }

@@ -1,16 +1,20 @@
-
-import 'package:ats_app/utilities/extension.dart';
 import 'package:flutter/material.dart';
 import '../../../Data/model/response_model/manual_inspection_list_model.dart';
 import '../../../utilities/color_data.dart';
+import '../../../utilities/new_app_theme/app_icon_size.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/new_app_ui/app_card.dart';
+import '../../../widgets/new_app_ui/appointment_time.dart';
 import '../../../widgets/new_app_ui/info_chip.dart';
-import '../../../widgets/new_app_ui/meta_row.dart';
 import '../../../widgets/new_app_ui/registration_plate.dart';
 import '../../../widgets/new_app_ui/status_badge.dart';
 
 /// Manual inspection result card shown in the Result tab.
+///
+/// Registration and appointment time on top, vehicle and booking details in
+/// the middle, and the result (with Retest for failed inspections) in the
+/// footer. The card border is tinted by the result.
 class ResultScreenItem extends StatelessWidget {
   final ManualLisAppointments appointments;
   final VoidCallback? onRetest;
@@ -32,80 +36,150 @@ class ResultScreenItem extends StatelessWidget {
     final regNo = _text(appointments.registrationNo);
     final bookingId = _text(appointments.bookingId);
     final rawDate = _text(appointments.appointmentDate);
-    final hasDate = DateTime.tryParse(rawDate) != null;
     final isFail = appointments.manualStatus == "Fail";
+    final isPass = appointments.manualStatus == "Pass";
+    final make = _text(appointments.make);
+
     final chips = <Widget>[
       if (_text(appointments.vehicleClass).isNotEmpty)
-        InfoChip(icon: Icons.tag_rounded, label: _text(appointments.vehicleClass)),
-      if (_text(appointments.make).isNotEmpty)
-        InfoChip(icon: Icons.directions_car_outlined, label: _text(appointments.make)),
+        InfoChip(
+          icon: Icons.tag_rounded,
+          label: _text(appointments.vehicleClass),
+        ),
       if (_text(appointments.fuelType).isNotEmpty)
-        InfoChip(icon: Icons.local_gas_station_outlined, label: _text(appointments.fuelType)),
+        InfoChip(
+          icon: Icons.local_gas_station_outlined,
+          label: _text(appointments.fuelType),
+        ),
       const InfoChip(icon: Icons.edit_note_rounded, label: "Manual"),
     ];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
       child: AppCard(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: EdgeInsets.zero,
+        borderColor: isFail
+            ? fail.withValues(alpha: 0.45)
+            : isPass
+            ? pass.withValues(alpha: 0.35)
+            : null,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Flexible(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: RegistrationPlate(number: regNo.isEmpty ? '-' : regNo),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                StatusBadge.fromResult(appointments.manualStatus),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.sm,
-              children: chips,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            const Divider(height: 1, thickness: 1, color: border),
-            const SizedBox(height: AppSpacing.md),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.card,
+                AppSpacing.card,
+                AppSpacing.card,
+                AppSpacing.md,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Registration + appointment time
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (bookingId.isNotEmpty)
-                        MetaRow(
-                          icon: Icons.confirmation_number_outlined,
-                          text: "Booking ID $bookingId",
+                      Flexible(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: RegistrationPlate(
+                            number: regNo.isEmpty ? '-' : regNo,
+                          ),
                         ),
-                      if (bookingId.isNotEmpty && hasDate)
-                        const SizedBox(height: AppSpacing.sm),
-                      if (hasDate)
-                        MetaRow(
-                          icon: Icons.schedule_rounded,
-                          text: "${formatDate(rawDate)} · ${formatTime(rawDate)}",
-                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      AppointmentTime(raw: rawDate),
                     ],
                   ),
-                ),
-                if (isFail) ...[
-                  const SizedBox(width: AppSpacing.md),
-                  FilledButton.icon(
-                    onPressed: onRetest,
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(0, 48),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                  if (make.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    Text(
+                      make,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppText.title,
                     ),
-                    icon: const Icon(Icons.refresh_rounded, size: 18),
-                    label: const Text("Retest"),
+                  ],
+                  if (bookingId.isNotEmpty) ...[
+                    SizedBox(height: make.isNotEmpty ? 2 : AppSpacing.md),
+                    Text(
+                      "Booking ID $bookingId",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppText.caption,
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.md),
+                  Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
+                    children: chips,
                   ),
                 ],
-              ],
+              ),
+            ),
+            const Divider(height: 1),
+            // Result + Retest
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.card,
+                AppSpacing.sm,
+                AppSpacing.sm,
+                AppSpacing.sm,
+              ),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: AppSpacing.minTouchTarget,
+                ),
+                child: Row(
+                  children: [
+                    // "Result [badge]" stays together on the left and can
+                    // shrink, so the row never overflows next to Retest.
+                    Expanded(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Flexible(
+                            child: Text(
+                              "Result",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppText.caption,
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Flexible(
+                            flex: 3,
+                            child: StatusBadge.fromResult(
+                              appointments.manualStatus,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isFail) ...[
+                      const SizedBox(width: AppSpacing.sm),
+                      FilledButton.icon(
+                        onPressed: onRetest,
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(0, 40),
+                          tapTargetSize: MaterialTapTargetSize.padded,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md,
+                          ),
+                          textStyle: AppText.button.copyWith(fontSize: 14),
+                        ),
+                        icon: const Icon(
+                          Icons.refresh_rounded,
+                          size: AppIconSize.sm + 2,
+                        ),
+                        label: const Text("Retest"),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
             ),
           ],
         ),

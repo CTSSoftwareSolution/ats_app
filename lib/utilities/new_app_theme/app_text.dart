@@ -36,21 +36,45 @@ class AppText {
     height: 1.15,
     letterSpacing: 0.5,
   );
-  static const TextStyle pageTitle =
-  TextStyle(fontFamily: "Bold", fontSize: 20, color: textPrimary, height: 1.25);
-  static const TextStyle sectionTitle =
-  TextStyle(fontFamily: "Bold", fontSize: 16, color: textPrimary, height: 1.3);
-  static const TextStyle title =
-  TextStyle(fontFamily: "SemiBold", fontSize: 15, color: textPrimary, height: 1.35);
-  static const TextStyle body =
-  TextStyle(fontFamily: "Medium", fontSize: 14, color: textPrimary, height: 1.45);
-  static const TextStyle bodySecondary =
-  TextStyle(fontFamily: "Medium", fontSize: 13, color: textSecondary, height: 1.4);
+  static const TextStyle pageTitle = TextStyle(
+    fontFamily: "Bold",
+    fontSize: 20,
+    color: textPrimary,
+    height: 1.25,
+  );
+  static const TextStyle sectionTitle = TextStyle(
+    fontFamily: "Bold",
+    fontSize: 16,
+    color: textPrimary,
+    height: 1.3,
+  );
+  static const TextStyle title = TextStyle(
+    fontFamily: "SemiBold",
+    fontSize: 15,
+    color: textPrimary,
+    height: 1.35,
+  );
+  static const TextStyle body = TextStyle(
+    fontFamily: "Medium",
+    fontSize: 14,
+    color: textPrimary,
+    height: 1.45,
+  );
+  static const TextStyle bodySecondary = TextStyle(
+    fontFamily: "Medium",
+    fontSize: 13,
+    color: textSecondary,
+    height: 1.4,
+  );
 
   /// Uses [na] rather than [textMuted] so small text keeps WCAG AA contrast
   /// (≈4.7:1) on white surfaces.
-  static const TextStyle caption =
-  TextStyle(fontFamily: "Medium", fontSize: 12, color: na, height: 1.35);
+  static const TextStyle caption = TextStyle(
+    fontFamily: "Medium",
+    fontSize: 12,
+    color: na,
+    height: 1.35,
+  );
 
   /// Small uppercase label above a group of content.
   static const TextStyle overline = TextStyle(
@@ -61,22 +85,38 @@ class AppText {
   );
 
   /// Button labels. Colour comes from the button's foreground colour.
-  static const TextStyle button =
-  TextStyle(fontFamily: "SemiBold", fontSize: 15, letterSpacing: 0.2);
+  static const TextStyle button = TextStyle(
+    fontFamily: "SemiBold",
+    fontSize: 15,
+    letterSpacing: 0.2,
+  );
 
   /// Label shown above a form field.
-  static const TextStyle fieldLabel =
-  TextStyle(fontFamily: "SemiBold", fontSize: 13, color: textSecondary);
+  static const TextStyle fieldLabel = TextStyle(
+    fontFamily: "SemiBold",
+    fontSize: 13,
+    color: textSecondary,
+  );
 
   /// Compact label for chips, tabs and filter pills.
-  static const TextStyle chip =
-  TextStyle(fontFamily: "SemiBold", fontSize: 13, color: textPrimary);
+  static const TextStyle chip = TextStyle(
+    fontFamily: "SemiBold",
+    fontSize: 13,
+    color: textPrimary,
+  );
 
   /// Label used in bottom navigation destinations.
-  static const TextStyle navLabel =
-  TextStyle(fontFamily: "SemiBold", fontSize: 12, color: textSecondary);
+  static const TextStyle navLabel = TextStyle(
+    fontFamily: "SemiBold",
+    fontSize: 12,
+    color: textSecondary,
+  );
 
   /// Title placed on dark surfaces (media viewers, camera overlays).
-  static const TextStyle titleOnDark =
-  TextStyle(fontFamily: "SemiBold", fontSize: 15, color: textWhite, height: 1.35);
+  static const TextStyle titleOnDark = TextStyle(
+    fontFamily: "SemiBold",
+    fontSize: 15,
+    color: textWhite,
+    height: 1.35,
+  );
 }

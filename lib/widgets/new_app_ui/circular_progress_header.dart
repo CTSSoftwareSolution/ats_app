@@ -35,10 +35,7 @@ class CaptureProgressHeader extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: AppText.sectionTitle,
-                    ),
+                    Text(title, style: AppText.sectionTitle),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
@@ -51,10 +48,10 @@ class CaptureProgressHeader extends StatelessWidget {
               complete
                   ? StatusBadge.pass(label: trailingLabel ?? '$done/$total')
                   : StatusBadge(
-                label: trailingLabel ?? '$done/$total',
-                color: appColor,
-                background: accentLight,
-              ),
+                      label: trailingLabel ?? '$done/$total',
+                      color: appColor,
+                      background: accentLight,
+                    ),
             ],
           ),
           const SizedBox(height: 12),
@@ -64,7 +61,9 @@ class CaptureProgressHeader extends StatelessWidget {
               value: progress,
               minHeight: 6,
               backgroundColor: surface2,
-              valueColor: AlwaysStoppedAnimation<Color>(complete ? pass : appColor),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                complete ? pass : appColor,
+              ),
             ),
           ),
         ],

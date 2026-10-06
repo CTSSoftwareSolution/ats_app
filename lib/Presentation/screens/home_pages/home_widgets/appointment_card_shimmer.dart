@@ -10,7 +10,11 @@ import '../../../../utilities/new_app_theme/app_spacing.dart';
 class AppointmentCardShimmer extends StatelessWidget {
   const AppointmentCardShimmer({super.key});
 
-  Widget _block({double? width, required double height, double radius = AppRadius.sm}) {
+  Widget _block({
+    double? width,
+    required double height,
+    double radius = AppRadius.sm,
+  }) {
     return Container(
       width: width,
       height: height,
@@ -37,7 +41,11 @@ class AppointmentCardShimmer extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.card, AppSpacing.card, AppSpacing.card, AppSpacing.md),
+                AppSpacing.card,
+                AppSpacing.card,
+                AppSpacing.card,
+                AppSpacing.md,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -73,7 +81,11 @@ class AppointmentCardShimmer extends StatelessWidget {
             _block(height: 1, radius: 0),
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.card, AppSpacing.md, AppSpacing.card, AppSpacing.md),
+                AppSpacing.card,
+                AppSpacing.md,
+                AppSpacing.card,
+                AppSpacing.md,
+              ),
               child: Row(
                 children: [
                   // Flexible so narrow phones shrink these instead of

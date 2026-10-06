@@ -10,7 +10,7 @@ Widget buildServerField({
   required String title,
   required TextEditingController controller,
   final Widget? suffixIcon,
-  final String? Function(String?)? validator
+  final String? Function(String?)? validator,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
