@@ -6,7 +6,6 @@ import '../../../../VehicleFilterChip.dart';
 import '../../../../utilities/color_data.dart';
 import '../../../../utilities/new_app_theme/app_radius.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
-import '../../../../utilities/new_app_theme/app_text.dart';
 import '../../../../widgets/custom_search_bar.dart';
 import '../../../provider/vehicle_class_provider.dart';
 
@@ -32,14 +31,21 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
   @override
   Widget build(BuildContext context) {
     final chipsProvider = context.watch<LaneListProvider>();
+    // No horizontal padding here: the chip row scrolls edge to edge and adds
+    // the page gutter itself; the search field is inset below.
     return Container(
-      color: bg,
-      padding: const EdgeInsets.fromLTRB(
-          AppSpacing.page, AppSpacing.md, AppSpacing.page, AppSpacing.sm),
+      decoration: const BoxDecoration(
+        color: bg,
+        border: Border(bottom: BorderSide(color: border)),
+      ),
+      padding: const EdgeInsets.fromLTRB(0, AppSpacing.md, 0, AppSpacing.xs),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomSearchTextField(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
+            child: CustomSearchTextField(
+            hint: 'Search appointments',
             onChanged: (v) => widget.provider.onSearchChanged(context, v),
               controller: widget.provider.searchController,
               suffixIcon: widget.provider.searchValue.isEmpty
@@ -51,7 +57,9 @@ class _SearchFilterBarHomeState extends State<SearchFilterBarHome> {
                 },
               )
           ),
-          const SizedBox(height: AppSpacing.md),
+          ),
+          // Chips carry 4dp of vertical tap padding, so this reads as 12dp.
+          const SizedBox(height: AppSpacing.sm),
           _FilterRow(
             vehicleProvider: widget.provider,
             chipsProvider: chipsProvider,
@@ -74,14 +82,21 @@ class _FilterRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('CATEGORY', style: AppText.overline),
-        const SizedBox(height: AppSpacing.sm),
-        chipsProvider.isLoading ? const ChipShimmer() : SingleChildScrollView(
+    // The selected category is also echoed in the list summary, so the row
+    // needs no separate label.
+    return Semantics(
+      label: 'Category filter',
+      container: true,
+      child: chipsProvider.isLoading
+            ? const Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: AppSpacing.page, vertical: AppSpacing.xs),
+          child: ChipShimmer(),
+        )
+            : SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(left: AppSpacing.page, right: AppSpacing.sm),
           child: Row(
             children: chipsProvider.laneMap.keys.map((laneName) {
               final laneCode = chipsProvider.laneMap[laneName];
@@ -100,7 +115,6 @@ class _FilterRow extends StatelessWidget {
             }).toList(),
           ),
         ),
-      ],
     );
   }
 }
@@ -124,7 +138,7 @@ class ChipShimmer extends StatelessWidget {
               width: 80,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: surface,
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
             );

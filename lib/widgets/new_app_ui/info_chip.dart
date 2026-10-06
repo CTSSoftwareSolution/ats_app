@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utilities/color_data.dart';
+import '../../utilities/new_app_theme/app_text.dart';
 import '../../utilities/new_app_theme/app_radius.dart';
 
 class InfoChip extends StatelessWidget {
@@ -28,11 +29,7 @@ class InfoChip extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12,
-                fontFamily: "SemiBold",
-                color: textSecondary,
-              ),
+              style: AppText.chip.copyWith(fontSize: 12, color: textSecondary),
             ),
           ),
         ],

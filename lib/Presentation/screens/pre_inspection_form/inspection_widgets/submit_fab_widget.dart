@@ -23,9 +23,12 @@ class SubmitFAB extends StatelessWidget {
     final detailsProvider = context.watch<AiInspectionDetailsProvider>();
 
 
+    final missingEvidence = questionsWithNoButNoImage.length;
     final label = (questionsWithNoButNoImage.isNotEmpty && !detailsProvider.isAIMode)
         ? (provider.isFullyComplete
-            ? 'Report is not ready'
+            ? (missingEvidence == 1
+                ? 'Add a photo for 1 failed item'
+                : 'Add photos for $missingEvidence failed items')
             : '${provider.visibleAnsweredQuestions}/${provider.visibleTotalQuestions} Answered')
         : (provider.isFullyComplete
             ? 'Submit Report'
@@ -73,6 +76,8 @@ class SubmitFAB extends StatelessWidget {
               ),
               label: Text(
                 label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontFamily: "Bold", fontSize: 15),
               ),
             ),

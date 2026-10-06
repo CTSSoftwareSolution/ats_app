@@ -21,13 +21,13 @@ customConfirmationDialogBox({
   required BuildContext context,
   required String text,
   required List<DialogButton> buttons,
+  String title = "Alert",
 }) {
   showDialog(
     context: context,
-    barrierColor: navy.withValues(alpha: 0.45),
     builder: (BuildContext context) {
       return AppDialog(
-        title: "Alert",
+        title: title,
         message: text,
         onClose: () => Navigator.of(context).pop(),
         actions: [
@@ -36,7 +36,8 @@ customConfirmationDialogBox({
               onPressed: button.onPressed,
               style: FilledButton.styleFrom(
                 backgroundColor: button.backgroundColor ?? appColor,
-                foregroundColor: button.textColor ?? whiteColor,
+                foregroundColor: button.textColor ?? textWhite,
+                minimumSize: const Size(0, 48),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 textStyle: const TextStyle(fontFamily: "SemiBold", fontSize: 14),
               ),

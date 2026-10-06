@@ -36,21 +36,17 @@ class ValidationDialog {
                           color: fail, size: 22),
                     ),
                     const SizedBox(width: AppSpacing.md),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Evidence Required!',
-                        style: TextStyle(
-                          fontFamily: "Bold",
-                          fontSize: 17,
-                          color: textPrimary,
-                        ),
+                        'Evidence required',
+                        style: AppText.sectionTitle.copyWith(fontSize: 17),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 const Text(
-                  'Following questions marked as "No" require evidence photos:',
+                  'These questions were answered "No" and need an evidence photo:',
                   style: AppText.bodySecondary,
                 ),
                 const SizedBox(height: AppSpacing.md),
@@ -82,10 +78,7 @@ class ValidationDialog {
                               Expanded(
                                 child: Text(
                                   q,
-                                  style: AppText.caption.copyWith(
-                                    color: textPrimary,
-                                    fontSize: 12.5,
-                                  ),
+                                  style: AppText.caption.copyWith(color: textPrimary),
                                 ),
                               ),
                             ],

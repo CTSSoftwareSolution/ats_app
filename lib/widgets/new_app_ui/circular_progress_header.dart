@@ -1,6 +1,7 @@
 import 'package:ats_app/widgets/new_app_ui/status_badge.dart';
 import 'package:flutter/material.dart';
 import '../../utilities/color_data.dart';
+import '../../utilities/new_app_theme/app_text.dart';
 
 class CaptureProgressHeader extends StatelessWidget {
   final String title;
@@ -36,16 +37,12 @@ class CaptureProgressHeader extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        fontFamily: "Bold",
-                        fontSize: 16,
-                        color: textPrimary,
-                      ),
+                      style: AppText.sectionTitle,
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(fontSize: 12.5, color: textSecondary),
+                      style: AppText.caption.copyWith(color: textSecondary),
                     ),
                   ],
                 ),

@@ -47,7 +47,7 @@ class InspectionTile extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, color: textMuted, size: 22),
+          const Icon(Icons.chevron_right_rounded, color: textSecondary, size: 22),
         ],
       ),
     );

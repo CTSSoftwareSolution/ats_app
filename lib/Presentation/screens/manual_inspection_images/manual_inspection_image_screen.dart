@@ -110,10 +110,6 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
     return Scaffold(
       backgroundColor: bg,
       appBar: AppBar(
-        backgroundColor: appColor,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        titleSpacing: 0,
         title: const Text("Gather Vehicle Data"),
         leading: AppBackButton(
           onPressed: (){
@@ -193,7 +189,9 @@ class _ManualInspectionImageScreenState extends State<ManualInspectionImageScree
             ),
             BottomActionBar(
               child: PrimaryButton(
-                label: "Next",
+                label: capturedCount >= labels.length
+                    ? "Next"
+                    : "Next · ${labels.length - capturedCount} left",
                 icon: Icons.arrow_forward_rounded,
                 onPressed: (){
                   imageUpload();

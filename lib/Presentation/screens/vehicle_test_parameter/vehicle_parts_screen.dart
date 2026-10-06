@@ -43,10 +43,6 @@ class _VehiclePartsScreenScreenState extends State<VehiclePartsScreen> {
       child: Scaffold(
         backgroundColor: bg,
         appBar: AppBar(
-          titleSpacing: 0.0,
-          backgroundColor: appColor,
-          elevation: 0,
-          scrolledUnderElevation: 0,
           title: const Text("Vehicle Test Parameter"),
           leading: AppBackButton(
             onPressed: (){

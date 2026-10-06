@@ -21,6 +21,7 @@ class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
   final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
 
   void _submit() {
+    if (context.read<LoginProvider>().isLoading) return;
     if (loginFormKey.currentState!.validate()) {
       context.read<LoginProvider>().login(context);
     }
@@ -28,6 +29,7 @@ class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = context.select<LoginProvider, bool>((p) => p.isLoading);
     return LayoutBuilder(
       builder: (context, constraints) {
         final double gutter = constraints.isTablet ? AppSpacing.xl : AppSpacing.page;
@@ -67,11 +69,12 @@ class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
                               style: AppText.bodySecondary,
                             ),
                             const SizedBox(height: AppSpacing.xl),
-                            const LoginScreenItem(),
+                            LoginScreenItem(onSubmit: _submit),
                             const SizedBox(height: AppSpacing.xl),
                             PrimaryButton(
-                              label: "Login",
+                              label: "Sign in",
                               onPressed: _submit,
+                              loading: isLoading,
                             ),
                           ],
                         ),

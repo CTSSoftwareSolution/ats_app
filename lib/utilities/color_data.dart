@@ -1,5 +1,14 @@
 import 'dart:ui';
 
+// ATS colour tokens. See docs/design_system.md for when to use each one.
+//
+// Brand: [appColor] is the single primary colour (app bars, primary buttons,
+// selected states, links). Everything else is neutral or semantic.
+//
+// The block directly below (up to `background`) is the legacy palette, still
+// referenced by older/unused screens. New UI uses the tokens from
+// "new-manual-flow" onward.
+
 //const appColor = Color(0xff345afa);
 const appColor = Color(0xff1c3e70);
 const appGradientColor = Color(0xff19162e);
@@ -58,4 +67,7 @@ const background = Color(0xfff4f5fa);
 // Accent (bright blue for highlights)
  const accent       = Color(0xFF2563EB);
  const accentLight  = Color(0xFFEFF4FF);
+
+// Overlay behind dialogs and bottom sheets (navy at 45%).
+ const scrim        = Color(0x730D1B3E);
 

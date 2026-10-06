@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../utilities/color_data.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
+import '../../../widgets/new_app_ui/media_preview_header.dart';
 
 class VideoDialog extends StatefulWidget {
   final String path;
@@ -19,6 +22,9 @@ class _VideoDialogState extends State<VideoDialog>
     with TickerProviderStateMixin {
   late VideoPlayerController controller;
   bool isInitialized = false;
+
+  /// True when the file could not be opened.
+  bool _loadFailed = false;
 
   late AnimationController _fadeController;
   late Animation<double> _fadeAnim;
@@ -42,6 +48,9 @@ class _VideoDialogState extends State<VideoDialog>
       setState(() => isInitialized = true);
       controller.play();
       _scheduleHideControls();
+    }).catchError((_) {
+      if (!mounted) return;
+      setState(() => _loadFailed = true);
     });
 
     controller.addListener(() {
@@ -125,41 +134,40 @@ class _VideoDialogState extends State<VideoDialog>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildHeader(context),
+              MediaPreviewHeader(
+                title: "Video preview",
+                onClose: () => Navigator.pop(context),
+              ),
               if (isInitialized) ...[
                 Flexible(child: _buildVideo()),
                 _buildControls(context),
-              ] else
+              ] else if (_loadFailed)
+                SizedBox(
+                  height: 220,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.videocam_off_outlined, color: textWhiteSub, size: 32),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          "This video can't be played",
+                          style: AppText.bodySecondary.copyWith(color: textWhiteSub),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
                 const SizedBox(
                   height: 220,
                   child: Center(
-                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                    child: CircularProgressIndicator(color: textWhite, strokeWidth: 2),
                   ),
                 ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.xs, AppSpacing.xs, AppSpacing.xs),
-      child: Row(
-        children: [
-          const Expanded(
-            child: Text(
-              "Video preview",
-              style: TextStyle(fontFamily: "SemiBold", fontSize: 15, color: Colors.white),
-            ),
-          ),
-          IconButton(
-            tooltip: 'Close',
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.close_rounded, color: Colors.white),
-          ),
-        ],
       ),
     );
   }

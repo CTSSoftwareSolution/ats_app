@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../utilities/color_data.dart';
+import '../../utilities/new_app_theme/app_text.dart';
 
 class MetaRow extends StatelessWidget {
   final IconData icon;
@@ -19,11 +20,7 @@ class MetaRow extends StatelessWidget {
             text,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 13,
-              fontFamily: "SemiBold",
-              color: textSecondary,
-            ),
+            style: AppText.chip.copyWith(color: textSecondary),
           ),
         ),
       ],

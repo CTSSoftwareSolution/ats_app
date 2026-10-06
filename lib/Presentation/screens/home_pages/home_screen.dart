@@ -1,5 +1,8 @@
-import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_shimmer.dart';
+import 'package:ats_app/Presentation/provider/lane_list_provider.dart';
+import 'package:ats_app/Presentation/screens/home_pages/home_widgets/appointment_card_shimmer.dart';
+import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_list_summary.dart';
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/new_app_theme/app_text.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,9 +66,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  String _categorySuffix(String laneName) =>
+      laneName.isEmpty || laneName == 'All' ? '' : ' in $laneName';
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<VehicleClassProvider>();
+    final laneName = context.select<LaneListProvider, String>((p) => p.selectedFilter);
     // Status bar blends into the brand header: same colour behind it (also on
     // edge-to-edge Android, where statusBarColor is ignored) and light icons.
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -89,41 +96,59 @@ class _HomeScreenState extends State<HomeScreen> {
               color: appColor,
               backgroundColor: surface,
               onRefresh: _onRefresh,
-              child: provider.isLoading ? ListView.builder(
+              child: provider.isLoading ? ListView.separated(
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: 6,
-                itemBuilder: (_, __) => const HomeShimmer(),
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.page, AppSpacing.lg, AppSpacing.page, AppSpacing.lg),
+                itemCount: 4,
+                separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+                itemBuilder: (_, __) => const AppointmentCardShimmer(),
               ) : (provider.vehicleClassEntity?.data?.appointments?.isEmpty ?? true)
-                  ? const PullToRefreshFill(
-                child: EmptyStateWidget(
-                icon: Icons.search_off_rounded,
-                title: 'No Appointments Found',
-                subtitle: 'Try changing the filter or search term',
-              ),
+                  ? PullToRefreshFill(
+                child: provider.searchValue.isNotEmpty
+                    ? EmptyStateWidget(
+                  icon: Icons.search_off_rounded,
+                  title: 'No matching appointments',
+                  subtitle: 'Nothing matches "${provider.searchValue}"${_categorySuffix(laneName)}. Check the spelling or try another search.',
+                )
+                    : EmptyStateWidget(
+                  icon: Icons.event_available_outlined,
+                  title: 'No appointments',
+                  subtitle: laneName.isEmpty || laneName == 'All'
+                      ? 'New appointments will appear here. Pull down to refresh, or check your connection if this persists.'
+                      : 'There are no appointments in $laneName. Try another category or pull down to refresh.',
+                  actionLabel: 'Refresh',
+                  onAction: _onRefresh,
+                ),
               ) : ListView.builder(
-                padding: const EdgeInsets.only(top: AppSpacing.xs, bottom: AppSpacing.lg),
+                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
                 controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(
                   parent: BouncingScrollPhysics(),
                 ),
-                itemCount: provider.vehicleClassEntity!.data!.appointments!.length + (provider.isLoadMore ? 1 : 0),
+                // Summary + appointments + footer (loading more / end of list).
+                itemCount: provider.vehicleClassEntity!.data!.appointments!.length + 2,
                 itemBuilder: (context, index) {
                   final appointments = provider.vehicleClassEntity!.data!.appointments!;
-                  if (index == appointments.length) {
-                    return Padding(
-                      padding:
-                      const EdgeInsets.symmetric(vertical: 20),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: appColor,
-                          strokeWidth: 2.5,
-                        ),
-                      ),
+                  if (index == 0) {
+                    return HomeListSummary(
+                      totalRecords: provider.vehicleClassEntity!.data!.totalRecords,
+                      loadedCount: appointments.length,
+                      category: laneName,
+                      search: provider.searchValue,
                     );
                   }
-                  final item = appointments[index];
+                  if (index == appointments.length + 1) {
+                    return _ListFooter(
+                      isLoadingMore: provider.isLoadMore,
+                      reachedEnd: !provider.hasMoreData,
+                      count: appointments.length,
+                    );
+                  }
+                  final item = appointments[index - 1];
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page, vertical: 6),
+                    padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.page, 0, AppSpacing.page, AppSpacing.md),
                     child: VehicleClassScreenItem(
                       classDataModel: item,
                       onTap: () {
@@ -143,6 +168,54 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     ),
+    );
+  }
+}
+
+/// Last list item: a spinner while the next page loads, a quiet
+/// end-of-list note once everything is loaded, otherwise nothing.
+class _ListFooter extends StatelessWidget {
+  final bool isLoadingMore;
+  final bool reachedEnd;
+  final int count;
+
+  const _ListFooter({
+    required this.isLoadingMore,
+    required this.reachedEnd,
+    required this.count,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoadingMore) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+        child: Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(strokeWidth: 2.5),
+          ),
+        ),
+      );
+    }
+    if (!reachedEnd) return const SizedBox(height: AppSpacing.sm);
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.page, vertical: AppSpacing.sm),
+      child: Row(
+        children: [
+          const Expanded(child: Divider()),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            child: Text(
+              count == 1 ? '1 appointment' : 'All $count appointments shown',
+              style: AppText.caption,
+            ),
+          ),
+          const Expanded(child: Divider()),
+        ],
+      ),
     );
   }
 }

@@ -63,6 +63,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> w
             context: context,
             title: "Exit",
             subTitle: "Do you really want to exit this app?",
+            cancelLabel: "Cancel",
+            confirmLabel: "Exit",
+            icon: Icons.exit_to_app_rounded,
             cancelClick: () {
               context.pop();
             },

@@ -3,10 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../color_data.dart';
+import 'app_icon_size.dart';
 import 'app_radius.dart';
 import 'app_spacing.dart';
 import 'app_text.dart';
 
+/// App-wide Material theme built from the ATS tokens ([AppText],
+/// [AppSpacing], [AppRadius], colours in color_data.dart).
+///
+/// Principles (see docs/design_system.md):
+/// * one brand colour ([appColor]); semantic colours only for status
+/// * flat surfaces: hairline borders instead of shadows, no gradients
+/// * 48dp minimum touch targets, 52dp primary actions
 class AppTheme {
   static const SystemUiOverlayStyle statusBarStyle = SystemUiOverlayStyle(
     statusBarColor: appColor,
@@ -20,29 +28,26 @@ class AppTheme {
       brightness: Brightness.light,
     ).copyWith(
       primary: appColor,
-      onPrimary: whiteColor,
+      onPrimary: textWhite,
       primaryContainer: accentLight,
       onPrimaryContainer: appColor,
       secondary: navyAccent,
-      onSecondary: whiteColor,
+      onSecondary: textWhite,
       error: fail,
-      onError: whiteColor,
+      onError: textWhite,
       surface: surface,
       onSurface: textPrimary,
       onSurfaceVariant: textSecondary,
       outline: borderDark,
       outlineVariant: border,
+      scrim: scrim,
       surfaceTint: Colors.transparent,
     );
 
     final buttonShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(AppRadius.md),
     );
-    const buttonText = TextStyle(
-      fontFamily: "SemiBold",
-      fontSize: 16,
-      letterSpacing: 0.2,
-    );
+    const buttonMinSize = Size(64, AppSpacing.minTouchTarget);
 
     OutlineInputBorder inputBorder(Color color, [double width = 1]) =>
         OutlineInputBorder(
@@ -58,23 +63,42 @@ class AppTheme {
       materialTapTargetSize: MaterialTapTargetSize.padded,
       scaffoldBackgroundColor: bg,
       splashFactory: InkRipple.splashFactory,
+
+      // Default Text / Material widgets pick these up, so unstyled text
+      // still follows the scale.
+      textTheme: const TextTheme(
+        headlineSmall: AppText.display,
+        titleLarge: AppText.pageTitle,
+        titleMedium: AppText.sectionTitle,
+        titleSmall: AppText.title,
+        bodyLarge: AppText.body,
+        bodyMedium: AppText.body,
+        bodySmall: AppText.caption,
+        labelLarge: AppText.button,
+        labelMedium: AppText.chip,
+        labelSmall: AppText.overline,
+      ),
+
       appBarTheme: const AppBarTheme(
         backgroundColor: appColor,
-        foregroundColor: whiteColor,
+        foregroundColor: textWhite,
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         centerTitle: false,
         titleSpacing: 0,
-        iconTheme: IconThemeData(color: whiteColor),
+        iconTheme: IconThemeData(color: textWhite, size: AppIconSize.lg),
+        actionsIconTheme: IconThemeData(color: textWhite, size: AppIconSize.lg),
         titleTextStyle: TextStyle(
           fontFamily: "SemiBold",
           fontSize: 18,
-          color: whiteColor,
+          color: textWhite,
           letterSpacing: 0.1,
         ),
         systemOverlayStyle: statusBarStyle,
       ),
+
+      // Cards are flat: a hairline border separates them from the page.
       cardTheme: CardThemeData(
         color: surface,
         elevation: 0,
@@ -85,88 +109,101 @@ class AppTheme {
           side: const BorderSide(color: border),
         ),
       ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: appColor,
-          foregroundColor: whiteColor,
+          foregroundColor: textWhite,
           elevation: 0,
-          minimumSize: const Size(64, 48),
+          minimumSize: buttonMinSize,
           disabledBackgroundColor: surface2,
           disabledForegroundColor: textMuted,
           shape: buttonShape,
-          textStyle: buttonText,
+          textStyle: AppText.button,
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: appColor,
-          foregroundColor: whiteColor,
-          minimumSize: const Size(64, 48),
+          foregroundColor: textWhite,
+          minimumSize: buttonMinSize,
           disabledBackgroundColor: surface2,
           disabledForegroundColor: textMuted,
           shape: buttonShape,
-          textStyle: buttonText,
+          textStyle: AppText.button,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: appColor,
-          minimumSize: const Size(64, 48),
+          minimumSize: buttonMinSize,
           side: const BorderSide(color: borderDark),
           shape: buttonShape,
-          textStyle: buttonText,
+          textStyle: AppText.button,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: appColor,
+          minimumSize: buttonMinSize,
           shape: buttonShape,
-          textStyle: buttonText.copyWith(fontSize: 15),
+          textStyle: AppText.button,
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          minimumSize: const Size.square(AppSpacing.minTouchTarget),
+          iconSize: AppIconSize.lg,
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: appColor,
-        foregroundColor: whiteColor,
-        elevation: 2,
-        highlightElevation: 4,
+        foregroundColor: textWhite,
+        elevation: 0,
+        highlightElevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
       ),
+
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
         isDense: true,
         contentPadding:
         const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        hintStyle: const TextStyle(color: textMuted, fontSize: 14),
+        hintStyle: AppText.body.copyWith(color: textMuted),
+        labelStyle: AppText.fieldLabel,
+        helperStyle: AppText.caption,
+        errorStyle: AppText.caption.copyWith(color: fail),
+        prefixIconColor: textSecondary,
+        suffixIconColor: textSecondary,
         border: inputBorder(border),
         enabledBorder: inputBorder(border),
+        disabledBorder: inputBorder(border),
         focusedBorder: inputBorder(appColor, 1.5),
         errorBorder: inputBorder(fail),
         focusedErrorBorder: inputBorder(fail, 1.5),
       ),
+
       dialogTheme: DialogThemeData(
         backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
+        barrierColor: scrim,
+        insetPadding: const EdgeInsets.all(AppSpacing.xl),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.xl),
         ),
-        titleTextStyle: const TextStyle(
-          fontFamily: "Bold",
-          fontSize: 18,
-          color: textPrimary,
-        ),
-        contentTextStyle: const TextStyle(
-          fontSize: 14,
-          color: textSecondary,
-          height: 1.45,
-        ),
+        titleTextStyle: AppText.sectionTitle.copyWith(fontSize: 17),
+        contentTextStyle: AppText.body.copyWith(color: textSecondary, height: 1.5),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        modalElevation: 0,
+        modalBarrierColor: scrim,
         showDragHandle: false,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
@@ -175,11 +212,22 @@ class AppTheme {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: textPrimary,
-        contentTextStyle: const TextStyle(color: whiteColor, fontSize: 14),
+        elevation: 0,
+        contentTextStyle: AppText.body.copyWith(color: textWhite),
+        actionTextColor: textWhiteSub,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
       ),
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: textPrimary,
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+        ),
+        textStyle: AppText.caption.copyWith(color: textWhite),
+        waitDuration: const Duration(milliseconds: 400),
+      ),
+
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: appColor,
         linearTrackColor: surface2,
@@ -190,13 +238,15 @@ class AppTheme {
         thickness: 1,
         space: 1,
       ),
-      tabBarTheme: const TabBarThemeData(
+      tabBarTheme: TabBarThemeData(
         dividerColor: Colors.transparent,
-        labelColor: whiteColor,
+        labelColor: textWhite,
         unselectedLabelColor: textWhiteSub,
-        indicatorColor: whiteColor,
+        indicatorColor: textWhite,
+        labelStyle: AppText.navLabel,
+        unselectedLabelStyle: AppText.navLabel.copyWith(fontFamily: "Medium"),
       ),
-      iconTheme: const IconThemeData(color: textSecondary),
+      iconTheme: const IconThemeData(color: textSecondary, size: AppIconSize.md),
       listTileTheme: const ListTileThemeData(
         contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         minVerticalPadding: AppSpacing.md,
@@ -208,19 +258,35 @@ class AppTheme {
         backgroundColor: surface2,
         selectedColor: accentLight,
         side: BorderSide.none,
-        labelStyle: const TextStyle(fontFamily: "SemiBold", fontSize: 13, color: textPrimary),
+        labelStyle: AppText.chip,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
       ),
       checkboxTheme: CheckboxThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         side: const BorderSide(color: borderDark, width: 1.5),
       ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected) ? textWhite : borderDark,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected) ? appColor : surface2,
+        ),
+        trackOutlineColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected) ? appColor : borderDark,
+        ),
+      ),
       popupMenuTheme: PopupMenuThemeData(
         color: surface,
         surfaceTintColor: Colors.transparent,
-        elevation: 3,
+        // The one place a shadow is kept: a floating menu needs to read as
+        // being above the page.
+        elevation: 2,
         textStyle: AppText.body,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          side: const BorderSide(color: border),
+        ),
       ),
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: appColor,
@@ -233,9 +299,7 @@ class AppTheme {
         indicatorColor: accentLight,
         elevation: 0,
         labelTextStyle: WidgetStateProperty.resolveWith(
-              (states) => TextStyle(
-            fontFamily: "SemiBold",
-            fontSize: 12,
+              (states) => AppText.navLabel.copyWith(
             color: states.contains(WidgetState.selected) ? appColor : textSecondary,
           ),
         ),
@@ -256,9 +320,9 @@ class AppTheme {
       ..indicatorColor = appColor
       ..progressColor = appColor
       ..textColor = textPrimary
-      ..textStyle = const TextStyle(fontFamily: "SemiBold", fontSize: 14, color: textPrimary)
+      ..textStyle = AppText.chip.copyWith(fontSize: 14)
       ..maskType = EasyLoadingMaskType.custom
-      ..maskColor = navy.withValues(alpha: 0.35)
+      ..maskColor = scrim
       ..boxShadow = const <BoxShadow>[]
       ..userInteractions = false
       ..dismissOnTap = false;

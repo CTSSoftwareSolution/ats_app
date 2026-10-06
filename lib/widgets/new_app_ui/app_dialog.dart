@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../utilities/color_data.dart';
+import '../../utilities/new_app_theme/app_icon_size.dart';
 import '../../utilities/new_app_theme/app_radius.dart';
 import '../../utilities/new_app_theme/app_spacing.dart';
+import '../../utilities/new_app_theme/app_text.dart';
 
+/// Standard confirmation / alert dialog: tinted icon tile, title, message and
+/// a row of equal-width actions (secondary first, primary last).
+///
+/// Use [iconColor] = [fail] for destructive confirmations and [warn] for
+/// warnings; the default is the brand colour.
 class AppDialog extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
@@ -24,11 +31,11 @@ class AppDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 420),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.xl - 4, AppSpacing.xl - 4, AppSpacing.xl - 4, AppSpacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,31 +49,27 @@ class AppDialog extends StatelessWidget {
                       color: iconColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
-                    child: Icon(icon, color: iconColor, size: 22),
+                    child: Icon(icon, color: iconColor, size: AppIconSize.md + 2),
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Text(
                       title,
-                      style: const TextStyle(
-                        fontFamily: "Bold",
-                        fontSize: 17,
-                        color: textPrimary,
-                      ),
+                      style: AppText.sectionTitle.copyWith(fontSize: 17),
                     ),
                   ),
                   if (onClose != null)
                     IconButton(
                       tooltip: 'Close',
                       onPressed: onClose,
-                      icon: const Icon(Icons.close_rounded, size: 20, color: textMuted),
+                      icon: const Icon(Icons.close_rounded, size: AppIconSize.md, color: na),
                     ),
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
                 message,
-                style: const TextStyle(fontSize: 14.5, color: textSecondary, height: 1.5),
+                style: AppText.body.copyWith(color: textSecondary, height: 1.5),
               ),
               const SizedBox(height: AppSpacing.xl),
               Row(

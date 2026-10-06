@@ -7,6 +7,7 @@ import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
 import '../../../widgets/custom_image.dart';
@@ -44,16 +45,11 @@ class TabletNavigationRail extends StatelessWidget {
           useIndicator: false,
           leadingAtTop: true,
           trailingAtBottom: true,
-          selectedLabelTextStyle: const TextStyle(
+          selectedLabelTextStyle: AppText.navLabel.copyWith(
             fontFamily: "Bold",
-            fontSize: 11.5,
-            color: whiteColor,
+            color: textWhite,
           ),
-          unselectedLabelTextStyle: const TextStyle(
-            fontFamily: "Medium",
-            fontSize: 11.5,
-            color: textWhiteSub,
-          ),
+          unselectedLabelTextStyle: AppText.navLabel.copyWith(color: textWhiteSub),
           leading: Padding(
             padding: const EdgeInsets.only(
               top: AppSpacing.md,
@@ -85,7 +81,11 @@ class TabletNavigationRail extends StatelessWidget {
                 customShowDialog(
                   context: context,
                   title: "Log out",
-                  subTitle: 'Are you sure, you want to log out?',
+                  subTitle: 'Are you sure you want to log out?',
+                  cancelLabel: "Cancel",
+                  confirmLabel: "Log out",
+                  icon: Icons.logout_rounded,
+                  destructive: true,
                   cancelClick: () {
                     context.pop(context);
                   },

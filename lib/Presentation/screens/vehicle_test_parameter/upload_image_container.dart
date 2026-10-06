@@ -12,7 +12,8 @@ import '../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
-import '../../../widgets/new_app_ui/status_badge.dart';
+import '../../../utilities/new_app_theme/app_icon_size.dart';
+import 'capture_status.dart';
 import 'image_dialog_box.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/media_upload_tracker.dart';
 
@@ -111,6 +112,7 @@ class UploadImageContainer extends StatelessWidget {
                     imageHeight: imageHeight,
                     imageWidth: imageWidth,
                     radius: radius,
+                    isVideo: isVideo,
                     onTap: onTap,
                   ),
           ),
@@ -136,38 +138,55 @@ class _CapturedSlot extends StatelessWidget {
     this.onRetry,
   });
 
-  Widget _badge() {
-    switch (uploadState) {
-      case SlotUploadState.uploading:
-        return const StatusBadge.uploading(dense: true);
-      case SlotUploadState.uploaded:
-        return const StatusBadge.uploaded(dense: true);
-      case SlotUploadState.failed:
-        return const StatusBadge.error(label: 'Upload failed', dense: true);
-      case null:
-        return const StatusBadge.captured(dense: true);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final failed = uploadState == SlotUploadState.failed && onRetry != null;
-    return Stack(
+    final status = CaptureStatus.ofSlot(hasFile: true, upload: uploadState);
+    final failed = status == CaptureStatus.failed && onRetry != null;
+    final retakeIcon = isVideo ? Icons.videocam_outlined : Icons.photo_camera_outlined;
+    return Semantics(
+      container: true,
+      label: '${isVideo ? 'Video' : 'Photo'}: ${status.label}',
+      child: Stack(
       fit: StackFit.expand,
       children: [
         isVideo
             ? VideoPreviewWidget(path: path)
-            : Image.file(File(path), fit: BoxFit.cover),
+            : Image.file(
+                File(path),
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const Center(
+                  child: Icon(Icons.broken_image_outlined, color: na, size: AppIconSize.xl),
+                ),
+              ),
+        // While uploading, dim the thumbnail and say so in the middle.
+        if (status == CaptureStatus.uploading)
+          ColoredBox(
+            color: Colors.black.withValues(alpha: 0.35),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(strokeWidth: 2.5, color: textWhite),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text('Uploading…', style: AppText.caption.copyWith(color: textWhite)),
+                ],
+              ),
+            ),
+          ),
         Positioned(
           top: 6,
           left: 6,
-          right: isVideo ? 6 : 50, // clear of the Preview button
-          child: Align(alignment: Alignment.centerLeft, child: _badge()),
+          right: isVideo ? 6 : 52, // clear of the Preview button
+          child: Align(alignment: Alignment.centerLeft, child: status.badge()),
         ),
         if (!isVideo)
           Positioned(
-            top: 6,
-            right: 6,
+            top: 0,
+            right: 0,
             child: _OverlayIconButton(
               icon: Icons.open_in_full_rounded,
               tooltip: 'Preview',
@@ -179,10 +198,12 @@ class _CapturedSlot extends StatelessWidget {
               },
             ),
           ),
+        // Pills sit 8dp from the edges; their [_PillButton] hit area extends
+        // into that margin.
         Positioned(
-          left: 8,
-          right: 8,
-          bottom: 8,
+          left: 0,
+          right: 0,
+          bottom: 0,
           child: Row(
             children: [
               if (failed)
@@ -196,13 +217,13 @@ class _CapturedSlot extends StatelessWidget {
               // When Retry is shown the slot is narrow, so Retake becomes icon-only.
               failed
                   ? _PillButton(
-                      icon: Icons.photo_camera_outlined,
+                      icon: retakeIcon,
                       tooltip: "Retake",
                       color: appColor,
                       onTap: onRetake,
                     )
                   : _PillButton(
-                      icon: Icons.photo_camera_outlined,
+                      icon: retakeIcon,
                       label: "Retake",
                       color: appColor,
                       onTap: onRetake,
@@ -210,7 +231,7 @@ class _CapturedSlot extends StatelessWidget {
             ],
           ),
         ),
-        if (uploadState == SlotUploadState.uploading)
+        if (status == CaptureStatus.uploading)
           const Positioned(
             left: 0,
             right: 0,
@@ -222,6 +243,7 @@ class _CapturedSlot extends StatelessWidget {
             ),
           ),
       ],
+      ),
     );
   }
 }
@@ -255,7 +277,7 @@ class _PillButton extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: label == null ? 8 : 12,
-            vertical: 8,
+            vertical: 9,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -265,11 +287,7 @@ class _PillButton extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   label!,
-                  style: TextStyle(
-                    fontFamily: "SemiBold",
-                    fontSize: 12,
-                    color: color,
-                  ),
+                  style: AppText.chip.copyWith(fontSize: 12, color: color),
                 ),
               ],
             ],
@@ -277,7 +295,8 @@ class _PillButton extends StatelessWidget {
         ),
       ),
     );
-    return tooltip == null ? button : Tooltip(message: tooltip!, child: button);
+    final hitArea = _ExpandedHitArea(onTap: onTap, child: button);
+    return tooltip == null ? hitArea : Tooltip(message: tooltip!, child: hitArea);
   }
 }
 
@@ -288,6 +307,7 @@ class _EmptySlot extends StatelessWidget {
   final double iconScale;
   final double? imageHeight;
   final double? imageWidth;
+  final bool isVideo;
   final double radius;
   final VoidCallback onTap;
 
@@ -300,12 +320,17 @@ class _EmptySlot extends StatelessWidget {
     required this.imageHeight,
     required this.imageWidth,
     required this.radius,
+    this.isVideo = false,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
+    return Semantics(
+      button: true,
+      label: '${isVideo ? 'Video' : 'Photo'}: Not captured. $text',
+      excludeSemantics: true,
+      child: CustomPaint(
       painter: _DashedBorderPainter(color: borderDark, radius: radius),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -364,8 +389,10 @@ class _EmptySlot extends StatelessWidget {
                             borderRadius: BorderRadius.circular(AppRadius.sm),
                           ),
                         ),
-                        icon: const Icon(Icons.photo_camera_outlined, size: 16),
-                        label: const Text("Capture"),
+                        icon: Icon(
+                            isVideo ? Icons.videocam_outlined : Icons.photo_camera_outlined,
+                            size: 16),
+                        label: Text(isVideo ? "Record" : "Capture"),
                       ),
                     ),
                   ],
@@ -374,6 +401,7 @@ class _EmptySlot extends StatelessWidget {
             ),
           );
         },
+      ),
       ),
     );
   }
@@ -395,17 +423,42 @@ class _OverlayIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip,
-      child: Material(
-        color: Colors.black.withValues(alpha: 0.45),
-        shape: const CircleBorder(),
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Icon(icon, size: 16, color: Colors.white),
+      child: _ExpandedHitArea(
+        onTap: onTap,
+        child: Material(
+          color: Colors.black.withValues(alpha: 0.45),
+          shape: const CircleBorder(),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Icon(icon, size: 16, color: textWhite),
+            ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Surrounds a small overlay control with 8dp of transparent padding that
+/// also triggers [onTap], so a ~32dp control gets a 48dp touch target
+/// without changing how it looks.
+class _ExpandedHitArea extends StatelessWidget {
+  final VoidCallback onTap;
+  final Widget child;
+
+  const _ExpandedHitArea({required this.onTap, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        child: child,
       ),
     );
   }

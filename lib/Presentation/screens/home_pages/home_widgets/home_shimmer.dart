@@ -9,12 +9,12 @@ import '../../../../utilities/new_app_theme/app_spacing.dart';
 class HomeShimmer extends StatelessWidget {
   const HomeShimmer({super.key});
 
-  Widget _block({double? width, required double height, double radius = 6}) {
+  Widget _block({double? width, required double height, double radius = AppRadius.sm}) {
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: surface,
         borderRadius: BorderRadius.circular(radius),
       ),
     );

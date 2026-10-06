@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/new_app_ui/app_back_button.dart';
@@ -124,9 +125,7 @@ class _AiResultScreenState extends State<AiResultScreen> {
 
     if (entity == null) {
       return _ScrollableState(
-        child: AppStateView(
-          icon: Icons.error_outline_rounded,
-          color: fail,
+        child: AppStateView.error(
           title: "Unable to load result",
           message: "Pull down or tap retry to try again.",
           onAction: _loadResult,
@@ -152,7 +151,7 @@ class _AiResultScreenState extends State<AiResultScreen> {
 
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      padding: const EdgeInsets.all(AppSpacing.page),
       itemCount: records.length,
       separatorBuilder: (_, __) => const Padding(
         padding: EdgeInsets.symmetric(vertical: 24),
@@ -173,10 +172,7 @@ class _AiResultScreenState extends State<AiResultScreen> {
                 : () => _showChangeResultSheet(provider, records[index]),
           ),
           const SizedBox(height: 16),
-          const Text(
-            "Result Details",
-            style: TextStyle(fontFamily: "Bold", fontSize: 16, color: textPrimary),
-          ),
+          const Text("Result Details", style: AppText.sectionTitle),
           const SizedBox(height: 12),
           _ResultDetails(item: records[index]),
         ],
@@ -223,18 +219,13 @@ class _QuestionCard extends StatelessWidget {
               const SizedBox(width: 8),
               _resultBadge(result),
               const SizedBox(width: 4),
-              const Icon(Icons.chevron_right_rounded, size: 20, color: textMuted),
+              const Icon(Icons.chevron_right_rounded, size: 20, color: textSecondary),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             _hasText(text) ? text!.trim() : '—',
-            style: const TextStyle(
-              fontFamily: "SemiBold",
-              fontSize: 15,
-              color: textPrimary,
-              height: 1.4,
-            ),
+            style: AppText.title.copyWith(height: 1.4),
           ),
         ],
       ),
@@ -363,12 +354,7 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
             const SizedBox(height: 6),
             Text(
               _hasText(widget.question) ? widget.question!.trim() : '—',
-              style: const TextStyle(
-                fontFamily: "SemiBold",
-                fontSize: 15,
-                color: textPrimary,
-                height: 1.4,
-              ),
+              style: AppText.title.copyWith(height: 1.4),
             ),
             const SizedBox(height: 4),
             _DetailRow(label: "Current Result", child: _resultBadge(widget.current)),
@@ -410,28 +396,10 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 20),
-            SizedBox(
-              height: 48,
-              child: FilledButton(
-                onPressed: _canUpdate ? _update : null,
-                style: FilledButton.styleFrom(
-                  backgroundColor: appColor,
-                  disabledBackgroundColor: border,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                  ),
-                ),
-                child: _isUpdating
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: whiteColor),
-                      )
-                    : const Text(
-                        "Update",
-                        style: TextStyle(fontFamily: "SemiBold", fontSize: 15),
-                      ),
-              ),
+            PrimaryButton(
+              label: "Update",
+              onPressed: _canUpdate ? _update : null,
+              loading: _isUpdating,
             ),
           ],
         ),
@@ -524,7 +492,7 @@ class _RemarkField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: "Add a remark (optional)",
         hintStyle: const TextStyle(fontSize: 14, color: textMuted),
-        counterStyle: const TextStyle(fontSize: 11.5, color: textMuted),
+        counterStyle: AppText.caption,
         filled: true,
         fillColor: surface,
         isDense: true,
@@ -627,7 +595,7 @@ class _DetailRow extends StatelessWidget {
 
   const _DetailRow({required this.label, required this.child});
 
-  static const _labelStyle = TextStyle(fontSize: 13.5, color: textSecondary);
+  static const _labelStyle = AppText.bodySecondary;
 
   @override
   Widget build(BuildContext context) {
@@ -679,7 +647,7 @@ class _InlineNotice extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(fontSize: 13.5, color: textSecondary, height: 1.4),
+              style: AppText.bodySecondary,
             ),
           ),
         ],
@@ -698,7 +666,7 @@ class _ScrollableState extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      padding: const EdgeInsets.all(AppSpacing.page),
       children: [const SizedBox(height: 40), child],
     );
   }
@@ -740,7 +708,7 @@ String _humanize(String key) {
 /// everything else as plain text.
 Widget _valueBadge(dynamic value) {
   if (value == null || (value is String && value.trim().isEmpty)) {
-    return const Text('—', style: TextStyle(fontSize: 14, color: textMuted));
+    return const Text('—', style: TextStyle(fontSize: 14, color: na));
   }
   if (value is bool) {
     return value
@@ -761,7 +729,7 @@ Widget _valueBadge(dynamic value) {
   return Text(
     text,
     textAlign: TextAlign.right,
-    style: const TextStyle(fontSize: 14, fontFamily: "SemiBold", color: textPrimary),
+    style: AppText.title.copyWith(fontSize: 14),
   );
 }
 

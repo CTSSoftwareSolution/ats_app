@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../../../utilities/color_data.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
+import '../../../widgets/new_app_ui/media_preview_header.dart';
 
 /// Full-width image preview with pinch-to-zoom and a single close action.
 class ImageDialogBox extends StatelessWidget {
@@ -27,46 +30,36 @@ class ImageDialogBox extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _PreviewHeader(title: "Image preview", onClose: () => Navigator.pop(context)),
+            MediaPreviewHeader(title: "Image preview", onClose: () => Navigator.pop(context)),
             Flexible(
               child: InteractiveViewer(
                 minScale: 1,
                 maxScale: 4,
-                child: Image.file(File(path), fit: BoxFit.contain),
+                child: Image.file(
+                  File(path),
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => SizedBox(
+                    height: 220,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.broken_image_outlined, color: textWhiteSub, size: 32),
+                          const SizedBox(height: AppSpacing.sm),
+                          Text(
+                            "This image can't be displayed",
+                            style: AppText.bodySecondary.copyWith(color: textWhiteSub),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _PreviewHeader extends StatelessWidget {
-  final String title;
-  final VoidCallback onClose;
-
-  const _PreviewHeader({required this.title, required this.onClose});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.xs, AppSpacing.xs, AppSpacing.xs),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(fontFamily: "SemiBold", fontSize: 15, color: Colors.white),
-            ),
-          ),
-          IconButton(
-            tooltip: 'Close',
-            onPressed: onClose,
-            icon: const Icon(Icons.close_rounded, color: Colors.white),
-          ),
-        ],
       ),
     );
   }

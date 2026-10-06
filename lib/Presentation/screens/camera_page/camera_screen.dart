@@ -3,8 +3,10 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../image_processing/MediaPicker/file_provider.dart';
+import '../../../utilities/color_data.dart';
 import '../../../utilities/extension.dart';
-import '../../../widgets/custom_loader.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../utilities/new_app_theme/app_text.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -15,6 +17,10 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
+
+  /// True while a shutter action is running; further taps are ignored so a
+  /// photo isn't taken twice.
+  bool _shutterBusy = false;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -46,7 +52,38 @@ class _CameraScreenState extends State<CameraScreen>
     if (cameraController == null || !cameraController.value.isInitialized) {
       return Scaffold(
         backgroundColor: Colors.black,
-        body: Center(child: CustomLoader.loader()),
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      width: 32,
+                      height: 32,
+                      child: CircularProgressIndicator(color: textWhite, strokeWidth: 3),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    Text(
+                      "Starting camera…",
+                      style: AppText.bodySecondary.copyWith(color: textWhiteSub),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: AppSpacing.md,
+                left: AppSpacing.lg,
+                child: _CameraRoundButton(
+                  tooltip: 'Close camera',
+                  icon: Icons.close_rounded,
+                  onTap: () => context.pop(),
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
     final size = MediaQuery.of(context).size;
@@ -102,17 +139,16 @@ class _CameraScreenState extends State<CameraScreen>
                           children: [
                             AnimatedOpacity(
                               opacity: fileProvider.showBlink ? 1.0 : 0.2,
-                              duration: const Duration(microseconds: 100),
+                              duration: const Duration(milliseconds: 150),
                               child: const Icon(Icons.circle, color: Colors.red, size: 10),
                             ),
                             const SizedBox(width: 6),
                             Text(
                               formatDuration(fileProvider.recordingSeconds),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontFamily: "SemiBold",
+                              style: AppText.titleOnDark.copyWith(
                                 fontSize: 14,
-                                fontFeatures: [FontFeature.tabularFigures()],
+                                height: 1.2,
+                                fontFeatures: const [FontFeature.tabularFigures()],
                               ),
                             ),
                           ],
@@ -126,17 +162,13 @@ class _CameraScreenState extends State<CameraScreen>
                               fileProvider.isVideo
                                   ? Icons.videocam_rounded
                                   : Icons.photo_camera_rounded,
-                              color: Colors.white,
+                              color: textWhite,
                               size: 14,
                             ),
                             const SizedBox(width: 6),
                             Text(
                               fileProvider.isVideo ? "Video" : "Photo",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontFamily: "SemiBold",
-                                fontSize: 13,
-                              ),
+                              style: AppText.chip.copyWith(color: textWhite),
                             ),
                           ],
                         ),
@@ -156,14 +188,10 @@ class _CameraScreenState extends State<CameraScreen>
                       fileProvider.isVideo
                           ? (isRecording ? "Tap to stop recording" : "Tap to start recording")
                           : "Tap to capture photo",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontFamily: "Medium",
-                        fontSize: 12.5,
-                      ),
+                      style: AppText.caption.copyWith(color: textWhite),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.lg),
                   Semantics(
                     button: true,
                     label: fileProvider.isVideo
@@ -171,30 +199,40 @@ class _CameraScreenState extends State<CameraScreen>
                         : 'Capture photo',
                     child: GestureDetector(
                       onTap: () async {
-                        // Return the newly captured file path to the caller so it
-                        // can upload it. Returns null if capture failed.
-                        final before = _capturedPath(fileProvider);
-                        if (fileProvider.isVideo) {
-                          if (fileProvider.isRecording) {
-                            await fileProvider.stopVideoRecording();
+                        if (_shutterBusy) return;
+                        setState(() => _shutterBusy = true);
+                        try {
+                          // Return the newly captured file path to the caller so it
+                          // can upload it. Returns null if capture failed.
+                          final before = _capturedPath(fileProvider);
+                          if (fileProvider.isVideo) {
+                            if (fileProvider.isRecording) {
+                              await fileProvider.stopVideoRecording();
+                              if (!context.mounted) return;
+                              final after = _capturedPath(fileProvider);
+                              debugPrint("[MEDIA] CameraScreen returning video: $after");
+                              context.pop(after != before ? after : null);
+                            } else {
+                              await fileProvider.startVideoRecording();
+                            }
+                          } else {
+                            await fileProvider.takePicture(context);
                             if (!context.mounted) return;
                             final after = _capturedPath(fileProvider);
-                            debugPrint("[MEDIA] CameraScreen returning video: $after");
+                            debugPrint("[MEDIA] CameraScreen returning image: $after");
                             context.pop(after != before ? after : null);
-                          } else {
-                            await fileProvider.startVideoRecording();
                           }
-                        } else {
-                          await fileProvider.takePicture(context);
-                          if (!context.mounted) return;
-                          final after = _capturedPath(fileProvider);
-                          debugPrint("[MEDIA] CameraScreen returning image: $after");
-                          context.pop(after != before ? after : null);
+                        } finally {
+                          if (mounted) setState(() => _shutterBusy = false);
                         }
                       },
-                      child: _ShutterButton(
-                        isVideo: fileProvider.isVideo,
-                        isRecording: isRecording,
+                      child: AnimatedOpacity(
+                        opacity: _shutterBusy ? 0.5 : 1.0,
+                        duration: const Duration(milliseconds: 120),
+                        child: _ShutterButton(
+                          isVideo: fileProvider.isVideo,
+                          isRecording: isRecording,
+                        ),
                       ),
                     ),
                   ),
@@ -208,7 +246,7 @@ class _CameraScreenState extends State<CameraScreen>
   }
 }
 
-/// 44px translucent round control laid over the camera preview.
+/// 48dp translucent round control laid over the camera preview.
 class _CameraRoundButton extends StatelessWidget {
   final IconData icon;
   final String tooltip;
@@ -229,7 +267,7 @@ class _CameraRoundButton extends StatelessWidget {
           child: SizedBox(
             width: 48,
             height: 48,
-            child: Icon(icon, color: Colors.white, size: 22),
+            child: Icon(icon, color: textWhite, size: 22),
           ),
         ),
       ),

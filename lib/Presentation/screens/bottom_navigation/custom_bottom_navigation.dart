@@ -13,11 +13,11 @@ class CustomBottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigationProvider = context.watch<BottomNavigationProvider>();
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: surface,
-        border: Border(top: BorderSide(color: border)),
-      ),
+    // A Material (rather than a DecoratedBox) is the ink surface, so the
+    // destinations' tap ripples are painted on top of the bar's colour.
+    return Material(
+      color: surface,
+      shape: const Border(top: BorderSide(color: border)),
       child: SafeArea(
         top: false,
         child: SizedBox(

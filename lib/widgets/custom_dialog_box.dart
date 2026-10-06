@@ -9,18 +9,28 @@ customShowDialog({
   required String subTitle,
   required VoidCallback cancelClick,
   required VoidCallback okClick,
+  String cancelLabel = "No",
+  String confirmLabel = "Yes",
+  IconData icon = Icons.help_outline_rounded,
+  bool destructive = false,
 }) {
   showDialog(
     context: context,
-    barrierColor: navy.withValues(alpha: 0.45),
     builder: (BuildContext context) => AppDialog(
-      icon: Icons.help_outline_rounded,
+      icon: icon,
+      iconColor: destructive ? fail : appColor,
       title: title,
       message: subTitle,
       onClose: () => context.pop(),
       actions: [
-        OutlinedButton(onPressed: cancelClick, child: const Text("No")),
-        FilledButton(onPressed: okClick, child: const Text("Yes")),
+        OutlinedButton(onPressed: cancelClick, child: Text(cancelLabel)),
+        FilledButton(
+          onPressed: okClick,
+          style: destructive
+              ? FilledButton.styleFrom(backgroundColor: fail)
+              : null,
+          child: Text(confirmLabel),
+        ),
       ],
     ),
   );

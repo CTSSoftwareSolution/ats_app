@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import '../Presentation/provider/ai_inspection_details_provider.dart';
 import '../Presentation/provider/ai_update_result_provider.dart';
 import '../widgets/new_app_ui/app_bottom_sheet.dart';
+import '../widgets/new_app_ui/primary_button.dart';
+import '../widgets/new_app_ui/secondary_button.dart';
+import '../widgets/new_app_ui/section_header.dart';
 import '../widgets/new_app_ui/status_badge.dart';
 import 'color_data.dart';
 import 'new_app_theme/app_radius.dart';
@@ -59,13 +62,18 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
           Row(children: [
             Expanded(child: _StatusCard(label: 'System status', pass: widget.isPass)),
             const SizedBox(width: AppSpacing.md),
-            Expanded(child: _StatusCard(label: 'Current status', pass: widget.isPass)),
+            // Previews the status that will be saved with the toggle as set.
+            Expanded(
+              child: _StatusCard(
+                label: 'After change',
+                pass: updateResultProvider.toPass ? !widget.isPass : widget.isPass,
+              ),
+            ),
           ]),
           const SizedBox(height: AppSpacing.xl),
 
           // ── Toggle row
-          const Text('CHANGE TO', style: AppText.overline),
-          const SizedBox(height: AppSpacing.sm),
+          const SectionHeader('CHANGE TO'),
           Container(
             padding: const EdgeInsets.fromLTRB(
                 AppSpacing.lg, AppSpacing.xs, AppSpacing.sm, AppSpacing.xs),
@@ -110,8 +118,7 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
           const SizedBox(height: AppSpacing.lg),
 
           // ── Reason field
-          const Text('REASON', style: AppText.overline),
-          const SizedBox(height: AppSpacing.sm),
+          const SectionHeader('REASON'),
           TextField(
             controller: updateResultProvider.ctrl,
             minLines: 3,
@@ -136,39 +143,27 @@ class _ChangeStatusSheetState extends State<ChangeStatusSheet> {
           // ── Buttons
           Row(children: [
             Expanded(
-              child: SizedBox(
-                height: AppSpacing.buttonHeight,
-                child: OutlinedButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
-                ),
+              child: SecondaryButton(
+                label: 'Cancel',
+                onPressed: isLoading ? null : () => Navigator.pop(context),
               ),
             ),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               flex: 2,
-              child: SizedBox(
-                height: AppSpacing.buttonHeight,
-                child: FilledButton(
-                  onPressed: isLoading ? null : () async {
-                    final bool finalStatus =
-                    updateResultProvider.toPass
-                        ? !widget.isPass
-                        : widget.isPass;
-                    updateResultProvider.aiUpdateResult(context, finalStatus);
+              child: PrimaryButton(
+                label: 'Submit',
+                loading: isLoading,
+                onPressed: () async {
+                  final bool finalStatus =
+                  updateResultProvider.toPass
+                      ? !widget.isPass
+                      : widget.isPass;
+                  updateResultProvider.aiUpdateResult(context, finalStatus);
 
-                    // updateResultProvider.ctrl.clear();
-                    // updateResultProvider.toPass = false;
-                  },
-                  child: isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: appColor),
-                        )
-                      : const Text('Submit'),
-                ),
+                  // updateResultProvider.ctrl.clear();
+                  // updateResultProvider.toPass = false;
+                },
               ),
             ),
           ]),

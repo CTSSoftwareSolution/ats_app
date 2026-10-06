@@ -55,7 +55,7 @@ class AnswerButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (icon != null) ...[
-                Icon(icon, size: 18, color: selected ? selectedColor : textMuted),
+                Icon(icon, size: 18, color: selected ? selectedColor : na),
                 const SizedBox(width: AppSpacing.sm),
               ],
               Flexible(

@@ -17,6 +17,7 @@ import '../../../provider/inspection_form_provider.dart';
 import '../../camera_page/camera_screen.dart';
 import 'image_picker_prompt.dart';
 import 'image_preview.dart';
+import '../../../../widgets/new_app_ui/section_header.dart';
 
 
 class QuestionTile extends StatefulWidget {
@@ -46,6 +47,17 @@ class _QuestionTileState extends State<QuestionTile> {
   // Each tile registers this key in the provider so other tiles can scroll to it
   final GlobalKey _tileKey = GlobalKey();
   TextEditingController controller = TextEditingController();
+
+  /// Whether [controller] has been filled from the question's saved remark.
+  /// Done once, so a remark typed earlier (or loaded for a retest) shows up
+  /// again after this tile is rebuilt, without overwriting later edits.
+  bool _remarkSeeded = false;
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   // ── Auto-scroll ───────────────────────────────
   // Called after answering Yes. Finds the next unanswered question via the
@@ -125,6 +137,12 @@ class _QuestionTileState extends State<QuestionTile> {
 
         // Register this tile's key so the provider can find it for scrolling
         provider.registerQuestionKey(origSec, origCat, origQue, _tileKey);
+
+        if (!_remarkSeeded) {
+          _remarkSeeded = true;
+          final savedRemark = question.remark ?? '';
+          if (savedRemark.isNotEmpty) controller.text = savedRemark;
+        }
 
         final isNo = question.answer == AnswerState.Fail;
         var isYes = question.answer == AnswerState.Pass;
@@ -256,8 +274,7 @@ class _QuestionTileState extends State<QuestionTile> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text('EVIDENCE', style: AppText.overline),
-                      const SizedBox(height: AppSpacing.sm),
+                      const SectionHeader('EVIDENCE'),
                           () {
                         final hasLocalImage = question.imagePath != null;
                         final hasExistingUrl = question.existingEvidenceUrl != null &&
@@ -317,8 +334,7 @@ class _QuestionTileState extends State<QuestionTile> {
                         }
                       }(),
                       const SizedBox(height: AppSpacing.md),
-                      const Text('REMARK', style: AppText.overline),
-                      const SizedBox(height: AppSpacing.sm),
+                      const SectionHeader('REMARK'),
                       CustomTextField(
                         cursorColor: appColor,
                         contentPadding: const EdgeInsets.symmetric(

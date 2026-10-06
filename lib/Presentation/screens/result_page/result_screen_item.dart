@@ -30,6 +30,9 @@ class ResultScreenItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final regNo = _text(appointments.registrationNo);
+    final bookingId = _text(appointments.bookingId);
+    final rawDate = _text(appointments.appointmentDate);
+    final hasDate = DateTime.tryParse(rawDate) != null;
     final isFail = appointments.manualStatus == "Fail";
     final chips = <Widget>[
       if (_text(appointments.vehicleClass).isNotEmpty)
@@ -75,16 +78,18 @@ class ResultScreenItem extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      MetaRow(
-                        icon: Icons.confirmation_number_outlined,
-                        text: "Booking ID ${_text(appointments.bookingId)}",
-                      ),
-                      const SizedBox(height: 6),
-                      MetaRow(
-                        icon: Icons.schedule_rounded,
-                        text:
-                            "${formatDate(appointments.appointmentDate.toString())} · ${formatTime(appointments.appointmentDate.toString())}",
-                      ),
+                      if (bookingId.isNotEmpty)
+                        MetaRow(
+                          icon: Icons.confirmation_number_outlined,
+                          text: "Booking ID $bookingId",
+                        ),
+                      if (bookingId.isNotEmpty && hasDate)
+                        const SizedBox(height: AppSpacing.sm),
+                      if (hasDate)
+                        MetaRow(
+                          icon: Icons.schedule_rounded,
+                          text: "${formatDate(rawDate)} · ${formatTime(rawDate)}",
+                        ),
                     ],
                   ),
                 ),
@@ -93,7 +98,6 @@ class ResultScreenItem extends StatelessWidget {
                   FilledButton.icon(
                     onPressed: onRetest,
                     style: FilledButton.styleFrom(
-                      backgroundColor: appColor,
                       minimumSize: const Size(0, 48),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                     ),

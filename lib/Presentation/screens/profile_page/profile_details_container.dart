@@ -17,22 +17,28 @@ class ProfileDetailsContainer extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Row(
         children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: surface2,
-              border: Border.all(color: border),
-            ),
-            child: ClipOval(
-              child: Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: CustomImage(
-                  image: Preferences.getImage(),
-                  fit: BoxFit.cover,
-                  switchToNetwork: true,
-                  defaultImage: userImage,
+          Semantics(
+            image: true,
+            label: 'Profile photo',
+            child: Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: surface2,
+                border: Border.all(color: border),
+              ),
+              child: ClipOval(
+                // Inset keeps the default person placeholder clear of the
+                // circular clip.
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: CustomImage(
+                    image: Preferences.getImage(),
+                    fit: BoxFit.cover,
+                    switchToNetwork: true,
+                    defaultImage: userImage,
+                  ),
                 ),
               ),
             ),
@@ -53,10 +59,10 @@ class ProfileDetailsContainer extends StatelessWidget {
                   children: [
                     const Icon(
                       Icons.email_outlined,
-                      color: textMuted,
+                      color: textSecondary,
                       size: 16,
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: AppSpacing.sm),
                     Flexible(
                       child: Text(
                         Preferences.getEmail(),

@@ -4,6 +4,7 @@ import '../utilities/color_data.dart';
 import '../utilities/input_formatters.dart';
 import '../utilities/new_app_theme/app_spacing.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/new_app_ui/field_label.dart';
 
 Widget buildServerField({
   required String title,
@@ -14,17 +15,7 @@ Widget buildServerField({
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.sm - 2),
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontFamily: "SemiBold",
-            fontSize: 13,
-            color: textSecondary,
-          ),
-        ),
-      ),
+      FieldLabel(title),
       CustomTextField(
         validator: validator,
         inputFormatters: [
@@ -33,6 +24,7 @@ Widget buildServerField({
         ],
         controller: controller,
         keyboardType: TextInputType.number,
+        textInputAction: TextInputAction.done,
         hint: "192.168.1.100:8080",
         hintStyle: const TextStyle(
           color: textMuted,

@@ -9,7 +9,9 @@ import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/new_app_ui/app_card.dart';
-import '../../../widgets/new_app_ui/status_badge.dart';
+import '../../../widgets/new_app_ui/info_chip.dart';
+import '../../../utilities/new_app_theme/app_icon_size.dart';
+import 'capture_status.dart';
 import '../../provider/create_queue_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
 import '../camera_page/camera_screen.dart';
@@ -20,12 +22,16 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
   final int allIndex;
   final bool isTablet;
   final MediaUploadTracker tracker;
+
+  /// Total number of parts across all steps (for "Part 3 of 12").
+  final int totalParts;
   const VehiclePartsResponsiveItem({
     super.key,
     required this.item,
     required this.allIndex,
     required this.isTablet,
     required this.tracker,
+    this.totalParts = 0,
   });
 
   /// Sends a captured file to the upload queue and records the slot's
@@ -34,7 +40,27 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
     BuildContext context,
     String filePath,
     bool isVideo,
-  ) async {
+  ) =>
+      uploadMedia(
+        context: context,
+        item: item,
+        allIndex: allIndex,
+        tracker: tracker,
+        filePath: filePath,
+        isVideo: isVideo,
+      );
+
+  /// The one upload path for a capture slot, shared by the part card and the
+  /// uploads sheet (retry). Calls [CreateQueueProvider.uploadMedia] and
+  /// records the slot's state in [tracker].
+  static Future<void> uploadMedia({
+    required BuildContext context,
+    required dynamic item,
+    required int allIndex,
+    required MediaUploadTracker tracker,
+    required String filePath,
+    required bool isVideo,
+  }) async {
     try {
       final classProvider = context.read<VehicleClassProvider>();
 
@@ -98,7 +124,7 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
       return Expanded(
         child: UploadImageContainer(
           isVideo: isVideo,
-          width: 180,
+          width: double.infinity,
           index: allIndex,
           image: isVideo ? videoUploadImage : pictureUploadImage,
           imageHeight: 25.0,
@@ -147,61 +173,88 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
     }
 
     final media = context.watch<FileProvider>().getMedia(allIndex);
-    final captured = isCaptured(item, media);
-    final partName = item.vehiclePartName.toString();
-    final String requirement = item.type == 1
-        ? "Photo required"
-        : item.type == 2
-        ? "Video required"
-        : "Photo and video required";
+    final partName = _text(item.vehiclePartName);
+
+    // Media slots this part requires (false = photo, true = video).
+    final slots = requiredSlots(item);
+
+    /// A labelled slot: "PHOTO" / "VIDEO" above the capture area.
+    Widget slot(bool isVideo) => Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Icon(isVideo ? Icons.videocam_outlined : Icons.photo_camera_outlined,
+                      size: AppIconSize.sm, color: na),
+                  const SizedBox(width: AppSpacing.xs),
+                  Text(isVideo ? 'VIDEO' : 'PHOTO', style: AppText.overline),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Row(children: [buildImageContainer(isVideo: isVideo)]),
+            ],
+          ),
+        );
 
     return ListenableBuilder(
       listenable: tracker,
       builder: (context, _) {
-        final failed = _slotStates().contains(SlotUploadState.failed);
+        final status = partStatus(item, media, tracker, allIndex);
         return AppCard(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          borderColor: failed
+          padding: const EdgeInsets.all(AppSpacing.card),
+          borderColor: status == CaptureStatus.failed
               ? fail.withValues(alpha: 0.45)
-              : captured
+              : status == CaptureStatus.uploaded
               ? pass.withValues(alpha: 0.35)
               : null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Part number + status
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          partName,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppText.sectionTitle,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(requirement, style: AppText.caption),
-                      ],
+                    child: Text(
+                      totalParts > 0
+                          ? 'PART ${allIndex + 1} OF $totalParts'
+                          : 'PART ${allIndex + 1}',
+                      style: AppText.overline,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  _statusBadge(captured),
+                  // Capped rather than Flexible so the badge sits flush right.
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 160),
+                    child: status.badge(),
+                  ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.md),
-              Row(
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                partName.isEmpty ? 'Vehicle part' : partName,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppText.sectionTitle,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
                 children: [
-                  if (item.type == 1) ...[
-                    buildImageContainer(isVideo: false),
-                  ] else if (item.type == 2) ...[
-                    buildImageContainer(isVideo: true),
-                  ] else ...[
-                    buildImageContainer(isVideo: false),
-                    const SizedBox(width: AppSpacing.md),
-                    buildImageContainer(isVideo: true),
+                  if (slots.contains(false))
+                    const InfoChip(icon: Icons.photo_camera_outlined, label: 'Photo required'),
+                  if (slots.contains(true))
+                    const InfoChip(icon: Icons.videocam_outlined, label: 'Video required'),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var i = 0; i < slots.length; i++) ...[
+                    if (i > 0) const SizedBox(width: AppSpacing.md),
+                    slot(slots[i]),
                   ],
                 ],
               ),
@@ -212,32 +265,33 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
     );
   }
 
-  /// Upload states of the slots this part requires.
-  List<SlotUploadState?> _slotStates() {
-    final slots = switch (item.type) {
-      1 => const [false],
-      2 => const [true],
-      _ => const [false, true],
-    };
-    return slots.map((isVideo) => tracker.stateOf(allIndex, isVideo)).toList();
+  static String _text(Object? value) {
+    final text = value?.toString().trim() ?? '';
+    return text == 'null' ? '' : text;
   }
 
-  /// Part-level status: a failed upload first, then uploading, then
-  /// uploaded/captured, otherwise still required.
-  Widget _statusBadge(bool captured) {
-    final states = _slotStates();
-    if (states.contains(SlotUploadState.failed)) {
-      return const StatusBadge.error(label: 'Upload failed', dense: true);
-    }
-    if (states.contains(SlotUploadState.uploading)) {
-      return const StatusBadge.uploading(dense: true);
-    }
-    if (!captured)
-      return const StatusBadge.pending(label: 'Required', dense: true);
-    if (states.every((s) => s == SlotUploadState.uploaded)) {
-      return const StatusBadge.uploaded(dense: true);
-    }
-    return const StatusBadge.captured(dense: true);
+  /// Slots required by [item]: type 1 = photo, 2 = video, otherwise both.
+  /// (false = photo, true = video.)
+  static List<bool> requiredSlots(dynamic item) => switch (item.type) {
+        1 => const [false],
+        2 => const [true],
+        _ => const [false, true],
+      };
+
+  /// Combined [CaptureStatus] of all slots of [item].
+  static CaptureStatus partStatus(
+    dynamic item,
+    MediaFile? media,
+    MediaUploadTracker tracker,
+    int index,
+  ) {
+    return CaptureStatus.combine([
+      for (final isVideo in requiredSlots(item))
+        CaptureStatus.ofSlot(
+          hasFile: isVideo ? media?.video != null : media?.image != null,
+          upload: tracker.stateOf(index, isVideo),
+        ),
+    ]);
   }
 
   /// Whether every media type required by [item] has been captured.

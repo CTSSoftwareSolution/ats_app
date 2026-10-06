@@ -1,6 +1,9 @@
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/material.dart';
 
+import '../utilities/new_app_theme/app_radius.dart';
+import '../utilities/new_app_theme/app_text.dart';
+
 /// One destination of the docked bottom navigation bar: icon inside a tinted
 /// pill when active, with a label underneath.
 Widget navigationIcon(
@@ -11,16 +14,17 @@ Widget navigationIcon(
   ValueChanged<int> onTabSelected,
 ) {
   final bool isActive = currentIndex == index;
-  final Color color = isActive ? appColor : textMuted;
+  final Color color = isActive ? appColor : textSecondary;
 
   return Expanded(
     child: Semantics(
       selected: isActive,
       button: true,
       label: title,
+      excludeSemantics: true,
       child: InkWell(
         onTap: () => onTabSelected.call(index),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
           child: Column(
@@ -43,9 +47,9 @@ Widget navigationIcon(
               Text(
                 title,
                 maxLines: 1,
-                style: TextStyle(
-                  fontSize: 11.5,
-                  fontFamily: isActive ? "Bold" : "Medium",
+                overflow: TextOverflow.ellipsis,
+                style: AppText.navLabel.copyWith(
+                  fontFamily: isActive ? "Bold" : "SemiBold",
                   color: isActive ? appColor : textSecondary,
                 ),
               ),

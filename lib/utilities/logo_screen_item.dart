@@ -3,41 +3,41 @@ import 'package:flutter/material.dart';
 import 'color_data.dart';
 import 'image_data.dart';
 import 'new_app_theme/app_spacing.dart';
+import 'new_app_theme/app_text.dart';
 
 class LogoScreenItem extends StatelessWidget {
   const LogoScreenItem({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        CustomImage(image: appLogoImage, scale: 4),
-        const SizedBox(height: AppSpacing.sm),
-        const Text(
-          "ATS\nCORPORATION",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 24,
-            fontFamily: "Black",
-            color: whiteColor,
-            height: 1.15,
-            letterSpacing: 0.5,
+    return Semantics(
+      container: true,
+      label: 'ATS Corporation. Scan, detect, drive safe.',
+      excludeSemantics: true,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CustomImage(image: appLogoImage, scale: 4),
+          const SizedBox(height: AppSpacing.sm),
+          const Text(
+            "ATS\nCORPORATION",
+            textAlign: TextAlign.center,
+            style: AppText.display,
           ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        const Text(
-          "SCAN, DETECT DRIVE SAFE",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 12,
-            fontFamily: "SemiBold",
-            color: textWhiteSub,
-            letterSpacing: 1.6,
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            "SCAN, DETECT DRIVE SAFE",
+            textAlign: TextAlign.center,
+            style: AppText.overline.copyWith(
+              fontFamily: "SemiBold",
+              fontSize: 12,
+              color: textWhiteSub,
+              letterSpacing: 1.6,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

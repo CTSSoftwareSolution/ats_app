@@ -2,6 +2,7 @@
 import 'package:ats_app/Presentation/screens/profile_page/profile_details_container.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app_config/ip_address_bottom_sheet_screen.dart';
@@ -12,6 +13,7 @@ import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../utilities/preferences.dart';
 import '../../../widgets/custom_dialog_box.dart';
+import '../../../widgets/new_app_ui/section_header.dart';
 import '../../provider/create_queue_provider.dart';
 import '../../provider/login_provider.dart';
 
@@ -32,6 +34,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   /// Index of the "Ip Config" entry in [profileGridValues] (see [click]).
   static const int _ipConfigIndex = 4;
+
+  /// Index of the "Version" entry in [profileGridValues].
+  static const int _versionIndex = 6;
+
+  /// Entries that [click] actually handles; the others are shown as plain
+  /// information rows so they don't look tappable.
+  static const Set<int> _actionIndexes = {_ipConfigIndex, _logoutIndex};
+
+  late final Future<PackageInfo> _packageInfo = PackageInfo.fromPlatform();
 
   @override
   Widget build(BuildContext context) {
@@ -54,21 +65,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             const ProfileDetailsContainer(),
             const SizedBox(height: AppSpacing.xl),
-            const Padding(
+            const SectionHeader(
+              "Settings",
               padding: EdgeInsets.only(left: AppSpacing.xs, bottom: AppSpacing.sm),
-              child: Text("SETTINGS", style: AppText.overline),
             ),
             _ProfileMenuSection(
               children: List.generate(profileGridValues.length, (index) {
                 final item = profileGridValues[index];
-                return _ProfileMenuTile(
+                final isAction = _actionIndexes.contains(index);
+                final tile = _ProfileMenuTile(
                   image: item.image,
                   icon: index == _ipConfigIndex ? Icons.settings_ethernet_rounded : null,
                   title: item.title,
                   subtitle: item.subtitle,
                   destructive: index == _logoutIndex,
-                  onTap: () {
+                  showChevron: index == _ipConfigIndex,
+                  onTap: isAction
+                      ? () {
                     click(index, context);
+                  }
+                      : null,
+                );
+                if (index != _versionIndex) return tile;
+                return FutureBuilder<PackageInfo>(
+                  future: _packageInfo,
+                  builder: (context, snapshot) {
+                    final info = snapshot.data;
+                    if (info == null) return tile;
+                    return tile.copyWithSubtitle(
+                      'Version ${info.version} (${info.buildNumber})',
+                    );
                   },
                 );
               }),
@@ -98,7 +124,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         customShowDialog(
           context: context,
           title: "Log out",
-          subTitle: 'Are you sure, you want to log out?',
+          subTitle: 'Are you sure you want to log out?',
+          cancelLabel: "Cancel",
+          confirmLabel: "Log out",
+          icon: Icons.logout_rounded,
+          destructive: true,
           cancelClick: () {
             context.pop(context);
           },
@@ -143,7 +173,7 @@ class _ProfileMenuSection extends StatelessWidget {
               for (int i = 0; i < children.length; i++) ...[
                 children[i],
                 if (i < children.length - 1)
-                  const Divider(indent: 68, height: 1),
+                  const Divider(indent: _ProfileMenuTile.textInset, height: 1),
               ],
             ],
           ),
@@ -159,7 +189,15 @@ class _ProfileMenuTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final bool destructive;
-  final VoidCallback onTap;
+  final bool showChevron;
+
+  /// Null for information-only rows: no ripple and not announced as a button.
+  final VoidCallback? onTap;
+
+  static const double _iconBox = 40;
+
+  /// Horizontal offset of the title text, used to align the dividers with it.
+  static const double textInset = AppSpacing.lg + _iconBox + AppSpacing.md;
 
   const _ProfileMenuTile({
     required this.image,
@@ -167,8 +205,19 @@ class _ProfileMenuTile extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.destructive,
+    this.showChevron = false,
     required this.onTap,
   });
+
+  _ProfileMenuTile copyWithSubtitle(String newSubtitle) => _ProfileMenuTile(
+        image: image,
+        icon: icon,
+        title: title,
+        subtitle: newSubtitle,
+        destructive: destructive,
+        showChevron: showChevron,
+        onTap: onTap,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -185,8 +234,8 @@ class _ProfileMenuTile extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: _iconBox,
+                height: _iconBox,
                 decoration: BoxDecoration(
                   color: destructive ? failLight : accentLight,
                   borderRadius: BorderRadius.circular(AppRadius.md),
@@ -220,6 +269,10 @@ class _ProfileMenuTile extends StatelessWidget {
                   ],
                 ),
               ),
+              if (showChevron) ...[
+                const SizedBox(width: AppSpacing.sm),
+                const Icon(Icons.chevron_right_rounded, size: 22, color: textSecondary),
+              ],
             ],
           ),
         ),

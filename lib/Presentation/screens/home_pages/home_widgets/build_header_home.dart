@@ -4,48 +4,104 @@ import 'package:ats_app/utilities/preferences.dart';
 import 'package:ats_app/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../utilities/new_app_theme/app_icon_size.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../utilities/new_app_theme/app_text.dart';
 
 
-/// Flat brand header for the Home tab: logo and the current centre location.
+/// Compact brand header for the Home tab: logo, then a greeting with the
+/// signed-in inspector's name and the current centre location.
 class BuildHeaderHome extends StatelessWidget {
   const BuildHeaderHome({super.key});
 
+  /// Preferences values are stored with toString(), so a missing value can
+  /// come back as "null".
+  static String _pref(Object? value) {
+    final text = (value ?? '').toString().trim();
+    return text == 'null' ? '' : text;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final String location = (Preferences.getLocation() ?? "").toString();
+    final location = _pref(Preferences.getLocation());
+    final name = _pref(Preferences.getName());
+    final firstName = name.split(RegExp(r'\s+')).first;
+
     return Container(
       width: double.infinity,
       color: appColor,
       padding: const EdgeInsets.fromLTRB(
-          AppSpacing.page, AppSpacing.md, AppSpacing.page, AppSpacing.md),
+          AppSpacing.page, AppSpacing.md, AppSpacing.page, AppSpacing.lg),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          CustomImage(image: lmsLogo, height: 60, width: double.infinity),
-          if (location.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.location_on_outlined, color: textWhiteSub, size: 16),
-                const SizedBox(width: AppSpacing.xs),
-                Flexible(
-                  child: Text(
-                    location,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontFamily: "SemiBold",
-                      fontSize: 13,
-                      color: Colors.white,
-                    ),
+          Semantics(
+            image: true,
+            label: 'Logo',
+            child: CustomImage(image: lmsLogo, height: 30, fit: BoxFit.contain),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  firstName.isEmpty ? 'Welcome' : 'Hello, $firstName',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.sectionTitle.copyWith(color: textWhite, fontSize: 17),
+                ),
+              ),
+              if (location.isNotEmpty) ...[
+                const SizedBox(width: AppSpacing.md),
+                // Never wider than half the header so the greeting stays readable.
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.sizeOf(context).width * 0.5,
                   ),
+                  child: _LocationPill(location: location),
                 ),
               ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LocationPill extends StatelessWidget {
+  final String location;
+
+  const _LocationPill({required this.location});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: 'Location: $location',
+      excludeSemantics: true,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: textWhite.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.location_on_outlined,
+                color: textWhiteSub, size: AppIconSize.sm),
+            const SizedBox(width: AppSpacing.xs),
+            Flexible(
+              child: Text(
+                location,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppText.caption.copyWith(color: textWhite, fontFamily: "SemiBold"),
+              ),
             ),
           ],
-        ],
+        ),
       ),
     );
   }

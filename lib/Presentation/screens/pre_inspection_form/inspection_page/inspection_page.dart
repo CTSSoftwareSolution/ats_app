@@ -5,6 +5,7 @@ import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../utilities/new_app_theme/app_text.dart';
 import '../../../../widgets/new_app_ui/app_back_button.dart';
 import '../../../../widgets/new_app_ui/app_state_view.dart';
 import '../../../provider/inspection_form_provider.dart';
@@ -22,9 +23,17 @@ class InspectionPage extends StatefulWidget {
   State<InspectionPage> createState() => _InspectionPageState();
 }
 
+// TickerProviderStateMixin (not Single...) because the TabController is
+// recreated whenever the number of visible sections changes.
 class _InspectionPageState extends State<InspectionPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
    TabController? _tabController;
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -98,9 +107,6 @@ class _InspectionPageState extends State<InspectionPage>
       builder: (context, provider, _) {
         return Scaffold(
           appBar: AppBar(
-            titleSpacing: 0.0,
-            elevation: 0,
-            backgroundColor: appColor,
             title: const Text("Inspection"),
             leading: AppBackButton(
               onPressed: (){
@@ -132,25 +138,31 @@ class _InspectionPageState extends State<InspectionPage>
       _updateTabController(sections.length);
     });
 
+    // The controller is (re)created after this frame; until it matches the
+    // sections, a same-height placeholder keeps the layout from jumping and
+    // avoids building TabBar/TabBarView without a valid controller.
+    final tabsReady = sections.isNotEmpty &&
+        _tabController != null &&
+        _tabController!.length == sections.length;
+
     return Column(
       children: [
         Container(
           color: appColor,
-          child: TabBar(
+          child: !tabsReady
+              ? const SizedBox(height: 60, width: double.infinity)
+              : TabBar(
             controller: _tabController,
-            indicatorColor: Colors.white,
+            isScrollable: sections.length > 3,
+            tabAlignment: sections.length > 3 ? TabAlignment.start : null,
+            indicatorColor: textWhite,
             indicatorWeight: 3,
             indicatorSize: TabBarIndicatorSize.tab,
             dividerColor: Colors.transparent,
-            labelColor: Colors.white,
+            labelColor: textWhite,
             unselectedLabelColor: textWhiteSub,
-            labelStyle: const TextStyle(
-              fontSize: 12,
-              fontFamily: "SemiBold",
-              letterSpacing: 0.2,
-            ),
-            unselectedLabelStyle: const TextStyle(
-              fontSize: 12,
+            labelStyle: AppText.navLabel.copyWith(letterSpacing: 0.2),
+            unselectedLabelStyle: AppText.navLabel.copyWith(
               fontFamily: "Medium",
               letterSpacing: 0.2,
             ),
@@ -176,17 +188,21 @@ class _InspectionPageState extends State<InspectionPage>
                             border: Border.all(color: appColor, width: 1.5),
                           ),
                           child: const Icon(Icons.check_rounded,
-                              size: 9, color: Colors.white),
+                              size: 9, color: textWhite),
                         ),
                       ),
                   ],
                 ),
                 // Section name ("Under-PIT Inspection" -> "Under-PIT") so the
                 // inspector sees which inspection each tab holds.
-                child: Text(
-                  s.label.replaceFirst(RegExp(r'\s+Inspection$'), ''),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                child: Semantics(
+                  label: s.isComplete ? '${s.label}, complete' : s.label,
+                  excludeSemantics: true,
+                  child: Text(
+                    s.label.replaceFirst(RegExp(r'\s+Inspection$'), ''),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               );
             }),
@@ -198,6 +214,8 @@ class _InspectionPageState extends State<InspectionPage>
         Expanded(
           child: sections.isEmpty
               ? _buildEmptyFilter(provider)
+              : !tabsReady
+              ? const LoadingScreen()
               : TabBarView(
             controller: _tabController,
             children: List.generate(
@@ -285,7 +303,7 @@ class _InspectionPageState extends State<InspectionPage>
 
     final iconColor = filter == QuestionFilter.no || filter == QuestionFilter.unanswered
         ? pass
-        : textMuted;
+        : na;
 
     return Center(
       child: SingleChildScrollView(
@@ -313,7 +331,12 @@ class _FilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(100);
-    return Material(
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: '$label, $count',
+      excludeSemantics: true,
+      child: Material(
       color: selected ? color.withValues(alpha: 0.1) : surface,
       borderRadius: radius,
       child: InkWell(
@@ -335,9 +358,7 @@ class _FilterChip extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontFamily: "SemiBold",
+                style: AppText.chip.copyWith(
                   color: selected ? color : textSecondary,
                 ),
               ),
@@ -354,7 +375,7 @@ class _FilterChip extends StatelessWidget {
                   '$count',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: selected ? Colors.white : textSecondary,
+                    color: selected ? textWhite : textSecondary,
                     fontSize: 11,
                     fontFamily: "Bold",
                   ),
@@ -363,6 +384,7 @@ class _FilterChip extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

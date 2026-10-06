@@ -73,7 +73,7 @@ class SectionTabView extends StatelessWidget {
               : isPendingFilter
               ? Icons.pending_outlined
               : Icons.inbox_outlined,
-          color: isPendingFilter ? pass : textMuted,
+          color: isPendingFilter ? pass : na,
           title: isAnsweredFilter
               ? 'No answered questions in this section'
               : isPendingFilter

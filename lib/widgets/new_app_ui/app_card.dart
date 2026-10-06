@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../utilities/color_data.dart';
 import '../../utilities/new_app_theme/app_radius.dart';
+import '../../utilities/new_app_theme/app_spacing.dart';
 
+/// Flat white card: hairline border, no shadow. The standard container for
+/// list items and grouped content. Pass [onTap] to make the whole card
+/// tappable; use [borderColor] to signal state (e.g. pass / fail).
 class AppCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -12,7 +16,7 @@ class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(16),
+    this.padding = const EdgeInsets.all(AppSpacing.card),
     this.onTap,
     this.borderColor,
     this.color = surface,
@@ -21,27 +25,16 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(AppRadius.lg);
-    return Container(
-      decoration: BoxDecoration(
-        color: color,
+    return Material(
+      color: color,
+      shape: RoundedRectangleBorder(
         borderRadius: radius,
-        border: Border.all(color: borderColor ?? border),
-        boxShadow: [
-          BoxShadow(
-            color: navy.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        side: BorderSide(color: borderColor ?? border),
       ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: radius,
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(padding: padding, child: child),
-        ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(padding: padding, child: child),
       ),
     );
   }

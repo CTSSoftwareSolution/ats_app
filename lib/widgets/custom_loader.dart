@@ -5,6 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../utilities/color_data.dart';
 import '../utilities/new_app_theme/app_radius.dart';
 import '../utilities/new_app_theme/app_spacing.dart';
+import '../utilities/new_app_theme/app_text.dart';
+import 'new_app_ui/app_state_view.dart';
 
 class CustomLoader {
   static showToast(
@@ -51,14 +53,9 @@ class CustomLoader {
     );
   }
 
-  static Widget loader() {
-    return const Center(
-      child: SizedBox(
-        width: 32,
-        height: 32,
-        child: CircularProgressIndicator(color: appColor, strokeWidth: 3),
-      ),
-    );
+  /// Inline full-area spinner; same as [AppLoadingView].
+  static Widget loader({String? message}) {
+    return AppLoadingView(message: message);
   }
 
   static showSuccessSnackBar(BuildContext context) {
@@ -103,7 +100,7 @@ class CustomLoader {
       SnackBar(
         content: Row(
           children: [
-            Icon(icon, color: whiteColor, size: 22),
+            Icon(icon, color: textWhite, size: 22),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
@@ -113,17 +110,13 @@ class CustomLoader {
                   if (title != null) ...[
                     Text(
                       title,
-                      style: const TextStyle(
-                        fontFamily: "Bold",
-                        fontSize: 14,
-                        color: whiteColor,
-                      ),
+                      style: AppText.title.copyWith(fontSize: 14, color: textWhite),
                     ),
                     const SizedBox(height: 2),
                   ],
                   Text(
                     message,
-                    style: const TextStyle(fontSize: 13, color: whiteColor, height: 1.35),
+                    style: AppText.bodySecondary.copyWith(color: textWhite),
                   ),
                 ],
               ),
@@ -135,7 +128,7 @@ class CustomLoader {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
         margin: const EdgeInsets.all(AppSpacing.lg),
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: 14),
-        elevation: 2,
+        elevation: 0,
         duration: duration,
       ),
     );

@@ -66,7 +66,7 @@ class _ResultScreenState extends State<ResultScreen> {
       backgroundColor: bg,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: appColor,
+        titleSpacing: AppSpacing.page,
         title: const Text("Result"),
       ),
       body: SafeArea(
@@ -76,6 +76,7 @@ class _ResultScreenState extends State<ResultScreen> {
               padding: const EdgeInsets.fromLTRB(
                   AppSpacing.page, AppSpacing.md, AppSpacing.page, AppSpacing.sm),
               child: CustomSearchTextField(
+                hint: 'Search results',
                 onChanged: (v) => provider.onSearchChanged(context, v),
                 controller: provider.searchController,
                 suffixIcon: provider.searchValue.isEmpty
@@ -100,12 +101,20 @@ class _ResultScreenState extends State<ResultScreen> {
                 itemCount: 6,
                 itemBuilder: (_, __) => const HomeShimmer(),
               ) : (provider.manualInspectionEntity?.data?.appointments?.isEmpty ?? true)
-                  ? const PullToRefreshFill(
-                child: EmptyStateWidget(
-                icon: Icons.search_off_rounded,
-                title: 'No Appointments Found',
-                subtitle: 'Try changing the filter or search term',
-              ),
+                  ? PullToRefreshFill(
+                child: provider.searchValue.isNotEmpty
+                    ? EmptyStateWidget(
+                  icon: Icons.search_off_rounded,
+                  title: 'No matching results',
+                  subtitle: 'No results for "${provider.searchValue}". Check the spelling or try another search.',
+                )
+                    : EmptyStateWidget(
+                  icon: Icons.fact_check_outlined,
+                  title: 'No Results Yet',
+                  subtitle: 'Completed inspections will appear here. Pull down to refresh.',
+                  actionLabel: 'Refresh',
+                  onAction: _onRefresh,
+                ),
               ) : ListView.builder(
                 padding: const EdgeInsets.fromLTRB(
                     AppSpacing.page, AppSpacing.xs, AppSpacing.page, AppSpacing.lg),
@@ -119,7 +128,7 @@ class _ResultScreenState extends State<ResultScreen> {
                   if (index == appointments.length) {
                     return Padding(
                       padding:
-                      const EdgeInsets.symmetric(vertical: 20),
+                      const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                       child: Center(
                         child: CircularProgressIndicator(
                           color: appColor,

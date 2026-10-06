@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:ats_app/Data/model/request_model/create_bulk_req_model.dart';
 import 'package:ats_app/Presentation/provider/create_bulk_provider.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_page/inspection_page.dart';
-import 'package:ats_app/Presentation/screens/vehicle_test_parameter/responsive_button.dart';
 
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_responsive_item.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/media_upload_tracker.dart';
+import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_queue_sheet.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +20,9 @@ import '../../../widgets/custom_loader.dart';
 import '../../../widgets/new_app_ui/app_state_view.dart';
 import '../../../widgets/new_app_ui/bottom_action_bar.dart';
 import '../../../widgets/new_app_ui/status_badge.dart';
+import '../../../widgets/new_app_ui/primary_button.dart';
+import '../../../utilities/new_app_theme/app_icon_size.dart';
+import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../provider/ai_inspection_details_provider.dart';
 import '../../provider/ai_result_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
@@ -52,14 +55,25 @@ class _VehiclePartsResponsiveLayoutState
     final fileProvider = context.watch<FileProvider>();
 
     if (partsProvider.isLoading) {
-      return Center(child: CustomLoader.loader());
+      return CustomLoader.loader(message: "Loading vehicle parts…");
+    }
+    // The request failed (the provider clears the entity on error).
+    if (partsProvider.vehiclePartsEntity?.data == null) {
+      return Center(
+        child: AppStateView.error(
+          title: "Couldn't load vehicle parts",
+          onAction: () => context.read<VehiclePartsProvider>().vehiclePartsApi(context),
+        ),
+      );
     }
     if (partsProvider.vehiclePartsEntity!.data!.isEmpty) {
+      final message = partsProvider.vehiclePartsEntity!.message ?? '';
       return Center(
-        child: AppStateView(
+        child: AppStateView.empty(
           icon: Icons.inventory_2_outlined,
           title: "No parts to capture",
-          message: partsProvider.vehiclePartsEntity!.message.toString(),
+          message: message.isEmpty || message == 'null' ? null : message,
+          onAction: () => context.read<VehiclePartsProvider>().vehiclePartsApi(context),
         ),
       );
     }
@@ -73,10 +87,21 @@ class _VehiclePartsResponsiveLayoutState
     }
     final allDone = capturedCount >= allParts.length;
 
+    // Parts on this step that still need media (for the Next button).
+    int pageMissing = 0;
+    for (int i = 0; i < partsProvider.currentPageData.length; i++) {
+      final index = partsProvider.currentPage * partsProvider.itemsPerPage + i;
+      if (!VehiclePartsResponsiveItem.isCaptured(
+          partsProvider.currentPageData[i], fileProvider.getMedia(index))) {
+        pageMissing++;
+      }
+    }
+    final isLastStep = partsProvider.currentPage == partsProvider.totalPages - 1;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Step indicator + overall capture progress
+        // Step, overall capture progress and upload summary
         Container(
           decoration: const BoxDecoration(
             color: surface,
@@ -86,12 +111,13 @@ class _VehiclePartsResponsiveLayoutState
             AppSpacing.page,
             AppSpacing.md,
             AppSpacing.page,
-            AppSpacing.lg,
+            AppSpacing.md,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
                     child: Text(
@@ -99,50 +125,32 @@ class _VehiclePartsResponsiveLayoutState
                       style: AppText.sectionTitle,
                     ),
                   ),
-                  allDone
-                      ? StatusBadge.pass(label: "$capturedCount/${allParts.length} captured", dense: true)
-                      : StatusBadge(
-                          label: "$capturedCount/${allParts.length} captured",
-                          color: appColor,
-                          background: accentLight,
-                          dense: true,
-                        ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Text(
+                    "$capturedCount of ${allParts.length} parts captured",
+                    style: AppText.caption.copyWith(
+                      color: allDone ? pass : textSecondary,
+                      fontFamily: "SemiBold",
+                    ),
+                  ),
                 ],
               ),
-              ListenableBuilder(
-                listenable: _uploadTracker,
-                builder: (context, _) {
-                  final failedCount = _uploadTracker.failedCount;
-                  if (failedCount == 0) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(top: AppSpacing.sm),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.error_rounded, size: 16, color: fail),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            failedCount == 1
-                                ? "1 upload failed. Tap Retry on the highlighted media."
-                                : "$failedCount uploads failed. Tap Retry on the highlighted media.",
-                            style: AppText.caption.copyWith(color: fail, fontFamily: "SemiBold"),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 2),
-              const Text(
-                "Capture the required media for each part below",
-                style: AppText.bodySecondary,
-              ),
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: AppSpacing.sm),
               CustomStepper(
                 currentStep: partsProvider.currentStep,
                 totalStep: partsProvider.totalPages,
                 width: double.infinity,
+              ),
+              ListenableBuilder(
+                listenable: _uploadTracker,
+                builder: (context, _) => _UploadSummary(
+                  tracker: _uploadTracker,
+                  onViewAll: () => showUploadQueueSheet(
+                    screenContext: this.context,
+                    parts: allParts,
+                    tracker: _uploadTracker,
+                  ),
+                ),
               ),
             ],
           ),
@@ -163,19 +171,20 @@ class _VehiclePartsResponsiveLayoutState
                 allIndex: allIndex,
                 isTablet: false,
                 tracker: _uploadTracker,
+                totalParts: allParts.length,
               );
             },
           ),
         ),
         BottomActionBar(
-          child: ResponsiveButton(
-            width: double.infinity,
-            buttonText:
-                partsProvider.currentPage ==
-                    partsProvider.totalPages - 1
-                ? "View Result"
-                : "Next",
-            onPress: () async {
+          child: PrimaryButton(
+            label: [
+              isLastStep ? "View Result" : "Next",
+              if (pageMissing > 0)
+                pageMissing == 1 ? "1 part left" : "$pageMissing parts left",
+            ].join(' · '),
+            icon: isLastStep ? Icons.fact_check_outlined : Icons.arrow_forward_rounded,
+            onPressed: () async {
               final error = partsProvider.validateMedia(
                 context: context,
               );
@@ -266,5 +275,102 @@ class _VehiclePartsResponsiveLayoutState
     detailsController.setAIMode(true);
     context.push(InspectionPage());
     context.read<VehiclePartsProvider>().resetStepper();
+  }
+}
+
+/// Upload activity for this visit, in the header: how many media files are
+/// uploaded / uploading, and a clear call-out when any upload failed.
+class _UploadSummary extends StatelessWidget {
+  final MediaUploadTracker tracker;
+
+  /// Opens the upload queue sheet.
+  final VoidCallback onViewAll;
+  const _UploadSummary({required this.tracker, required this.onViewAll});
+
+  @override
+  Widget build(BuildContext context) {
+    final uploaded = tracker.uploadedCount;
+    final uploading = tracker.uploadingCount;
+    final failed = tracker.failedCount;
+
+    if (uploaded == 0 && uploading == 0 && failed == 0) {
+      return const Padding(
+        padding: EdgeInsets.only(top: AppSpacing.sm),
+        child: Text(
+          "Capture the required photo/video for each part. Media uploads as soon as it's captured.",
+          style: AppText.caption,
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.xs),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Tappable row: counts on the left, "View uploads" on the right.
+          Semantics(
+            button: true,
+            label: 'Uploads: $uploaded uploaded, $uploading uploading, $failed failed. View uploads',
+            excludeSemantics: true,
+            child: InkWell(
+              onTap: onViewAll,
+              borderRadius: BorderRadius.circular(AppRadius.sm),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: AppSpacing.minTouchTarget),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.xs,
+                        children: [
+                          if (uploaded > 0)
+                            StatusBadge.uploaded(label: "$uploaded uploaded", dense: true),
+                          if (uploading > 0)
+                            StatusBadge.uploading(label: "$uploading uploading", dense: true),
+                          if (failed > 0)
+                            StatusBadge.error(label: "$failed failed", dense: true),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text("View uploads", style: AppText.chip.copyWith(color: appColor)),
+                    const Icon(Icons.chevron_right_rounded, color: appColor, size: AppIconSize.md),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (failed > 0) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+              decoration: BoxDecoration(
+                color: failLight,
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.error_outline_rounded, size: AppIconSize.sm + 2, color: fail),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      failed == 1
+                          ? "1 upload failed. Tap Retry on the part marked in red, or open View uploads."
+                          : "$failed uploads failed. Retry them from View uploads, or on the parts marked in red.",
+                      style: AppText.caption.copyWith(color: fail, fontFamily: "SemiBold"),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 }

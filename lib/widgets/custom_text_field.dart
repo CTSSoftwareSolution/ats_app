@@ -32,6 +32,10 @@ class CustomTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final TextAlign? textAlign;
   final InputBorder? focusedErrorBorder;
+  final TextInputAction? textInputAction;
+  final Iterable<String>? autofillHints;
+  final ValueChanged<String>? onFieldSubmitted;
+  final FocusNode? focusNode;
 
   const CustomTextField({
     super.key,
@@ -62,6 +66,10 @@ class CustomTextField extends StatelessWidget {
     this.errorColor,
     this.focusedErrorBorder,
     this.cursorColor,
+    this.textInputAction,
+    this.autofillHints,
+    this.onFieldSubmitted,
+    this.focusNode,
   });
 
   @override
@@ -84,6 +92,10 @@ class CustomTextField extends StatelessWidget {
         keyboardType: keyboardType,
         onTap: onTap,
         onChanged: onChanged,
+        onFieldSubmitted: onFieldSubmitted,
+        textInputAction: textInputAction,
+        autofillHints: autofillHints,
+        focusNode: focusNode,
         enabled: enable,
         controller: controller,
         readOnly: readOnly,

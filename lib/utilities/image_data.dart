@@ -104,8 +104,8 @@ List<ProfileModel> profileGridValues = [
   ),
   const ProfileModel(
     4,
-    'Ip Config',
-    'Change Ip Address to access',
+    'IP Config',
+    'Change the server IP address',
     logoutIcon,
     ProfileTrailingType.none,
   ),

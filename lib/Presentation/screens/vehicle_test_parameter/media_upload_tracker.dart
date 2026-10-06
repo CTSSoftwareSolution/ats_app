@@ -19,6 +19,12 @@ class MediaUploadTracker extends ChangeNotifier {
   int get failedCount =>
       _states.values.where((s) => s == SlotUploadState.failed).length;
 
+  int get uploadingCount =>
+      _states.values.where((s) => s == SlotUploadState.uploading).length;
+
+  int get uploadedCount =>
+      _states.values.where((s) => s == SlotUploadState.uploaded).length;
+
   SlotUploadState? stateOf(int index, bool isVideo) =>
       _states[_key(index, isVideo)];
 

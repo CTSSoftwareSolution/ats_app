@@ -25,13 +25,16 @@ class _SplashScreenResponsiveLayoutState extends State<SplashScreenResponsiveLay
               child: Column(
                 children: [
                   const Expanded(child: Center(child: LogoScreenItem())),
-                  const SizedBox(
-                    width: 28,
-                    height: 28,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      color: whiteColor,
-                      backgroundColor: Colors.transparent,
+                  Semantics(
+                    label: 'Loading',
+                    child: const SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: textWhite,
+                        backgroundColor: Colors.transparent,
+                      ),
                     ),
                   ),
                   SizedBox(height: constraints.isTablet ? 96 : AppSpacing.xl * 2.5),
