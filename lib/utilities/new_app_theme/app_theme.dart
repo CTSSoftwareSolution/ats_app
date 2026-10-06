@@ -22,6 +22,14 @@ class AppTheme {
     statusBarBrightness: Brightness.dark,
   );
 
+  /// Status bar for the full-screen brand pages (Splash, Login), whose
+  /// background is [appColorDark].
+  static const SystemUiOverlayStyle brandStatusBarStyle = SystemUiOverlayStyle(
+    statusBarColor: appColorDark,
+    statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.dark,
+  );
+
   static ThemeData get light {
     final colorScheme =
         ColorScheme.fromSeed(
@@ -30,9 +38,9 @@ class AppTheme {
         ).copyWith(
           primary: appColor,
           onPrimary: textWhite,
-          primaryContainer: accentLight,
+          primaryContainer: primaryLight,
           onPrimaryContainer: appColor,
-          secondary: navyAccent,
+          secondary: appColorDark,
           onSecondary: textWhite,
           error: fail,
           onError: textWhite,
@@ -267,7 +275,7 @@ class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: surface2,
-        selectedColor: accentLight,
+        selectedColor: primaryLight,
         side: BorderSide.none,
         labelStyle: AppText.chip,
         shape: RoundedRectangleBorder(
@@ -312,7 +320,7 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: accentLight,
+        indicatorColor: primaryLight,
         elevation: 0,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => AppText.navLabel.copyWith(

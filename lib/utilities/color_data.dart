@@ -2,15 +2,17 @@ import 'dart:ui';
 
 // ATS colour tokens. See docs/design_system.md for when to use each one.
 //
-// Brand: [appColor] is the single primary colour (app bars, primary buttons,
-// selected states, links). Everything else is neutral or semantic.
+// Brand: [appColor] is the single primary colour, used only for important
+// actions and selected states (app bars, primary buttons, selected tabs /
+// chips / nav items, focus rings, links, progress). Surfaces are white /
+// neutral; status colours are deliberately different hues from the brand.
 //
 // The block directly below (up to `background`) is the legacy palette, still
-// referenced by older/unused screens. New UI uses the tokens from
-// "new-manual-flow" onward.
+// referenced by older/unused screens. New UI uses the tokens further down.
 
 //const appColor = Color(0xff345afa);
-const appColor = Color(0xff1c3e70);
+//const appColor = Color(0xff1c3e70);
+const appColor = Color(0xFF1565C0);
 const appGradientColor = Color(0xff19162e);
 const stepperInactiveColor = Color(0x4a345afa);
 const bottomIconColor = Color(0xffa29c9c);
@@ -27,46 +29,71 @@ const greyColor = Color(0xf38b8b8b);
 const mediaPickerColor = Color(0x45d9d9d9);
 const cameraBackConColor = Color(0x4fd9d9d9);
 const textFieldColor = Color(0xf3e8e8e8);
-const background = Color(0xfff4f5fa);
+const background = Color(0xFFF7F9FC);
 
-// new-manual-flow
+// ── Brand ───────────────────────────────────────────────────────────────────
+/// Darker primary: pressed states, the theme's secondary colour.
+const appColorDark = Color(0xFF0D47A1);
 
-// Backgrounds
-const bg = Color(0xFFF4F6FA);
+/// Light primary tint: selected chip / nav pill / icon-tile backgrounds.
+const primaryLight = Color(0xFFE3F2FD);
+
+// ── Backgrounds ─────────────────────────────────────────────────────────────
+const bg = Color(0xFFF7F9FC);
 const surface = Color(0xFFFFFFFF);
-const surface2 = Color(0xFFEDF0F7);
-const surfaceDark = Color(0xFF0D1B3E);
+const surface2 = Color(0xFFF2F4F7);
+const surfaceDark = Color(0xFF172033);
 
-// Navy palette
-const navy = Color(0xFF0D1B3E);
-const navyMid = Color(0xFF1A2F5E);
-const navyLight = Color(0xFF253F7A);
-const navyAccent = Color(0xFF2E53A0);
+// Navy names kept for the new-manual-flow screens; they now follow the
+// primary family so those screens match the rest of the app.
+const navy = appColorDark;
+const navyMid = appColorDark;
+const navyLight = appColor;
+const navyAccent = appColor;
 
-// Borders
-const border = Color(0xFFDDE2EE);
-const borderDark = Color(0xFFB8C4DE);
+// ── Borders ─────────────────────────────────────────────────────────────────
+const border = Color(0xFFE4E7EC);
+const borderDark = Color(0xFFD0D5DD);
 
-// Semantic
+// ── Status (distinct hues from the brand blue) ──────────────────────────────
 const pass = Color(0xFF1A7F4B);
 const passLight = Color(0xFFE8F5EE);
 const fail = Color(0xFFC0392B);
 const failLight = Color(0xFFFDECEA);
 const warn = Color(0xFFB45309);
 const warnLight = Color(0xFFFEF3E2);
-const na = Color(0xFF64748B);
-const naLight = Color(0xFFF1F5F9);
 
-// Text
-const textPrimary = Color(0xFF0D1B3E);
-const textSecondary = Color(0xFF4A5568);
-const textMuted = Color(0xFF94A3B8);
+/// In progress: uploading / processing.
+const processing = Color(0xFF6941C6);
+const processingLight = Color(0xFFF4F3FF);
+
+/// Media captured on the device, not yet sent.
+const captured = Color(0xFF0E7490);
+const capturedLight = Color(0xFFECFEFF);
+
+/// Neutral / not started / not applicable. Also the caption colour
+/// (≈4.8:1 on white).
+const na = Color(0xFF667085);
+const naLight = Color(0xFFF2F4F7);
+
+// ── Text ────────────────────────────────────────────────────────────────────
+const textPrimary = Color(0xFF172033);
+const textSecondary = Color(0xFF667085);
+
+/// Placeholders, disabled and decorative only (not for readable text).
+const textMuted = Color(0xFF98A2B3);
 const textWhite = Color(0xFFFFFFFF);
-const textWhiteSub = Color(0xFFB8C8E8);
 
-// Accent (bright blue for highlights)
-const accent = Color(0xFF2563EB);
-const accentLight = Color(0xFFEFF4FF);
+/// Secondary text on the primary colour (app bar subtitles, inactive tabs).
+const textWhiteSub = Color(0xFFD6E6FA);
 
-// Overlay behind dialogs and bottom sheets (navy at 45%).
-const scrim = Color(0x730D1B3E);
+// ── Legacy aliases ──────────────────────────────────────────────────────────
+/// In-progress status colour (was a bright blue; now [processing] so it is
+/// distinct from the brand).
+const accent = processing;
+
+/// Primary tint (alias of [primaryLight]).
+const accentLight = primaryLight;
+
+// Overlay behind dialogs and bottom sheets ([textPrimary] at 45%).
+const scrim = Color(0x73172033);

@@ -16,7 +16,7 @@ Everything here is implemented as code. Use the tokens and widgets; don't re-cre
 
 ## Principles
 
-1. **One brand colour.** `appColor` (#1C3E70) is used for app bars, primary buttons, selection and focus. Every other colour is either neutral or carries a status meaning.
+1. **One brand colour.** `appColor` (#1565C0) is used only for important actions and selected states: app bars, primary buttons, selection, focus and links. Surfaces are white and neutral. Every other colour is either neutral or carries a status meaning, in a hue distinct from the brand blue.
 2. **Flat.** Separate surfaces with hairline borders (`border`), not shadows. No gradients. The only shadow left is on popup menus.
 3. **Readable first.** Text is at least 11pt. Readable text uses `textPrimary`, `textSecondary` or `na`. `textMuted` is only for placeholders, disabled states and decorative icons.
 4. **Big targets.** Anything tappable is at least 48 × 48dp. Primary actions are 52dp tall.
@@ -26,19 +26,21 @@ Everything here is implemented as code. Use the tokens and widgets; don't re-cre
 
 | Token | Use |
 |---|---|
-| `appColor` | Brand: app bar, primary button, selected chip/tab, focus ring, links |
-| `bg` | Page background |
-| `surface` | Cards, sheets, dialogs, inputs, bottom bars |
+| `appColor` (#1565C0) | Brand: app bar, primary button, selected chip, tab and nav item, focus ring, links, progress |
+| `appColorDark` (#0D47A1) | Full-screen brand pages (Splash, Login) and their status bar; the theme's secondary colour |
+| `primaryLight` (#E3F2FD) | Selected chip and nav pill backgrounds, tinted icon tiles (`accentLight` is an alias) |
+| `bg` (#F7F9FC) / `surface` (#FFFFFF) | Page background / cards, sheets, dialogs, inputs |
 | `surface2` | Neutral fills: disabled buttons, chip backgrounds, progress tracks |
-| `border` / `borderDark` | Hairline dividers and card borders / outlined button and input outlines |
-| `textPrimary` / `textSecondary` | Main text / supporting text |
-| `na` | Captions, overlines, neutral icons (4.7:1 on white) |
+| `border` (#E4E7EC) / `borderDark` (#D0D5DD) | Hairline dividers and card borders / outlined button and input outlines |
+| `textPrimary` (#172033) / `textSecondary` (#667085) | Main text / supporting text |
+| `na` | Captions, overlines, neutral icons, "Not started" (4.8:1 on white) |
 | `textMuted` | Placeholders, disabled, decorative only (fails AA for body text) |
 | `textWhite` / `textWhiteSub` | Text on `appColor` or dark media |
 | `pass` / `passLight` | Pass, success, uploaded |
 | `fail` / `failLight` | Fail, error, destructive actions |
 | `warn` / `warnLight` | Pending, needs attention |
-| `accent` / `accentLight` | In-progress states (uploading, processing); tinted icon backgrounds |
+| `processing` / `processingLight` (violet) | In progress: Uploading, Processing (`accent` is an alias) |
+| `captured` / `capturedLight` (teal) | Media captured on the device, not yet uploaded |
 | `scrim` | Overlay behind dialogs, sheets and the blocking loader (set in the theme) |
 
 The legacy colours at the top of `color_data.dart` are only for old screens. Don't use them in new code.

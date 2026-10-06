@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 import '../../../utilities/new_app_theme/app_theme.dart';
 
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -16,23 +15,19 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
-  void initState(){
+  void initState() {
     super.initState();
     context.read<SplashProvider>().startTimer(context);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return const AnnotatedRegion<SystemUiOverlayStyle>(
-      value: AppTheme.statusBarStyle,
+      value: AppTheme.brandStatusBarStyle,
       child: Scaffold(
-        backgroundColor: appColor,
-        body: SafeArea(
-          child: SplashScreenResponsiveLayout(),
-        ),
+        backgroundColor: appColorDark,
+        body: SafeArea(child: SplashScreenResponsiveLayout()),
       ),
     );
   }
