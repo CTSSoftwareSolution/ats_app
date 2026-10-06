@@ -24,9 +24,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return const AnnotatedRegion<SystemUiOverlayStyle>(
-      value: AppTheme.brandStatusBarStyle,
+      value: AppTheme.statusBarStyle,
       child: Scaffold(
-        backgroundColor: appColorDark,
+        backgroundColor: appColor,
         body: SafeArea(child: SplashScreenResponsiveLayout()),
       ),
     );

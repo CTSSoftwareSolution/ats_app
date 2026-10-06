@@ -17,9 +17,9 @@ class LoginScreen extends StatelessWidget {
         SystemNavigator.pop();
       },
       child: const AnnotatedRegion<SystemUiOverlayStyle>(
-        value: AppTheme.brandStatusBarStyle,
+        value: AppTheme.statusBarStyle,
         child: Scaffold(
-          backgroundColor: appColorDark,
+          backgroundColor: appColor,
           bottomNavigationBar: TermsConditionsScreen(),
           body: SafeArea(child: LoginResponsiveLayout()),
         ),

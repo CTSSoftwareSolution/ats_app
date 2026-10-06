@@ -48,16 +48,16 @@ class StatusBadge extends StatelessWidget {
     super.key,
     this.label = 'Captured',
     this.dense = false,
-  }) : color = captured,
-       background = capturedLight,
+  }) : color = appColor,
+       background = accentLight,
        icon = Icons.photo_camera_rounded;
 
   const StatusBadge.uploading({
     super.key,
     this.label = 'Uploading',
     this.dense = false,
-  }) : color = processing,
-       background = processingLight,
+  }) : color = accent,
+       background = accentLight,
        icon = Icons.cloud_upload_rounded;
 
   const StatusBadge.uploaded({
@@ -72,8 +72,8 @@ class StatusBadge extends StatelessWidget {
     super.key,
     this.label = 'Processing',
     this.dense = false,
-  }) : color = processing,
-       background = processingLight,
+  }) : color = accent,
+       background = accentLight,
        icon = Icons.hourglass_top_rounded;
 
   const StatusBadge.error({super.key, this.label = 'Error', this.dense = false})
