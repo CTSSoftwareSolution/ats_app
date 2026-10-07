@@ -6,35 +6,48 @@ import 'package:ats_app/widgets/new_app_ui/app_top_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../../utilities/new_app_theme/app_icon_size.dart';
-import '../../utilities/new_app_theme/app_radius.dart';
 import '../../utilities/new_app_theme/app_spacing.dart';
 import '../../utilities/new_app_theme/app_text.dart';
 import '../../widgets/new_app_ui/app_card.dart';
+import '../../widgets/new_app_ui/app_icon_tile.dart';
+import '../../widgets/new_app_ui/app_progress_bar.dart';
 import '../../widgets/new_app_ui/app_state_view.dart';
 import '../../widgets/new_app_ui/bottom_action_bar.dart';
-import '../../widgets/new_app_ui/info_chip.dart';
 import '../../widgets/new_app_ui/primary_button.dart';
 import '../../widgets/new_app_ui/registration_plate.dart';
-import '../../widgets/new_app_ui/section_header.dart';
+import '../../widgets/new_app_ui/secondary_button.dart';
 import '../../widgets/new_app_ui/status_badge.dart';
 import '../app_provider.dart';
 import '../auth_provider.dart';
 import '../debug_log_overlay.dart';
+import '../new_model/auth_model.dart';
 import '../new_model/inspection_model.dart';
 import '../new_model/vehicle_entry.dart';
 import '../new_model/vehicle_photos_model.dart';
 import '../new_widget/logout_dialog.dart';
 import 'inspection_flow_screen.dart';
 
-/// Vehicle details and inspection workflow hub for one appointment:
-/// identity (plate, make/model, status) → vehicle details → the three
-/// inspection steps, with the report as the bottom action.
+/// Vehicle details and inspection hub for one appointment.
+///
+///   [PLATE]                    [In progress]
+///   Make Model · Customer
+///   ── Vehicle information ──────────────────
+///   ── Appointment information ──────────────
+///   ── Inspection information ───────────────
+///   ── Inspection status ─── 1 of 3 steps ──
+///   ▰▰▰▰▱▱▱▱
+///   ① Vehicle photos            [Done]    ›
+///   ② Pre-inspection checks     [4/20]    ›
+///   ③ Post-inspection checks    [Locked]  ›
+///   ─────────────────────────────────────────
+///   [Report]  [ Continue: Pre-inspection  → ]
 class VehicleDetailScreen extends StatelessWidget {
   final String vehicleId;
   const VehicleDetailScreen({super.key, required this.vehicleId});
 
   @override
   Widget build(BuildContext context) {
+    final config = context.watch<AuthProvider>().config;
     return Consumer<AppProvider>(
       builder: (_, prov, __) {
         VehicleEntry? v;
@@ -44,6 +57,9 @@ class VehicleDetailScreen extends StatelessWidget {
             break;
           }
         }
+        final steps = v == null
+            ? const <_Step>[]
+            : _inspectionSteps(context, v, vehicleId, config);
 
         return DebugFabWrapper(
           child: Scaffold(
@@ -65,24 +81,199 @@ class VehicleDetailScreen extends StatelessWidget {
             ),
             body: v == null
                 ? _MissingVehicleState(provider: prov)
-                : _VehicleDetailBody(vehicle: v, vehicleId: vehicleId),
-            bottomNavigationBar: (v != null && v.doneCount > 0)
-                ? BottomActionBar(
-                    child: PrimaryButton(
-                      label: 'View inspection report',
-                      icon: Icons.summarize_rounded,
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ReportScreen(vehicleId: vehicleId),
-                        ),
-                      ),
-                    ),
-                  )
-                : null,
+                : _VehicleDetailBody(vehicle: v, steps: steps),
+            bottomNavigationBar: v == null
+                ? null
+                : _ActionBar(vehicle: v, vehicleId: vehicleId, steps: steps),
           ),
         );
       },
+    );
+  }
+}
+
+// ── Inspection steps ─────────────────────────────────────────────────────────
+
+/// One step of the inspection workflow as shown on this screen.
+class _Step {
+  final int number;
+  final String phase;
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final int done;
+  final int total;
+
+  /// Non-null when the step can't be opened yet; shown on the row.
+  final String? lockedReason;
+  final VoidCallback onTap;
+
+  const _Step({
+    required this.number,
+    required this.phase,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.done,
+    required this.total,
+    this.lockedReason,
+    required this.onTap,
+  });
+
+  bool get locked => lockedReason != null;
+  bool get complete => total > 0 && done >= total;
+}
+
+/// The three steps, with the same lock rules and destinations as before.
+/// The step rows and the bottom "Continue" button both use these handlers.
+List<_Step> _inspectionSteps(
+  BuildContext context,
+  VehicleEntry v,
+  String vehicleId,
+  AppConfig config,
+) {
+  void snack(String msg) => ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text(msg)));
+
+  final totalPhotos = VehiclePhotoAngle.values.length;
+  final preLocked = config.requirePhotosForPre && !v.photosComplete;
+  final postLocked = config.requirePreForPost && !v.preAllDone;
+
+  return [
+    _Step(
+      number: 1,
+      phase: 'Pre-inspection',
+      icon: Icons.photo_camera_outlined,
+      title: 'Vehicle photos',
+      subtitle: v.photosComplete
+          ? 'All $totalPhotos angles captured'
+          : 'Front, rear, sides, engine and more',
+      done: v.photoCount,
+      total: totalPhotos,
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => VehiclePhotosScreen(vehicleId: vehicleId),
+        ),
+      ),
+    ),
+    _Step(
+      number: 2,
+      phase: 'Pre-inspection',
+      icon: Icons.assignment_outlined,
+      title: 'Pre-inspection checks',
+      subtitle: v.preAllDone
+          ? 'All ${v.preTotalItems} checks completed'
+          : 'Lamps, safety, body, tyres…',
+      done: v.preDoneCount,
+      total: v.preTotalItems,
+      lockedReason: preLocked ? 'Complete the vehicle photos first' : null,
+      onTap: preLocked
+          ? () => snack('Complete $totalPhotos vehicle photos first')
+          : () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => InspectionFlowScreen(
+                  vehicleId: vehicleId,
+                  phase: InspectionPhase.pre,
+                ),
+              ),
+            ),
+    ),
+    _Step(
+      number: 3,
+      phase: 'Post-inspection',
+      icon: Icons.assignment_turned_in_outlined,
+      title: 'Post-inspection checks',
+      subtitle: v.postAllDone
+          ? 'All ${v.postTotalItems} checks completed'
+          : 'Brakes, emission, protection…',
+      done: v.postDoneCount,
+      total: v.postTotalItems,
+      lockedReason: postLocked ? 'Complete the pre-inspection checks first' : null,
+      onTap: postLocked
+          ? () => snack('Complete pre-inspection checks first')
+          : () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => InspectionFlowScreen(
+                  vehicleId: vehicleId,
+                  phase: InspectionPhase.post,
+                ),
+              ),
+            ),
+    ),
+  ];
+}
+
+/// First step that is open and not finished, if any.
+_Step? _nextStep(List<_Step> steps) {
+  for (final s in steps) {
+    if (!s.locked && !s.complete) return s;
+  }
+  return null;
+}
+
+// ── Bottom action bar ────────────────────────────────────────────────────────
+
+/// Primary: continue with the next open step (same handler as its row).
+/// Secondary: the inspection report, once anything has been recorded.
+/// When every step is finished, the report becomes the primary action.
+class _ActionBar extends StatelessWidget {
+  final VehicleEntry vehicle;
+  final String vehicleId;
+  final List<_Step> steps;
+
+  const _ActionBar({
+    required this.vehicle,
+    required this.vehicleId,
+    required this.steps,
+  });
+
+  void _openReport(BuildContext context) => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => ReportScreen(vehicleId: vehicleId)),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final next = _nextStep(steps);
+    final hasReport = vehicle.doneCount > 0;
+    if (next == null && !hasReport) return const SizedBox.shrink();
+
+    if (next == null) {
+      return BottomActionBar(
+        child: PrimaryButton(
+          label: 'View inspection report',
+          icon: Icons.summarize_rounded,
+          onPressed: () => _openReport(context),
+        ),
+      );
+    }
+
+    final started = next.done > 0;
+    final primary = PrimaryButton(
+      label: '${started ? 'Continue' : 'Start'}: ${next.title}',
+      icon: Icons.arrow_forward_rounded,
+      onPressed: next.onTap,
+    );
+    return BottomActionBar(
+      child: hasReport
+          ? Row(
+              children: [
+                Expanded(
+                  child: SecondaryButton(
+                    label: 'Report',
+                    icon: Icons.summarize_outlined,
+                    onPressed: () => _openReport(context),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(flex: 2, child: primary),
+              ],
+            )
+          : primary,
     );
   }
 }
@@ -121,22 +312,16 @@ class _MissingVehicleState extends StatelessWidget {
   }
 }
 
+// ── Body ─────────────────────────────────────────────────────────────────────
+
 class _VehicleDetailBody extends StatelessWidget {
   final VehicleEntry vehicle;
-  final String vehicleId;
-  const _VehicleDetailBody({required this.vehicle, required this.vehicleId});
-
-  void _snack(BuildContext ctx, String msg) =>
-      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(msg)));
+  final List<_Step> steps;
+  const _VehicleDetailBody({required this.vehicle, required this.steps});
 
   @override
   Widget build(BuildContext context) {
     final v = vehicle;
-    final config = context.watch<AuthProvider>().config;
-    final totalPhotos = VehiclePhotoAngle.values.length;
-    final preLocked = config.requirePhotosForPre && !v.photosComplete;
-    final postLocked = config.requirePreForPost && !v.preAllDone;
-
     return ListView(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(
@@ -146,115 +331,101 @@ class _VehicleDetailBody extends StatelessWidget {
         AppSpacing.xl,
       ),
       children: [
-        _VehicleSummaryCard(vehicle: v),
-        const SizedBox(height: AppSpacing.xl),
-
-        const SectionHeader('Vehicle information'),
-        _VehicleInfoCard(vehicle: v),
-        const SizedBox(height: AppSpacing.xl),
-
-        // PRE-INSPECTION
-        _PhaseHeader(
-          title: 'Pre-inspection',
-          subtitle: 'Visual checks before the vehicle enters the test lane',
-          isDone: v.preAllDone,
+        _IdentityCard(vehicle: v),
+        const SizedBox(height: AppSpacing.section),
+        _InfoSection(
+          icon: Icons.directions_car_outlined,
+          title: 'Vehicle information',
+          rows: [
+            ('Class', v.vehicleClass),
+            ('Fuel', v.fuelType),
+            ('Engine no.', v.engineNo),
+            ('Chassis no.', v.chassisNo),
+            ('Emission norms', v.emissionNorms),
+          ],
         ),
-        _StepCard(
-          step: 1,
-          icon: Icons.photo_camera_outlined,
-          title: 'Vehicle photos',
-          subtitle: v.photosComplete
-              ? 'All $totalPhotos angles captured'
-              : 'Front, rear, sides, engine and more',
-          done: v.photoCount,
-          total: totalPhotos,
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => VehiclePhotosScreen(vehicleId: vehicleId),
-            ),
-          ),
+        const SizedBox(height: AppSpacing.section),
+        _InfoSection(
+          icon: Icons.event_note_outlined,
+          title: 'Appointment information',
+          rows: [
+            ('Booking ID', v.bookingId),
+            ('Test date', v.testDate),
+            ('Lane', v.laneName),
+            ('Contact', v.customerContact),
+          ],
         ),
-        const SizedBox(height: AppSpacing.md),
-        _StepCard(
-          step: 2,
-          icon: Icons.assignment_outlined,
-          title: 'Pre-inspection checks',
-          subtitle: v.preAllDone
-              ? 'All ${v.preTotalItems} checks completed'
-              : 'Lamps, safety, body, tyres…',
-          done: v.preDoneCount,
-          total: v.preTotalItems,
-          lockedReason: preLocked ? 'Complete the vehicle photos first' : null,
-          onTap: preLocked
-              ? () => _snack(
-                  context,
-                  'Complete $totalPhotos vehicle photos first',
-                )
-              : () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => InspectionFlowScreen(
-                      vehicleId: vehicleId,
-                      phase: InspectionPhase.pre,
-                    ),
-                  ),
-                ),
+        const SizedBox(height: AppSpacing.section),
+        _InfoSection(
+          icon: Icons.fact_check_outlined,
+          title: 'Inspection information',
+          rows: [
+            ('Test no.', v.testNo),
+            ('RTO', v.rtoDistrict),
+            ('Fitness expiry', v.fitnessExpiry),
+          ],
         ),
-        const SizedBox(height: AppSpacing.xl),
-
-        // POST-INSPECTION
-        _PhaseHeader(
-          title: 'Post-inspection',
-          subtitle: 'Checks after the automated tests in the lane',
-          isDone: v.postAllDone,
-        ),
-        _StepCard(
-          step: 3,
-          icon: Icons.assignment_turned_in_outlined,
-          title: 'Post-inspection checks',
-          subtitle: v.postAllDone
-              ? 'All ${v.postTotalItems} checks completed'
-              : 'Brakes, emission, protection…',
-          done: v.postDoneCount,
-          total: v.postTotalItems,
-          lockedReason: postLocked
-              ? 'Complete the pre-inspection checks first'
-              : null,
-          onTap: postLocked
-              ? () => _snack(context, 'Complete pre-inspection checks first')
-              : () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => InspectionFlowScreen(
-                      vehicleId: vehicleId,
-                      phase: InspectionPhase.post,
-                    ),
-                  ),
-                ),
-        ),
+        const SizedBox(height: AppSpacing.section),
+        _StatusSection(steps: steps),
       ],
     );
   }
 }
 
-// ── Summary card: plate, identity, status ───────────────────────────────────
-class _VehicleSummaryCard extends StatelessWidget {
+// ── Section header ───────────────────────────────────────────────────────────
+
+/// Icon + H2 title above a section card, with an optional right-hand item.
+class _SectionTitle extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final Widget? trailing;
+
+  const _SectionTitle({required this.icon, required this.title, this.trailing});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Semantics(
+        header: true,
+        child: Row(
+          children: [
+            Icon(icon, size: AppIconSize.md, color: appColor),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppText.sectionTitle,
+              ),
+            ),
+            if (trailing != null) ...[
+              const SizedBox(width: AppSpacing.sm),
+              trailing!,
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Identity card: plate, status, make/model, customer ───────────────────────
+
+class _IdentityCard extends StatelessWidget {
   final VehicleEntry vehicle;
-  const _VehicleSummaryCard({required this.vehicle});
+  const _IdentityCard({required this.vehicle});
 
   /// Overall inspection status for this vehicle.
   StatusBadge _overallBadge() {
     switch (vehicle.status) {
       case InspectionStatus.pending:
-        return const StatusBadge.neutral(
-          label: 'Not started',
-          icon: Icons.radio_button_unchecked_rounded,
-        );
+        return const StatusBadge.pending(label: 'Not started');
       case InspectionStatus.photosOnly:
         return const StatusBadge.captured(label: 'Photos captured');
       case InspectionStatus.inProgress:
-        return const StatusBadge.processing(label: 'In progress');
+        return const StatusBadge.inProgress();
       case InspectionStatus.completed:
         return vehicle.overallResult == 'UNFIT'
             ? const StatusBadge.fail(label: 'Unfit')
@@ -266,123 +437,67 @@ class _VehicleSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final v = vehicle;
     final title = '${v.make} ${v.model}'.trim();
-    final chips = <Widget>[
-      if (v.vehicleClass.trim().isNotEmpty)
-        InfoChip(icon: Icons.tag_rounded, label: v.vehicleClass),
-      if (v.fuelType.trim().isNotEmpty)
-        InfoChip(icon: Icons.local_gas_station_outlined, label: v.fuelType),
-      if (v.laneName.trim().isNotEmpty)
-        InfoChip(icon: Icons.alt_route_rounded, label: v.laneName),
-    ];
-
-    // Three steps: photos, pre-inspection, post-inspection.
-    final stepsDone =
-        (v.photosComplete ? 1 : 0) +
-        (v.preAllDone ? 1 : 0) +
-        (v.postAllDone ? 1 : 0);
+    final customer = v.customerName.trim();
+    final failed =
+        v.status == InspectionStatus.completed && v.overallResult == 'UNFIT';
 
     return Semantics(
       container: true,
       label: 'Vehicle ${v.displayName}',
       child: AppCard(
-        padding: EdgeInsets.zero,
+        borderColor: failed ? fail.withValues(alpha: 0.35) : null,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(AppSpacing.card),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Status sits above the plate so the registration number
-                  // always gets the full card width.
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text(
-                          'REGISTRATION NO.',
-                          style: AppText.overline,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      // Capped rather than Flexible so the badge sits flush right.
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 180),
-                        child: _overallBadge(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Align(
+            Row(
+              children: [
+                Flexible(
+                  child: Align(
                     alignment: Alignment.centerLeft,
                     child: RegistrationPlate(
                       number: v.displayName,
-                      fontSize: 24,
+                      fontSize: 22,
                     ),
                   ),
-                  if (title.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppText.sectionTitle,
-                    ),
-                  ],
-                  if (v.customerName.trim().isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      v.customerName,
+                ),
+                const SizedBox(width: AppSpacing.md),
+                // Capped so a long label never squeezes the plate.
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 160),
+                  child: _overallBadge(),
+                ),
+              ],
+            ),
+            if (title.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppText.sectionTitle,
+              ),
+            ],
+            if (customer.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.person_outline_rounded,
+                    size: AppIconSize.xs,
+                    color: na,
+                  ),
+                  const SizedBox(width: AppSpacing.iconGap),
+                  Expanded(
+                    child: Text(
+                      customer,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppText.bodySecondary,
                     ),
-                  ],
-                  if (chips.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.md),
-                    Wrap(
-                      spacing: AppSpacing.sm,
-                      runSpacing: AppSpacing.sm,
-                      children: chips,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.card,
-                AppSpacing.md,
-                AppSpacing.card,
-                AppSpacing.card,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text('Inspection progress', style: AppText.chip),
-                      ),
-                      Text('$stepsDone of 3 steps', style: AppText.caption),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: stepsDone / 3,
-                      minHeight: 6,
-                      backgroundColor: surface2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        stepsDone == 3 ? pass : appColor,
-                      ),
-                    ),
                   ),
                 ],
               ),
-            ),
+            ],
           ],
         ),
       ),
@@ -390,74 +505,74 @@ class _VehicleSummaryCard extends StatelessWidget {
   }
 }
 
-// ── Vehicle information (label / value rows) ────────────────────────────────
-class _VehicleInfoCard extends StatelessWidget {
-  final VehicleEntry vehicle;
-  const _VehicleInfoCard({required this.vehicle});
+// ── Information sections (label / value rows) ────────────────────────────────
+
+class _InfoSection extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final List<(String, String)> rows;
+
+  const _InfoSection({
+    required this.icon,
+    required this.title,
+    required this.rows,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final v = vehicle;
-    final rows = <(String, String)>[
-      ('Booking ID', v.bookingId),
-      ('Test date', v.testDate),
-      ('Test no.', v.testNo),
-      ('Fitness expiry', v.fitnessExpiry),
-      ('Engine no.', v.engineNo),
-      ('Chassis no.', v.chassisNo),
-      ('Emission norms', v.emissionNorms),
-      ('RTO', v.rtoDistrict),
-      ('Contact', v.customerContact),
-    ].where((r) => r.$2.trim().isNotEmpty).toList();
-
-    if (rows.isEmpty) {
-      return const AppCard(
-        child: Text(
-          'No additional details for this vehicle.',
-          style: AppText.bodySecondary,
-        ),
-      );
-    }
-
-    return AppCard(
-      padding: EdgeInsets.zero,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Two columns on wide screens, one on phones.
-          final twoColumns = constraints.maxWidth >= 520;
-          final cells = [
-            for (final r in rows) _InfoCell(label: r.$1, value: r.$2),
-          ];
-          if (!twoColumns) {
-            return Column(
-              children: [
-                for (var i = 0; i < cells.length; i++) ...[
-                  if (i > 0) const Divider(height: 1, indent: AppSpacing.card),
-                  cells[i],
-                ],
-              ],
-            );
-          }
-          return Column(
-            children: [
-              for (var i = 0; i < cells.length; i += 2) ...[
-                if (i > 0) const Divider(height: 1, indent: AppSpacing.card),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    final shown = rows.where((r) => r.$2.trim().isNotEmpty).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _SectionTitle(icon: icon, title: title),
+        if (shown.isEmpty)
+          const AppCard(
+            child: Text('No details available.', style: AppText.bodySecondary),
+          )
+        else
+          AppCard(
+            padding: EdgeInsets.zero,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Two columns on wide screens, one on phones.
+                final twoColumns = constraints.maxWidth >= 520;
+                final cells = [
+                  for (final r in shown) _InfoCell(label: r.$1, value: r.$2),
+                ];
+                if (!twoColumns) {
+                  return Column(
+                    children: [
+                      for (var i = 0; i < cells.length; i++) ...[
+                        if (i > 0)
+                          const Divider(height: 1, indent: AppSpacing.card),
+                        cells[i],
+                      ],
+                    ],
+                  );
+                }
+                return Column(
                   children: [
-                    Expanded(child: cells[i]),
-                    Expanded(
-                      child: i + 1 < cells.length
-                          ? cells[i + 1]
-                          : const SizedBox(),
-                    ),
+                    for (var i = 0; i < cells.length; i += 2) ...[
+                      if (i > 0)
+                        const Divider(height: 1, indent: AppSpacing.card),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: cells[i]),
+                          Expanded(
+                            child: i + 1 < cells.length
+                                ? cells[i + 1]
+                                : const SizedBox(),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
-                ),
-              ],
-            ],
-          );
-        },
-      ),
+                );
+              },
+            ),
+          ),
+      ],
     );
   }
 }
@@ -480,192 +595,152 @@ class _InfoCell extends StatelessWidget {
         const SizedBox(width: AppSpacing.md),
         Expanded(
           flex: 3,
-          child: Text(
-            value,
-            textAlign: TextAlign.right,
-            style: AppText.chip.copyWith(fontSize: 14),
-          ),
+          child: Text(value, textAlign: TextAlign.right, style: AppText.label),
         ),
       ],
     ),
   );
 }
 
-// ── Phase header ────────────────────────────────────────────────────────────
-class _PhaseHeader extends StatelessWidget {
-  final String title, subtitle;
-  final bool isDone;
-  const _PhaseHeader({
-    required this.title,
-    required this.subtitle,
-    required this.isDone,
-  });
+// ── Inspection status: overall progress + the three steps ────────────────────
 
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: AppSpacing.md),
-    child: Semantics(
-      header: true,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title.toUpperCase(), style: AppText.overline),
-                const SizedBox(height: 2),
-                Text(subtitle, style: AppText.caption),
-              ],
-            ),
-          ),
-          if (isDone) ...[
-            const SizedBox(width: AppSpacing.sm),
-            const StatusBadge.pass(label: 'Done', dense: true),
-          ],
-        ],
-      ),
-    ),
-  );
-}
-
-// ── Step card ───────────────────────────────────────────────────────────────
-class _StepCard extends StatelessWidget {
-  final int step;
-  final IconData icon;
-  final String title, subtitle;
-  final int done, total;
-
-  /// Non-null when the step can't be opened yet; shown on the card.
-  final String? lockedReason;
-  final VoidCallback onTap;
-
-  const _StepCard({
-    required this.step,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.done,
-    required this.total,
-    this.lockedReason,
-    required this.onTap,
-  });
-
-  bool get _locked => lockedReason != null;
-  bool get _complete => total > 0 && done >= total;
+class _StatusSection extends StatelessWidget {
+  final List<_Step> steps;
+  const _StatusSection({required this.steps});
 
   @override
   Widget build(BuildContext context) {
-    final Color tint = _locked
+    final finished = steps.where((s) => s.complete).length;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _SectionTitle(
+          icon: Icons.timeline_rounded,
+          title: 'Inspection status',
+          trailing: Text(
+            '$finished of ${steps.length} steps',
+            style: AppText.caption.copyWith(fontFeatures: AppText.tabular),
+          ),
+        ),
+        AppCard(
+          padding: EdgeInsets.zero,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.card),
+                child: AppProgressBar.thick(
+                  value: steps.isEmpty ? 0 : finished / steps.length,
+                ),
+              ),
+              for (final step in steps) ...[
+                const Divider(height: 1),
+                _StepRow(step: step),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StepRow extends StatelessWidget {
+  final _Step step;
+  const _StepRow({required this.step});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = step;
+    final Color tint = s.locked
         ? na
-        : _complete
+        : s.complete
         ? pass
         : appColor;
-    final Color tintBg = _locked
-        ? naLight
-        : _complete
-        ? passLight
-        : accentLight;
-    final progress = total > 0 ? (done / total).clamp(0.0, 1.0) : 0.0;
+    final progress = s.total > 0 ? (s.done / s.total).clamp(0.0, 1.0) : 0.0;
 
-    final Widget badge = _locked
+    final StatusBadge badge = s.locked
         ? const StatusBadge.neutral(
             label: 'Locked',
             icon: Icons.lock_outline_rounded,
             dense: true,
           )
-        : _complete
-        ? const StatusBadge.pass(label: 'Done', dense: true)
-        : done > 0
-        ? StatusBadge(
-            label: '$done/$total',
-            color: appColor,
-            background: accentLight,
-            dense: true,
-          )
-        : const StatusBadge.neutral(label: 'To do', dense: true);
+        : s.complete
+        ? const StatusBadge.completed(label: 'Done', dense: true)
+        : s.done > 0
+        ? StatusBadge.inProgress(label: '${s.done}/${s.total}', dense: true)
+        : const StatusBadge.pending(label: 'To do', dense: true);
 
     return Semantics(
       button: true,
       label:
-          'Step $step, $title. ${lockedReason ?? (_complete ? 'Done' : '$done of $total')}',
+          'Step ${s.number}, ${s.title}. ${s.lockedReason ?? (s.complete ? 'Done' : '${s.done} of ${s.total}')}',
       excludeSemantics: true,
-      child: AppCard(
-        onTap: onTap,
-        borderColor: _complete ? pass.withValues(alpha: 0.35) : null,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: tintBg,
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              child: Icon(
-                _locked
-                    ? Icons.lock_outline_rounded
-                    : _complete
-                    ? Icons.check_rounded
-                    : icon,
-                color: tint,
-                size: AppIconSize.lg,
-              ),
+      child: InkWell(
+        onTap: s.onTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 72),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.card,
+              AppSpacing.md,
+              AppSpacing.sm,
+              AppSpacing.md,
             ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('STEP $step', style: AppText.overline),
-                  const SizedBox(height: 2),
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppText.title.copyWith(
-                      color: _locked ? textSecondary : textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    lockedReason ?? subtitle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppText.caption,
-                  ),
-                  if (!_locked && !_complete && total > 0) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(3),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        minHeight: 4,
-                        backgroundColor: surface2,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          appColor,
+            child: Row(
+              children: [
+                AppIconTile(
+                  icon: s.locked
+                      ? Icons.lock_outline_rounded
+                      : s.complete
+                      ? Icons.check_rounded
+                      : s.icon,
+                  color: tint,
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'STEP ${s.number} · ${s.phase.toUpperCase()}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.overline,
+                      ),
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text(
+                        s.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.title.copyWith(
+                          color: s.locked ? textSecondary : textPrimary,
                         ),
                       ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text(
+                        s.lockedReason ?? s.subtitle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.caption,
+                      ),
+                      if (!s.locked && !s.complete && s.done > 0) ...[
+                        const SizedBox(height: AppSpacing.sm),
+                        AppProgressBar(value: progress),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
                 badge,
-                const SizedBox(height: AppSpacing.sm),
-                Icon(
+                const Icon(
                   Icons.chevron_right_rounded,
-                  color: _locked ? textMuted : textSecondary,
+                  color: textSecondary,
                   size: AppIconSize.lg,
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

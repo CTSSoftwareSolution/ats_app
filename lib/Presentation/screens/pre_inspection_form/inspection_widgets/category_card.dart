@@ -1,11 +1,13 @@
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/question_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:ats_app/utilities/new_app_theme/app_motion.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../utilities/color_data.dart';
 import '../../../../utilities/new_app_theme/app_radius.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../../utilities/new_app_theme/app_text.dart';
+import '../../../../widgets/new_app_ui/app_progress_bar.dart';
 import '../../../../widgets/new_app_ui/status_badge.dart';
 import '../../../provider/inspection_form_provider.dart';
 import 'inspection_view_rules.dart';
@@ -136,23 +138,15 @@ class CategoryCard extends StatelessWidget {
                                       ],
                                     ),
                                     const SizedBox(height: AppSpacing.sm),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(4),
-                                      child: LinearProgressIndicator(
-                                        value: cat.progress,
-                                        backgroundColor: surface2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              cat.hasFailed
-                                                  ? fail
-                                                  : complete
-                                                  ? pass
-                                                  : appColor,
-                                            ),
-                                        minHeight: 4,
-                                      ),
+                                    AppProgressBar(
+                                      value: cat.progress,
+                                      color: cat.hasFailed
+                                          ? fail
+                                          : complete
+                                          ? pass
+                                          : appColor,
                                     ),
-                                    const SizedBox(height: AppSpacing.xs + 2),
+                                    const SizedBox(height: AppSpacing.sm),
                                     Text(
                                       '${cat.answeredCount}/${cat.totalCount} answered · $breakdown',
                                       maxLines: 1,
@@ -165,7 +159,7 @@ class CategoryCard extends StatelessWidget {
                               const SizedBox(width: AppSpacing.sm),
                               AnimatedRotation(
                                 turns: cat.isExpanded ? 0.5 : 0,
-                                duration: const Duration(milliseconds: 250),
+                                duration: AppMotion.standard,
                                 child: const Icon(
                                   Icons.keyboard_arrow_down_rounded,
                                   color: textSecondary,
@@ -199,7 +193,7 @@ class CategoryCard extends StatelessWidget {
                   crossFadeState: cat.isExpanded
                       ? CrossFadeState.showSecond
                       : CrossFadeState.showFirst,
-                  duration: const Duration(milliseconds: 250),
+                  duration: AppMotion.standard,
                 ),
               ],
             ),

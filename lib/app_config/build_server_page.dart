@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ats_app/utilities/new_app_theme/app_text.dart';
 import 'package:flutter/services.dart';
 import '../utilities/color_data.dart';
 import '../utilities/input_formatters.dart';
@@ -26,11 +27,7 @@ Widget buildServerField({
         keyboardType: TextInputType.number,
         textInputAction: TextInputAction.done,
         hint: "192.168.1.100:8080",
-        hintStyle: const TextStyle(
-          color: textMuted,
-          fontSize: 14,
-          fontFamily: 'Medium',
-        ),
+        hintStyle: AppText.hint,
         prefixIcon: const Icon(
           Icons.settings_ethernet_rounded,
           color: textSecondary,

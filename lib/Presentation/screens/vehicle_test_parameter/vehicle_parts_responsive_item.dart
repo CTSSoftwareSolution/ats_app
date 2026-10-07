@@ -9,7 +9,7 @@ import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/new_app_ui/app_card.dart';
-import '../../../widgets/new_app_ui/info_chip.dart';
+import '../../../widgets/new_app_ui/status_badge.dart';
 import '../../../utilities/new_app_theme/app_icon_size.dart';
 import 'capture_status.dart';
 import '../../provider/create_queue_provider.dart';
@@ -25,6 +25,11 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
 
   /// Total number of parts across all steps (for "Part 3 of 12").
   final int totalParts;
+
+  /// The first part on the step still missing media; outlined and tagged
+  /// "Up next" so the inspector sees where to continue.
+  final bool isUpNext;
+
   const VehiclePartsResponsiveItem({
     super.key,
     required this.item,
@@ -32,6 +37,7 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
     required this.isTablet,
     required this.tracker,
     this.totalParts = 0,
+    this.isUpNext = false,
   });
 
   /// Sends a captured file to the upload queue and records the slot's
@@ -118,11 +124,15 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final partName = _text(item.vehiclePartName);
+    final partLabel = partName.isEmpty ? 'Vehicle part' : partName;
+
     Widget buildImageContainer({required bool isVideo}) {
       final retryPath = tracker.pathOf(allIndex, isVideo);
       return Expanded(
         child: UploadImageContainer(
           isVideo: isVideo,
+          previewTitle: '$partLabel · ${isVideo ? 'Video' : 'Photo'}',
           width: double.infinity,
           index: allIndex,
           image: isVideo ? videoUploadImage : pictureUploadImage,
@@ -172,12 +182,12 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
     }
 
     final media = context.watch<FileProvider>().getMedia(allIndex);
-    final partName = _text(item.vehiclePartName);
 
     // Media slots this part requires (false = photo, true = video).
     final slots = requiredSlots(item);
 
-    /// A labelled slot: "PHOTO" / "VIDEO" above the capture area.
+    /// A labelled slot: "PHOTO · REQUIRED" / "VIDEO" above the capture area.
+    /// Once captured, the thumbnail carries the slot's status badge.
     Widget slot(bool isVideo) => Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -191,6 +201,15 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.xs),
               Text(isVideo ? 'VIDEO' : 'PHOTO', style: AppText.overline),
+              if ((isVideo ? media?.video : media?.image) == null)
+                Flexible(
+                  child: Text(
+                    ' · REQUIRED',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppText.overline.copyWith(color: warn),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -209,6 +228,8 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
               ? fail.withValues(alpha: 0.45)
               : status == CaptureStatus.uploaded
               ? pass.withValues(alpha: 0.35)
+              : isUpNext
+              ? appColor.withValues(alpha: 0.45)
               : null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,6 +242,8 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
                       totalParts > 0
                           ? 'PART ${allIndex + 1} OF $totalParts'
                           : 'PART ${allIndex + 1}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: AppText.overline,
                     ),
                   ),
@@ -228,35 +251,30 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
                   // Capped rather than Flexible so the badge sits flush right.
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 160),
-                    child: status.badge(),
+                    // "Up next" stands in for "Required"; uploading and
+                    // failed states still show their own badge.
+                    child: isUpNext && status == CaptureStatus.notCaptured
+                        ? const _UpNextTag()
+                        : status.badge(),
                   ),
                 ],
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                partName.isEmpty ? 'Vehicle part' : partName,
+                partLabel,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: AppText.sectionTitle,
               ),
-              const SizedBox(height: AppSpacing.sm),
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.xs,
-                children: [
-                  if (slots.contains(false))
-                    const InfoChip(
-                      icon: Icons.photo_camera_outlined,
-                      label: 'Photo required',
-                    ),
-                  if (slots.contains(true))
-                    const InfoChip(
-                      icon: Icons.videocam_outlined,
-                      label: 'Video required',
-                    ),
-                ],
+              const SizedBox(height: AppSpacing.xxs),
+              Text(
+                switch (slots.length) {
+                  1 => slots.first ? 'Record a video' : 'Take a photo',
+                  _ => 'Take a photo and record a video',
+                },
+                style: AppText.caption,
               ),
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.md),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -313,5 +331,22 @@ class VehiclePartsResponsiveItem extends StatelessWidget {
       default:
         return media?.image != null && media?.video != null;
     }
+  }
+}
+
+/// Brand badge marking the part the inspector should do next (it is still
+/// required, so it replaces the "Required" badge).
+class _UpNextTag extends StatelessWidget {
+  const _UpNextTag();
+
+  @override
+  Widget build(BuildContext context) {
+    return const StatusBadge(
+      label: 'Up next',
+      color: appColor,
+      background: accentLight,
+      icon: Icons.arrow_forward_rounded,
+      dense: true,
+    );
   }
 }

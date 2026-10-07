@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ats_app/utilities/new_app_theme/app_shadow.dart';
 import 'dart:ui';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/video_preview_widget.dart';
 import 'package:ats_app/utilities/color_data.dart';
@@ -13,6 +14,8 @@ import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../utilities/new_app_theme/app_icon_size.dart';
+import '../../../utilities/new_app_theme/app_motion.dart';
+import '../../../widgets/new_app_ui/app_spinner.dart';
 import 'capture_status.dart';
 import 'image_dialog_box.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/media_upload_tracker.dart';
@@ -42,6 +45,9 @@ class UploadImageContainer extends StatelessWidget {
   /// Re-sends the captured file; shown as "Retry" when the upload failed.
   final VoidCallback? onRetry;
 
+  /// Title of the full-screen preview, e.g. "Front bumper · Photo".
+  final String? previewTitle;
+
   const UploadImageContainer({
     super.key,
     required this.onTap,
@@ -60,6 +66,7 @@ class UploadImageContainer extends StatelessWidget {
     this.text = "Tap to capture image",
     this.uploadState,
     this.onRetry,
+    this.previewTitle,
   });
 
   @override
@@ -89,7 +96,7 @@ class UploadImageContainer extends StatelessWidget {
         child: InkWell(
           onTap: mediaFile == null ? onTap : null,
           child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 250),
+            duration: AppMotion.standard,
             layoutBuilder: (current, previous) => Stack(
               fit: StackFit.expand,
               children: [...previous, if (current != null) current],
@@ -102,6 +109,7 @@ class UploadImageContainer extends StatelessWidget {
                     onRetake: onTap,
                     uploadState: uploadState,
                     onRetry: onRetry,
+                    previewTitle: previewTitle,
                   )
                 : _EmptySlot(
                     key: const ValueKey('empty'),
@@ -128,6 +136,7 @@ class _CapturedSlot extends StatelessWidget {
   final VoidCallback onRetake;
   final SlotUploadState? uploadState;
   final VoidCallback? onRetry;
+  final String? previewTitle;
 
   const _CapturedSlot({
     super.key,
@@ -136,6 +145,7 @@ class _CapturedSlot extends StatelessWidget {
     required this.onRetake,
     this.uploadState,
     this.onRetry,
+    this.previewTitle,
   });
 
   @override
@@ -152,7 +162,7 @@ class _CapturedSlot extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           isVideo
-              ? VideoPreviewWidget(path: path)
+              ? VideoPreviewWidget(path: path, title: previewTitle)
               : Image.file(
                   File(path),
                   fit: BoxFit.cover,
@@ -167,19 +177,12 @@ class _CapturedSlot extends StatelessWidget {
           // While uploading, dim the thumbnail and say so in the middle.
           if (status == CaptureStatus.uploading)
             ColoredBox(
-              color: Colors.black.withValues(alpha: 0.35),
+              color: mediaBg.withValues(alpha: 0.35),
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: textWhite,
-                      ),
-                    ),
+                    const AppSpinner.small(color: textWhite),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
                       'Uploading…',
@@ -192,7 +195,8 @@ class _CapturedSlot extends StatelessWidget {
           Positioned(
             top: 6,
             left: 6,
-            right: isVideo ? 6 : 52, // clear of the Preview button
+            // Clear of the Preview button (photo) / duration chip (video).
+            right: 52,
             child: Align(
               alignment: Alignment.centerLeft,
               child: status.badge(),
@@ -208,7 +212,9 @@ class _CapturedSlot extends StatelessWidget {
                 onTap: () {
                   showDialog(
                     context: context,
-                    builder: (_) => ImageDialogBox(path: path),
+                    builder: (_) => previewTitle == null
+                        ? ImageDialogBox(path: path)
+                        : ImageDialogBox(path: path, title: previewTitle!),
                   );
                 },
               ),
@@ -284,8 +290,8 @@ class _PillButton extends StatelessWidget {
     final button = Material(
       color: surface,
       shape: const StadiumBorder(),
-      elevation: 1,
-      shadowColor: Colors.black26,
+      elevation: AppShadow.overlayElevation,
+      shadowColor: AppShadow.color,
       child: InkWell(
         customBorder: const StadiumBorder(),
         onTap: onTap,
@@ -297,12 +303,12 @@ class _PillButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 15, color: color),
+              Icon(icon, size: AppIconSize.sm, color: color),
               if (label != null) ...[
-                const SizedBox(width: 4),
+                const SizedBox(width: AppSpacing.xs),
                 Text(
                   label!,
-                  style: AppText.chip.copyWith(fontSize: 12, color: color),
+                  style: AppText.tag.copyWith(color: color),
                 ),
               ],
             ],
@@ -345,7 +351,7 @@ class _EmptySlot extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: '${isVideo ? 'Video' : 'Photo'}: Not captured. $text',
+      label: '${isVideo ? 'Video' : 'Photo'}: Required. $text',
       excludeSemantics: true,
       child: CustomPaint(
         painter: _DashedBorderPainter(color: borderDark, radius: radius),
@@ -404,10 +410,7 @@ class _EmptySlot extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 14),
                             backgroundColor: accentLight,
                             foregroundColor: appColor,
-                            textStyle: const TextStyle(
-                              fontFamily: "SemiBold",
-                              fontSize: 12.5,
-                            ),
+                            textStyle: AppText.tag,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(AppRadius.sm),
                             ),
@@ -416,7 +419,7 @@ class _EmptySlot extends StatelessWidget {
                             isVideo
                                 ? Icons.videocam_outlined
                                 : Icons.photo_camera_outlined,
-                            size: 16,
+                            size: AppIconSize.sm,
                           ),
                           label: Text(isVideo ? "Record" : "Capture"),
                         ),
@@ -452,14 +455,14 @@ class _OverlayIconButton extends StatelessWidget {
       child: _ExpandedHitArea(
         onTap: onTap,
         child: Material(
-          color: Colors.black.withValues(alpha: 0.45),
+          color: mediaScrim,
           shape: const CircleBorder(),
           child: InkWell(
             customBorder: const CircleBorder(),
             onTap: onTap,
             child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Icon(icon, size: 16, color: textWhite),
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              child: Icon(icon, size: AppIconSize.sm, color: textWhite),
             ),
           ),
         ),

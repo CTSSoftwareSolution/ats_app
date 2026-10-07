@@ -1,3 +1,5 @@
+import '../../../utilities/new_app_theme/app_motion.dart';
+import '../../../widgets/new_app_ui/app_spinner.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -12,7 +14,14 @@ import '../../../widgets/new_app_ui/media_preview_header.dart';
 class VideoDialog extends StatefulWidget {
   final String path;
 
-  const VideoDialog({super.key, required this.path});
+  /// Header text, e.g. "Front bumper · Video".
+  final String title;
+
+  const VideoDialog({
+    super.key,
+    required this.path,
+    this.title = 'Video preview',
+  });
 
   @override
   State<VideoDialog> createState() => _VideoDialogState();
@@ -35,7 +44,7 @@ class _VideoDialogState extends State<VideoDialog>
 
     _fadeController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 250),
+      duration: AppMotion.standard,
       value: 1.0,
     );
     _fadeAnim = CurvedAnimation(
@@ -127,7 +136,7 @@ class _VideoDialogState extends State<VideoDialog>
         : (isDeviceLandscape ? size.width * 0.86 : size.width * 0.94);
 
     return Dialog(
-      backgroundColor: Colors.black,
+      backgroundColor: mediaBg,
       insetPadding: const EdgeInsets.all(AppSpacing.page),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
@@ -141,7 +150,7 @@ class _VideoDialogState extends State<VideoDialog>
             mainAxisSize: MainAxisSize.min,
             children: [
               MediaPreviewHeader(
-                title: "Video preview",
+                title: widget.title,
                 onClose: () => Navigator.pop(context),
               ),
               if (isInitialized) ...[
@@ -174,10 +183,7 @@ class _VideoDialogState extends State<VideoDialog>
                 const SizedBox(
                   height: 220,
                   child: Center(
-                    child: CircularProgressIndicator(
-                      color: textWhite,
-                      strokeWidth: 2,
-                    ),
+                    child: AppSpinner.large(color: textWhite),
                   ),
                 ),
             ],
@@ -200,13 +206,13 @@ class _VideoDialogState extends State<VideoDialog>
           FadeTransition(
             opacity: _fadeAnim,
             child: Material(
-              color: Colors.black.withValues(alpha: 0.45),
+              color: mediaScrim,
               shape: const CircleBorder(),
               child: InkWell(
                 customBorder: const CircleBorder(),
                 onTap: togglePlayPause,
                 child: Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(AppSpacing.md),
                   child: Icon(
                     controller.value.isPlaying
                         ? Icons.pause_rounded
@@ -229,11 +235,9 @@ class _VideoDialogState extends State<VideoDialog>
     final progress = duration.inMilliseconds > 0
         ? position.inMilliseconds / duration.inMilliseconds
         : 0.0;
-    const timeStyle = TextStyle(
-      fontFamily: "Medium",
+    final timeStyle = AppText.caption.copyWith(
       color: textWhiteSub,
-      fontSize: 12,
-      fontFeatures: [FontFeature.tabularFigures()],
+      fontFeatures: AppText.tabular,
     );
 
     return Padding(

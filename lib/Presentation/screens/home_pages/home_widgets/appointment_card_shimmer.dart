@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart';
+import '../../../../widgets/new_app_ui/app_skeleton.dart';
 
 import '../../../../utilities/color_data.dart';
 import '../../../../utilities/new_app_theme/app_radius.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
 
-/// Loading placeholder with the same shape as the Home appointment card,
-/// so the list doesn't jump when data arrives.
+/// Loading placeholder with the same shape as the Home appointment card
+/// (plate + status, vehicle lines + time, progress, stages + action), so the
+/// list doesn't jump when data arrives.
 class AppointmentCardShimmer extends StatelessWidget {
   const AppointmentCardShimmer({super.key});
 
@@ -14,16 +15,7 @@ class AppointmentCardShimmer extends StatelessWidget {
     double? width,
     required double height,
     double radius = AppRadius.sm,
-  }) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(radius),
-      ),
-    );
-  }
+  }) => SkeletonBox(width: width, height: height, radius: radius);
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +25,7 @@ class AppointmentCardShimmer extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: border),
       ),
-      child: Shimmer.fromColors(
-        baseColor: surface2,
-        highlightColor: surface,
+      child: AppSkeleton(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -51,28 +41,36 @@ class AppointmentCardShimmer extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      _block(width: 128, height: 32, radius: 6),
+                      Flexible(child: _block(width: 120, height: 30)),
                       const Spacer(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          _block(width: 56, height: 14),
-                          const SizedBox(height: 4),
-                          _block(width: 72, height: 12),
-                        ],
-                      ),
+                      _block(width: 84, height: 22, radius: AppRadius.full),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  _block(width: 180, height: 16),
-                  const SizedBox(height: 6),
-                  _block(width: 120, height: 12),
-                  const SizedBox(height: AppSpacing.md),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _block(width: 56, height: 22),
-                      const SizedBox(width: AppSpacing.sm),
-                      _block(width: 64, height: 22),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _block(width: 180, height: 16),
+                            const SizedBox(height: AppSpacing.xs),
+                            _block(width: 120, height: 13),
+                            const SizedBox(height: AppSpacing.xs),
+                            _block(width: 140, height: 12),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          _block(width: 44, height: 14),
+                          const SizedBox(height: AppSpacing.xs),
+                          _block(width: 52, height: 12),
+                        ],
+                      ),
                     ],
                   ),
                 ],
@@ -86,16 +84,38 @@ class AppointmentCardShimmer extends StatelessWidget {
                 AppSpacing.card,
                 AppSpacing.md,
               ),
-              child: Row(
+              child: Column(
                 children: [
-                  // Flexible so narrow phones shrink these instead of
-                  // overflowing.
-                  Flexible(child: _block(width: 110, height: 20, radius: 100)),
-                  const SizedBox(width: AppSpacing.md),
-                  Flexible(child: _block(width: 110, height: 20, radius: 100)),
-                  const SizedBox(width: AppSpacing.md),
-                  const Spacer(),
-                  _block(width: 84, height: 40, radius: AppRadius.sm + 2),
+                  Row(
+                    children: [
+                      // Flexible so narrow phones shrink these instead of
+                      // overflowing.
+                      Flexible(
+                        child: _block(
+                          width: 112,
+                          height: 20,
+                          radius: AppRadius.full,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.lg),
+                      Flexible(
+                        child: _block(
+                          width: 96,
+                          height: 20,
+                          radius: AppRadius.full,
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Row(
+                    children: [
+                      Expanded(child: _block(height: 4, radius: AppRadius.xs)),
+                      const SizedBox(width: AppSpacing.lg),
+                      _block(width: 92, height: 40, radius: AppRadius.md),
+                    ],
+                  ),
                 ],
               ),
             ),

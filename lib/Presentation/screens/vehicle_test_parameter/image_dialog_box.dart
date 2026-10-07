@@ -12,14 +12,21 @@ import '../../../widgets/new_app_ui/media_preview_header.dart';
 class ImageDialogBox extends StatelessWidget {
   final String path;
 
-  const ImageDialogBox({super.key, required this.path});
+  /// Header text, e.g. "Front bumper · Photo".
+  final String title;
+
+  const ImageDialogBox({
+    super.key,
+    required this.path,
+    this.title = 'Image preview',
+  });
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Dialog(
-      backgroundColor: Colors.black,
+      backgroundColor: mediaBg,
       insetPadding: const EdgeInsets.all(AppSpacing.page),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
@@ -34,7 +41,7 @@ class ImageDialogBox extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             MediaPreviewHeader(
-              title: "Image preview",
+              title: title,
               onClose: () => Navigator.pop(context),
             ),
             Flexible(

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../Presentation/screens/login_page/login_screen.dart';
 import '../../utilities/color_data.dart';
+import '../../utilities/new_app_theme/app_icon_size.dart';
+import '../../utilities/new_app_theme/app_layout.dart';
+import '../../utilities/new_app_theme/app_radius.dart';
+import '../../utilities/new_app_theme/app_spacing.dart';
+import '../../utilities/new_app_theme/app_text.dart';
+import '../../widgets/new_app_ui/primary_button.dart';
+import '../../widgets/new_app_ui/secondary_button.dart';
 import '../auth_provider.dart';
-
 
 /// Shows logout confirmation dialog, handles logout + navigation
 Future<void> confirmLogout(BuildContext context) async {
@@ -14,69 +19,94 @@ Future<void> confirmLogout(BuildContext context) async {
   final confirmed = await showDialog<bool>(
     context: context,
     barrierDismissible: true,
-    builder: (_) => AlertDialog(
-      backgroundColor: surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      contentPadding: const EdgeInsets.all(24),
-      content: Column(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-          width: 56, height: 56,
-          decoration: BoxDecoration(
-            color: failLight,
-            shape: BoxShape.circle),
-          child: const Icon(Icons.logout_rounded,
-              color: fail, size: 28)),
-        const SizedBox(height: 16),
-        Text('Sign Out?', style: GoogleFonts.inter(
-            color: textPrimary, fontSize: 18,
-            fontWeight: FontWeight.w800)),
-        const SizedBox(height: 8),
-        if (user != null) ...[
-          Text(user.displayName, style: GoogleFonts.inter(
-              color: navyAccent, fontSize: 13,
-              fontWeight: FontWeight.w600)),
-          const SizedBox(height: 4),
-        ],
-        Text('You will be returned to the login screen.',
-            style: GoogleFonts.inter(
-                color: textMuted, fontSize: 13),
-            textAlign: TextAlign.center),
-        const SizedBox(height: 24),
-        Row(children: [
-          Expanded(child: OutlinedButton(
-            onPressed: () => Navigator.pop(context, false),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: textSecondary,
-              side: const BorderSide(color: border),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              padding: const EdgeInsets.symmetric(vertical: 12)),
-            child: Text('Cancel', style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600)),
-          )),
-          const SizedBox(width: 12),
-          Expanded(child: ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: fail,
-              foregroundColor: Colors.white, elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              padding: const EdgeInsets.symmetric(vertical: 12)),
-            child: Text('Sign Out', style: GoogleFonts.inter(
-                fontWeight: FontWeight.w700)),
-          )),
-        ]),
-      ]),
+    // Same layout as AppDialog, with the signed-in user's name under the
+    // title.
+    builder: (_) => Dialog(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: AppLayout.maxDialogWidth),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.dialog,
+            AppSpacing.dialog,
+            AppSpacing.dialog,
+            AppSpacing.lg,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: failLight,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                    ),
+                    child: const Icon(
+                      Icons.logout_rounded,
+                      color: fail,
+                      size: AppIconSize.md + 2,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Sign Out?', style: AppText.dialogTitle),
+                        if (user != null)
+                          Text(
+                            user.displayName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppText.bodySecondary,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text(
+                'You will be returned to the login screen.',
+                style: AppText.body.copyWith(color: textSecondary, height: 1.5),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              Row(
+                children: [
+                  Expanded(
+                    child: SecondaryButton(
+                      label: 'Cancel',
+                      onPressed: () => Navigator.pop(context, false),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: PrimaryButton(
+                      label: 'Sign Out',
+                      color: fail,
+                      onPressed: () => Navigator.pop(context, true),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     ),
   );
 
   if (confirmed == true && context.mounted) {
     await auth.logout();
     if (context.mounted) {
-      Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-          (_) => false);
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        (_) => false,
+      );
     }
   }
 }

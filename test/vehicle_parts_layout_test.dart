@@ -116,6 +116,7 @@ void main() {
                   isTablet: false,
                   tracker: tracker,
                   totalParts: 12,
+                  isUpNext: i == 0,
                 ),
               ),
             ),
@@ -133,7 +134,8 @@ void main() {
         await pump(tester, width: width, textScale: scale);
         expect(tester.takeException(), isNull);
         // Each state is spelled out (part badge + slot badge for captured ones).
-        expect(find.text('Not captured'), findsOneWidget);
+        // Part 0 is up next: "Up next" stands in for its "Required" badge.
+        expect(find.text('Up next'), findsOneWidget);
         expect(find.text('Captured'), findsNWidgets(2));
         expect(find.text('Uploading'), findsNWidgets(2));
         expect(find.text('Uploaded'), findsNWidgets(2));

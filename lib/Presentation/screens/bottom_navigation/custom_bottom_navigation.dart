@@ -1,8 +1,8 @@
 import 'package:ats_app/utilities/color_data.dart';
-import 'package:ats_app/utilities/image_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../widgets/widget_navigation_icon.dart';
+import '../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../widgets/new_app_ui/app_navigation.dart';
 import '../../provider/bottom_navigation_provider.dart';
 
 /// Docked bottom navigation bar: flat white surface with a hairline top
@@ -23,30 +23,15 @@ class CustomBottomNavigation extends StatelessWidget {
         child: SizedBox(
           height: 64,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
             child: Row(
               children: [
-                navigationIcon(
-                  homeIcon,
-                  0,
-                  'Home',
-                  navigationProvider.pageIndex,
-                  navigationProvider.updateIndex,
-                ),
-                navigationIcon(
-                  resultIcon,
-                  1,
-                  'Result',
-                  navigationProvider.pageIndex,
-                  navigationProvider.updateIndex,
-                ),
-                navigationIcon(
-                  profileIcon,
-                  2,
-                  'Profile',
-                  navigationProvider.pageIndex,
-                  navigationProvider.updateIndex,
-                ),
+                for (var i = 0; i < appNavDestinations.length; i++)
+                  AppNavBarItem(
+                    destination: appNavDestinations[i],
+                    selected: navigationProvider.pageIndex == i,
+                    onTap: () => navigationProvider.updateIndex(i),
+                  ),
               ],
             ),
           ),

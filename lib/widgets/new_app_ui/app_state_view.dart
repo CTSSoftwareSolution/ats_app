@@ -3,13 +3,17 @@ import '../../utilities/color_data.dart';
 import '../../utilities/new_app_theme/app_icon_size.dart';
 import '../../utilities/new_app_theme/app_spacing.dart';
 import '../../utilities/new_app_theme/app_text.dart';
+import 'app_icon_tile.dart';
+import 'app_spinner.dart';
 
 /// Centred icon + title + message (+ optional action) used for every
-/// empty and error state.
+/// full-area empty, error and success state. For a message inside a page
+/// (above a list, inside a sheet) use [AppBanner] instead.
 ///
 /// * [AppStateView.empty] – neutral tint; the action is optional
 ///   (e.g. "Refresh").
 /// * [AppStateView.error] – red tint; always offers a retry.
+/// * [AppStateView.success] – green tint; the action is the next step.
 class AppStateView extends StatelessWidget {
   final IconData icon;
   final Color color;
@@ -52,6 +56,18 @@ class AppStateView extends StatelessWidget {
     required this.onAction,
   }) : color = fail;
 
+  /// A task finished (submitted, uploaded, saved). [onAction] is the next
+  /// step, e.g. "Done" or "Back to home".
+  const AppStateView.success({
+    super.key,
+    this.icon = Icons.check_circle_outline_rounded,
+    required this.title,
+    this.message,
+    this.actionLabel = 'Done',
+    this.actionIcon = Icons.arrow_forward_rounded,
+    this.onAction,
+  }) : color = pass;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -59,23 +75,18 @@ class AppStateView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: AppIconSize.xl - 2),
-          ),
+          AppIconTile.large(icon: icon, color: color),
           const SizedBox(height: AppSpacing.lg),
           Text(title, textAlign: TextAlign.center, style: AppText.sectionTitle),
           if (message != null) ...[
-            const SizedBox(height: 6),
-            Text(
-              message!,
-              textAlign: TextAlign.center,
-              style: AppText.bodySecondary,
+            const SizedBox(height: AppSpacing.xs),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 360),
+              child: Text(
+                message!,
+                textAlign: TextAlign.center,
+                style: AppText.bodySecondary,
+              ),
             ),
           ],
           if (onAction != null) ...[
@@ -109,11 +120,7 @@ class AppLoadingView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(
-              width: AppIconSize.xl,
-              height: AppIconSize.xl,
-              child: CircularProgressIndicator(color: appColor, strokeWidth: 3),
-            ),
+            const AppSpinner.large(),
             if (message != null) ...[
               const SizedBox(height: AppSpacing.lg),
               Text(

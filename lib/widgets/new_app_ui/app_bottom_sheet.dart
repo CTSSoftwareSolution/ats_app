@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utilities/color_data.dart';
+import '../../utilities/new_app_theme/app_icon_size.dart';
 import '../../utilities/new_app_theme/app_radius.dart';
 import '../../utilities/new_app_theme/app_spacing.dart';
 import '../../utilities/new_app_theme/app_text.dart';
@@ -24,17 +25,22 @@ Future<T?> showAppBottomSheet<T>({
 }
 
 /// Standard bottom sheet surface: drag handle, optional title / subtitle,
-/// scrollable content that stays above the keyboard.
+/// scrollable content that stays above the keyboard. Pass [onClose] to show
+/// a close button beside the title (null while closing is not allowed).
 class AppBottomSheet extends StatelessWidget {
   final String? title;
   final String? subtitle;
   final Widget child;
+  final VoidCallback? onClose;
+  final bool showClose;
 
   const AppBottomSheet({
     super.key,
     this.title,
     this.subtitle,
     required this.child,
+    this.onClose,
+    this.showClose = false,
   });
 
   @override
@@ -51,7 +57,12 @@ class AppBottomSheet extends StatelessWidget {
           ),
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(20, 10, 20, 20 + media.padding.bottom),
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.dialog,
+            AppSpacing.md,
+            AppSpacing.dialog,
+            AppSpacing.dialog + media.padding.bottom,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,14 +73,34 @@ class AppBottomSheet extends StatelessWidget {
                   height: 4,
                   decoration: BoxDecoration(
                     color: border,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(AppRadius.full),
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.lg),
-              if (title != null) Text(title!, style: AppText.sectionTitle),
+              SizedBox(height: showClose ? AppSpacing.xs : AppSpacing.lg),
+              if (title != null)
+                showClose
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: Semantics(
+                              header: true,
+                              child: Text(title!, style: AppText.sectionTitle),
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: 'Close',
+                            onPressed: onClose,
+                            icon: const Icon(
+                              Icons.close_rounded,
+                              size: AppIconSize.md,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Text(title!, style: AppText.sectionTitle),
               if (subtitle != null) ...[
-                const SizedBox(height: 2),
+                const SizedBox(height: AppSpacing.xxs),
                 Text(subtitle!, style: AppText.bodySecondary),
               ],
               if (title != null || subtitle != null)

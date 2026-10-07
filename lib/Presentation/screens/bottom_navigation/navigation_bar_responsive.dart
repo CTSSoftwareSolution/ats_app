@@ -20,33 +20,32 @@ class _NavigationBarResponsiveLayoutState
     final navigationProvider = context.watch<BottomNavigationProvider>();
     return LayoutBuilder(
       builder: (context, constraints) {
-        return ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: constraints.contentMaxWidth),
-          child: constraints.isTablet
-              ? Row(
-                  children: [
-                    TabletNavigationRail(),
-                    Expanded(
+        // Full width: the rail (tablet) or bar (phone) frames the page, and each
+        // screen centres its own scrolling content (see ResponsiveContent).
+        return constraints.isTablet
+            ? Row(
+                children: [
+                  TabletNavigationRail(),
+                  Expanded(
+                    child:
+                        navigationProvider.pages[navigationProvider.pageIndex],
+                  ),
+                ],
+              )
+            : Column(
+                children: [
+                  // The docked bar below owns the system bottom inset.
+                  Expanded(
+                    child: MediaQuery.removePadding(
+                      context: context,
+                      removeBottom: true,
                       child: navigationProvider
                           .pages[navigationProvider.pageIndex],
                     ),
-                  ],
-                )
-              : Column(
-                  children: [
-                    // The docked bar below owns the system bottom inset.
-                    Expanded(
-                      child: MediaQuery.removePadding(
-                        context: context,
-                        removeBottom: true,
-                        child: navigationProvider
-                            .pages[navigationProvider.pageIndex],
-                      ),
-                    ),
-                    const CustomBottomNavigation(),
-                  ],
-                ),
-        );
+                  ),
+                  const CustomBottomNavigation(),
+                ],
+              );
       },
     );
   }

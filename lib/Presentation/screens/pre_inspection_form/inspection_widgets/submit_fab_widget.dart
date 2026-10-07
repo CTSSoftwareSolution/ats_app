@@ -1,4 +1,6 @@
 import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dart';
+import 'package:ats_app/utilities/new_app_theme/app_icon_size.dart';
+import 'package:ats_app/widgets/new_app_ui/app_progress_bar.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/confirmation_dialog.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/validation_dialog.dart';
 import 'package:flutter/material.dart';
@@ -48,15 +50,7 @@ class SubmitFAB extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (!provider.isFullyComplete) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(
-                value: progress,
-                minHeight: 4,
-                backgroundColor: surface2,
-                valueColor: const AlwaysStoppedAnimation<Color>(appColor),
-              ),
-            ),
+            AppProgressBar(value: progress, color: appColor),
             const SizedBox(height: AppSpacing.md),
           ],
           SizedBox(
@@ -74,14 +68,9 @@ class SubmitFAB extends StatelessWidget {
                     : (provider.isFullyComplete
                           ? Icons.check_circle_rounded
                           : Icons.send_rounded),
-                size: 20,
+                size: AppIconSize.md,
               ),
-              label: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontFamily: "Bold", fontSize: 15),
-              ),
+              label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
           ),
         ],

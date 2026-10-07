@@ -89,8 +89,8 @@ class _ManualInspectionImageScreenState
     int remaining = 8 - docs.length;
     if (remaining > 0) {
       String message = remaining == 1
-          ? "$remaining image remaining to upload"
-          : "$remaining images remaining to upload";
+          ? "Capture 1 more photo to continue"
+          : "Capture $remaining more photos to continue";
 
       CustomLoader.message(message);
       return;

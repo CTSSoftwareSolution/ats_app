@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../utilities/color_data.dart';
 import '../../utilities/new_app_theme/app_spacing.dart';
 import '../../utilities/new_app_theme/app_text.dart';
 import 'app_back_button.dart';
@@ -10,12 +9,14 @@ import 'app_back_button.dart';
 /// * Pushed screens pass [onBack] and get the shared back button; tab roots
 ///   omit it and the title lines up with the page gutter.
 /// * Optional [subtitle] for context (e.g. a vehicle number) under the title.
+/// * Optional [bottom] for a tab strip that continues the bar's colour.
 /// Colours, height and title style come from the theme.
 class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final String? subtitle;
   final VoidCallback? onBack;
   final List<Widget>? actions;
+  final PreferredSizeWidget? bottom;
 
   const AppTopBar({
     super.key,
@@ -23,10 +24,12 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.subtitle,
     this.onBack,
     this.actions,
+    this.bottom,
   });
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize =>
+      Size.fromHeight(kToolbarHeight + (bottom?.preferredSize.height ?? 0));
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
                 subtitle!,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppText.caption.copyWith(color: textWhiteSub),
+                style: AppText.appBarSubtitle,
               ),
             ],
           );
@@ -54,6 +57,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
       actions: actions == null
           ? null
           : [...actions!, const SizedBox(width: AppSpacing.xs)],
+      bottom: bottom,
     );
   }
 }

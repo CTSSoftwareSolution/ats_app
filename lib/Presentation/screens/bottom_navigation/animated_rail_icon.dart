@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../utilities/color_data.dart';
+import '../../../widgets/new_app_ui/app_navigation.dart';
 
-/// Rail destination icon: white inside a soft pill when active, muted otherwise.
+/// Rail destination icon: the shared [AppNavIndicator] in white on the
+/// brand rail (a 16% white pill when active, muted icon otherwise).
 class AnimatedRailIcon extends StatelessWidget {
-  final String icon;
+  final IconData icon;
   final bool isActive;
 
   const AnimatedRailIcon({
@@ -14,20 +16,12 @@ class AnimatedRailIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      decoration: BoxDecoration(
-        color: isActive
-            ? Colors.white.withValues(alpha: 0.16)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(100),
-      ),
-      child: ImageIcon(
-        AssetImage(icon),
-        size: 22,
-        color: isActive ? whiteColor : textWhiteSub,
-      ),
+    return AppNavIndicator(
+      icon: icon,
+      selected: isActive,
+      selectedColor: textWhite,
+      unselectedColor: textWhiteSub,
+      pillColor: textWhite.withValues(alpha: 0.16),
     );
   }
 }

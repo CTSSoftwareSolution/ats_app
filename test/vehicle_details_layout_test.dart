@@ -3,6 +3,7 @@ import 'package:ats_app/new_manual_flow/auth_provider.dart';
 import 'package:ats_app/new_manual_flow/new_model/vehicle_entry.dart';
 import 'package:ats_app/new_manual_flow/new_model/vehicle_photos_model.dart';
 import 'package:ats_app/new_manual_flow/new_screen/vehicle_details_screen.dart';
+import 'package:ats_app/new_manual_flow/new_screen/vehicle_photos_screen.dart';
 import 'package:ats_app/utilities/new_app_theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -86,9 +87,40 @@ void main() {
           find.text('Complete the pre-inspection checks first'),
           findsOneWidget,
         );
+        for (final section in [
+          'Vehicle information',
+          'Appointment information',
+          'Inspection information',
+          'Inspection status',
+        ]) {
+          expect(find.text(section), findsOneWidget);
+        }
+        // Photos started (3 of 8) → primary action continues them.
+        expect(find.text('Continue: Vehicle photos'), findsOneWidget);
       });
     }
   }
+
+  testWidgets('primary action opens the same screen as the next step', (
+    tester,
+  ) async {
+    final app = AppProvider()..vehicles.add(longVehicle());
+    // Tablet width: VehiclePhotosScreen's own photo-tile row overflows on
+    // narrow phones (a separate, pre-existing issue in that screen).
+    await pump(tester, app, width: 600);
+    await tester.tap(find.text('Continue: Vehicle photos'));
+    await tester.pumpAndSettle();
+    expect(find.byType(VehiclePhotosScreen), findsOneWidget);
+  });
+
+  testWidgets('a locked step keeps its existing message', (tester) async {
+    final app = AppProvider()..vehicles.add(longVehicle());
+    await pump(tester, app, width: 360);
+    await tester.tap(find.text('Pre-inspection checks'));
+    await tester.pump();
+    expect(find.textContaining('vehicle photos first'), findsWidgets);
+    expect(find.byType(SnackBar), findsOneWidget);
+  });
 
   testWidgets('shows a not-found state instead of crashing', (tester) async {
     await pump(tester, AppProvider(), width: 360);

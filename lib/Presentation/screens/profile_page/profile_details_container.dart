@@ -56,7 +56,7 @@ class ProfileDetailsContainer extends StatelessWidget {
               children: [
                 Text(
                   Preferences.getName(),
-                  style: AppText.sectionTitle.copyWith(fontSize: 18),
+                  style: AppText.pageTitle,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

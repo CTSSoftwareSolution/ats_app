@@ -5,19 +5,25 @@ import 'package:ats_app/Presentation/provider/bottom_navigation_provider.dart';
 import 'package:ats_app/Presentation/screens/bottom_navigation/bottom_navigation_bar.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:ats_app/utilities/new_app_theme/app_motion.dart';
 import 'package:ats_app/Presentation/screens/common/vehicle_subtitle.dart';
 import 'package:ats_app/widgets/new_app_ui/app_top_bar.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
+import '../../../utilities/new_app_theme/app_icon_size.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/new_app_ui/app_bottom_sheet.dart';
 import '../../../widgets/new_app_ui/app_card.dart';
+import '../../../widgets/new_app_ui/app_icon_tile.dart';
+import '../../../widgets/new_app_ui/app_segmented_bar.dart';
 import '../../../widgets/new_app_ui/app_state_view.dart';
 import '../../../widgets/new_app_ui/bottom_action_bar.dart';
 import '../../../widgets/new_app_ui/primary_button.dart';
+import '../../../widgets/new_app_ui/secondary_button.dart';
+import '../../../widgets/new_app_ui/section_header.dart';
 import '../../../widgets/new_app_ui/status_badge.dart';
 
 /// Full-screen AI result opened from the "View Result" button of the
@@ -60,6 +66,10 @@ class _AiResultScreenState extends State<AiResultScreen> {
 
   /// Questions whose "Result Details" are open (by [_keyOf]).
   final Set<String> _expanded = {};
+
+  /// Questions whose result was changed from this screen (by [_keyOf]);
+  /// display only, for the "Changed by you" tag.
+  final Set<String> _changed = {};
 
   /// Clears the inspection flow and returns to the dashboard tab.
   void _goToDashboard() {
@@ -143,10 +153,11 @@ class _AiResultScreenState extends State<AiResultScreen> {
         child: AppStateView(
           icon: Icons.schedule_rounded,
           color: warn,
-          title: "Result Pending",
+          title: "AI result not available",
           message: _hasText(entity.message)
               ? entity.message!.trim()
-              : "Processing pending. Please check again shortly.",
+              : "The AI hasn't returned results for this vehicle yet. Pull down to check again.",
+          actionLabel: 'Check again',
           onAction: _loadResult,
         ),
       );
@@ -177,7 +188,7 @@ class _AiResultScreenState extends State<AiResultScreen> {
           label: records.length > 1
               ? "Inspection Question $index of ${records.length}"
               : "Inspection Question",
-          result: _availableResult(item),
+          changedByUser: _changed.contains(key),
           expanded: expanded,
           onToggleDetails: records.length == 1
               ? null
@@ -202,15 +213,26 @@ class _AiResultScreenState extends State<AiResultScreen> {
         question: item.questionText,
         current: _availableResult(item),
         currentRemark: item.aiRemark,
-        onUpdated: (result, remark) =>
-            provider.updateQuestionResult(item, result, remark: remark),
+        currentBadge: _statusBadge(item, dense: true),
+        onUpdated: (result, remark) {
+          if (mounted) setState(() => _changed.add(_keyOf(item)));
+          provider.updateQuestionResult(item, result, remark: remark);
+        },
       ),
     );
   }
 }
 
-/// Overview of every question's AI result: Pass / Fail / Not Available
-/// counts, a proportional bar, and how to change a result.
+/// The overall verdict across every question, first thing on the screen:
+///
+///   [✗]  OVERALL AI RESULT
+///        FAIL
+///        1 of 3 checks failed
+///   ▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱   ● 1 pass  ● 1 fail  ● 1 pending
+///
+/// FAIL when any question failed, PASS only when every question passed,
+/// PENDING while the AI is still working on a question, otherwise
+/// AI RESULT NOT AVAILABLE.
 class _ResultSummary extends StatelessWidget {
   final List<ResultData> records;
 
@@ -218,139 +240,101 @@ class _ResultSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int passCount = 0, failCount = 0, otherCount = 0;
+    final count = {for (final s in _AiStatus.values) s: 0};
     for (final r in records) {
-      final result = _availableResult(r)?.trim().toLowerCase();
-      if (result == 'pass') {
-        passCount++;
-      } else if (result == 'fail') {
-        failCount++;
-      } else {
-        otherCount++;
-      }
+      final s = _statusOf(r);
+      count[s] = count[s]! + 1;
     }
     final total = records.length;
+    final passCount = count[_AiStatus.pass]!;
+    final failCount = count[_AiStatus.fail]!;
+    final pendingCount = count[_AiStatus.pending]!;
+    final missingCount =
+        count[_AiStatus.notAvailable]! + count[_AiStatus.other]!;
 
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const Expanded(
-                child: Text("AI Result", style: AppText.sectionTitle),
-              ),
-              Text(
-                total == 1 ? "1 question" : "$total questions",
-                style: AppText.caption,
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          // Proportional Pass / Fail / Not Available bar.
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: SizedBox(
-              height: 8,
+    final (String verdict, String reason, Color color, IconData icon) =
+        failCount > 0
+        ? (
+            'FAIL',
+            '$failCount of $total ${total == 1 ? 'check' : 'checks'} failed',
+            fail,
+            Icons.cancel_rounded,
+          )
+        : passCount == total
+        ? (
+            'PASS',
+            total == 1 ? 'The check passed' : 'All $total checks passed',
+            pass,
+            Icons.check_circle_rounded,
+          )
+        : pendingCount > 0
+        ? (
+            'PENDING',
+            '$pendingCount of $total awaiting the AI · pull down to refresh',
+            warn,
+            Icons.schedule_rounded,
+          )
+        : (
+            'AI RESULT NOT AVAILABLE',
+            '$missingCount of $total ${total == 1 ? 'check has' : 'checks have'} no AI result',
+            na,
+            Icons.help_outline_rounded,
+          );
+
+    final segments = [
+      AppSegment(value: passCount, label: 'pass', color: pass),
+      AppSegment(value: failCount, label: 'fail', color: fail),
+      AppSegment(value: pendingCount, label: 'pending', color: warn),
+      AppSegment(
+        value: missingCount,
+        label: 'not available',
+        color: na,
+        remaining: true,
+      ),
+    ];
+
+    return Semantics(
+      container: true,
+      label: 'Overall AI result: $verdict. $reason',
+      child: AppCard(
+        borderColor: color == na ? null : color.withValues(alpha: 0.35),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ExcludeSemantics(
               child: Row(
-                // Stretch so the childless colour boxes get the bar height.
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (passCount > 0)
-                    Expanded(
-                      flex: passCount,
-                      child: const ColoredBox(color: pass),
+                  AppIconTile(icon: icon, color: color),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'OVERALL AI RESULT',
+                          style: AppText.overline,
+                        ),
+                        const SizedBox(height: AppSpacing.xxs),
+                        Text(
+                          verdict,
+                          style: AppText.pageTitle.copyWith(
+                            color: color == na ? textPrimary : color,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xxs),
+                        Text(reason, style: AppText.bodySecondary),
+                      ],
                     ),
-                  if (failCount > 0)
-                    Expanded(
-                      flex: failCount,
-                      child: const ColoredBox(color: fail),
-                    ),
-                  if (otherCount > 0)
-                    Expanded(
-                      flex: otherCount,
-                      child: const ColoredBox(color: surface2),
-                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Row(
-            children: [
-              Expanded(
-                child: _Tally(value: passCount, label: "Pass", color: pass),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _Tally(value: failCount, label: "Fail", color: fail),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _Tally(
-                  value: otherCount,
-                  label: "Not Available",
-                  color: na,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Row(
-            children: [
-              const Icon(Icons.touch_app_outlined, size: 16, color: na),
-              const SizedBox(width: AppSpacing.xs + 2),
-              Expanded(
-                child: Text(
-                  "Tap a question to change its result.",
-                  style: AppText.caption,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Tally extends StatelessWidget {
-  final int value;
-  final String label;
-  final Color color;
-
-  const _Tally({required this.value, required this.label, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    final active = value > 0;
-    return Semantics(
-      label: '$value $label',
-      excludeSemantics: true,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm + 2,
-          vertical: AppSpacing.sm,
-        ),
-        decoration: BoxDecoration(
-          color: active ? color.withValues(alpha: 0.08) : surface2,
-          borderRadius: BorderRadius.circular(AppRadius.sm),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '$value',
-              style: AppText.sectionTitle.copyWith(
-                color: active ? color : textSecondary,
-              ),
-            ),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppText.caption.copyWith(color: active ? color : na),
-            ),
+            const SizedBox(height: AppSpacing.md),
+            // Proportional Pass / Fail / Pending / Not available bar.
+            AppSegmentedBar(segments: segments),
+            const SizedBox(height: AppSpacing.sm),
+            AppSegmentLegend(segments: segments),
           ],
         ),
       ),
@@ -358,14 +342,16 @@ class _Tally extends StatelessWidget {
   }
 }
 
-/// One question: number + result, question text, a "Change result"
-/// affordance (the whole card opens the sheet for this question only) and
-/// collapsible Result Details.
+/// One question, in priority order: the question, the AI result, what the
+/// AI found (collapsible), then manual modification (remark, "Changed by
+/// you" and the Change result action).
 class _QuestionCard extends StatelessWidget {
   final ResultData item;
   final String label;
-  final String? result;
   final bool expanded;
+
+  /// True when the result was changed from this screen in this session.
+  final bool changedByUser;
 
   /// Null when the details can't be collapsed (single question).
   final VoidCallback? onToggleDetails;
@@ -374,8 +360,8 @@ class _QuestionCard extends StatelessWidget {
   const _QuestionCard({
     required this.item,
     required this.label,
-    this.result,
     required this.expanded,
+    required this.changedByUser,
     required this.onToggleDetails,
     required this.onTap,
   });
@@ -383,10 +369,12 @@ class _QuestionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = item.questionText;
-    final lower = result?.trim().toLowerCase();
-    final Color? tint = lower == 'fail'
+    final status = _statusOf(item);
+    final badge = _statusBadge(item);
+    final remark = item.aiRemark;
+    final Color? tint = status == _AiStatus.fail
         ? fail.withValues(alpha: 0.45)
-        : lower == 'pass'
+        : status == _AiStatus.pass
         ? pass.withValues(alpha: 0.35)
         : null;
 
@@ -396,12 +384,13 @@ class _QuestionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Tappable part: opens the Change Result sheet for this question.
+          // Question + AI result. Tapping opens the change sheet for this
+          // question only.
           Semantics(
             button: true,
             label:
                 '$label. ${_hasText(text) ? text!.trim() : ''}. '
-                'Result: ${result ?? 'Not Available'}. Change result',
+                'AI result: ${badge.label}. Change result',
             excludeSemantics: true,
             child: InkWell(
               onTap: onTap,
@@ -418,10 +407,16 @@ class _QuestionCard extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(child: _SectionLabel(label)),
-                        const SizedBox(width: AppSpacing.sm),
-                        result == null
-                            ? const StatusBadge.neutral(label: 'Not Available')
-                            : StatusBadge.fromResult(result),
+                        if (changedByUser) ...[
+                          const SizedBox(width: AppSpacing.sm),
+                          const StatusBadge(
+                            label: 'Changed by you',
+                            color: appColor,
+                            background: accentLight,
+                            icon: Icons.edit_rounded,
+                            dense: true,
+                          ),
+                        ],
                       ],
                     ),
                     const SizedBox(height: AppSpacing.sm),
@@ -433,33 +428,35 @@ class _QuestionCard extends StatelessWidget {
                     Row(
                       children: [
                         const Icon(
-                          Icons.edit_outlined,
-                          size: 16,
-                          color: appColor,
+                          Icons.auto_awesome_outlined,
+                          size: AppIconSize.sm,
+                          color: na,
                         ),
-                        const SizedBox(width: AppSpacing.xs + 2),
+                        const SizedBox(width: AppSpacing.iconGap),
+                        const Text('AI result', style: AppText.bodySecondary),
+                        const SizedBox(width: AppSpacing.md),
                         Expanded(
-                          child: Text(
-                            "Change result",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppText.chip.copyWith(color: appColor),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: badge,
                           ),
-                        ),
-                        const Icon(
-                          Icons.chevron_right_rounded,
-                          size: 20,
-                          color: appColor,
                         ),
                       ],
                     ),
+                    if (_hasText(remark)) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      _InlineNotice(
+                        icon: Icons.chat_bubble_outline_rounded,
+                        text: 'Remark: ${remark!.trim()}',
+                      ),
+                    ],
                   ],
                 ),
               ),
             ),
           ),
           const Divider(height: 1),
-          // Result Details header (toggle) + content.
+          // What the AI found (toggle) + content.
           InkWell(
             onTap: onToggleDetails,
             child: ConstrainedBox(
@@ -476,7 +473,7 @@ class _QuestionCard extends StatelessWidget {
                     if (onToggleDetails != null)
                       AnimatedRotation(
                         turns: expanded ? 0.5 : 0,
-                        duration: const Duration(milliseconds: 200),
+                        duration: AppMotion.standard,
                         child: const Icon(
                           Icons.keyboard_arrow_down_rounded,
                           color: textSecondary,
@@ -488,7 +485,7 @@ class _QuestionCard extends StatelessWidget {
             ),
           ),
           AnimatedCrossFade(
-            duration: const Duration(milliseconds: 200),
+            duration: AppMotion.standard,
             crossFadeState: expanded
                 ? CrossFadeState.showSecond
                 : CrossFadeState.showFirst,
@@ -501,6 +498,48 @@ class _QuestionCard extends StatelessWidget {
                 AppSpacing.sm,
               ),
               child: _ResultDetails(item: item),
+            ),
+          ),
+          const Divider(height: 1),
+          // Manual modification.
+          ExcludeSemantics(
+            child: InkWell(
+              onTap: onTap,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: AppSpacing.minTouchTarget,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.card,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.edit_outlined,
+                        size: AppIconSize.sm,
+                        color: onTap == null ? textMuted : appColor,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          "Change result",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppText.chip.copyWith(
+                            color: onTap == null ? textMuted : appColor,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        size: AppIconSize.md,
+                        color: onTap == null ? textMuted : appColor,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -519,27 +558,27 @@ class _ResultDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final response = item.aiResponse;
-    final overall = _availableResult(item);
-
-    // No overall result yet (missing or pending): show only the notice.
-    if (response == null || overall == null) {
-      return const _InlineNotice(
-        icon: Icons.info_outline_rounded,
-        text: "AI Result Not Available",
-      );
+    switch (_statusOf(item)) {
+      case _AiStatus.pending:
+        return const _InlineNotice(
+          icon: Icons.schedule_rounded,
+          text: "The AI is still analysing this check. Pull down to refresh.",
+        );
+      case _AiStatus.notAvailable:
+        return const _InlineNotice(
+          icon: Icons.help_outline_rounded,
+          text: "AI result not available",
+        );
+      case _AiStatus.pass:
+      case _AiStatus.fail:
+      case _AiStatus.other:
+        // The result itself is shown on the card; here only what the AI
+        // found.
+        return _AnalysisCard(
+          analysis: response?.analysis,
+          message: response?.message,
+        );
     }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _DetailRow(
-          label: "Overall Result",
-          child: StatusBadge.fromResult(overall, dense: true),
-        ),
-        const Divider(height: 1, thickness: 1, color: border),
-        _AnalysisCard(analysis: response.analysis, message: response.message),
-      ],
-    );
   }
 }
 
@@ -550,6 +589,10 @@ class _ChangeResultSheet extends StatefulWidget {
   final String? current;
   final String? currentRemark;
 
+  /// Badge for the current result as shown on the card (PASS, FAIL,
+  /// PENDING, not available); falls back to [current].
+  final StatusBadge? currentBadge;
+
   /// Called with the new result and remark once the API has accepted them.
   final void Function(String result, String remark) onUpdated;
 
@@ -558,6 +601,7 @@ class _ChangeResultSheet extends StatefulWidget {
     this.question,
     this.current,
     this.currentRemark,
+    this.currentBadge,
     required this.onUpdated,
   });
 
@@ -604,7 +648,7 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
 
     if (response?.success == true) {
       widget.onUpdated(result, remark);
-      CustomLoader.message(
+      CustomLoader.success(
         _hasText(response!.message)
             ? response.message!.trim()
             : "Result updated successfully",
@@ -621,24 +665,33 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
     if (mounted) setState(() => _isUpdating = false);
   }
 
+  /// The primary button says exactly what it will do.
+  String get _actionLabel {
+    final current = widget.current?.trim().toUpperCase();
+    if (_selected == null) return "Select a result";
+    if (_selected != current) return "Update to $_selected";
+    if (_remark != (widget.currentRemark?.trim() ?? '')) return "Update remark";
+    return "No changes to update";
+  }
+
+  void _close() => Navigator.pop(context);
+
   @override
   Widget build(BuildContext context) {
+    final current = widget.current?.trim().toUpperCase();
     return PopScope(
       canPop: !_isUpdating,
       child: AppBottomSheet(
-        title: "Change Result",
+        title: "Change result",
+        showClose: true,
+        onClose: _isUpdating ? null : _close,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // The one question this sheet edits, with its current result.
             Container(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md,
-                AppSpacing.md,
-                AppSpacing.md,
-                0,
-              ),
+              padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
                 color: surface2,
                 borderRadius: BorderRadius.circular(AppRadius.md),
@@ -646,23 +699,36 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const _SectionLabel("Inspection Question"),
-                  const SizedBox(height: 6),
                   Text(
                     _hasText(widget.question) ? widget.question!.trim() : '—',
-                    style: AppText.title.copyWith(height: 1.4),
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppText.title,
                   ),
-                  const SizedBox(height: 4),
-                  _DetailRow(
-                    label: "Current Result",
-                    child: _resultBadge(widget.current),
+                  const SizedBox(height: AppSpacing.sm),
+                  Row(
+                    children: [
+                      const Text(
+                        "Current result",
+                        style: AppText.bodySecondary,
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child:
+                              widget.currentBadge ??
+                              _resultBadge(widget.current),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.xl),
-            const _SectionLabel("Change To"),
-            const SizedBox(height: 10),
+            const SizedBox(height: AppSpacing.lg),
+            const _SectionLabel("New result"),
+            const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
                 Expanded(
@@ -670,21 +736,21 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
                     label: "PASS",
                     icon: Icons.check_circle_rounded,
                     color: pass,
-                    background: passLight,
                     selected: _selected == "PASS",
+                    isCurrent: current == "PASS",
                     onTap: _isUpdating
                         ? null
                         : () => setState(() => _selected = "PASS"),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: _ResultOption(
                     label: "FAIL",
                     icon: Icons.cancel_rounded,
                     color: fail,
-                    background: failLight,
                     selected: _selected == "FAIL",
+                    isCurrent: current == "FAIL",
                     onTap: _isUpdating
                         ? null
                         : () => setState(() => _selected = "FAIL"),
@@ -692,19 +758,36 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-            const _SectionLabel("Remark"),
-            const SizedBox(height: 10),
+            const SizedBox(height: AppSpacing.lg),
+            const SectionHeader(
+              'Remark',
+              trailing: Text('OPTIONAL', style: AppText.overline),
+            ),
             _RemarkField(
               controller: _remarkController,
               enabled: !_isUpdating,
               onChanged: (_) => setState(() {}),
             ),
-            const SizedBox(height: 20),
-            PrimaryButton(
-              label: "Update",
-              onPressed: _canUpdate ? _update : null,
-              loading: _isUpdating,
+            const SizedBox(height: AppSpacing.md),
+            Row(
+              children: [
+                Expanded(
+                  child: SecondaryButton(
+                    label: "Cancel",
+                    onPressed: _isUpdating ? null : _close,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  flex: 2,
+                  child: PrimaryButton(
+                    label: _actionLabel,
+                    icon: _canUpdate ? Icons.check_rounded : null,
+                    onPressed: _canUpdate ? _update : null,
+                    loading: _isUpdating,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -713,31 +796,33 @@ class _ChangeResultSheetState extends State<_ChangeResultSheet> {
   }
 }
 
+/// One choice in the "New result" pair: solid fill when selected, outlined
+/// otherwise, with a "Current" note on the result the question has now.
 class _ResultOption extends StatelessWidget {
   final String label;
   final IconData icon;
   final Color color;
-  final Color background;
   final bool selected;
+  final bool isCurrent;
   final VoidCallback? onTap;
 
   const _ResultOption({
     required this.label,
     required this.icon,
     required this.color,
-    required this.background,
     required this.selected,
+    required this.isCurrent,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Selected = solid fill with white text, so the choice reads at a glance.
     final radius = BorderRadius.circular(AppRadius.md);
+    final fg = selected ? textWhite : color;
     return Semantics(
       button: true,
       selected: selected,
-      label: label,
+      label: isCurrent ? '$label, current result' : label,
       excludeSemantics: true,
       child: Material(
         color: selected ? color : surface,
@@ -745,24 +830,44 @@ class _ResultOption extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: radius,
-          child: Container(
-            height: AppSpacing.buttonHeight,
+          child: AnimatedContainer(
+            duration: AppMotion.fast,
+            constraints: const BoxConstraints(
+              minHeight: AppSpacing.buttonHeight,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.xs,
+            ),
             decoration: BoxDecoration(
               borderRadius: radius,
               border: Border.all(color: selected ? color : borderDark),
             ),
-            child: Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 20, color: selected ? textWhite : color),
-                const SizedBox(width: AppSpacing.sm),
-                Text(
-                  label,
-                  style: AppText.button.copyWith(
-                    fontFamily: "Bold",
-                    color: selected ? textWhite : color,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(icon, size: AppIconSize.md, color: fg),
+                    const SizedBox(width: AppSpacing.sm),
+                    Flexible(
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.button.copyWith(color: fg),
+                      ),
+                    ),
+                  ],
                 ),
+                if (isCurrent)
+                  Text(
+                    'Current',
+                    style: AppText.caption.copyWith(
+                      color: selected ? textWhite : textSecondary,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -804,15 +909,15 @@ class _RemarkField extends StatelessWidget {
       keyboardType: TextInputType.multiline,
       textCapitalization: TextCapitalization.sentences,
       cursorColor: appColor,
-      style: const TextStyle(fontSize: 14, color: textPrimary, height: 1.4),
+      style: AppText.body,
       decoration: InputDecoration(
         hintText: "Add a remark (optional)",
-        hintStyle: const TextStyle(fontSize: 14, color: textMuted),
+        hintStyle: AppText.hint,
         counterStyle: AppText.caption,
         filled: true,
         fillColor: surface,
         isDense: true,
-        contentPadding: const EdgeInsets.all(12),
+        contentPadding: const EdgeInsets.all(AppSpacing.md),
         border: outline(border),
         enabledBorder: outline(border),
         disabledBorder: outline(border),
@@ -828,29 +933,53 @@ class _AnalysisCard extends StatelessWidget {
 
   const _AnalysisCard({required this.analysis, this.message});
 
-  /// Analysis keys that are kept in the model but not shown to the user.
-  static const _hiddenKeys = {'processing_time_sec'};
+  /// Analysis keys that are kept in the model but not shown to the user:
+  /// timings, request/model identifiers, timestamps, storage locations.
+  static const _hiddenKeys = {
+    'processing_time_sec',
+    'processing_time',
+    'request_id',
+    'id',
+    'model',
+    'model_name',
+    'model_version',
+    'version',
+    'timestamp',
+    'created_at',
+    'updated_at',
+    'latency',
+    'latency_ms',
+    'inference_time',
+    'debug',
+  };
+
+  /// Keys that look technical by name (paths, URLs, *_ms / *_sec timings).
+  static bool _isTechnical(String key) {
+    final k = key.toLowerCase();
+    return _hiddenKeys.contains(k) ||
+        k.endsWith('_ms') ||
+        k.endsWith('_sec') ||
+        k.endsWith('_url') ||
+        k.endsWith('_path') ||
+        k.endsWith('_id');
+  }
 
   @override
   Widget build(BuildContext context) {
     final analysis = this.analysis is Map
         ? Map.fromEntries(
             (this.analysis as Map).entries.where(
-              (e) => !_hiddenKeys.contains(e.key.toString()),
+              (e) => !_isTechnical(e.key.toString()),
             ),
           )
         : this.analysis;
 
     if (_isEmptyValue(analysis)) {
-      return _KeyValueCard(
-        title: "Analysis",
-        rows: const [],
-        footer: _InlineNotice(
-          icon: Icons.info_outline_rounded,
-          text: _hasText(message)
-              ? message!.trim()
-              : "No analysis data returned.",
-        ),
+      return _InlineNotice(
+        icon: Icons.info_outline_rounded,
+        text: _hasText(message)
+            ? message!.trim()
+            : "No further details from the AI for this check.",
       );
     }
 
@@ -874,50 +1003,27 @@ class _AnalysisCard extends StatelessWidget {
       rows.add(_DetailRow(label: 'Analysis', child: _valueBadge(analysis)));
     }
 
-    return _KeyValueCard(title: "Analysis", rows: rows);
+    return _KeyValueCard(rows: rows);
   }
 }
 
-/// Titled group of key-value rows separated by hairline dividers, laid out
+/// Key-value rows separated by hairline dividers, laid out
 /// inline (it sits inside the question card).
 class _KeyValueCard extends StatelessWidget {
-  final String? title;
   final List<Widget> rows;
-  final Widget? footer;
 
-  const _KeyValueCard({this.title, required this.rows, this.footer});
+  const _KeyValueCard({required this.rows});
 
   @override
   Widget build(BuildContext context) {
-    final children = <Widget>[];
-    if (title != null) {
-      children.add(
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: _SectionLabel(title!),
-        ),
-      );
-    }
-    for (var i = 0; i < rows.length; i++) {
-      if (i > 0) {
-        children.add(const Divider(height: 1, thickness: 1, color: border));
-      }
-      children.add(rows[i]);
-    }
-    if (footer != null) {
-      if (children.isNotEmpty) children.add(const SizedBox(height: 8));
-      children.add(footer!);
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: title != null
-          ? [
-              const SizedBox(height: AppSpacing.md),
-              ...children,
-              const SizedBox(height: AppSpacing.xs),
-            ]
-          : children,
+      children: [
+        for (var i = 0; i < rows.length; i++) ...[
+          if (i > 0) const Divider(height: 1, thickness: 1, color: border),
+          rows[i],
+        ],
+      ],
     );
   }
 }
@@ -933,11 +1039,11 @@ class _DetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Row(
         children: [
           Expanded(child: Text(label, style: _labelStyle)),
-          const SizedBox(width: 16),
+          const SizedBox(width: AppSpacing.lg),
           Flexible(
             child: Align(alignment: Alignment.centerRight, child: child),
           ),
@@ -968,8 +1074,8 @@ class _InlineNotice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: naLight,
         borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -978,7 +1084,7 @@ class _InlineNotice extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, size: 18, color: na),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(child: Text(text, style: AppText.bodySecondary)),
         ],
       ),
@@ -997,7 +1103,7 @@ class _ScrollableState extends StatelessWidget {
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(AppSpacing.page),
-      children: [const SizedBox(height: 40), child],
+      children: [const SizedBox(height: AppSpacing.xxl), child],
     );
   }
 }
@@ -1013,9 +1119,53 @@ String? _availableResult(ResultData item) {
   return overall;
 }
 
+/// What the AI returned for a question, as shown to the inspector.
+enum _AiStatus { pass, fail, pending, notAvailable, other }
+
+/// Reads `ai_response.overall_result`: Pass / Fail / Pending, missing →
+/// not available, anything else is shown as returned.
+_AiStatus _statusOf(ResultData item) {
+  final overall = item.aiResponse?.overallResult?.trim().toLowerCase() ?? '';
+  return switch (overall) {
+    'pass' => _AiStatus.pass,
+    'fail' => _AiStatus.fail,
+    'pending' => _AiStatus.pending,
+    '' || 'null' => _AiStatus.notAvailable,
+    _ => _AiStatus.other,
+  };
+}
+
+/// PASS / FAIL / PENDING / "AI result not available" badge for [item].
+StatusBadge _statusBadge(ResultData item, {bool dense = false}) {
+  switch (_statusOf(item)) {
+    case _AiStatus.pass:
+      return StatusBadge.pass(label: 'PASS', dense: dense);
+    case _AiStatus.fail:
+      return StatusBadge.fail(label: 'FAIL', dense: dense);
+    case _AiStatus.pending:
+      return StatusBadge.pending(label: 'PENDING', dense: dense);
+    case _AiStatus.notAvailable:
+      return StatusBadge.neutral(
+        label: 'AI result not available',
+        icon: Icons.help_outline_rounded,
+        dense: dense,
+      );
+    case _AiStatus.other:
+      return StatusBadge.neutral(
+        label: item.aiResponse!.overallResult!.trim().toUpperCase(),
+        icon: Icons.info_outline_rounded,
+        dense: dense,
+      );
+  }
+}
+
 Widget _resultBadge(String? result) => result == null
-    ? const StatusBadge.neutral(label: 'Not Available', dense: true)
-    : StatusBadge.fromResult(result, dense: true);
+    ? const StatusBadge.neutral(
+        label: 'AI result not available',
+        icon: Icons.help_outline_rounded,
+        dense: true,
+      )
+    : StatusBadge.fromResult(result.trim().toUpperCase(), dense: true);
 
 bool _isEmptyValue(dynamic value) {
   if (value == null) return true;
@@ -1040,7 +1190,7 @@ String _humanize(String key) {
 /// everything else as plain text.
 Widget _valueBadge(dynamic value) {
   if (value == null || (value is String && value.trim().isEmpty)) {
-    return const Text('—', style: TextStyle(fontSize: 14, color: na));
+    return Text('—', style: AppText.body.copyWith(color: na));
   }
   if (value is bool) {
     return value
@@ -1063,6 +1213,6 @@ Widget _valueBadge(dynamic value) {
   return Text(
     text,
     textAlign: TextAlign.right,
-    style: AppText.title.copyWith(fontSize: 14),
+    style: AppText.label,
   );
 }

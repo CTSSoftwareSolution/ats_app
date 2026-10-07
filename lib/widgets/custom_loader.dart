@@ -1,12 +1,12 @@
-import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import '../utilities/color_data.dart';
+import '../utilities/new_app_theme/app_icon_size.dart';
 import '../utilities/new_app_theme/app_radius.dart';
 import '../utilities/new_app_theme/app_spacing.dart';
 import '../utilities/new_app_theme/app_text.dart';
 import 'new_app_ui/app_state_view.dart';
+import 'new_app_ui/app_toast.dart';
 
 class CustomLoader {
   static showToast(
@@ -24,28 +24,28 @@ class CustomLoader {
     EasyLoading.dismiss();
   }
 
+  /// Passing notice or hint ("2 photos left to capture").
   static message(String msg) {
-    _toast(msg, background: appColor);
+    showAppToast(msg);
   }
 
+  /// Passing confirmation of a finished action ("Result updated").
+  static success(String msg) {
+    showAppToast(msg, tone: AppToastTone.success);
+  }
+
+  /// Passing failure the inspector should read ("Couldn't update result").
   static errorMessage(String msg) {
-    _toast(msg, background: fail);
-  }
-
-  static void _toast(String msg, {required Color background}) {
-    Fluttertoast.showToast(
-      msg: msg,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 2,
-      backgroundColor: background,
-      textColor: whiteColor,
-      fontSize: 14.0,
-    );
+    showAppToast(msg, tone: AppToastTone.error);
   }
 
   static internetMessage({required String msg, required BuildContext context}) {
-    context.showCustomSnackBar(message: "No Internet", backgroundColor: fail);
+    _showSnackBar(
+      context,
+      icon: Icons.wifi_off_rounded,
+      color: fail,
+      message: "No Internet",
+    );
   }
 
   /// Inline full-area spinner; same as [AppLoadingView].
@@ -95,7 +95,7 @@ class CustomLoader {
       SnackBar(
         content: Row(
           children: [
-            Icon(icon, color: textWhite, size: 22),
+            Icon(icon, color: textWhite, size: AppIconSize.lg),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
@@ -105,12 +105,9 @@ class CustomLoader {
                   if (title != null) ...[
                     Text(
                       title,
-                      style: AppText.title.copyWith(
-                        fontSize: 14,
-                        color: textWhite,
-                      ),
+                      style: AppText.label.copyWith(color: textWhite),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xxs),
                   ],
                   Text(
                     message,
@@ -129,7 +126,7 @@ class CustomLoader {
         margin: const EdgeInsets.all(AppSpacing.lg),
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.lg,
-          vertical: 14,
+          vertical: AppSpacing.md,
         ),
         elevation: 0,
         duration: duration,

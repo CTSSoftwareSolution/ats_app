@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import '../../utilities/color_data.dart';
 import '../../utilities/new_app_theme/app_icon_size.dart';
 import '../../utilities/new_app_theme/app_spacing.dart';
+import 'app_spinner.dart';
 
+/// The one main action of a screen or sheet: 52dp, full width, brand fill.
+/// Pass [color] = [fail] for a destructive action and [loading] while it
+/// runs. Usually placed in a [BottomActionBar].
 class PrimaryButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -33,17 +37,8 @@ class PrimaryButton extends StatelessWidget {
       return FilledButton(
         onPressed: handler,
         style: style,
-        child: Semantics(
-          label: label,
-          child: const SizedBox(
-            width: 22,
-            height: 22,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.5,
-              color: textMuted,
-            ),
-          ),
-        ),
+        // Disabled while loading, so the spinner sits on the surface2 fill.
+        child: AppSpinner.small(color: textMuted, semanticsLabel: label),
       );
     }
     return icon == null

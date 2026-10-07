@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../utilities/color_data.dart';
+import '../../utilities/new_app_theme/app_icon_size.dart';
+import '../../utilities/new_app_theme/app_radius.dart';
+import '../../utilities/new_app_theme/app_spacing.dart';
+import '../../utilities/new_app_theme/app_text.dart';
 
+/// Stadium-shaped status pill: tinted background, hairline border, icon and
+/// text, so status never relies on colour alone. Use the named
+/// constructors so a given status always looks the same.
 class StatusBadge extends StatelessWidget {
   final String label;
   final Color color;
@@ -34,6 +41,24 @@ class StatusBadge extends StatelessWidget {
   }) : color = warn,
        background = warnLight,
        icon = Icons.schedule_rounded;
+
+  /// Work has started but isn't finished (e.g. one of two stages done).
+  const StatusBadge.inProgress({
+    super.key,
+    this.label = 'In progress',
+    this.dense = false,
+  }) : color = accent,
+       background = accentLight,
+       icon = Icons.timelapse_rounded;
+
+  /// Every step is finished and nothing failed.
+  const StatusBadge.completed({
+    super.key,
+    this.label = 'Completed',
+    this.dense = false,
+  }) : color = pass,
+       background = passLight,
+       icon = Icons.task_alt_rounded;
 
   const StatusBadge.neutral({
     super.key,
@@ -100,31 +125,32 @@ class StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: dense ? 8 : 10,
+        horizontal: dense ? AppSpacing.sm : 10,
         vertical: dense ? 3 : 5,
       ),
       decoration: BoxDecoration(
         color: background,
-        borderRadius: BorderRadius.circular(100),
+        borderRadius: BorderRadius.circular(AppRadius.full),
         border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: dense ? 12 : 14, color: color),
-            const SizedBox(width: 4),
+            Icon(
+              icon,
+              size: dense ? AppIconSize.xxs : AppIconSize.xs,
+              color: color,
+            ),
+            const SizedBox(width: AppSpacing.xs),
           ],
           Flexible(
             child: Text(
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: (dense ? AppText.badgeDense : AppText.badge).copyWith(
                 color: color,
-                fontSize: dense ? 11 : 12,
-                fontFamily: "Bold",
-                letterSpacing: 0.2,
               ),
             ),
           ),

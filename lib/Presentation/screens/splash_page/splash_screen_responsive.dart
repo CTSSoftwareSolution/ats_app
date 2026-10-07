@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../utilities/color_data.dart';
 import '../../../utilities/logo_screen_item.dart';
+import '../../../widgets/new_app_ui/app_spinner.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 
 class SplashScreenResponsiveLayout extends StatefulWidget {
@@ -31,15 +32,7 @@ class _SplashScreenResponsiveLayoutState
                   const Expanded(child: Center(child: LogoScreenItem())),
                   Semantics(
                     label: 'Loading',
-                    child: const SizedBox(
-                      width: 28,
-                      height: 28,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: textWhite,
-                        backgroundColor: Colors.transparent,
-                      ),
-                    ),
+                    child: const AppSpinner(color: textWhite),
                   ),
                   SizedBox(
                     height: constraints.isTablet ? 96 : AppSpacing.xl * 2.5,

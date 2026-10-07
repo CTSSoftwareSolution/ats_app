@@ -260,7 +260,7 @@ class _ProfileMenuTile extends StatelessWidget {
                       ),
                     ),
                     if (subtitle.isNotEmpty) ...[
-                      const SizedBox(height: 2),
+                      const SizedBox(height: AppSpacing.xxs),
                       Text(
                         subtitle,
                         style: AppText.caption.copyWith(color: textSecondary),

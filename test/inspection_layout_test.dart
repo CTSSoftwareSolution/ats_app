@@ -135,10 +135,25 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(find.text('Pre-Inspection'), findsOneWidget);
         expect(find.text('High severity'), findsOneWidget);
-        expect(find.text('Q1'), findsNWidgets(2));
+        // The first question of each category shows its number (or its
+        // result once answered) in the marker.
+        expect(
+          find.byWidgetPredicate(
+            (w) =>
+                w is Semantics &&
+                (w.properties.label ?? '').startsWith('Question 1,'),
+          ),
+          findsNWidgets(2),
+        );
+        // Answers say what they mean.
+        expect(find.text('Yes · Pass'), findsWidgets);
+        expect(find.text('No · Fail'), findsWidgets);
       });
     }
   }
+
+  _questionUiTests();
+  _underPitTests();
 
   testWidgets('"No" filter shows only failed questions', (tester) async {
     final form = await tester.runAsync(_loadedProvider);
@@ -171,5 +186,90 @@ void main() {
     ); // toggles off
     await _pump(tester, form, width: 360);
     expect(find.text('Nothing answered yet'), findsOneWidget);
+  });
+}
+
+/// Labels of every question marker (number, or result once answered).
+List<String> _markerLabels(WidgetTester tester) => tester
+    .widgetList<Semantics>(
+      find.byWidgetPredicate(
+        (w) =>
+            w is Semantics &&
+            (w.properties.label ?? '').startsWith('Question '),
+      ),
+    )
+    .map((s) => s.properties.label!)
+    .toList();
+
+void _questionUiTests() {
+  testWidgets('markers show passed / failed / not answered', (tester) async {
+    final form = await tester.runAsync(_loadedProvider);
+    await _pump(tester, form!, width: 360);
+    final labels = _markerLabels(tester);
+    expect(labels, contains('Question 1, passed'));
+    expect(labels, contains('Question 2, failed'));
+    expect(labels, contains('Question 3, not answered'));
+    // The failed question groups its details in one panel.
+    expect(find.text('Defect details').hitTestable(), findsOneWidget);
+    expect(find.text('Add evidence photo').hitTestable(), findsOneWidget);
+  });
+
+  testWidgets('tapping "Yes · Pass" records Pass through the provider', (
+    tester,
+  ) async {
+    final form = await tester.runAsync(_loadedProvider);
+    await _pump(tester, form!, width: 360);
+    // Third question of the first category is still open.
+    await tester.tap(find.text('Yes · Pass').at(2));
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(
+      form.sections[0].categories[0].questions[2].answer,
+      AnswerState.Pass,
+    );
+    expect(_markerLabels(tester), contains('Question 3, passed'));
+  });
+}
+
+/// Under-PIT is the same screen in another provider mode: one section, no
+/// tab strip, same question UI.
+void _underPitTests() {
+  Future<InspectionFormProvider> underPit() async {
+    final p = await _loadedProvider();
+    p.setInspectionMode(InspectionMode.underPitInspection);
+    return p;
+  }
+
+  for (final width in [320.0, 412.0, 600.0]) {
+    for (final scale in [1.0, 1.3]) {
+      testWidgets('Under-PIT section fits at ${width}dp, text x$scale', (
+        tester,
+      ) async {
+        final form = await tester.runAsync(underPit);
+        await _pump(tester, form!, width: width, textScale: scale);
+        expect(tester.takeException(), isNull);
+        expect(find.text('Under-PIT Inspection'), findsOneWidget);
+        expect(find.text('Steering'), findsOneWidget);
+        expect(_markerLabels(tester), ['Question 1, not answered']);
+        expect(find.text('Yes · Pass'), findsOneWidget);
+        expect(find.text('No · Fail'), findsOneWidget);
+      });
+    }
+  }
+
+  testWidgets('Under-PIT "No · Fail" records Fail and opens defect details', (
+    tester,
+  ) async {
+    final form = await tester.runAsync(underPit);
+    await _pump(tester, form!, width: 360);
+    await tester.tap(find.text('No · Fail'));
+    await tester.pumpAndSettle();
+    expect(
+      form.visibleSections.single.categories.single.questions.single.answer,
+      AnswerState.Fail,
+    );
+    expect(_markerLabels(tester), ['Question 1, failed']);
+    expect(find.text('Defect details').hitTestable(), findsOneWidget);
+    expect(find.text('High severity'), findsOneWidget);
+    expect(find.text('Add evidence photo').hitTestable(), findsOneWidget);
   });
 }

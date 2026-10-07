@@ -4,9 +4,12 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../color_data.dart';
 import 'app_icon_size.dart';
+import 'app_layout.dart';
 import 'app_radius.dart';
+import 'app_shadow.dart';
 import 'app_spacing.dart';
 import 'app_text.dart';
+import '../../widgets/new_app_ui/app_spinner.dart';
 
 /// App-wide Material theme built from the ATS tokens ([AppText],
 /// [AppSpacing], [AppRadius], colours in color_data.dart).
@@ -14,7 +17,10 @@ import 'app_text.dart';
 /// Principles (see docs/design_system.md):
 /// * one brand colour ([appColor]); semantic colours only for status
 /// * flat surfaces: hairline borders instead of shadows, no gradients
-/// * 48dp minimum touch targets, 52dp primary actions
+///   ([AppShadow.overlay] only for popup menus)
+/// * small radii ([AppRadius]); 48dp minimum touch targets, 52dp primary
+///   actions
+/// * sheets and dialogs keep a readable width on tablets ([AppLayout])
 class AppTheme {
   static const SystemUiOverlayStyle statusBarStyle = SystemUiOverlayStyle(
     statusBarColor: appColor,
@@ -90,12 +96,7 @@ class AppTheme {
         titleSpacing: 0,
         iconTheme: IconThemeData(color: textWhite, size: AppIconSize.lg),
         actionsIconTheme: IconThemeData(color: textWhite, size: AppIconSize.lg),
-        titleTextStyle: TextStyle(
-          fontFamily: "SemiBold",
-          fontSize: 18,
-          color: textWhite,
-          letterSpacing: 0.1,
-        ),
+        titleTextStyle: AppText.appBarTitle,
         systemOverlayStyle: statusBarStyle,
       ),
 
@@ -171,14 +172,13 @@ class AppTheme {
         filled: true,
         fillColor: surface,
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 14,
-        ),
-        hintStyle: AppText.body.copyWith(color: textMuted),
+        contentPadding: const EdgeInsets.all(AppSpacing.inputPadding),
+        hintStyle: AppText.hint,
         labelStyle: AppText.fieldLabel,
         helperStyle: AppText.caption,
         errorStyle: AppText.caption.copyWith(color: fail),
+        errorMaxLines: 2,
+        counterStyle: AppText.caption,
         prefixIconColor: textSecondary,
         suffixIconColor: textSecondary,
         border: inputBorder(border),
@@ -195,10 +195,11 @@ class AppTheme {
         elevation: 0,
         barrierColor: scrim,
         insetPadding: const EdgeInsets.all(AppSpacing.xl),
+        constraints: const BoxConstraints(maxWidth: AppLayout.maxDialogWidth),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.xl),
         ),
-        titleTextStyle: AppText.sectionTitle.copyWith(fontSize: 17),
+        titleTextStyle: AppText.dialogTitle,
         contentTextStyle: AppText.body.copyWith(
           color: textSecondary,
           height: 1.5,
@@ -211,6 +212,7 @@ class AppTheme {
         modalElevation: 0,
         modalBarrierColor: scrim,
         showDragHandle: false,
+        constraints: BoxConstraints(maxWidth: AppLayout.maxSheetWidth),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppRadius.xl),
@@ -223,6 +225,7 @@ class AppTheme {
         elevation: 0,
         contentTextStyle: AppText.body.copyWith(color: textWhite),
         actionTextColor: textWhiteSub,
+        insetPadding: const EdgeInsets.all(AppSpacing.lg),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
@@ -239,6 +242,7 @@ class AppTheme {
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: appColor,
         linearTrackColor: surface2,
+        linearMinHeight: 4,
         circularTrackColor: Colors.transparent,
       ),
       dividerTheme: const DividerThemeData(
@@ -246,13 +250,70 @@ class AppTheme {
         thickness: 1,
         space: 1,
       ),
+      // Tab strips sit in the brand app bar (AppTopBar.bottom), so labels
+      // are white; the selected tab gets a 3dp white underline.
       tabBarTheme: TabBarThemeData(
         dividerColor: Colors.transparent,
         labelColor: textWhite,
         unselectedLabelColor: textWhiteSub,
         indicatorColor: textWhite,
-        labelStyle: AppText.navLabel,
-        unselectedLabelStyle: AppText.navLabel.copyWith(fontFamily: "Medium"),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: const UnderlineTabIndicator(
+          borderSide: BorderSide(color: textWhite, width: 3),
+        ),
+        labelStyle: AppText.chip,
+        unselectedLabelStyle: AppText.chip.copyWith(fontFamily: "Medium"),
+        overlayColor: WidgetStatePropertyAll(
+          textWhite.withValues(alpha: 0.08),
+        ),
+      ),
+      // Two- or three-way choices (Pass / Fail). Selected: brand tint.
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: SegmentedButton.styleFrom(
+          backgroundColor: surface,
+          foregroundColor: textPrimary,
+          selectedBackgroundColor: accentLight,
+          selectedForegroundColor: appColor,
+          side: const BorderSide(color: borderDark),
+          minimumSize: const Size(0, AppSpacing.minTouchTarget),
+          textStyle: AppText.chip,
+          shape: buttonShape,
+        ),
+      ),
+      radioTheme: RadioThemeData(
+        fillColor: WidgetStateProperty.resolveWith(
+          (states) =>
+              states.contains(WidgetState.selected) ? appColor : borderDark,
+        ),
+      ),
+      // Collapsible groups (inspection categories, result details): flat,
+      // no extra dividers when expanded.
+      expansionTileTheme: const ExpansionTileThemeData(
+        backgroundColor: Colors.transparent,
+        collapsedBackgroundColor: Colors.transparent,
+        tilePadding: EdgeInsets.symmetric(horizontal: AppSpacing.card),
+        childrenPadding: EdgeInsets.fromLTRB(
+          AppSpacing.card,
+          0,
+          AppSpacing.card,
+          AppSpacing.card,
+        ),
+        iconColor: appColor,
+        collapsedIconColor: textSecondary,
+        textColor: textPrimary,
+        collapsedTextColor: textPrimary,
+        shape: Border(),
+        collapsedShape: Border(),
+      ),
+      badgeTheme: const BadgeThemeData(
+        backgroundColor: fail,
+        textColor: textWhite,
+        textStyle: AppText.badgeDense,
+      ),
+      scrollbarTheme: ScrollbarThemeData(
+        thickness: const WidgetStatePropertyAll(4),
+        radius: const Radius.circular(AppRadius.xs),
+        thumbColor: WidgetStatePropertyAll(textMuted.withValues(alpha: 0.6)),
       ),
       iconTheme: const IconThemeData(
         color: textSecondary,
@@ -261,6 +322,7 @@ class AppTheme {
       listTileTheme: const ListTileThemeData(
         contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         minVerticalPadding: AppSpacing.md,
+        minTileHeight: 56,
         iconColor: textSecondary,
         titleTextStyle: AppText.title,
         subtitleTextStyle: AppText.bodySecondary,
@@ -275,7 +337,9 @@ class AppTheme {
         ),
       ),
       checkboxTheme: CheckboxThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xs),
+        ),
         side: const BorderSide(color: borderDark, width: 1.5),
       ),
       switchTheme: SwitchThemeData(
@@ -297,7 +361,8 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         // The one place a shadow is kept: a floating menu needs to read as
         // being above the page.
-        elevation: 2,
+        elevation: AppShadow.overlayElevation,
+        shadowColor: AppShadow.color,
         textStyle: AppText.body,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
@@ -308,6 +373,25 @@ class AppTheme {
         cursorColor: appColor,
         selectionColor: appColor.withValues(alpha: 0.18),
         selectionHandleColor: appColor,
+      ),
+      // Tablet rail: brand surface, white icons, active item on a 16% white
+      // pill (matches TabletNavigationRail).
+      navigationRailTheme: NavigationRailThemeData(
+        backgroundColor: appColor,
+        indicatorColor: textWhite.withValues(alpha: 0.16),
+        selectedIconTheme: const IconThemeData(
+          color: textWhite,
+          size: AppIconSize.lg,
+        ),
+        unselectedIconTheme: const IconThemeData(
+          color: textWhiteSub,
+          size: AppIconSize.lg,
+        ),
+        // Same weight as unselected; colour and the pill mark selection.
+        selectedLabelTextStyle: AppText.navLabel.copyWith(color: textWhite),
+        unselectedLabelTextStyle: AppText.navLabel.copyWith(
+          color: textWhiteSub,
+        ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: surface,
@@ -330,6 +414,8 @@ class AppTheme {
     EasyLoading.instance
       ..loadingStyle = EasyLoadingStyle.custom
       ..indicatorType = EasyLoadingIndicatorType.ring
+      // The app's one spinner, so blocking loads look like in-page ones.
+      ..indicatorWidget = const AppSpinner.large()
       ..indicatorSize = 36
       ..lineWidth = 3
       ..radius = AppRadius.lg
@@ -341,10 +427,10 @@ class AppTheme {
       ..indicatorColor = appColor
       ..progressColor = appColor
       ..textColor = textPrimary
-      ..textStyle = AppText.chip.copyWith(fontSize: 14)
+      ..textStyle = AppText.label
       ..maskType = EasyLoadingMaskType.custom
       ..maskColor = scrim
-      ..boxShadow = const <BoxShadow>[]
+      ..boxShadow = AppShadow.none
       ..userInteractions = false
       ..dismissOnTap = false;
   }

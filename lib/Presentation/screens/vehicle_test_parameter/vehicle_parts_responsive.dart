@@ -7,6 +7,8 @@ import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_page
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/vehicle_parts_responsive_item.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/media_upload_tracker.dart';
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/upload_queue_sheet.dart';
+import 'package:ats_app/Presentation/screens/vehicle_test_parameter/capture_status.dart';
+import 'package:ats_app/Presentation/screens/vehicle_test_parameter/media_pipeline_summary.dart';
 import 'package:ats_app/utilities/preferences.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +21,7 @@ import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/custom_loader.dart';
 import '../../../widgets/new_app_ui/app_state_view.dart';
 import '../../../widgets/new_app_ui/bottom_action_bar.dart';
-import '../../../widgets/new_app_ui/status_badge.dart';
 import '../../../widgets/new_app_ui/primary_button.dart';
-import '../../../utilities/new_app_theme/app_icon_size.dart';
-import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../provider/ai_inspection_details_provider.dart';
 import '../../provider/ai_result_provider.dart';
 import '../../provider/vehicle_class_provider.dart';
@@ -106,6 +105,27 @@ class _VehiclePartsResponsiveLayoutState
     final isLastStep =
         partsProvider.currentPage == partsProvider.totalPages - 1;
 
+    // The first part on this step still missing media: the one the
+    // inspector is working on.
+    int? upNext;
+    for (int i = 0; i < partsProvider.currentPageData.length; i++) {
+      final index = partsProvider.currentPage * partsProvider.itemsPerPage + i;
+      if (!VehiclePartsResponsiveItem.isCaptured(
+        partsProvider.currentPageData[i],
+        fileProvider.getMedia(index),
+      )) {
+        upNext = i;
+        break;
+      }
+    }
+
+    void openUploads({bool failedOnly = false}) => showUploadQueueSheet(
+      screenContext: this.context,
+      parts: allParts,
+      tracker: _uploadTracker,
+      failedOnly: failedOnly,
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -136,9 +156,8 @@ class _VehiclePartsResponsiveLayoutState
                   const SizedBox(width: AppSpacing.sm),
                   Text(
                     "$capturedCount of ${allParts.length} parts captured",
-                    style: AppText.caption.copyWith(
+                    style: AppText.tag.copyWith(
                       color: allDone ? pass : textSecondary,
-                      fontFamily: "SemiBold",
                     ),
                   ),
                 ],
@@ -149,15 +168,25 @@ class _VehiclePartsResponsiveLayoutState
                 totalStep: partsProvider.totalPages,
                 width: double.infinity,
               ),
+              const SizedBox(height: AppSpacing.md),
               ListenableBuilder(
                 listenable: _uploadTracker,
-                builder: (context, _) => _UploadSummary(
-                  tracker: _uploadTracker,
-                  onViewAll: () => showUploadQueueSheet(
-                    screenContext: this.context,
-                    parts: allParts,
-                    tracker: _uploadTracker,
-                  ),
+                builder: (context, _) => MediaPipelineSummary(
+                  slots: [
+                    for (int i = 0; i < allParts.length; i++)
+                      for (final isVideo
+                          in VehiclePartsResponsiveItem.requiredSlots(
+                            allParts[i],
+                          ))
+                        CaptureStatus.ofSlot(
+                          hasFile: isVideo
+                              ? fileProvider.getMedia(i)?.video != null
+                              : fileProvider.getMedia(i)?.image != null,
+                          upload: _uploadTracker.stateOf(i, isVideo),
+                        ),
+                  ],
+                  onViewUploads: openUploads,
+                  onReviewFailed: () => openUploads(failedOnly: true),
                 ),
               ),
             ],
@@ -179,6 +208,7 @@ class _VehiclePartsResponsiveLayoutState
                 isTablet: false,
                 tracker: _uploadTracker,
                 totalParts: allParts.length,
+                isUpNext: index == upNext,
               );
             },
           ),
@@ -283,127 +313,3 @@ class _VehiclePartsResponsiveLayoutState
   }
 }
 
-/// Upload activity for this visit, in the header: how many media files are
-/// uploaded / uploading, and a clear call-out when any upload failed.
-class _UploadSummary extends StatelessWidget {
-  final MediaUploadTracker tracker;
-
-  /// Opens the upload queue sheet.
-  final VoidCallback onViewAll;
-  const _UploadSummary({required this.tracker, required this.onViewAll});
-
-  @override
-  Widget build(BuildContext context) {
-    final uploaded = tracker.uploadedCount;
-    final uploading = tracker.uploadingCount;
-    final failed = tracker.failedCount;
-
-    if (uploaded == 0 && uploading == 0 && failed == 0) {
-      return const Padding(
-        padding: EdgeInsets.only(top: AppSpacing.sm),
-        child: Text(
-          "Capture the required photo/video for each part. Media uploads as soon as it's captured.",
-          style: AppText.caption,
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.xs),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Tappable row: counts on the left, "View uploads" on the right.
-          Semantics(
-            button: true,
-            label:
-                'Uploads: $uploaded uploaded, $uploading uploading, $failed failed. View uploads',
-            excludeSemantics: true,
-            child: InkWell(
-              onTap: onViewAll,
-              borderRadius: BorderRadius.circular(AppRadius.sm),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: AppSpacing.minTouchTarget,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.xs,
-                        children: [
-                          if (uploaded > 0)
-                            StatusBadge.uploaded(
-                              label: "$uploaded uploaded",
-                              dense: true,
-                            ),
-                          if (uploading > 0)
-                            StatusBadge.uploading(
-                              label: "$uploading uploading",
-                              dense: true,
-                            ),
-                          if (failed > 0)
-                            StatusBadge.error(
-                              label: "$failed failed",
-                              dense: true,
-                            ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      "View uploads",
-                      style: AppText.chip.copyWith(color: appColor),
-                    ),
-                    const Icon(
-                      Icons.chevron_right_rounded,
-                      color: appColor,
-                      size: AppIconSize.md,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          if (failed > 0) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.sm,
-              ),
-              decoration: BoxDecoration(
-                color: failLight,
-                borderRadius: BorderRadius.circular(AppRadius.sm),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.error_outline_rounded,
-                    size: AppIconSize.sm + 2,
-                    color: fail,
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      failed == 1
-                          ? "1 upload failed. Tap Retry on the part marked in red, or open View uploads."
-                          : "$failed uploads failed. Retry them from View uploads, or on the parts marked in red.",
-                      style: AppText.caption.copyWith(
-                        color: fail,
-                        fontFamily: "SemiBold",
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../utilities/color_data.dart';
+import '../../utilities/new_app_theme/app_radius.dart';
+import '../../utilities/new_app_theme/app_text.dart';
 
 /// Number-plate styled registration number. The number is never truncated:
 /// when space is tight it scales down to fit instead of ellipsizing, so the
@@ -24,7 +26,7 @@ class RegistrationPlate extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
           color: surface,
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
           border: Border.all(color: textPrimary, width: 1.4),
         ),
         child: FittedBox(
@@ -34,12 +36,7 @@ class RegistrationPlate extends StatelessWidget {
             number.toUpperCase(),
             maxLines: 1,
             softWrap: false,
-            style: TextStyle(
-              fontFamily: "Bold",
-              fontSize: fontSize,
-              color: textPrimary,
-              letterSpacing: 1.2,
-            ),
+            style: AppText.plate.copyWith(fontSize: fontSize),
           ),
         ),
       ),

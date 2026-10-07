@@ -1,4 +1,7 @@
+import '../../../utilities/new_app_theme/app_motion.dart';
+import '../../../widgets/new_app_ui/app_spinner.dart';
 import 'package:camera/camera.dart';
+import 'package:ats_app/utilities/new_app_theme/app_radius.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -50,7 +53,7 @@ class _CameraScreenState extends State<CameraScreen>
     final cameraController = fileProvider.controller;
     if (cameraController == null || !cameraController.value.isInitialized) {
       return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: mediaBg,
         body: SafeArea(
           child: Stack(
             children: [
@@ -58,14 +61,7 @@ class _CameraScreenState extends State<CameraScreen>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const SizedBox(
-                      width: 32,
-                      height: 32,
-                      child: CircularProgressIndicator(
-                        color: textWhite,
-                        strokeWidth: 3,
-                      ),
-                    ),
+                    const AppSpinner.large(color: textWhite),
                     const SizedBox(height: AppSpacing.lg),
                     Text(
                       "Starting camera…",
@@ -107,7 +103,7 @@ class _CameraScreenState extends State<CameraScreen>
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: mediaBg,
         body: Stack(
           children: [
             Transform.scale(
@@ -143,22 +139,20 @@ class _CameraScreenState extends State<CameraScreen>
                           children: [
                             AnimatedOpacity(
                               opacity: fileProvider.showBlink ? 1.0 : 0.2,
-                              duration: const Duration(milliseconds: 150),
+                              duration: AppMotion.fast,
                               child: const Icon(
                                 Icons.circle,
-                                color: Colors.red,
+                                color: fail,
                                 size: 10,
                               ),
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: AppSpacing.iconGap),
                             Text(
                               formatDuration(fileProvider.recordingSeconds),
-                              style: AppText.titleOnDark.copyWith(
-                                fontSize: 14,
+                              style: AppText.label.copyWith(
+                                color: textWhite,
                                 height: 1.2,
-                                fontFeatures: const [
-                                  FontFeature.tabularFigures(),
-                                ],
+                                fontFeatures: AppText.tabular,
                               ),
                             ),
                           ],
@@ -175,7 +169,7 @@ class _CameraScreenState extends State<CameraScreen>
                               color: textWhite,
                               size: 14,
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: AppSpacing.iconGap),
                             Text(
                               fileProvider.isVideo ? "Video" : "Photo",
                               style: AppText.chip.copyWith(color: textWhite),
@@ -244,7 +238,7 @@ class _CameraScreenState extends State<CameraScreen>
                       },
                       child: AnimatedOpacity(
                         opacity: _shutterBusy ? 0.5 : 1.0,
-                        duration: const Duration(milliseconds: 120),
+                        duration: AppMotion.fast,
                         child: _ShutterButton(
                           isVideo: fileProvider.isVideo,
                           isRecording: isRecording,
@@ -279,7 +273,7 @@ class _CameraRoundButton extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: Colors.black.withValues(alpha: 0.45),
+        color: mediaScrim,
         shape: const CircleBorder(),
         child: InkWell(
           customBorder: const CircleBorder(),
@@ -306,8 +300,8 @@ class _CameraPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.45),
-        borderRadius: BorderRadius.circular(100),
+        color: mediaScrim,
+        borderRadius: BorderRadius.circular(AppRadius.full),
       ),
       child: child,
     );
@@ -334,11 +328,11 @@ class _ShutterButton extends StatelessWidget {
       ),
       alignment: Alignment.center,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: AppMotion.standard,
         width: inner,
         height: inner,
         decoration: BoxDecoration(
-          color: isVideo ? Colors.red : textWhite,
+          color: isVideo ? fail : textWhite,
           borderRadius: BorderRadius.circular(isRecording ? 6 : inner / 2),
         ),
       ),

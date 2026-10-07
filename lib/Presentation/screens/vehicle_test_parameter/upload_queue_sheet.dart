@@ -11,6 +11,7 @@ import '../../../utilities/new_app_theme/app_radius.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/new_app_ui/app_bottom_sheet.dart';
+import '../../../widgets/new_app_ui/app_progress_bar.dart';
 import '../../../widgets/new_app_ui/app_state_view.dart';
 import 'capture_status.dart';
 import 'image_dialog_box.dart';
@@ -24,10 +25,12 @@ import 'video_dialog_box.dart';
 ///
 /// [screenContext] is the parts screen's context (kept alive while the sheet
 /// is open and after it closes) and is what retries run with.
+/// [failedOnly] opens the sheet on the "Failed" filter.
 void showUploadQueueSheet({
   required BuildContext screenContext,
   required List<dynamic> parts,
   required MediaUploadTracker tracker,
+  bool failedOnly = false,
 }) {
   showAppBottomSheet(
     context: screenContext,
@@ -35,6 +38,7 @@ void showUploadQueueSheet({
       screenContext: screenContext,
       parts: parts,
       tracker: tracker,
+      initialFilter: failedOnly ? _QueueFilter.failed : _QueueFilter.all,
     ),
   );
 }
@@ -62,11 +66,13 @@ class _UploadQueueSheet extends StatefulWidget {
   final BuildContext screenContext;
   final List<dynamic> parts;
   final MediaUploadTracker tracker;
+  final _QueueFilter initialFilter;
 
   const _UploadQueueSheet({
     required this.screenContext,
     required this.parts,
     required this.tracker,
+    this.initialFilter = _QueueFilter.all,
   });
 
   @override
@@ -74,7 +80,7 @@ class _UploadQueueSheet extends StatefulWidget {
 }
 
 class _UploadQueueSheetState extends State<_UploadQueueSheet> {
-  _QueueFilter _filter = _QueueFilter.all;
+  late _QueueFilter _filter = widget.initialFilter;
 
   /// Captured slots, newest-problem first: failed, uploading, captured but
   /// not sent, uploaded.
@@ -188,17 +194,7 @@ class _UploadQueueSheetState extends State<_UploadQueueSheet> {
               if (items.isNotEmpty) ...[
                 // Overall progress (by item count; the upload request does
                 // not report byte progress).
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: uploaded / items.length,
-                    minHeight: 6,
-                    backgroundColor: surface2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      uploaded == items.length ? pass : appColor,
-                    ),
-                  ),
-                ),
+                AppProgressBar.thick(value: uploaded / items.length),
                 const SizedBox(height: AppSpacing.md),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -337,8 +333,14 @@ class _QueueRow extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => item.isVideo
-          ? VideoDialog(path: item.path)
-          : ImageDialogBox(path: item.path),
+          ? VideoDialog(
+              path: item.path,
+              title: '${item.partName} · Video',
+            )
+          : ImageDialogBox(
+              path: item.path,
+              title: '${item.partName} · Photo',
+            ),
     );
   }
 
@@ -358,7 +360,7 @@ class _QueueRow extends StatelessWidget {
             minimumSize: const Size(0, 40),
             tapTargetSize: MaterialTapTargetSize.padded,
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-            textStyle: AppText.button.copyWith(fontSize: 14),
+            textStyle: AppText.buttonCompact,
           ),
           icon: const Icon(Icons.refresh_rounded, size: AppIconSize.sm + 2),
           label: const Text('Retry'),
@@ -402,9 +404,9 @@ class _QueueRow extends StatelessWidget {
                     item.partName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppText.title.copyWith(fontSize: 14),
+                    style: AppText.label,
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppSpacing.xxs),
                   Text(
                     'Part ${item.index + 1} of $totalParts · $kind',
                     maxLines: 1,
@@ -415,14 +417,7 @@ class _QueueRow extends StatelessWidget {
                   Align(alignment: Alignment.centerLeft, child: status.badge()),
                   if (status == CaptureStatus.uploading) ...[
                     const SizedBox(height: AppSpacing.xs),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(2),
-                      child: const LinearProgressIndicator(
-                        minHeight: 3,
-                        backgroundColor: surface2,
-                        color: accent,
-                      ),
-                    ),
+                    const AppProgressBar(color: accent),
                   ],
                 ],
               ),

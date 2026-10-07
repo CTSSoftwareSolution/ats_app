@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ats_app/utilities/new_app_theme/app_motion.dart';
 
 import '../../../../utilities/color_data.dart';
 import '../../../../utilities/new_app_theme/app_icon_size.dart';
@@ -19,6 +20,10 @@ class AnswerButton extends StatelessWidget {
   /// Optional icon shown before the label.
   final IconData? icon;
 
+  /// Optional outcome shown after the label ("Yes · Pass"), so the effect of
+  /// the answer is explicit.
+  final String? hint;
+
   /// Kept for compatibility; the selected state is a solid [selectedColor].
   final Color? selectedBackground;
 
@@ -30,6 +35,7 @@ class AnswerButton extends StatelessWidget {
     required this.onTap,
     this.icon,
     this.selectedBackground,
+    this.hint,
   });
 
   @override
@@ -41,7 +47,7 @@ class AnswerButton extends StatelessWidget {
       button: true,
       selected: selected,
       enabled: onTap != null,
-      label: label,
+      label: hint == null ? label : '$label, $hint',
       excludeSemantics: true,
       child: Material(
         color: selected ? selectedColor : surface,
@@ -50,7 +56,7 @@ class AnswerButton extends StatelessWidget {
           onTap: onTap,
           borderRadius: radius,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 160),
+            duration: AppMotion.fast,
             height: AppSpacing.buttonHeight,
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             decoration: BoxDecoration(
@@ -69,14 +75,22 @@ class AnswerButton extends StatelessWidget {
                   const SizedBox(width: AppSpacing.sm),
                 ],
                 Flexible(
-                  child: Text(
-                    label,
+                  child: Text.rich(
+                    TextSpan(
+                      text: label,
+                      style: AppText.button.copyWith(color: fg),
+                      children: [
+                        if (hint != null)
+                          TextSpan(
+                            text: ' · $hint',
+                            style: AppText.chip.copyWith(
+                              color: selected ? textWhite : textSecondary,
+                            ),
+                          ),
+                      ],
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppText.button.copyWith(
-                      color: fg,
-                      fontFamily: selected ? "Bold" : "SemiBold",
-                    ),
                   ),
                 ),
               ],

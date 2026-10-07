@@ -1,4 +1,9 @@
+import '../../../widgets/new_app_ui/app_spinner.dart';
 import 'dart:io';
+import 'package:ats_app/utilities/new_app_theme/app_icon_size.dart';
+import 'package:ats_app/utilities/new_app_theme/app_radius.dart';
+import 'package:ats_app/utilities/new_app_theme/app_spacing.dart';
+import 'package:ats_app/utilities/new_app_theme/app_text.dart';
 
 import 'package:ats_app/Presentation/screens/vehicle_test_parameter/video_dialog_box.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +13,11 @@ import '../../../utilities/color_data.dart';
 
 class VideoPreviewWidget extends StatefulWidget {
   final String path;
-  const VideoPreviewWidget({super.key, required this.path});
+
+  /// Header of the full-screen player, e.g. "Front bumper · Video".
+  final String? title;
+
+  const VideoPreviewWidget({super.key, required this.path, this.title});
 
   @override
   State<VideoPreviewWidget> createState() => _VideoPreviewWidgetState();
@@ -70,19 +79,19 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
   @override
   Widget build(BuildContext context) {
     if (_loadFailed) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.videocam_off_outlined, size: 24, color: textSecondary),
-            SizedBox(height: 4),
+            const Icon(
+              Icons.videocam_off_outlined,
+              size: AppIconSize.lg,
+              color: textSecondary,
+            ),
+            const SizedBox(height: AppSpacing.xs),
             Text(
               'Preview unavailable',
-              style: TextStyle(
-                fontFamily: "SemiBold",
-                fontSize: 12,
-                color: textSecondary,
-              ),
+              style: AppText.tag,
             ),
           ],
         ),
@@ -90,15 +99,10 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
     }
     if (videoPlayerController == null ||
         !videoPlayerController!.value.isInitialized) {
-      return const Center(
-        child: SizedBox(
-          width: 22,
-          height: 22,
-          child: CircularProgressIndicator(strokeWidth: 2, color: appColor),
-        ),
-      );
+      return const Center(child: AppSpinner.small());
     }
     final videoSize = videoPlayerController!.value.size;
+    final duration = videoPlayerController!.value.duration;
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -115,7 +119,7 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
           child: Tooltip(
             message: 'Play video',
             child: Material(
-              color: Colors.black.withValues(alpha: 0.45),
+              color: mediaScrim,
               shape: const CircleBorder(),
               child: InkWell(
                 customBorder: const CircleBorder(),
@@ -123,7 +127,9 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return VideoDialog(path: widget.path);
+                      return widget.title == null
+                          ? VideoDialog(path: widget.path)
+                          : VideoDialog(path: widget.path, title: widget.title!);
                     },
                   );
                 },
@@ -139,7 +145,43 @@ class _VideoPreviewWidgetState extends State<VideoPreviewWidget> {
             ),
           ),
         ),
+        if (duration > Duration.zero)
+          Positioned(
+            top: AppSpacing.sm,
+            right: AppSpacing.sm,
+            child: _DurationChip(duration: duration),
+          ),
       ],
+    );
+  }
+}
+
+/// "0:12" on a dark pill over the video thumbnail.
+class _DurationChip extends StatelessWidget {
+  final Duration duration;
+
+  const _DurationChip({required this.duration});
+
+  @override
+  Widget build(BuildContext context) {
+    final minutes = duration.inMinutes;
+    final seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.iconGap,
+        vertical: AppSpacing.xxs,
+      ),
+      decoration: BoxDecoration(
+        color: mediaScrim,
+        borderRadius: BorderRadius.circular(AppRadius.xs),
+      ),
+      child: Text(
+        '$minutes:$seconds',
+        style: AppText.badgeDense.copyWith(
+          color: textWhite,
+          fontFeatures: AppText.tabular,
+        ),
+      ),
     );
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ats_app/utilities/new_app_theme/app_radius.dart';
 
-import '../../../../utilities/color_data.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../../utilities/new_app_theme/app_text.dart';
+import '../../../../widgets/new_app_ui/app_count_pill.dart';
+import '../../../../widgets/new_app_ui/app_skeleton.dart';
 
 /// Summary line at the top of the appointment list:
 /// "Appointments [134]" with the active category / search underneath.
@@ -64,24 +66,10 @@ class HomeListSummary extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: accentLight,
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  child: Text(
-                    '$total',
-                    maxLines: 1,
-                    style: AppText.chip.copyWith(color: appColor, fontSize: 12),
-                  ),
-                ),
+                AppCountPill(count: total),
               ],
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: AppSpacing.xxs),
             Text(
               scope,
               maxLines: 1,
@@ -90,6 +78,32 @@ class HomeListSummary extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Loading placeholder for [HomeListSummary] (title + count, scope line).
+/// The list already sits inside the page gutter, so no horizontal padding.
+class HomeListSummarySkeleton extends StatelessWidget {
+  const HomeListSummarySkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const AppSkeleton(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SkeletonBox(width: 120, height: 18),
+              SizedBox(width: AppSpacing.sm),
+              SkeletonBox(width: 32, height: 18, radius: AppRadius.full),
+            ],
+          ),
+          SizedBox(height: AppSpacing.xs),
+          SkeletonBox(width: 150, height: 12),
+        ],
       ),
     );
   }

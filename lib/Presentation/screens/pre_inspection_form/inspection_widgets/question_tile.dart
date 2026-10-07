@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:ats_app/widgets/custom_loader.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/answer_button.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/widgets/custom_text_field.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
+import 'package:ats_app/utilities/new_app_theme/app_motion.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../../../Core/network/services.dart';
@@ -11,6 +13,8 @@ import '../../../../aws_images/aws_signedurl_provider.dart';
 import '../../../../image_processing/MediaPicker/file_provider.dart';
 import '../../../../utilities/change_status_bottom_sheet.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../utilities/new_app_theme/app_icon_size.dart';
+import '../../../../utilities/new_app_theme/app_radius.dart';
 import '../../../../utilities/new_app_theme/app_text.dart';
 import '../../../provider/ai_inspection_details_provider.dart';
 import '../../../provider/inspection_form_provider.dart';
@@ -51,6 +55,10 @@ class _QuestionTileState extends State<QuestionTile> {
   /// Done once, so a remark typed earlier (or loaded for a retest) shows up
   /// again after this tile is rebuilt, without overwriting later edits.
   bool _remarkSeeded = false;
+
+  /// True while the evidence photo taken for this question is uploading
+  /// (display only: shown on the evidence prompt).
+  bool _uploadingEvidence = false;
 
   @override
   void dispose() {
@@ -105,7 +113,12 @@ class _QuestionTileState extends State<QuestionTile> {
       if (fileProvider.overlayImage != null) {
         final file = File(fileProvider.overlayImage!.path);
         final imagePath = file.path.split(Platform.pathSeparator).last;
-        await awsProvider.awsUploadedFile(imagePath, file, context);
+        if (mounted) setState(() => _uploadingEvidence = true);
+        try {
+          await awsProvider.awsUploadedFile(imagePath, file, context);
+        } finally {
+          if (mounted) setState(() => _uploadingEvidence = false);
+        }
         final fileImagePath =
             awsImagePathUrl + awsProvider.stringRandomNumber + imagePath;
         provider.setQuestionImage(
@@ -117,8 +130,12 @@ class _QuestionTileState extends State<QuestionTile> {
         );
       }
     } catch (e) {
+      debugPrint('[EVIDENCE] Could not attach photo: $e');
       if (!context.mounted) return;
-      context.showErrorSnackBar('Could not pick image: $e');
+      CustomLoader.showCustomErrorSnackBar(
+        "Couldn't attach the photo. Check your connection and try again.",
+        context,
+      );
     }
   }
 
@@ -154,18 +171,33 @@ class _QuestionTileState extends State<QuestionTile> {
         var isYes = question.answer == AnswerState.Pass;
         final items = question.carData.items ?? const [];
 
+        // Left rail: green once passed, red once failed, none while open.
+        final Color? railColor = isReadOnly
+            ? null
+            : isYes
+            ? pass
+            : isNo
+            ? fail
+            : null;
+
         return Container(
           key: _tileKey,
           decoration: BoxDecoration(
             // A faint red wash makes failed questions easy to spot when
             // scrolling back through a long category.
             color: isNo && !isReadOnly ? fail.withValues(alpha: 0.03) : surface,
-            border: widget.isLast
-                ? null
-                : const Border(bottom: BorderSide(color: border)),
+            border: Border(
+              left: BorderSide(
+                color: railColor ?? Colors.transparent,
+                width: 3,
+              ),
+              bottom: widget.isLast
+                  ? BorderSide.none
+                  : const BorderSide(color: border),
+            ),
           ),
           padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
+            AppSpacing.lg - 3,
             AppSpacing.md,
             AppSpacing.lg,
             AppSpacing.lg,
@@ -173,51 +205,63 @@ class _QuestionTileState extends State<QuestionTile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ── Question number + severity ──
+              // ── Number / result + question text ──
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Q${widget.questionIndex + 1}', style: AppText.overline),
-                  const Spacer(),
-                  if (severityLabel(question.answer) != null)
-                    StatusBadge(
-                      label: severityLabel(question.answer)!,
-                      color: fail,
-                      background: failLight,
-                      icon: Icons.priority_high_rounded,
-                      dense: true,
+                  _QuestionMarker(
+                    number: widget.questionIndex + 1,
+                    answer: isReadOnly
+                        ? AnswerState.unanswered
+                        : question.answer,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Padding(
+                      // Optically centre the first line on the 28dp marker.
+                      padding: const EdgeInsets.only(top: 3),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (var index = 0; index < items.length; index++)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                bottom: index == items.length - 1
+                                    ? 0
+                                    : AppSpacing.sm,
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (items.length > 1) ...[
+                                    Container(
+                                      margin: const EdgeInsets.only(
+                                        top: AppSpacing.sm,
+                                      ),
+                                      width: 6,
+                                      height: 6,
+                                      decoration: const BoxDecoration(
+                                        color: borderDark,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.sm),
+                                  ],
+                                  Expanded(
+                                    child: Text(
+                                      items[index].itemText ?? '',
+                                      style: AppText.title,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
+                  ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.xs),
-              // ── Question text ──
-              ...List.generate(items.length, (index) {
-                final item = items[index];
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: index == items.length - 1 ? 0 : AppSpacing.sm,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (items.length > 1) ...[
-                        Container(
-                          margin: const EdgeInsets.only(top: 8),
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: borderDark,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                      ],
-                      Expanded(
-                        child: Text(item.itemText ?? '', style: AppText.title),
-                      ),
-                    ],
-                  ),
-                );
-              }),
               const SizedBox(height: AppSpacing.md),
 
               // ── Answer selector ──
@@ -226,6 +270,7 @@ class _QuestionTileState extends State<QuestionTile> {
                   Expanded(
                     child: AnswerButton(
                       label: 'Yes',
+                      hint: 'Pass',
                       icon: Icons.check_rounded,
                       selected: isYes,
                       selectedColor: isReadOnly ? na : pass,
@@ -253,6 +298,7 @@ class _QuestionTileState extends State<QuestionTile> {
                   Expanded(
                     child: AnswerButton(
                       label: 'No',
+                      hint: 'Fail',
                       icon: Icons.close_rounded,
                       selected: isNo,
                       selectedColor: isReadOnly ? na : fail,
@@ -288,14 +334,17 @@ class _QuestionTileState extends State<QuestionTile> {
                       ),
                     );
                   },
-                  icon: const Icon(Icons.swap_horiz_rounded, size: 20),
+                  icon: const Icon(
+                    Icons.swap_horiz_rounded,
+                    size: AppIconSize.md,
+                  ),
                   label: const Text("Change Status"),
                 ),
               ],
 
               // ── Evidence + remark (Fail only, manual mode) ──
               AnimatedCrossFade(
-                duration: const Duration(milliseconds: 250),
+                duration: AppMotion.standard,
                 crossFadeState:
                     // isNo || isYes ? CrossFadeState.showSecond : CrossFadeState.showFirst,
                     (!aiDetailsProvider.isAIModeOn && isNo)
@@ -304,19 +353,60 @@ class _QuestionTileState extends State<QuestionTile> {
                 firstChild: const SizedBox(width: double.infinity),
                 secondChild: Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.md),
-                  child: Column(
+                  // Everything a failed check needs, grouped in one panel.
+                  child: Container(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: surface,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(color: fail.withValues(alpha: 0.3)),
+                    ),
+                    child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SectionHeader(
+                      // Wraps so the severity badge drops below the title
+                      // on narrow phones with large text.
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.xs,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        alignment: WrapAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.report_problem_outlined,
+                                size: AppIconSize.sm,
+                                color: fail,
+                              ),
+                              const SizedBox(width: AppSpacing.iconGap),
+                              Flexible(
+                                child: Text(
+                                  'Defect details',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppText.label.copyWith(color: fail),
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (severityLabel(question.answer) != null)
+                            StatusBadge(
+                              label: severityLabel(question.answer)!,
+                              color: fail,
+                              background: failLight,
+                              icon: Icons.priority_high_rounded,
+                              dense: true,
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      SectionHeader(
                         'Evidence photo',
                         trailing: Text(
                           'REQUIRED',
-                          style: TextStyle(
-                            fontFamily: "Bold",
-                            fontSize: 11,
-                            color: fail,
-                            letterSpacing: 0.8,
-                          ),
+                          style: AppText.overline.copyWith(color: fail),
                         ),
                       ),
                       () {
@@ -360,12 +450,10 @@ class _QuestionTileState extends State<QuestionTile> {
                           );
                         } else {
                           return ImagePickerPrompt(
-                            boxColor: isNo ? failLight : passLight,
-                            borderColor: isNo
-                                ? fail.withValues(alpha: 0.35)
-                                : pass.withValues(alpha: 0.35),
-                            iconColor: isNo ? fail : pass,
-                            titleColor: isNo ? fail : pass,
+                            uploading: _uploadingEvidence,
+                            boxColor: failLight,
+                            borderColor: fail.withValues(alpha: 0.35),
+                            iconColor: fail,
                             subtitleColor: textSecondary,
                             onTap: () => _pickImage(
                               context,
@@ -385,9 +473,8 @@ class _QuestionTileState extends State<QuestionTile> {
                       ),
                       CustomTextField(
                         cursorColor: appColor,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 14,
+                        contentPadding: const EdgeInsets.all(
+                          AppSpacing.inputPadding,
                         ),
                         fillColor: surface,
                         hint: "Describe the defect (optional)",
@@ -402,14 +489,12 @@ class _QuestionTileState extends State<QuestionTile> {
                             remark: value,
                           );
                         },
-                        hintStyle: const TextStyle(
-                          color: textMuted,
-                          fontSize: 14,
-                        ),
+                        hintStyle: AppText.hint,
                         readOnly: false,
                         textCapitalization: TextCapitalization.sentences,
                       ),
                     ],
+                  ),
                   ),
                 ),
               ),
@@ -417,6 +502,54 @@ class _QuestionTileState extends State<QuestionTile> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Question number that becomes the result once answered: a neutral "3",
+/// a green tick for Yes (pass) or a red cross for No (fail).
+class _QuestionMarker extends StatelessWidget {
+  final int number;
+  final AnswerState answer;
+
+  const _QuestionMarker({required this.number, required this.answer});
+
+  @override
+  Widget build(BuildContext context) {
+    final (Color bgColor, Widget child, String label) = switch (answer) {
+      AnswerState.Pass => (
+        pass,
+        const Icon(Icons.check_rounded, size: AppIconSize.sm, color: textWhite),
+        'Question $number, passed',
+      ),
+      AnswerState.Fail => (
+        fail,
+        const Icon(Icons.close_rounded, size: AppIconSize.sm, color: textWhite),
+        'Question $number, failed',
+      ),
+      AnswerState.unanswered => (
+        surface2,
+        Text(
+          '$number',
+          style: AppText.badge.copyWith(
+            color: textSecondary,
+            fontFeatures: AppText.tabular,
+          ),
+        ),
+        'Question $number, not answered',
+      ),
+    };
+    return Semantics(
+      label: label,
+      excludeSemantics: true,
+      child: AnimatedContainer(
+        duration: AppMotion.fast,
+        width: 28,
+        height: 28,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
+        child: FittedBox(fit: BoxFit.scaleDown, child: child),
+      ),
     );
   }
 }

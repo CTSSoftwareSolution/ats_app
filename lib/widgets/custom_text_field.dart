@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../utilities/color_data.dart';
 import '../utilities/new_app_theme/app_radius.dart';
+import '../utilities/new_app_theme/app_text.dart';
 
 class CustomTextField extends StatelessWidget {
   final String hint;
@@ -101,11 +102,7 @@ class CustomTextField extends StatelessWidget {
         readOnly: readOnly,
         minLines: minLines,
         maxLines: maxLines,
-        style: const TextStyle(
-          color: textPrimary,
-          fontSize: 15,
-          fontFamily: "SemiBold",
-        ),
+        style: AppText.input,
         textAlign: textAlign ?? TextAlign.start,
         cursorColor: cursorColor ?? appColor,
         decoration: InputDecoration(
@@ -122,7 +119,7 @@ class CustomTextField extends StatelessWidget {
               focusedErrorBorder ?? outline(errorColor ?? fail, 1.5),
           border: outline(borderColor ?? border, restingWidth),
           errorBorder: outline(errorColor ?? fail, restingWidth),
-          errorStyle: TextStyle(color: errorColor ?? fail, fontSize: 12),
+          errorStyle: AppText.caption.copyWith(color: errorColor ?? fail),
           hintText: hint,
           suffixIcon: suffixIcon,
           prefixIcon: prefixIcon,

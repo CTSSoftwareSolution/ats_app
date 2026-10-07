@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/image_data.dart';
+import '../../../utilities/new_app_theme/app_icon_size.dart';
 import '../../../utilities/new_app_theme/app_radius.dart';
+import '../../../widgets/new_app_ui/app_navigation.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../utilities/preferences.dart';
@@ -23,19 +25,10 @@ class TabletNavigationRail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigationProvider = context.watch<BottomNavigationProvider>();
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.xl,
-        0,
-        AppSpacing.lg,
-      ),
-      child: Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: appColor,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-        ),
+    return Material(
+      color: appColor,
+      child: SafeArea(
+        right: false,
         child: NavigationRail(
           selectedIndex: navigationProvider.pageIndex,
           onDestinationSelected: navigationProvider.updateIndex,
@@ -46,7 +39,6 @@ class TabletNavigationRail extends StatelessWidget {
           leadingAtTop: true,
           trailingAtBottom: true,
           selectedLabelTextStyle: AppText.navLabel.copyWith(
-            fontFamily: "Bold",
             color: textWhite,
           ),
           unselectedLabelTextStyle: AppText.navLabel.copyWith(
@@ -59,19 +51,22 @@ class TabletNavigationRail extends StatelessWidget {
             ),
             child: Container(
               decoration: BoxDecoration(
-                color: whiteColor,
+                color: surface,
                 borderRadius: BorderRadius.circular(AppRadius.sm),
               ),
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AppSpacing.sm),
               child: CustomImage(image: logoImage, height: 28, width: 28),
             ),
           ),
 
-          destinations: bottomNavValue.map((item) {
+          destinations: appNavDestinations.map((item) {
             return NavigationRailDestination(
-              icon: AnimatedRailIcon(icon: item.image, isActive: false),
-              selectedIcon: AnimatedRailIcon(icon: item.image, isActive: true),
-              label: Text(item.title),
+              icon: AnimatedRailIcon(icon: item.icon, isActive: false),
+              selectedIcon: AnimatedRailIcon(
+                icon: item.selectedIcon,
+                isActive: true,
+              ),
+              label: Text(item.label),
             );
           }).toList(),
 
@@ -100,11 +95,10 @@ class TabletNavigationRail extends StatelessWidget {
                   },
                 );
               },
-              icon: CustomImage(
-                image: logoutIcon,
-                height: 22,
-                width: 22,
-                color: whiteColor,
+              icon: const Icon(
+                Icons.logout_rounded,
+                color: textWhite,
+                size: AppIconSize.lg,
               ),
             ),
           ),

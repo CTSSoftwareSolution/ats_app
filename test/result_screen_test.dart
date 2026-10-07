@@ -86,6 +86,8 @@ Future<void> pumpResults(
 }
 
 void main() {
+  emptyStateTests();
+
   for (final width in [320.0, 360.0, 412.0, 600.0]) {
     for (final scale in [1.0, 1.3]) {
       testWidgets('result list fits at ${width}dp, text x$scale', (
@@ -105,4 +107,50 @@ void main() {
       });
     }
   }
+}
+
+/// Result tab empty states: each offers the quickest way back to a list.
+void emptyStateTests() {
+  Future<ManualInspectionListProvider> pumpEmpty(
+    WidgetTester tester, {
+    String search = '',
+  }) async {
+    tester.view.physicalSize = const Size(360, 1200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    final provider = ManualInspectionListProvider(
+      manualInspectionListUseCase: ManualInspectionListUseCase(
+        manualInspectionRepository: FakeResults(const []),
+      ),
+    );
+    provider.searchController.text = search;
+    provider.searchValue = search;
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: provider,
+        child: MaterialApp(theme: AppTheme.light, home: const ResultScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+    return provider;
+  }
+
+  testWidgets('no results: Retry', (tester) async {
+    await pumpEmpty(tester);
+    expect(find.text('No results to show'), findsOneWidget);
+    expect(find.text('Retry'), findsOneWidget);
+    await tester.tap(find.text('Retry'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('no matching search: Clear search empties the box', (
+    tester,
+  ) async {
+    final provider = await pumpEmpty(tester, search: 'MH99');
+    expect(find.text('No matching results'), findsOneWidget);
+    await tester.tap(find.text('Clear search'));
+    await tester.pumpAndSettle();
+    expect(provider.searchController.text, isEmpty);
+  });
 }

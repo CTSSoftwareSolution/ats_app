@@ -3,6 +3,8 @@ import '../../../../utilities/color_data.dart';
 import '../../../../utilities/new_app_theme/app_radius.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../../utilities/new_app_theme/app_text.dart';
+import '../../../../widgets/new_app_ui/app_icon_tile.dart';
+import '../../../../widgets/new_app_ui/app_progress_bar.dart';
 import '../../../provider/inspection_form_provider.dart';
 
 /// Section overview at the top of a tab: name, progress and a
@@ -42,12 +44,23 @@ class SectionSummaryCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Section identity: the section's own icon in the brand colour
+              // (a tick once complete). Matters most in Under-PIT mode, where
+              // there is no tab strip naming the section.
+              AppIconTile(
+                icon: complete ? Icons.task_alt_rounded : section.icon,
+                color: complete ? pass : appColor,
+              ),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(section.label, style: AppText.sectionTitle),
-                    const SizedBox(height: 2),
+                    Semantics(
+                      header: true,
+                      child: Text(section.label, style: AppText.sectionTitle),
+                    ),
+                    const SizedBox(height: AppSpacing.xxs),
                     Text(
                       '${section.categories.length} categories · ${section.totalQuestions} checks'
                       '${section.subtitle.isNotEmpty ? ' · ${section.subtitle}' : ''}',
@@ -68,16 +81,9 @@ class SectionSummaryCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: section.overallProgress,
-              backgroundColor: surface2,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                complete ? pass : appColor,
-              ),
-              minHeight: 6,
-            ),
+          AppProgressBar.thick(
+            value: section.overallProgress,
+            color: complete ? pass : appColor,
           ),
           const SizedBox(height: AppSpacing.md),
           Row(
@@ -130,7 +136,7 @@ class _Tally extends StatelessWidget {
                 color: value > 0 ? color : textSecondary,
               ),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: AppSpacing.iconGap),
             Flexible(
               child: Text(
                 label,

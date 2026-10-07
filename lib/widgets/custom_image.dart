@@ -1,4 +1,4 @@
-import 'package:ats_app/utilities/color_data.dart';
+import 'new_app_ui/app_spinner.dart';
 import 'package:flutter/material.dart';
 
 class CustomImage extends StatelessWidget {
@@ -56,8 +56,7 @@ class CustomImage extends StatelessWidget {
                     return child;
                   }
                   return Center(
-                    child: CircularProgressIndicator(
-                      color: appColor,
+                    child: AppSpinner(
                       value: loadingProgress.expectedTotalBytes != null
                           ? loadingProgress.cumulativeBytesLoaded /
                                 loadingProgress.expectedTotalBytes!

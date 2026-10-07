@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ats_app/utilities/new_app_theme/app_spacing.dart';
+import 'package:ats_app/utilities/new_app_theme/app_motion.dart';
+import 'package:ats_app/utilities/new_app_theme/app_radius.dart';
 
 import 'color_data.dart';
 
@@ -26,13 +29,13 @@ class CustomStepper extends StatelessWidget {
         child: Row(
           children: [
             for (int i = 0; i < totalStep; i++) ...[
-              if (i > 0) const SizedBox(width: 4),
+              if (i > 0) const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
+                  duration: AppMotion.standard,
                   decoration: BoxDecoration(
                     color: i <= currentStep ? appColor : border,
-                    borderRadius: BorderRadius.circular(3),
+                    borderRadius: BorderRadius.circular(AppRadius.xs),
                   ),
                 ),
               ),

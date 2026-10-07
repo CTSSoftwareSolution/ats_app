@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:ats_app/widgets/new_app_ui/list_footer.dart';
 import 'package:ats_app/widgets/new_app_ui/app_top_bar.dart';
 import 'package:provider/provider.dart';
-import '../../../EmptyStateWidget.dart';
+import '../../../widgets/new_app_ui/app_count_pill.dart';
+import '../../../widgets/new_app_ui/app_state_view.dart';
 import '../../../utilities/color_data.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../widgets/custom_search_bar.dart';
@@ -138,21 +139,34 @@ class _ResultScreenState extends State<ResultScreen> {
                               ?.isEmpty ??
                           true)
                     ? PullToRefreshFill(
-                        child: provider.searchValue.isNotEmpty
-                            ? EmptyStateWidget(
-                                icon: Icons.search_off_rounded,
-                                title: 'No matching results',
-                                subtitle:
-                                    'No results for "${provider.searchValue}". Check the spelling or try another search.',
-                              )
-                            : EmptyStateWidget(
-                                icon: Icons.fact_check_outlined,
-                                title: 'No Results Yet',
-                                subtitle:
-                                    'Completed inspections will appear here. Pull down to refresh.',
-                                actionLabel: 'Refresh',
-                                onAction: _onRefresh,
-                              ),
+                        // The list provider reports a failed request like an
+                        // empty one, so the default case also offers Retry.
+                        child: Center(
+                          child: SingleChildScrollView(
+                            child: provider.searchValue.isNotEmpty
+                                ? AppStateView.empty(
+                                    icon: Icons.search_off_rounded,
+                                    title: 'No matching results',
+                                    message:
+                                        'No results for "${provider.searchValue}". Check the registration or booking ID.',
+                                    actionLabel: 'Clear search',
+                                    actionIcon: Icons.close_rounded,
+                                    // Same as the search box's clear button.
+                                    onAction: () {
+                                      provider.searchController.clear();
+                                      provider.onFilterChanged(context);
+                                    },
+                                  )
+                                : AppStateView.empty(
+                                    icon: Icons.fact_check_outlined,
+                                    title: 'No results to show',
+                                    message:
+                                        'Completed inspections appear here. If you expected some, check your connection and try again.',
+                                    actionLabel: 'Retry',
+                                    onAction: _onRefresh,
+                                  ),
+                          ),
+                        ),
                       )
                     : ListView.builder(
                         padding: const EdgeInsets.fromLTRB(
@@ -269,21 +283,10 @@ class _ResultSummary extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: accentLight,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Text(
-                  '$total',
-                  maxLines: 1,
-                  style: AppText.chip.copyWith(color: appColor, fontSize: 12),
-                ),
-              ),
+              AppCountPill(count: total),
             ],
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: AppSpacing.xxs),
           Text(
             scope,
             maxLines: 1,

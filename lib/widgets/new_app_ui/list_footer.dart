@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../utilities/new_app_theme/app_spacing.dart';
 import '../../utilities/new_app_theme/app_text.dart';
+import 'app_spinner.dart';
 
 /// Last item of a paged list: a small spinner while the next page loads, a
 /// quiet "All N … shown" divider once everything is loaded, otherwise a gap.
@@ -29,14 +30,7 @@ class ListFooter extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
         child: Center(
-          child: Semantics(
-            label: 'Loading more $plural',
-            child: const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(strokeWidth: 2.5),
-            ),
-          ),
+          child: AppSpinner(semanticsLabel: 'Loading more $plural'),
         ),
       );
     }

@@ -1,4 +1,5 @@
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:ats_app/utilities/new_app_theme/app_text.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/new_app_ui/app_dialog.dart';
@@ -42,10 +43,7 @@ customConfirmationDialogBox({
                   horizontal: 12,
                   vertical: 10,
                 ),
-                textStyle: const TextStyle(
-                  fontFamily: "SemiBold",
-                  fontSize: 14,
-                ),
+                textStyle: AppText.buttonCompact,
               ),
               child: Text(
                 button.text,

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../utilities/color_data.dart';
 import '../../utilities/new_app_theme/app_icon_size.dart';
-import '../../utilities/new_app_theme/app_radius.dart';
+import '../../utilities/new_app_theme/app_layout.dart';
 import '../../utilities/new_app_theme/app_spacing.dart';
 import '../../utilities/new_app_theme/app_text.dart';
+import 'app_icon_tile.dart';
 
 /// Standard confirmation / alert dialog: tinted icon tile, title, message and
 /// a row of equal-width actions (secondary first, primary last).
@@ -32,12 +33,12 @@ class AppDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 420),
+        constraints: const BoxConstraints(maxWidth: AppLayout.maxDialogWidth),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
-            AppSpacing.xl - 4,
-            AppSpacing.xl - 4,
-            AppSpacing.xl - 4,
+            AppSpacing.dialog,
+            AppSpacing.dialog,
+            AppSpacing.dialog,
             AppSpacing.lg,
           ),
           child: Column(
@@ -46,26 +47,9 @@ class AppDialog extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: iconColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppRadius.md),
-                    ),
-                    child: Icon(
-                      icon,
-                      color: iconColor,
-                      size: AppIconSize.md + 2,
-                    ),
-                  ),
+                  AppIconTile(icon: icon, color: iconColor),
                   const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: AppText.sectionTitle.copyWith(fontSize: 17),
-                    ),
-                  ),
+                  Expanded(child: Text(title, style: AppText.dialogTitle)),
                   if (onClose != null)
                     IconButton(
                       tooltip: 'Close',

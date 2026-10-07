@@ -49,6 +49,7 @@ void main() {
     WidgetTester tester, {
     required double width,
     double textScale = 1.0,
+    bool failedOnly = false,
   }) async {
     final files = FileProvider();
     // Part 0: photo + video captured; parts 1, 2, 4: photo; part 3: video;
@@ -93,6 +94,7 @@ void main() {
                       screenContext: context,
                       parts: parts,
                       tracker: tracker,
+                      failedOnly: failedOnly,
                     ),
                     child: const Text('open'),
                   ),
@@ -131,6 +133,13 @@ void main() {
     await openSheet(tester, width: 360);
     await tester.tap(find.text('Failed 2'));
     await tester.pump();
+    expect(find.text('Head lamp'), findsNothing); // uploading
+    expect(find.text('Tail lamp'), findsOneWidget); // failed video
+    expect(find.text('Upload failed'), findsNWidgets(2));
+  });
+
+  testWidgets('"Review failed" opens on the failed filter', (tester) async {
+    await openSheet(tester, width: 360, failedOnly: true);
     expect(find.text('Head lamp'), findsNothing); // uploading
     expect(find.text('Tail lamp'), findsOneWidget); // failed video
     expect(find.text('Upload failed'), findsNWidgets(2));

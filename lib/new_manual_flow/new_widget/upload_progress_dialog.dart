@@ -1,11 +1,14 @@
 import 'package:ats_app/new_manual_flow/auth_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../utilities/color_data.dart';
+import '../../utilities/new_app_theme/app_icon_size.dart';
+import '../../utilities/new_app_theme/app_radius.dart';
+import '../../utilities/new_app_theme/app_spacing.dart';
+import '../../utilities/new_app_theme/app_text.dart';
+import '../../widgets/new_app_ui/primary_button.dart';
 import '../new_services/debug_service.dart';
 import '../new_services/upload_service.dart';
-
 
 class UploadProgressDialog extends StatefulWidget {
   final String title;
@@ -22,8 +25,9 @@ class UploadProgressDialog extends StatefulWidget {
 }
 
 class _State extends State<UploadProgressDialog> {
-  UploadProgress _progress =
-      const UploadProgress(status: UploadStatus.uploading);
+  UploadProgress _progress = const UploadProgress(
+    status: UploadStatus.uploading,
+  );
   bool _started = false;
   bool _showLog = true;
   final ScrollController _scroll = ScrollController();
@@ -55,9 +59,11 @@ class _State extends State<UploadProgressDialog> {
         // Auto-scroll log to bottom
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (_scroll.hasClients) {
-            _scroll.animateTo(_scroll.position.maxScrollExtent,
-                duration: const Duration(milliseconds: 150),
-                curve: Curves.easeOut);
+            _scroll.animateTo(
+              _scroll.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeOut,
+            );
           }
         });
       }
@@ -67,208 +73,254 @@ class _State extends State<UploadProgressDialog> {
   @override
   Widget build(BuildContext context) {
     final debugOn = context.watch<AuthProvider>().config.debugMode;
-    final isDone  = _progress.isComplete ||
+    final isDone =
+        _progress.isComplete ||
         (_progress.total == 0 && _progress.status == UploadStatus.success);
-    final isOk    = _progress.status == UploadStatus.success;
+    final isOk = _progress.status == UploadStatus.success;
     final noMedia = _progress.total == 0 && isDone;
     final entries = DebugService.entries;
 
     return PopScope(
       canPop: isDone,
       child: Dialog(
-        backgroundColor: surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        insetPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.dialog,
+          vertical: 40,
+        ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
+          padding: const EdgeInsets.all(AppSpacing.dialog),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ── Icon ─────────────────────────────────────────────────
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: isDone ? (isOk ? passLight : failLight) : accentLight,
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                ),
+                child: isDone
+                    ? Icon(
+                        isOk
+                            ? Icons.cloud_done_rounded
+                            : Icons.cloud_off_rounded,
+                        color: isOk ? pass : fail,
+                        size: AppIconSize.xl - 4,
+                      )
+                    : const Padding(
+                        padding: EdgeInsets.all(AppSpacing.lg),
+                        child: CircularProgressIndicator(
+                          color: appColor,
+                          strokeWidth: 3,
+                        ),
+                      ),
+              ),
+              const SizedBox(height: AppSpacing.md),
 
-            // ── Icon ─────────────────────────────────────────────────
-            Container(
-              width: 60, height: 60,
-              decoration: BoxDecoration(
-                color: isDone
-                    ? (isOk ? passLight : failLight)
-                    : accentLight,
-                shape: BoxShape.circle),
-              child: isDone
-                  ? Icon(
-                      isOk
-                          ? Icons.cloud_done_rounded
-                          : Icons.cloud_off_rounded,
-                      color: isOk ? pass : fail,
-                      size: 30)
-                  : const Padding(
-                      padding: EdgeInsets.all(14),
-                      child: CircularProgressIndicator(
-                          color: navyAccent, strokeWidth: 3)),
-            ),
-            const SizedBox(height: 14),
+              // ── Title ─────────────────────────────────────────────────
+              Text(
+                widget.title,
+                style: AppText.dialogTitle,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.xs),
 
-            // ── Title ─────────────────────────────────────────────────
-            Text(widget.title, style: GoogleFonts.inter(
-                color: textPrimary, fontSize: 15,
-                fontWeight: FontWeight.w700),
-                textAlign: TextAlign.center),
-            const SizedBox(height: 6),
-
-            // ── Status text ───────────────────────────────────────────
-            Text(
-              noMedia
-                  ? 'No photos/videos captured for this step'
-                  : isDone
-                      ? isOk
+              // ── Status text ───────────────────────────────────────────
+              Text(
+                noMedia
+                    ? 'No photos/videos captured for this step'
+                    : isDone
+                    ? isOk
                           ? 'All ${_progress.total} file(s) uploaded ✓'
                           : '${_progress.done} uploaded · ${_progress.failed} failed'
-                      : 'Uploading ${_progress.done + 1} of ${_progress.total}...',
-              style: GoogleFonts.inter(
-                  color: textSecondary, fontSize: 13),
-              textAlign: TextAlign.center,
-            ),
-
-            if (!isDone && _progress.currentFile.isNotEmpty) ...[
-              const SizedBox(height: 3),
-              Text(_progress.currentFile,
-                  style: GoogleFonts.robotoMono(
-                      color: textMuted, fontSize: 10),
-                  textAlign: TextAlign.center),
-            ],
-
-            // ── Progress bar ──────────────────────────────────────────
-            if (_progress.total > 0) ...[
-              const SizedBox(height: 14),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: _progress.percent, minHeight: 8,
-                  backgroundColor: border,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    _progress.failed > 0
-                        ? fail : pass),
-                ),
+                    : 'Uploading ${_progress.done + 1} of ${_progress.total}...',
+                style: AppText.bodySecondary,
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 6),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                Text('${_progress.done}/${_progress.total}',
-                    style: GoogleFonts.inter(
-                        color: textMuted, fontSize: 11)),
+
+              if (!isDone && _progress.currentFile.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.xs),
                 Text(
-                    '${(_progress.percent * 100).toStringAsFixed(0)}%',
-                    style: GoogleFonts.inter(
-                        color: navyAccent, fontSize: 11,
-                        fontWeight: FontWeight.w700)),
-              ]),
-            ],
-
-            // ── Debug log ─────────────────────────────────────────────
-            if (debugOn) ...[
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: () => setState(() => _showLog = !_showLog),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 7),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0D1117),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                        color: Colors.green.withOpacity(0.5))),
-                  child: Row(children: [
-                    const Icon(Icons.terminal_rounded,
-                        color: Colors.greenAccent, size: 13),
-                    const SizedBox(width: 6),
-                    Text(
-                      'API Log  (${entries.length} entries)',
-                      style: GoogleFonts.robotoMono(
-                          color: Colors.greenAccent, fontSize: 10)),
-                    const Spacer(),
-                    Icon(
-                      _showLog
-                          ? Icons.expand_less_rounded
-                          : Icons.expand_more_rounded,
-                      color: Colors.greenAccent, size: 16),
-                  ]),
+                  _progress.currentFile,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.caption,
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              if (_showLog) ...[
-                const SizedBox(height: 2),
-                Container(
-                  height: 220,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0D1117),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(8),
-                      bottomRight: Radius.circular(8)),
-                    border: Border.all(
-                        color: Colors.green.withOpacity(0.3))),
-                  child: entries.isEmpty
-                      ? Center(child: Text('No log entries yet',
-                          style: GoogleFonts.robotoMono(
-                              color: Colors.white38, fontSize: 10)))
-                      : ListView.builder(
-                          controller: _scroll,
-                          padding: const EdgeInsets.all(8),
-                          itemCount: entries.length,
-                          itemBuilder: (_, i) {
-                            final e = entries[i];
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 2),
-                              child: Row(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [
-                                  Text(e.timeStr,
-                                      style: TextStyle(
-                                          color: Colors.white24,
-                                          fontSize: 8,
-                                          fontFamily: 'monospace')),
-                                  const SizedBox(width: 4),
-                                  Container(
-                                    constraints:
-                                        const BoxConstraints(minWidth: 45),
-                                    child: Text(e.tag,
-                                        style: TextStyle(
-                                            color: e.color,
-                                            fontSize: 9,
-                                            fontFamily: 'monospace',
-                                            fontWeight:
-                                                FontWeight.bold))),
-                                  const SizedBox(width: 4),
-                                  Expanded(child: Text(e.message,
+              ],
+
+              // ── Progress bar ──────────────────────────────────────────
+              if (_progress.total > 0) ...[
+                const SizedBox(height: AppSpacing.md),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadius.xs),
+                  child: LinearProgressIndicator(
+                    value: _progress.percent,
+                    minHeight: 6,
+                    backgroundColor: surface2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      _progress.failed > 0 ? fail : pass,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${_progress.done}/${_progress.total}',
+                      style: AppText.caption.copyWith(
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                    Text(
+                      '${(_progress.percent * 100).toStringAsFixed(0)}%',
+                      style: AppText.caption.copyWith(
+                        fontFamily: 'Bold',
+                        color: appColor,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
+              // ── Debug log (developer console, intentionally dark) ─────
+              if (debugOn) ...[
+                const SizedBox(height: AppSpacing.md),
+                GestureDetector(
+                  onTap: () => setState(() => _showLog = !_showLog),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0D1117),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(
+                        color: Colors.green.withValues(alpha: 0.5),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.terminal_rounded,
+                          color: Colors.greenAccent,
+                          size: 13,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'API Log  (${entries.length} entries)',
+                          style: const TextStyle(
+                            color: Colors.greenAccent,
+                            fontSize: 10,
+                            fontFamily: 'monospace',
+                          ),
+                        ),
+                        const Spacer(),
+                        Icon(
+                          _showLog
+                              ? Icons.expand_less_rounded
+                              : Icons.expand_more_rounded,
+                          color: Colors.greenAccent,
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (_showLog) ...[
+                  const SizedBox(height: 2),
+                  Container(
+                    height: 220,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0D1117),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(AppRadius.md),
+                        bottomRight: Radius.circular(AppRadius.md),
+                      ),
+                      border: Border.all(
+                        color: Colors.green.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: entries.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'No log entries yet',
+                              style: TextStyle(
+                                color: Colors.white38,
+                                fontSize: 10,
+                                fontFamily: 'monospace',
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            controller: _scroll,
+                            padding: const EdgeInsets.all(8),
+                            itemCount: entries.length,
+                            itemBuilder: (_, i) {
+                              final e = entries[i];
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 2),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      e.timeStr,
                                       style: const TextStyle(
+                                        color: Colors.white24,
+                                        fontSize: 8,
+                                        fontFamily: 'monospace',
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Container(
+                                      constraints: const BoxConstraints(
+                                        minWidth: 45,
+                                      ),
+                                      child: Text(
+                                        e.tag,
+                                        style: TextStyle(
+                                          color: e.color,
+                                          fontSize: 9,
+                                          fontFamily: 'monospace',
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        e.message,
+                                        style: const TextStyle(
                                           color: Color(0xFFCBD5E1),
                                           fontSize: 9,
                                           fontFamily: 'monospace',
-                                          height: 1.4))),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                ],
+              ],
+
+              // ── Continue button ───────────────────────────────────────
+              if (isDone) ...[
+                const SizedBox(height: AppSpacing.dialog),
+                PrimaryButton(
+                  label: isOk ? 'Continue' : 'OK',
+                  onPressed: () => Navigator.pop(context, true),
                 ),
               ],
             ],
-
-            // ── Continue button ───────────────────────────────────────
-            if (isDone) ...[
-              const SizedBox(height: 20),
-              SizedBox(width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: navy,
-                    foregroundColor: Colors.white, elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10))),
-                  child: Text(isOk ? 'Continue' : 'OK',
-                      style: GoogleFonts.inter(
-                          fontWeight: FontWeight.w700, fontSize: 14)),
-                ),
-              ),
-            ],
-          ]),
+          ),
         ),
       ),
     );

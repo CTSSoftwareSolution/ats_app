@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../../utilities/color_data.dart';
 import '../../../widgets/new_app_ui/status_badge.dart';
 import 'media_upload_tracker.dart';
 
 /// The one status vocabulary for media capture, shown the same way on the
 /// slot, the part card and the screen summary:
 ///
-///   Not captured → Captured → Uploading → Uploaded
-///                                       ↘ Upload failed (retry)
+///   Required → Captured → Uploading → Uploaded
+///                                   ↘ Upload failed (retry)
 ///
 /// Derived purely from what the UI already knows: whether a file exists for
 /// the slot and the [SlotUploadState] recorded by [MediaUploadTracker].
@@ -54,7 +55,7 @@ enum CaptureStatus {
   String get label {
     switch (this) {
       case CaptureStatus.notCaptured:
-        return 'Not captured';
+        return 'Required';
       case CaptureStatus.captured:
         return 'Captured';
       case CaptureStatus.uploading:
@@ -66,12 +67,23 @@ enum CaptureStatus {
     }
   }
 
+  /// Colour of this state in progress bars and counters.
+  Color get color => switch (this) {
+    CaptureStatus.notCaptured => warn,
+    CaptureStatus.captured => appColor,
+    CaptureStatus.uploading => accent,
+    CaptureStatus.uploaded => pass,
+    CaptureStatus.failed => fail,
+  };
+
   StatusBadge badge({bool dense = true}) {
     switch (this) {
       case CaptureStatus.notCaptured:
-        return StatusBadge.neutral(
+        return StatusBadge(
           label: label,
-          icon: Icons.radio_button_unchecked_rounded,
+          color: warn,
+          background: warnLight,
+          icon: Icons.add_circle_outline_rounded,
           dense: dense,
         );
       case CaptureStatus.captured:

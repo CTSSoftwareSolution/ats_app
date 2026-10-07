@@ -70,3 +70,10 @@ const accentLight = Color(0xFFEFF4FF);
 
 // Overlay behind dialogs and bottom sheets (navy at 45%).
 const scrim = Color(0x730D1B3E);
+
+// Media surfaces: camera preview and full-screen image / video viewers.
+const mediaBg = Color(0xFF000000);
+
+// Translucent backing for controls and captions laid over a photo or video
+// (black at 55%), so white text stays readable on any image.
+const mediaScrim = Color(0x8C000000);

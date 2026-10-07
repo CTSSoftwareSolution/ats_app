@@ -1,6 +1,8 @@
 import 'package:ats_app/utilities/input_formatters.dart';
 import 'package:flutter/material.dart';
 import '../utilities/color_data.dart';
+import '../utilities/new_app_theme/app_spacing.dart';
+import '../utilities/new_app_theme/app_text.dart';
 import 'custom_text_field.dart';
 
 class CustomSearchTextField extends StatelessWidget {
@@ -29,7 +31,7 @@ class CustomSearchTextField extends StatelessWidget {
         horizontal: 12.0,
       ),
       maxLines: 1,
-      height: 48,
+      height: AppSpacing.inputHeight,
       fillColor: surface,
       borderWidth: 1,
       controller: controller,
@@ -40,11 +42,7 @@ class CustomSearchTextField extends StatelessWidget {
       suffixIcon: suffixIcon,
       prefixIcon: const Icon(Icons.search_rounded, color: na, size: 22),
       hint: hint,
-      hintStyle: const TextStyle(
-        fontSize: 15,
-        fontFamily: "Medium",
-        color: textMuted,
-      ),
+      hintStyle: AppText.hint,
       onChanged: onChanged,
     );
   }

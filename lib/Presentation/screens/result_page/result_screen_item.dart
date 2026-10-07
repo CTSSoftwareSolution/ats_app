@@ -168,7 +168,7 @@ class ResultScreenItem extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                             horizontal: AppSpacing.md,
                           ),
-                          textStyle: AppText.button.copyWith(fontSize: 14),
+                          textStyle: AppText.buttonCompact,
                         ),
                         icon: const Icon(
                           Icons.refresh_rounded,

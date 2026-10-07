@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ats_app/utilities/new_app_theme/app_spacing.dart';
 
 import '../../utilities/color_data.dart';
 import '../../utilities/new_app_theme/app_text.dart';
@@ -14,7 +15,7 @@ class MetaRow extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, size: 16, color: textSecondary),
-        const SizedBox(width: 6),
+        const SizedBox(width: AppSpacing.iconGap),
         Expanded(
           child: Text(
             text,

@@ -1,4 +1,5 @@
 import 'package:ats_app/Presentation/provider/login_provider.dart';
+import 'package:ats_app/utilities/new_app_theme/app_text.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:ats_app/utilities/input_formatters.dart';
 import 'package:ats_app/utilities/validators.dart';
@@ -20,11 +21,7 @@ class LoginScreenItem extends StatelessWidget {
     horizontal: 14,
     vertical: 14,
   );
-  static const TextStyle _hintStyle = TextStyle(
-    fontSize: 14,
-    fontFamily: "Medium",
-    color: textMuted,
-  );
+  static const TextStyle _hintStyle = AppText.hint;
 
   @override
   Widget build(BuildContext context) {

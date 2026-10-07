@@ -1,5 +1,6 @@
 import 'package:ats_app/Data/model/response_model/vehicle_class_res_model.dart';
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/appointment_card_shimmer.dart';
+import 'package:ats_app/Presentation/screens/home_pages/home_widgets/appointment_status.dart';
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/build_header_home.dart';
 import 'package:ats_app/Presentation/screens/home_pages/home_widgets/home_list_summary.dart';
 import 'package:ats_app/Presentation/screens/vehicles_class_page/vehicle_class_screen_item.dart';
@@ -27,6 +28,45 @@ void main() {
     machineInspectonStatus: 'Fail',
   );
   final emptyAppointment = Appointments();
+  final passedAppointment = Appointments(
+    registrationNo: 'KA01MN0001',
+    make: 'Tata',
+    model: 'Nexon',
+    manualPreInspectionStatus: 'Pass',
+    machineInspectonStatus: 'pass',
+  );
+
+  group('AppointmentStatus', () {
+    AppointmentStatus of(String? manual, String? machine) => AppointmentStatus(
+      Appointments(
+        manualPreInspectionStatus: manual,
+        machineInspectonStatus: machine,
+      ),
+    );
+
+    test('nothing started is pending', () {
+      final s = of(null, 'null');
+      expect(s.phase, InspectionPhase.pending);
+      expect(s.finishedCount, 0);
+      expect(s.actionLabel, 'Start');
+    });
+
+    test('a started or finished stage is in progress', () {
+      expect(of('Pending', null).phase, InspectionPhase.inProgress);
+      final s = of('Pass', '');
+      expect(s.phase, InspectionPhase.inProgress);
+      expect(s.progress, 0.5);
+      expect(s.progressLabel, '1 of 2 stages done');
+    });
+
+    test('both finished is completed; any fail shows Failed', () {
+      expect(of('Pass', 'Pass').badge().label, 'Completed');
+      final failed = of('Pass', 'Fail');
+      expect(failed.phase, InspectionPhase.completed);
+      expect(failed.hasFailure, isTrue);
+      expect(failed.badge().label, 'Failed');
+    });
+  });
 
   Future<void> pump(
     WidgetTester tester,
@@ -85,14 +125,28 @@ void main() {
                 classDataModel: emptyAppointment,
                 onTap: () {},
               ),
+              const SizedBox(height: 12),
+              VehicleClassScreenItem(
+                classDataModel: passedAppointment,
+                highlighted: true,
+                onTap: () {},
+              ),
             ],
           ),
           width: width,
           textScale: scale,
         );
         expect(tester.takeException(), isNull);
-        expect(find.text('Inspect'), findsNWidgets(2));
+        // Long: one stage failed, one pending → in progress.
+        expect(find.text('In progress'), findsOneWidget);
+        expect(find.text('Continue'), findsOneWidget);
+        // Empty: nothing started.
+        expect(find.text('Pending'), findsOneWidget);
+        expect(find.text('Start'), findsOneWidget);
         expect(find.text('Not started'), findsNWidgets(2));
+        // Both passed.
+        expect(find.text('Completed'), findsOneWidget);
+        expect(find.text('Open'), findsOneWidget);
       });
 
       testWidgets(

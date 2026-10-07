@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import '../../../../utilities/color_data.dart';
 import '../../../../utilities/new_app_theme/app_radius.dart';
 import '../../../../utilities/new_app_theme/app_spacing.dart';
+import '../../../../utilities/new_app_theme/app_icon_size.dart';
+import '../../../../utilities/new_app_theme/app_layout.dart';
 import '../../../../utilities/new_app_theme/app_text.dart';
+import '../../../../widgets/new_app_ui/app_icon_tile.dart';
+import '../../../../widgets/new_app_ui/primary_button.dart';
 
 class ValidationDialog {
   static void show({
@@ -13,38 +17,30 @@ class ValidationDialog {
     showDialog(
       context: context,
       builder: (_) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xl,
-          vertical: AppSpacing.xl,
-        ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
+          constraints: const BoxConstraints(maxWidth: AppLayout.maxDialogWidth),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.dialog,
+              AppSpacing.dialog,
+              AppSpacing.dialog,
+              AppSpacing.lg,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: failLight,
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                      ),
-                      child: const Icon(
-                        Icons.error_outline_rounded,
-                        color: fail,
-                        size: 22,
-                      ),
+                    const AppIconTile(
+                      icon: Icons.error_outline_rounded,
+                      color: fail,
                     ),
                     const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: Text(
                         'Evidence required',
-                        style: AppText.sectionTitle.copyWith(fontSize: 17),
+                        style: AppText.dialogTitle,
                       ),
                     ),
                   ],
@@ -75,7 +71,7 @@ class ValidationDialog {
                                 padding: EdgeInsets.only(top: 1),
                                 child: Icon(
                                   Icons.photo_camera_outlined,
-                                  size: 16,
+                                  size: AppIconSize.sm,
                                   color: fail,
                                 ),
                               ),
@@ -98,18 +94,12 @@ class ValidationDialog {
                 const SizedBox(height: AppSpacing.md),
                 Text(
                   'Please add photos for all failed inspections before submitting.',
-                  style: AppText.caption.copyWith(
-                    color: fail,
-                    fontFamily: "SemiBold",
-                  ),
+                  style: AppText.tag.copyWith(color: fail),
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Got it'),
-                  ),
+                PrimaryButton(
+                  label: 'Got it',
+                  onPressed: () => Navigator.pop(context),
                 ),
               ],
             ),

@@ -1,4 +1,7 @@
+import 'package:ats_app/widgets/new_app_ui/app_filter_chip.dart';
 import 'package:ats_app/Presentation/provider/ai_inspection_details_provider.dart';
+import 'package:ats_app/utilities/new_app_theme/app_motion.dart';
+import 'package:ats_app/utilities/new_app_theme/app_radius.dart';
 import 'package:ats_app/Presentation/screens/pre_inspection_form/inspection_widgets/submit_fab_widget.dart';
 import 'package:ats_app/utilities/color_data.dart';
 import 'package:extensions_pro/extensions_pro.dart';
@@ -170,11 +173,7 @@ class _InspectionPageState extends State<InspectionPage>
                     dividerColor: Colors.transparent,
                     labelColor: textWhite,
                     unselectedLabelColor: textWhiteSub,
-                    labelStyle: AppText.chip.copyWith(letterSpacing: 0.2),
-                    unselectedLabelStyle: AppText.chip.copyWith(
-                      fontFamily: "Medium",
-                      letterSpacing: 0.2,
-                    ),
+                    // Label styles come from the theme's tabBarTheme.
                     tabs: List.generate(sections.length, (i) {
                       final s = sections[i];
                       return Tab(
@@ -196,7 +195,7 @@ class _InspectionPageState extends State<InspectionPage>
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              const SizedBox(width: 6),
+                              const SizedBox(width: AppSpacing.iconGap),
                               s.isComplete
                                   ? const Icon(
                                       Icons.check_circle_rounded,
@@ -213,15 +212,13 @@ class _InspectionPageState extends State<InspectionPage>
                                           alpha: 0.16,
                                         ),
                                         borderRadius: BorderRadius.circular(
-                                          100,
+                                          AppRadius.full,
                                         ),
                                       ),
                                       child: Text(
                                         '${s.totalAnswered}/${s.totalQuestions}',
-                                        style: AppText.caption.copyWith(
+                                        style: AppText.badgeDense.copyWith(
                                           color: textWhite,
-                                          fontFamily: "SemiBold",
-                                          fontSize: 11,
                                         ),
                                       ),
                                     ),
@@ -287,7 +284,6 @@ class _InspectionPageState extends State<InspectionPage>
               label: 'All',
               count: provider.visibleTotalQuestions,
               selected: provider.filter == QuestionFilter.all,
-              color: appColor,
               onTap: () => provider.setFilter(QuestionFilter.all),
             ),
             const SizedBox(width: AppSpacing.sm),
@@ -295,7 +291,6 @@ class _InspectionPageState extends State<InspectionPage>
               label: 'Answered',
               count: answered,
               selected: provider.filter == QuestionFilter.answered,
-              color: pass,
               onTap: () => provider.setFilter(QuestionFilter.answered),
             ),
             const SizedBox(width: AppSpacing.sm),
@@ -303,7 +298,6 @@ class _InspectionPageState extends State<InspectionPage>
               label: 'Pending',
               count: unanswered,
               selected: provider.filter == QuestionFilter.unanswered,
-              color: warn,
               onTap: () => provider.setFilter(QuestionFilter.unanswered),
             ),
             const SizedBox(width: AppSpacing.sm),
@@ -311,7 +305,6 @@ class _InspectionPageState extends State<InspectionPage>
               label: 'No',
               count: no,
               selected: provider.filter == QuestionFilter.no,
-              color: fail,
               onTap: () => provider.setFilter(QuestionFilter.no),
             ),
           ],
@@ -356,77 +349,22 @@ class _FilterChip extends StatelessWidget {
   final String label;
   final int count;
   final bool selected;
-  final Color color;
   final VoidCallback onTap;
 
   const _FilterChip({
     required this.label,
     required this.count,
     required this.selected,
-    required this.color,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(100);
-    return Semantics(
-      button: true,
+    return AppFilterChip(
+      label: label,
+      count: count,
       selected: selected,
-      label: '$label, $count',
-      excludeSemantics: true,
-      child: Material(
-        color: selected ? color.withValues(alpha: 0.1) : surface,
-        borderRadius: radius,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: radius,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 160),
-            height: 44,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            decoration: BoxDecoration(
-              borderRadius: radius,
-              border: Border.all(
-                color: selected ? color : border,
-                width: selected ? 1.5 : 1,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  label,
-                  style: AppText.chip.copyWith(
-                    color: selected ? color : textSecondary,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Container(
-                  constraints: const BoxConstraints(minWidth: 22),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: selected ? color : surface2,
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  child: Text(
-                    '$count',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: selected ? textWhite : textSecondary,
-                      fontSize: 11,
-                      fontFamily: "Bold",
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      onTap: onTap,
     );
   }
 }
