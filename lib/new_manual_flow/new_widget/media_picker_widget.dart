@@ -279,7 +279,7 @@ class _VidThumb extends StatelessWidget {
   const _VidThumb({required this.path});
   @override
   Widget build(BuildContext context) => Container(
-    color: surfaceDark,
+    color: primaryDark,
     child: const Center(
       child: Icon(
         Icons.play_circle_fill_rounded,
@@ -325,9 +325,9 @@ class _VS extends State<MediaViewerScreen> {
     final m = widget.mediaList[_cur];
     // Full-screen media viewer: stays black so photos read true.
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: mediaBg,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: mediaBg,
         foregroundColor: textWhite,
         leading: IconButton(
           tooltip: 'Back',
@@ -348,7 +348,7 @@ class _VS extends State<MediaViewerScreen> {
               vertical: AppSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.16),
+              color: textWhite.withValues(alpha: 0.16),
               borderRadius: BorderRadius.circular(AppRadius.full),
             ),
             child: Text(
@@ -380,7 +380,7 @@ class _VS extends State<MediaViewerScreen> {
 
           // GPS info bar
           Container(
-            color: surfaceDark,
+            color: primaryDark,
             padding: EdgeInsets.fromLTRB(
               AppSpacing.lg,
               AppSpacing.md,

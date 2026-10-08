@@ -401,12 +401,12 @@ class _ExpandedPanel extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const Icon(Icons.gavel_rounded, color: accent, size: 13),
+              const Icon(Icons.gavel_rounded, color: secondaryDark, size: 13),
               const SizedBox(width: AppSpacing.xs + 2),
               Expanded(
                 child: Text(
                   item.ruleRef,
-                  style: AppText.caption.copyWith(fontSize: 11, color: accent),
+                  style: AppText.caption.copyWith(fontSize: 11, color: secondaryDark),
                 ),
               ),
             ],

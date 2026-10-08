@@ -15,8 +15,8 @@ class HomeShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
+      baseColor: shimmerBase,
+      highlightColor: shimmerHighlight,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
         child: SingleChildScrollView(
@@ -56,7 +56,7 @@ class HomeShimmer extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: surface,
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     ),
                   );
@@ -68,7 +68,7 @@ class HomeShimmer extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color: Colors.white,
+                  color: surface,
                 ),
 
               ),

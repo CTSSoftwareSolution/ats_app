@@ -82,7 +82,7 @@ class VehiclePhotoService {
       final scale   = (w / 1080).clamp(1.0, 3.0);
       final bannerH = (130 * scale).round();
 
-      // Dark navy overlay at bottom
+      // Dark primaryDark overlay at bottom
       for (int y = h - bannerH; y < h; y++) {
         for (int x = 0; x < w; x++) {
           final orig = image.getPixel(x, y);

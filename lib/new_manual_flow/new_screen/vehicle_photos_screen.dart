@@ -30,14 +30,14 @@ class VehiclePhotosScreen extends StatelessWidget {
       final content = Scaffold(
         backgroundColor: bg,
         appBar: AppBar(
-          backgroundColor:navy, elevation: 0,
+          backgroundColor: appColor, elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 18),
+                color: textWhite, size: 18),
             onPressed: () => Navigator.pop(context)),
           title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('Vehicle Photos', style: GoogleFonts.inter(
-                color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
+                color: textWhite, fontSize: 14, fontWeight: FontWeight.w700)),
             Text('$done/$total captured', style: GoogleFonts.inter(
                 color: textWhiteSub, fontSize: 10)),
           ]),
@@ -48,18 +48,18 @@ class VehiclePhotosScreen extends StatelessWidget {
             value: done / total, minHeight: 4,
             backgroundColor: border,
             valueColor: AlwaysStoppedAnimation<Color>(
-                done == total ? pass : navyAccent)),
+                done == total ? pass : secondaryColor)),
           // Instruction banner
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             color: accentLight,
             child: Row(children: [
               const Icon(Icons.info_outline_rounded,
-                  color: navyAccent, size: 15),
+                  color: secondaryDark, size: 15),
               const SizedBox(width: 8),
               Expanded(child: Text(
                 'Take all 8 photos from required angles. GPS coordinates will be stamped automatically.',
-                style: GoogleFonts.inter(color: navyAccent, fontSize: 11))),
+                style: GoogleFonts.inter(color: secondaryDark, fontSize: 11))),
             ]),
           ),
           Expanded(
@@ -95,64 +95,64 @@ class VehiclePhotosScreen extends StatelessWidget {
 
   void _viewPhoto(BuildContext ctx, photo) {
     showDialog(context: ctx, builder: (_) => Dialog(
-      backgroundColor: Colors.black,
+      backgroundColor: mediaBg,
       insetPadding: const EdgeInsets.all(12),
       child: Stack(children: [
         InteractiveViewer(child: photo.bytes != null
             ? Image.memory(photo.bytes!, fit: BoxFit.contain)
-            : kIsWeb ? const Center(child: Icon(Icons.image, color: Colors.white))
+            : kIsWeb ? const Center(child: Icon(Icons.image, color: textWhite))
                 : Image.file(File(photo.path), fit: BoxFit.contain)),
         Positioned(top: 8, right: 8,
           child: IconButton(
-            icon: const Icon(Icons.close_rounded, color: Colors.white),
+            icon: const Icon(Icons.close_rounded, color: textWhite),
             onPressed: () => Navigator.pop(ctx))),
         Positioned(bottom: 0, left: 0, right: 0,
           child: Container(
             padding: const EdgeInsets.all(12),
-            color: Colors.black.withOpacity(0.7),
+            color: mediaScrim,
             child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min, children: [
               Text(vehiclePhotoLabel(photo.angle).toUpperCase(),
-                  style: GoogleFonts.inter(color: const Color(0xFFFBBF24),
+                  style: GoogleFonts.inter(color: warnOnDark,
                       fontSize: 11, fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
               Text('GPS: ${photo.coordString}',
-                  style: GoogleFonts.robotoMono(color: Colors.white, fontSize: 11)),
+                  style: GoogleFonts.robotoMono(color: textWhite, fontSize: 11)),
               Text(photo.address,
-                  style: GoogleFonts.inter(color: Colors.white70, fontSize: 11)),
+                  style: GoogleFonts.inter(color: textWhiteSub, fontSize: 11)),
               Text(photo.formattedDate,
-                  style: GoogleFonts.robotoMono(color: Colors.white54, fontSize: 10)),
+                  style: GoogleFonts.robotoMono(color: textWhiteSub, fontSize: 10)),
               const SizedBox(height: 6),
               Row(children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                   decoration: BoxDecoration(
                     color: photo.savedToServer
-                        ? Colors.green.withOpacity(0.25)
-                        : Colors.orange.withOpacity(0.25),
+                        ? pass.withOpacity(0.25)
+                        : warn.withOpacity(0.25),
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(
                       color: photo.savedToServer
-                          ? Colors.greenAccent.withOpacity(0.6)
-                          : Colors.orangeAccent.withOpacity(0.6))),
+                          ? passOnDark.withOpacity(0.6)
+                          : warnOnDark.withOpacity(0.6))),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
                     Icon(
                       photo.savedToServer
                           ? Icons.cloud_done_rounded : Icons.folder_rounded,
                       color: photo.savedToServer
-                          ? Colors.greenAccent : Colors.orangeAccent,
+                          ? passOnDark : warnOnDark,
                       size: 11),
                     const SizedBox(width: 4),
                     Text(photo.savedToServer ? 'Saved to Server' : 'Saved Locally',
                         style: GoogleFonts.inter(
                             color: photo.savedToServer
-                                ? Colors.greenAccent : Colors.orangeAccent,
+                                ? passOnDark : warnOnDark,
                             fontSize: 10, fontWeight: FontWeight.w600)),
                   ])),
                 if (photo.storageNote != null) ...[
                   const SizedBox(width: 6),
                   Expanded(child: Text(photo.storageNote!,
-                      style: GoogleFonts.inter(color: Colors.white38, fontSize: 9),
+                      style: GoogleFonts.inter(color: textMuted, fontSize: 9),
                       overflow: TextOverflow.ellipsis)),
                 ],
               ]),
@@ -184,7 +184,7 @@ class _PhotoTile extends StatelessWidget {
         border: Border.all(
           color: _captured ? pass.withOpacity(0.4) : border,
           width: _captured ? 1.5 : 1),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05),
+        boxShadow: [BoxShadow(color: primaryDark.withOpacity(0.05),
             blurRadius: 6, offset: const Offset(0,2))],
       ),
       child: Column(children: [
@@ -210,20 +210,20 @@ class _PhotoTile extends StatelessWidget {
                           decoration: const BoxDecoration(
                               color: pass, shape: BoxShape.circle),
                           child: const Icon(Icons.check_rounded,
-                              color: Colors.white, size: 12))),
+                              color: textWhite, size: 12))),
                       // Storage badge bottom-left
                       Positioned(bottom: 4, left: 4,
                         child: Container(
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
+                            color: mediaScrim,
                             borderRadius: BorderRadius.circular(4)),
                           child: Icon(
                             photo.savedToServer
                                 ? Icons.cloud_done_rounded
                                 : Icons.folder_rounded,
                             color: photo.savedToServer
-                                ? Colors.greenAccent : Colors.orangeAccent,
+                                ? passOnDark : warnOnDark,
                             size: 11))),
                     ])
                   : Container(
@@ -251,10 +251,10 @@ class _PhotoTile extends StatelessWidget {
                     onTap: onView,
                     child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       const Icon(Icons.zoom_in_rounded,
-                          color: navyAccent, size: 14),
+                          color: secondaryDark, size: 14),
                       const SizedBox(width: 4),
                       Text('View', style: GoogleFonts.inter(
-                          color: navyAccent, fontSize: 11,
+                          color: secondaryDark, fontSize: 11,
                           fontWeight: FontWeight.w600)),
                     ]),
                   )),
@@ -275,11 +275,11 @@ class _PhotoTile extends StatelessWidget {
                   onTap: isCapturing ? null : onCapture,
                   child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Icon(Icons.camera_alt_rounded,
-                        color: isCapturing ? textMuted : navy,
+                        color: isCapturing ? textMuted : appColor,
                         size: 15),
                     const SizedBox(width: 5),
                     Text('Capture', style: GoogleFonts.inter(
-                        color: isCapturing ? textMuted : navy,
+                        color: isCapturing ? textMuted : appColor,
                         fontSize: 12, fontWeight: FontWeight.w700)),
                   ]),
                 ),
@@ -315,8 +315,8 @@ class _PhotosBottomBar extends StatelessWidget {
                     style: GoogleFonts.inter(
                         fontSize: 14, fontWeight: FontWeight.w700)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: navy,
-                  foregroundColor: Colors.white, elevation: 0,
+                  backgroundColor: appColor,
+                  foregroundColor: textWhite, elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10))),
               ))

@@ -13,11 +13,11 @@ class InspectionResultScreenItem extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: surface,
         borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF9BA8C3).withValues(alpha:0.18),
+            color: primaryDark.withValues(alpha:0.18),
             blurRadius: 20,
             spreadRadius: 0,
             offset: const Offset(0, 6),
@@ -61,7 +61,7 @@ class InspectionResultScreenItem extends StatelessWidget {
                       text: "Reverse Light",
                       fontFamily: "Bold",
                       fontSize: 16.0,
-                      textColor: const Color(0xFF1A2340),
+                      textColor: textPrimary,
                     ),
                     6.height,
                     Container(
@@ -69,7 +69,7 @@ class InspectionResultScreenItem extends StatelessWidget {
                           horizontal: 10.0, vertical: 4.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: const Color(0xFFEDF7EF),
+                        color: passLight,
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -79,7 +79,7 @@ class InspectionResultScreenItem extends StatelessWidget {
                             height: 6,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Color(0xFF3DB85C),
+                              color: pass,
                             ),
                           ),
                           5.width,
@@ -87,7 +87,7 @@ class InspectionResultScreenItem extends StatelessWidget {
                             text: "Pass",
                             fontFamily: "Bold",
                             fontSize: 12.0,
-                            textColor: const Color(0xFF2A8C44),
+                            textColor: pass,
                           ),
                         ],
                       ),

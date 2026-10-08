@@ -34,7 +34,7 @@ import 'package:ats_app/design_system.dart';
 
 ## Principles
 
-1. **One brand colour.** `appColor` (#1C3E70) is used for app bars, primary buttons, selection and focus. Every other colour is either neutral or carries a status meaning.
+1. **Deep Indigo, one accent.** `appColor` (#3F51B5) is used for app bars, primary buttons, FAB, selection and focus. `secondaryColor` (#5C6BC0) is the supporting indigo for secondary actions, progress and section accents; it is readable on white and under white text. `accent` (#7C4DFF) is a violet highlight used sparingly on light surfaces (theme `tertiary`); on indigo or dark surfaces (tab underlines, snackbar actions) use `accentOnDark` (#B388FF). Text is `textPrimary` (#263238), the page is `bg` (#FAFAFF) and neutral fills are `surface2` (#E8EAF6). Every other colour is either neutral or carries a status meaning.
 2. **Flat.** Separate surfaces with hairline borders (`border`), not shadows. There are no gradients. `AppShadow.overlay` is the only shadow, and it is reserved for things floating over live content.
 3. **Compact, not cramped.** Radii are small (6–16). Cards hug their content. Never set a fixed height on a card.
 4. **Readable first.** Text is at least 11pt. Readable text uses `textPrimary`, `textSecondary` or `na`. `textMuted` is only for placeholders, disabled states and decorative icons.
@@ -46,19 +46,29 @@ import 'package:ats_app/design_system.dart';
 
 | Token | Use |
 |---|---|
-| `appColor` | Brand: app bar, primary button, selected chip/tab, focus ring, links |
+| `appColor` | Brand primary (#3F51B5): app bar, primary button, FAB, selected chip/tab, focus ring, links |
+| `primaryDark` | Deepest indigo (#1A237E): dark panels, inverse surfaces, shadow tint |
+| `secondaryColor` / `secondaryLight` | Secondary indigo (#5C6BC0, 4.9:1 on white): secondary actions, progress, section accents / tinted fill #E8EAF6 (theme `secondary` / `secondaryContainer`) |
+| `secondaryDark` | Secondary text and icons on light surfaces (same value as `secondaryColor`) |
+| `primaryLight` | Muted violet (#7E57C2): section icons and labels beside `appColor` |
+| `accent` / `accentContainer` | Violet accent (#7C4DFF, 4.8:1 on white) for sparing highlights on light surfaces / its tinted fill #EDE7FF (theme `tertiary` / `tertiaryContainer`) |
+| `accentOnDark` | Accent tint (#B388FF) for highlights on `appColor` or dark surfaces: tab indicator, snackbar action |
+| `accentLight` | Selected-state tint on light surfaces (#E8EAF6): selected chips, segments, nav pill |
 | `bg` | Page background |
 | `surface` | Cards, sheets, dialogs, inputs, bottom bars |
-| `surface2` | Neutral fills: disabled buttons, static chips, progress tracks, skeletons |
+| `surface2` | Neutral fills: static chips, progress tracks |
+| `disabledBg` / `disabledFg` | **Disabled**: button fill / disabled text and icons |
+| `shimmerBase` / `shimmerHighlight` | Loading skeletons |
 | `border` / `borderDark` | Hairline dividers and card borders / outlined button and input outlines |
 | `textPrimary` / `textSecondary` | Main text / supporting text |
-| `na` | Captions, overlines, neutral icons (4.7:1 on white) |
-| `textMuted` | Placeholders, disabled, decorative only (fails AA for body text) |
+| `na` | Captions, overlines, neutral icons (4.9:1 on white) |
+| `textMuted` | Placeholders, disabled, decorative only (≈4.3:1, not for body text) |
 | `textWhite` / `textWhiteSub` | Text on `appColor` or dark media |
-| `pass` / `passLight` | **Success**: pass, uploaded, saved |
-| `fail` / `failLight` | **Error**: fail, failed, destructive actions |
-| `warn` / `warnLight` | **Warning**: pending, needs attention |
-| `accent` / `accentLight` | **Info / in progress**: uploading, processing; tinted icon backgrounds |
+| `pass` / `passLight` / `passBorder` | **Success**: pass, uploaded, saved |
+| `fail` / `failLight` / `failBorder` | **Error**: fail, failed, destructive actions |
+| `warn` / `warnLight` / `warnBorder` | **Pending / warning**: waiting, needs attention |
+| `passOnDark` / `warnOnDark` | Status text and icons on dark indigo panels or photo overlays |
+| `infoColor` / `infoLight` (secondary indigo, #5C6BC0) | **Info / in progress**: uploading, processing; tinted icon backgrounds |
 | `scrim` | Overlay behind dialogs, sheets and the blocking loader (set in the theme) |
 | `mediaBg` | Background of the camera and full-screen image / video viewers |
 | `mediaScrim` | Backing behind controls and captions laid over a photo or video |
@@ -334,7 +344,7 @@ Use `AppSpinner` for every spinner: `.large` (32dp) for a whole area, the defaul
 | Uploading | – | `StatusBadge.uploading` plus `AppProgressBar` (indeterminate when no byte progress is reported); summarise many uploads in one segmented bar (`MediaPipelineSummary`) | – |
 | Failed (retryable) | – | `StatusBadge.error` ("Upload failed") on the item with a Retry action, plus `AppBanner.error` with "Review failed" when several items failed | `CustomLoader.errorMessage` for a single failure the inspector only needs to read |
 
-**Toasts** (`showAppToast`, through `CustomLoader.message` / `.success` / `.errorMessage`) are in-app, not native. Each has an icon plus text: info on navy, success on green, error on red. One shows at a time (a new toast replaces the old). They float above bottom action bars and wrap up to three lines. Errors stay four seconds and the others 2.5.
+**Toasts** (`showAppToast`, through `CustomLoader.message` / `.success` / `.errorMessage`) are in-app, not native. Each has an icon plus text: info on indigo, success on green, error on red. One shows at a time (a new toast replaces the old). They float above bottom action bars and wrap up to three lines. Errors stay four seconds and the others 2.5.
 
 **Error copy** names the kind of failure in plain words ("You're offline…", "The server took too long…"). It never shows exception text, status codes or field names.
 
@@ -348,7 +358,7 @@ Older screens still use the first-generation widgets. When you touch one, swap i
 
 | Legacy | Use instead |
 |---|---|
-| Raw `AppBar(...)`, `navy` app bars | `AppTopBar` |
+| Raw `AppBar(...)`, dark custom app bars | `AppTopBar` |
 | `CustomText(...)`, inline `TextStyle(fontSize: …)`, `GoogleFonts.inter` | `Text` with an `AppText` style |
 | `CustomButton` | `PrimaryButton` / `SecondaryButton` / theme inline buttons |
 | `EmptyStateWidget`, `ErrorScreen`-style one-offs | `AppStateView.empty` / `.error` / `.success` |

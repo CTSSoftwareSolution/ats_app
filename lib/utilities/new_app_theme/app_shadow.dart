@@ -12,7 +12,7 @@ class AppShadow {
   static const List<BoxShadow> none = <BoxShadow>[];
 
   static const List<BoxShadow> overlay = <BoxShadow>[
-    BoxShadow(color: Color(0x140D1B3E), blurRadius: 12, offset: Offset(0, 4)),
+    BoxShadow(color: Color(0x141A237E), blurRadius: 12, offset: Offset(0, 4)),
   ];
 
   /// Material elevation equivalent of [overlay], for widgets that take an
@@ -20,5 +20,5 @@ class AppShadow {
   static const double overlayElevation = 2;
 
   /// Shadow colour used with [overlayElevation].
-  static const Color color = navy;
+  static const Color color = primaryDark;
 }

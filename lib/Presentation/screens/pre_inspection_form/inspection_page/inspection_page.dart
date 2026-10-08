@@ -167,7 +167,7 @@ class _InspectionPageState extends State<InspectionPage>
                     tabAlignment: sections.length > 3
                         ? TabAlignment.start
                         : null,
-                    indicatorColor: textWhite,
+                    indicatorColor: accentOnDark,
                     indicatorWeight: 3,
                     indicatorSize: TabBarIndicatorSize.tab,
                     dividerColor: Colors.transparent,

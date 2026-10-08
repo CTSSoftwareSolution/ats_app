@@ -162,69 +162,69 @@ class VehicleClassScreenItem extends StatelessWidget {
               ),
             ),
             const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.card,
-                AppSpacing.md,
-                AppSpacing.sm,
-                AppSpacing.sm,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Stage results (Manual / AI), full width so long API
-                  // statuses have room.
-                  Padding(
-                    padding: const EdgeInsets.only(right: AppSpacing.sm),
-                    child: Wrap(
-                      spacing: AppSpacing.lg,
-                      runSpacing: AppSpacing.xs,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        for (final stage in status.stages)
-                          _StageResult(stage: stage),
-                      ],
-                    ),
-                  ),
-                  // Stage progress + action
-                  Row(
-                    children: [
-                      // The bar gives way first so the action button never
-                      // gets squeezed; the "1/2" counter shows when it fits.
-                      Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            final bar = AppProgressBar(
-                              value: status.progress,
-                              color: status.hasFailure ? fail : null,
-                            );
-                            if (constraints.maxWidth < 96) return bar;
-                            return Row(
-                              children: [
-                                Expanded(child: bar),
-                                const SizedBox(width: AppSpacing.sm),
-                                Text(
-                                  '${status.finishedCount}/${status.total}',
-                                  style: AppText.caption.copyWith(
-                                    fontFeatures: AppText.tabular,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.md),
-                      _ActionButton(
-                        label: status.actionLabel,
-                        icon: status.actionIcon,
-                        onTap: onTap,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(
+            //     AppSpacing.card,
+            //     AppSpacing.md,
+            //     AppSpacing.sm,
+            //     AppSpacing.sm,
+            //   ),
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.stretch,
+            //     children: [
+            //       // Stage results (Manual / AI), full width so long API
+            //       // statuses have room.
+            //       Padding(
+            //         padding: const EdgeInsets.only(right: AppSpacing.sm),
+            //         child: Wrap(
+            //           spacing: AppSpacing.lg,
+            //           runSpacing: AppSpacing.xs,
+            //           crossAxisAlignment: WrapCrossAlignment.center,
+            //           children: [
+            //             for (final stage in status.stages)
+            //               _StageResult(stage: stage),
+            //           ],
+            //         ),
+            //       ),
+            //       // Stage progress + action
+            //       Row(
+            //         children: [
+            //           // The bar gives way first so the action button never
+            //           // gets squeezed; the "1/2" counter shows when it fits.
+            //           Expanded(
+            //             child: LayoutBuilder(
+            //               builder: (context, constraints) {
+            //                 final bar = AppProgressBar(
+            //                   value: status.progress,
+            //                   color: status.hasFailure ? fail : null,
+            //                 );
+            //                 if (constraints.maxWidth < 96) return bar;
+            //                 return Row(
+            //                   children: [
+            //                     Expanded(child: bar),
+            //                     const SizedBox(width: AppSpacing.sm),
+            //                     Text(
+            //                       '${status.finishedCount}/${status.total}',
+            //                       style: AppText.caption.copyWith(
+            //                         fontFeatures: AppText.tabular,
+            //                       ),
+            //                     ),
+            //                   ],
+            //                 );
+            //               },
+            //             ),
+            //           ),
+            //           const SizedBox(width: AppSpacing.md),
+            //           _ActionButton(
+            //             label: status.actionLabel,
+            //             icon: status.actionIcon,
+            //             onTap: onTap,
+            //           ),
+            //         ],
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),

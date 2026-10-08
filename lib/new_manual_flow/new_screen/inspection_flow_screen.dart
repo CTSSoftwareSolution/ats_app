@@ -55,17 +55,17 @@ class _InspectionFlowScreenState extends State<InspectionFlowScreen> {
       final phaseLabel = widget.phase == InspectionPhase.pre
           ? 'PRE-INSPECTION' : 'POST-INSPECTION';
       final phaseColor = widget.phase == InspectionPhase.pre
-          ? navyAccent : pass;
+          ? secondaryDark : pass;
 
       return DefaultTabController(
         length: sections.length,
         child: DebugFabWrapper(child: Scaffold(
           backgroundColor: bg,
           appBar: AppBar(
-            backgroundColor: navy, elevation: 0,
+            backgroundColor: appColor, elevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white, size: 18),
+                  color: textWhite, size: 18),
               onPressed: () => Navigator.pop(context)),
             title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
@@ -76,11 +76,11 @@ class _InspectionFlowScreenState extends State<InspectionFlowScreen> {
                     color: phaseColor.withOpacity(0.25),
                     borderRadius: BorderRadius.circular(4)),
                   child: Text(phaseLabel, style: GoogleFonts.inter(
-                      color: Colors.white, fontSize: 9,
+                      color: textWhite, fontSize: 9,
                       fontWeight: FontWeight.w800, letterSpacing: 0.5))),
                 const SizedBox(width: 8),
                 Text(v.displayName, style: GoogleFonts.inter(
-                    color: Colors.white, fontSize: 13,
+                    color: textWhite, fontSize: 13,
                     fontWeight: FontWeight.w700)),
               ]),
               Text('$doneCount/$totalItems checks done',
@@ -94,7 +94,7 @@ class _InspectionFlowScreenState extends State<InspectionFlowScreen> {
                       ? p.vehicles.firstWhere((e) => e.regNo == widget.vehicleId).preSections
                       : p.vehicles.firstWhere((e) => e.regNo == widget.vehicleId).postSections;
                   return PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert, color: Colors.white),
+                    icon: const Icon(Icons.more_vert, color: textWhite),
                     color: surface,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -126,8 +126,8 @@ class _InspectionFlowScreenState extends State<InspectionFlowScreen> {
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 indicatorColor: phaseColor,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.white54,
+                labelColor: textWhite,
+                unselectedLabelColor: textWhiteSub,
                 labelStyle: GoogleFonts.inter(
                     fontSize: 11, fontWeight: FontWeight.w700),
                 unselectedLabelStyle: GoogleFonts.inter(fontSize: 11),
@@ -142,7 +142,7 @@ class _InspectionFlowScreenState extends State<InspectionFlowScreen> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: s.hasFailure ? fail
-                            : s.allDone ? const Color(0xFF4ADE80)
+                            : s.allDone ? passOnDark
                             : Colors.transparent)),
                   ]),
                 )).toList(),
@@ -282,7 +282,7 @@ class _BottomBar extends StatelessWidget {
                       fontSize: 13, fontWeight: FontWeight.w700)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: phaseColor,
-                  foregroundColor: Colors.white, elevation: 0,
+                  foregroundColor: textWhite, elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10))),
               ),
@@ -394,7 +394,7 @@ class _BottomBar extends StatelessWidget {
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
                 backgroundColor: warn,
-                foregroundColor: Colors.white, elevation: 0,
+                foregroundColor: textWhite, elevation: 0,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8))),
             child: Text('Submit Anyway',
@@ -483,8 +483,8 @@ class _BottomBar extends StatelessWidget {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx),
             style: ElevatedButton.styleFrom(
-                backgroundColor: navy,
-                foregroundColor: Colors.white, elevation: 0,
+                backgroundColor: appColor,
+                foregroundColor: textWhite, elevation: 0,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8))),
             child: Text('Fix Issues',

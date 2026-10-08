@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'color_data.dart';
 
 class SelectVehicleShimmer extends StatefulWidget {
   const SelectVehicleShimmer({super.key});
@@ -12,8 +13,8 @@ class _SelectVehicleShimmerState extends State<SelectVehicleShimmer> {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
+      baseColor: shimmerBase,
+      highlightColor: shimmerHighlight,
       child: GridView.builder(
         itemCount: 4,
         shrinkWrap: true,
@@ -27,7 +28,7 @@ class _SelectVehicleShimmerState extends State<SelectVehicleShimmer> {
         itemBuilder: (BuildContext context, int index) {
           return Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: surface,
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           );

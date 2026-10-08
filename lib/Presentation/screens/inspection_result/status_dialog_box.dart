@@ -12,14 +12,14 @@ import '../../../widgets/custom_text.dart';
 statusDialogBox({required BuildContext context}) {
   showDialog(
     context: context,
-    barrierColor: Colors.black.withValues(alpha:0.45),
+    barrierColor: scrim,
     builder: (BuildContext context) => Dialog(
       backgroundColor: Colors.transparent,
       elevation: 0,
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: surface,
           borderRadius: BorderRadius.circular(28.0),
           boxShadow: [
             BoxShadow(
@@ -29,7 +29,7 @@ statusDialogBox({required BuildContext context}) {
               offset: const Offset(0, 16),
             ),
             BoxShadow(
-              color: Colors.black.withValues(alpha:0.08),
+              color: primaryDark.withValues(alpha:0.08),
               blurRadius: 20,
               spreadRadius: 0,
               offset: const Offset(0, 6),
@@ -64,12 +64,12 @@ statusDialogBox({required BuildContext context}) {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha:0.20),
+                                color: textWhite.withValues(alpha:0.20),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Icon(
                                 Icons.manage_search_rounded,
-                                color: Colors.white,
+                                color: textWhite,
                                 size: 16,
                               ),
                             ),
@@ -81,14 +81,14 @@ statusDialogBox({required BuildContext context}) {
                                   text: "Change Status",
                                   fontSize: 15.0,
                                   fontFamily: "Bold",
-                                  textColor: Colors.white,
+                                  textColor: textWhite,
                                 ),
                                 2.height,
                                 CustomText(
                                   text: "Update inspection result",
                                   fontSize: 11.0,
                                   fontFamily: "Medium",
-                                  textColor: Colors.white.withValues(alpha:0.70),
+                                  textColor: textWhite.withValues(alpha:0.70),
                                 ),
                               ],
                             ),
@@ -101,12 +101,12 @@ statusDialogBox({required BuildContext context}) {
                           child: Container(
                             padding: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha:0.15),
+                              color: textWhite.withValues(alpha:0.15),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
                               Icons.close_rounded,
-                              color: Colors.white,
+                              color: textWhite,
                               size: 14,
                             ),
                           ),
@@ -148,9 +148,9 @@ statusDialogBox({required BuildContext context}) {
                           horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: const Color(0xFFFDF1F1),
+                        color: failLight,
                         border: Border.all(
-                          color: const Color(0xFFE53935).withValues(alpha:0.20),
+                          color: fail.withValues(alpha:0.20),
                           width: 1.2,
                         ),
                       ),
@@ -162,12 +162,12 @@ statusDialogBox({required BuildContext context}) {
                               Container(
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFFE5E5),
+                                  color: failBorder,
                                   borderRadius: BorderRadius.circular(7),
                                 ),
                                 child: const Icon(
                                   Icons.cancel_outlined,
-                                  color: Color(0xFFD94040),
+                                  color: fail,
                                   size: 13,
                                 ),
                               ),
@@ -176,7 +176,7 @@ statusDialogBox({required BuildContext context}) {
                                 text: "Change status to FAIL",
                                 fontSize: 12.5,
                                 fontFamily: "Bold",
-                                textColor: Color(0xFFBF2E2E),
+                                textColor: fail,
                               ),
                             ],
                           ),
@@ -190,9 +190,9 @@ statusDialogBox({required BuildContext context}) {
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 side: const BorderSide(
-                                    color: Color(0xFFD94040), width: 2),
-                                activeColor: const Color(0xFFD94040),
-                                checkColor: Colors.white,
+                                    color: fail, width: 2),
+                                activeColor: fail,
+                                checkColor: textWhite,
                                 value: context
                                     .watch<InspectionResultProvider>()
                                     .isChecked,
@@ -223,17 +223,17 @@ statusDialogBox({required BuildContext context}) {
                           text: "Reason",
                           fontSize: 12.5,
                           fontFamily: "Bold",
-                          textColor: Color(0xFF1A2340),
+                          textColor: textPrimary,
                         ),
                       ],
                     ),
                     8.height,
                     Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5F7FC),
+                        color: bg,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                            color: const Color(0xFFE4E8F4), width: 1.2),
+                            color: border, width: 1.2),
                       ),
                       child: CustomTextField(
                         contentPadding: const EdgeInsets.symmetric(
@@ -247,7 +247,7 @@ statusDialogBox({required BuildContext context}) {
                         hintStyle: const TextStyle(
                           fontFamily: "Medium",
                           fontSize: 12,
-                          color: Color(0xFFB8C0D4),
+                          color: textMuted,
                         ),
                         readOnly: false,
                         textCapitalization: TextCapitalization.words,
@@ -263,7 +263,7 @@ statusDialogBox({required BuildContext context}) {
                             child: Container(
                               height: 44,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF0F3FA),
+                                color: surface2,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               alignment: Alignment.center,
@@ -271,7 +271,7 @@ statusDialogBox({required BuildContext context}) {
                                 text: "Cancel",
                                 fontSize: 13.5,
                                 fontFamily: "Bold",
-                                textColor: Color(0xFF6B7A99),
+                                textColor: textSecondary,
                               ),
                             ),
                           ),
@@ -304,7 +304,7 @@ statusDialogBox({required BuildContext context}) {
                               buttonText: "Submit",
                               onPress: () => context.pop(),
                               backgroundColor: Colors.transparent,
-                              foregroundColor: Colors.white,
+                              foregroundColor: textWhite,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
@@ -333,18 +333,18 @@ Widget _statusCard({
   required IconData icon,
 }) {
   final Color statusColor =
-  isPass ? const Color(0xFF2A8C44) : const Color(0xFFBF2E2E);
+  isPass ? pass : fail;
   final Color bgColor =
-  isPass ? const Color(0xFFEDF7EF) : const Color(0xFFFDF0F0);
+  isPass ? passLight : failLight;
   final Color iconBg =
-  isPass ? const Color(0xFFD4F0DC) : const Color(0xFFFFE5E5);
+  isPass ? passBorder : failBorder;
 
   return Container(
     padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
-      color: const Color(0xFFF8F9FD),
+      color: bg,
       borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: const Color(0xFFEAEDF5), width: 1.2),
+      border: Border.all(color: border, width: 1.2),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -365,7 +365,7 @@ Widget _statusCard({
                 text: label,
                 fontSize: 10,
                 fontFamily: "Medium",
-                textColor: const Color(0xFF8F9BB8),
+                textColor: textMuted,
                 overflow: TextOverflow.ellipsis,
               ),
             ),

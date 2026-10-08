@@ -6,6 +6,7 @@ import 'package:ats_app/Data/model/response_model/pre_inspection_details_model.d
 import 'package:ats_app/Domain/entities/inspection_new_que_entity.dart';
 import 'package:ats_app/Domain/usecases/inspection_new_que_usecases.dart';
 import 'package:ats_app/utilities/preferences.dart';
+import 'package:ats_app/utilities/color_data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -356,21 +357,21 @@ class InspectionFormProvider extends ChangeNotifier {
       SectionState(
         label: 'Pre-Inspection',
         subtitle: 'Before vehicle enters',
-        color: const Color(0xFF0D7377),
+        color: secondaryDark,
         icon: Icons.assignment_turned_in_outlined,
         categories: _buildFromPreInspection(data.preInspection ?? []),
       ),
       SectionState(
         label: 'Under-PIT Inspection',
         subtitle: 'Main vehicle check',
-        color: const Color(0xFF1A3C6E),
+        color: appColor,
         icon: Icons.directions_car_outlined,
         categories: _buildFromInspection(data.underPitInspection ?? []),
       ),
       SectionState(
         label: 'Post-Inspection',
         subtitle: 'After vehicle exits',
-        color: const Color(0xFF7B2D8B),
+        color: primaryLight,
         icon: Icons.task_alt_outlined,
         categories: _buildFromPostInspection(data.postInspection ?? []),
       ),
@@ -401,7 +402,7 @@ class InspectionFormProvider extends ChangeNotifier {
   //     SectionState(
   //       label: 'Pre-Inspection',
   //       subtitle: 'Before vehicle enters',
-  //       color: const Color(0xFF0D7377),
+  //       color: secondaryColor,
   //       icon: Icons.assignment_turned_in_outlined,
   //       categories: (data.preInspection ?? [])
   //           .map((cat) => CategoryState(
@@ -413,7 +414,7 @@ class InspectionFormProvider extends ChangeNotifier {
   //     SectionState(
   //       label: 'Under-PIT Inspection',
   //       subtitle: 'Main vehicle check',
-  //       color: const Color(0xFF1A3C6E),
+  //       color: appColor,
   //       icon: Icons.directions_car_outlined,
   //       categories: (data.underPitInspection ?? [])
   //           .map((cat) => CategoryState(
@@ -425,7 +426,7 @@ class InspectionFormProvider extends ChangeNotifier {
   //     SectionState(
   //       label: 'Post-Inspection',
   //       subtitle: 'After vehicle exits',
-  //       color: const Color(0xFF7B2D8B),
+  //       color: primaryLight,
   //       icon: Icons.task_alt_outlined,
   //       categories: (data.postInspection ?? [])
   //           .map((cat) => CategoryState(

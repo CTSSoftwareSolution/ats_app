@@ -97,7 +97,7 @@ class _State extends State<UploadProgressDialog> {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: isDone ? (isOk ? passLight : failLight) : accentLight,
+                  color: isDone ? (isOk ? passLight : failLight) : infoLight,
                   borderRadius: BorderRadius.circular(AppRadius.lg),
                 ),
                 child: isDone
@@ -197,24 +197,24 @@ class _State extends State<UploadProgressDialog> {
                       vertical: 7,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0D1117),
+                      color: primaryDark,
                       borderRadius: BorderRadius.circular(AppRadius.md),
                       border: Border.all(
-                        color: Colors.green.withValues(alpha: 0.5),
+                        color: pass.withValues(alpha: 0.5),
                       ),
                     ),
                     child: Row(
                       children: [
                         const Icon(
                           Icons.terminal_rounded,
-                          color: Colors.greenAccent,
+                          color: passOnDark,
                           size: 13,
                         ),
                         const SizedBox(width: 6),
                         Text(
                           'API Log  (${entries.length} entries)',
                           style: const TextStyle(
-                            color: Colors.greenAccent,
+                            color: passOnDark,
                             fontSize: 10,
                             fontFamily: 'monospace',
                           ),
@@ -224,7 +224,7 @@ class _State extends State<UploadProgressDialog> {
                           _showLog
                               ? Icons.expand_less_rounded
                               : Icons.expand_more_rounded,
-                          color: Colors.greenAccent,
+                          color: passOnDark,
                           size: 16,
                         ),
                       ],
@@ -236,13 +236,13 @@ class _State extends State<UploadProgressDialog> {
                   Container(
                     height: 220,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0D1117),
+                      color: primaryDark,
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(AppRadius.md),
                         bottomRight: Radius.circular(AppRadius.md),
                       ),
                       border: Border.all(
-                        color: Colors.green.withValues(alpha: 0.3),
+                        color: pass.withValues(alpha: 0.3),
                       ),
                     ),
                     child: entries.isEmpty
@@ -250,7 +250,7 @@ class _State extends State<UploadProgressDialog> {
                             child: Text(
                               'No log entries yet',
                               style: TextStyle(
-                                color: Colors.white38,
+                                color: textMuted,
                                 fontSize: 10,
                                 fontFamily: 'monospace',
                               ),
@@ -270,7 +270,7 @@ class _State extends State<UploadProgressDialog> {
                                     Text(
                                       e.timeStr,
                                       style: const TextStyle(
-                                        color: Colors.white24,
+                                        color: textMuted,
                                         fontSize: 8,
                                         fontFamily: 'monospace',
                                       ),
@@ -295,7 +295,7 @@ class _State extends State<UploadProgressDialog> {
                                       child: Text(
                                         e.message,
                                         style: const TextStyle(
-                                          color: Color(0xFFCBD5E1),
+                                          color: textWhiteSub,
                                           fontSize: 9,
                                           fontFamily: 'monospace',
                                           height: 1.4,

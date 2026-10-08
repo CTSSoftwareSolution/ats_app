@@ -15,7 +15,10 @@ import '../../widgets/new_app_ui/app_spinner.dart';
 /// [AppSpacing], [AppRadius], colours in color_data.dart).
 ///
 /// Principles (see docs/design_system.md):
-/// * one brand colour ([appColor]); semantic colours only for status
+/// * Deep Indigo palette: primary [appColor] #3F51B5, secondary
+///   [secondaryColor] #5C6BC0, surface [surface2] #E8EAF6, background [bg]
+///   #FAFAFF, accent [accent] #7C4DFF, text [textPrimary] #263238;
+///   semantic colours only for status
 /// * flat surfaces: hairline borders instead of shadows, no gradients
 ///   ([AppShadow.overlay] only for popup menus)
 /// * small radii ([AppRadius]); 48dp minimum touch targets, 52dp primary
@@ -38,13 +41,29 @@ class AppTheme {
           onPrimary: textWhite,
           primaryContainer: accentLight,
           onPrimaryContainer: appColor,
-          secondary: navyAccent,
+          secondary: secondaryColor,
           onSecondary: textWhite,
+          secondaryContainer: secondaryLight,
+          onSecondaryContainer: secondaryDark,
+          tertiary: accent,
+          onTertiary: textWhite,
+          tertiaryContainer: accentContainer,
+          onTertiaryContainer: accent,
           error: fail,
           onError: textWhite,
+          errorContainer: failLight,
+          onErrorContainer: fail,
           surface: surface,
           onSurface: textPrimary,
           onSurfaceVariant: textSecondary,
+          surfaceContainerLowest: surface,
+          surfaceContainerLow: bg,
+          surfaceContainer: bg,
+          surfaceContainerHigh: surface2,
+          surfaceContainerHighest: surface2,
+          inverseSurface: primaryDark,
+          onInverseSurface: textWhite,
+          inversePrimary: accentOnDark,
           outline: borderDark,
           outlineVariant: border,
           scrim: scrim,
@@ -118,8 +137,8 @@ class AppTheme {
           foregroundColor: textWhite,
           elevation: 0,
           minimumSize: buttonMinSize,
-          disabledBackgroundColor: surface2,
-          disabledForegroundColor: textMuted,
+          disabledBackgroundColor: disabledBg,
+          disabledForegroundColor: disabledFg,
           shape: buttonShape,
           textStyle: AppText.button,
         ),
@@ -129,8 +148,8 @@ class AppTheme {
           backgroundColor: appColor,
           foregroundColor: textWhite,
           minimumSize: buttonMinSize,
-          disabledBackgroundColor: surface2,
-          disabledForegroundColor: textMuted,
+          disabledBackgroundColor: disabledBg,
+          disabledForegroundColor: disabledFg,
           shape: buttonShape,
           textStyle: AppText.button,
         ),
@@ -163,6 +182,7 @@ class AppTheme {
         foregroundColor: textWhite,
         elevation: 0,
         highlightElevation: 0,
+        disabledElevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
@@ -212,6 +232,7 @@ class AppTheme {
         modalElevation: 0,
         modalBarrierColor: scrim,
         showDragHandle: false,
+        dragHandleColor: borderDark,
         constraints: BoxConstraints(maxWidth: AppLayout.maxSheetWidth),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -224,7 +245,7 @@ class AppTheme {
         backgroundColor: textPrimary,
         elevation: 0,
         contentTextStyle: AppText.body.copyWith(color: textWhite),
-        actionTextColor: textWhiteSub,
+        actionTextColor: accentOnDark,
         insetPadding: const EdgeInsets.all(AppSpacing.lg),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
@@ -251,15 +272,15 @@ class AppTheme {
         space: 1,
       ),
       // Tab strips sit in the brand app bar (AppTopBar.bottom), so labels
-      // are white; the selected tab gets a 3dp white underline.
+      // are white; the selected tab gets a 3dp [accentOnDark] underline.
       tabBarTheme: TabBarThemeData(
         dividerColor: Colors.transparent,
         labelColor: textWhite,
         unselectedLabelColor: textWhiteSub,
-        indicatorColor: textWhite,
+        indicatorColor: accentOnDark,
         indicatorSize: TabBarIndicatorSize.tab,
         indicator: const UnderlineTabIndicator(
-          borderSide: BorderSide(color: textWhite, width: 3),
+          borderSide: BorderSide(color: accentOnDark, width: 3),
         ),
         labelStyle: AppText.chip,
         unselectedLabelStyle: AppText.chip.copyWith(fontFamily: "Medium"),
@@ -391,6 +412,50 @@ class AppTheme {
         selectedLabelTextStyle: AppText.navLabel.copyWith(color: textWhite),
         unselectedLabelTextStyle: AppText.navLabel.copyWith(
           color: textWhiteSub,
+        ),
+      ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: surface,
+        elevation: 0,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: appColor,
+        unselectedItemColor: textMuted,
+        selectedLabelStyle: AppText.navLabel,
+        unselectedLabelStyle: AppText.navLabel,
+      ),
+      sliderTheme: SliderThemeData(
+        activeTrackColor: appColor,
+        inactiveTrackColor: surface2,
+        thumbColor: appColor,
+        overlayColor: appColor.withValues(alpha: 0.12),
+      ),
+      datePickerTheme: DatePickerThemeData(
+        backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        headerBackgroundColor: appColor,
+        headerForegroundColor: textWhite,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+        ),
+      ),
+      timePickerTheme: TimePickerThemeData(
+        backgroundColor: surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+        ),
+      ),
+      dropdownMenuTheme: DropdownMenuThemeData(
+        menuStyle: MenuStyle(
+          backgroundColor: const WidgetStatePropertyAll(surface),
+          surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.md),
+              side: const BorderSide(color: border),
+            ),
+          ),
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(

@@ -185,7 +185,7 @@
 //         border: Border.all(color: borderColor ?? border),
 //         boxShadow: [
 //           BoxShadow(
-//             color: navy.withValues(alpha: 0.04),
+//             color: primaryDark.withValues(alpha: 0.04),
 //             blurRadius: 10,
 //             offset: const Offset(0, 2),
 //           ),
@@ -263,12 +263,12 @@
 //         //   border: Border.all(color: border.withValues(alpha: 0.6)),
 //         // boxShadow: [
 //         //   BoxShadow(
-//         //     color: navy.withValues(alpha: 0.10),
+//         //     color: primaryDark.withValues(alpha: 0.10),
 //         //     blurRadius: 24,
 //         //     offset: const Offset(0, 8),
 //         //   ),
 //         //   BoxShadow(
-//         //     color: navy.withValues(alpha: 0.04),
+//         //     color: primaryDark.withValues(alpha: 0.04),
 //         //     blurRadius: 4,
 //         //     offset: const Offset(0, 1),
 //         //   ),

@@ -209,17 +209,17 @@ class _VerificationResult extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isApproved
-            ? Colors.green.shade50
+            ? passLight
             : isRejected
-            ? Colors.red.shade50
-            : Colors.yellow.shade50,
+            ? failLight
+            : warnLight,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isApproved
-              ? Colors.green.shade300
+              ? passBorder
               : isRejected
-              ? Colors.red.shade300
-              : Colors.yellow.shade300,
+              ? failBorder
+              : warnBorder,
         ),
       ),
       child: Column(
@@ -234,10 +234,10 @@ class _VerificationResult extends StatelessWidget {
                     ? Icons.cancel
                     : Icons.info,
                 color: isApproved
-                    ? Colors.green
+                    ? pass
                     : isRejected
-                    ? Colors.red
-                    : Colors.orange,
+                    ? fail
+                    : warn,
               ),
               8.width,
               const CustomText(

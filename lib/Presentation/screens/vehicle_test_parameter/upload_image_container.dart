@@ -260,7 +260,7 @@ class _CapturedSlot extends StatelessWidget {
               child: LinearProgressIndicator(
                 minHeight: 3,
                 backgroundColor: Colors.transparent,
-                color: accent,
+                color: infoColor,
               ),
             ),
         ],

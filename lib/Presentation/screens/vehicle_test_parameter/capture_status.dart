@@ -71,7 +71,7 @@ enum CaptureStatus {
   Color get color => switch (this) {
     CaptureStatus.notCaptured => warn,
     CaptureStatus.captured => appColor,
-    CaptureStatus.uploading => accent,
+    CaptureStatus.uploading => infoColor,
     CaptureStatus.uploaded => pass,
     CaptureStatus.failed => fail,
   };

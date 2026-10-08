@@ -47,8 +47,8 @@ class StatusBadge extends StatelessWidget {
     super.key,
     this.label = 'In progress',
     this.dense = false,
-  }) : color = accent,
-       background = accentLight,
+  }) : color = infoColor,
+       background = infoLight,
        icon = Icons.timelapse_rounded;
 
   /// Every step is finished and nothing failed.
@@ -81,8 +81,8 @@ class StatusBadge extends StatelessWidget {
     super.key,
     this.label = 'Uploading',
     this.dense = false,
-  }) : color = accent,
-       background = accentLight,
+  }) : color = infoColor,
+       background = infoLight,
        icon = Icons.cloud_upload_rounded;
 
   const StatusBadge.uploaded({
@@ -97,8 +97,8 @@ class StatusBadge extends StatelessWidget {
     super.key,
     this.label = 'Processing',
     this.dense = false,
-  }) : color = accent,
-       background = accentLight,
+  }) : color = infoColor,
+       background = infoLight,
        icon = Icons.hourglass_top_rounded;
 
   const StatusBadge.error({super.key, this.label = 'Error', this.dense = false})

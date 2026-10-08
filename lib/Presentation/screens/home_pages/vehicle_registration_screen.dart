@@ -28,16 +28,16 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5.0),
-              color: Colors.white,
+              color: surface,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFC5CAD8).withValues(alpha:0.35),
+                  color: borderDark.withValues(alpha:0.35),
                   blurRadius: 20,
                   spreadRadius: 0,
                   offset: const Offset(0, 6),
                 ),
                 BoxShadow(
-                  color: Colors.white.withValues(alpha:0.9),
+                  color: surface.withValues(alpha:0.9),
                   blurRadius: 6,
                   spreadRadius: 0,
                   offset: const Offset(0, -2),
@@ -54,7 +54,7 @@ class _VehicleRegistrationScreenState extends State<VehicleRegistrationScreen> {
                     height:  60,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
-                      color: const Color(0xFFF0F4FB),
+                      color: surface2,
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(5.0),

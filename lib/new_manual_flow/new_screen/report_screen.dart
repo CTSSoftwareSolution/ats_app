@@ -23,13 +23,13 @@ class ReportScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: bg,
       appBar: AppBar(
-        backgroundColor: navy, elevation: 0,
+        backgroundColor: appColor, elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: Colors.white, size: 18),
+              color: textWhite, size: 18),
           onPressed: () => Navigator.pop(context)),
         title: Text('Inspection Report', style: GoogleFonts.inter(
-            color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700)),
+            color: textWhite, fontSize: 15, fontWeight: FontWeight.w700)),
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -41,17 +41,17 @@ class ReportScreen extends StatelessWidget {
             child: Column(children: [
               Icon(isFit ? Icons.verified_rounded : isPending
                   ? Icons.hourglass_top_rounded : Icons.dangerous_rounded,
-                  color: Colors.white, size: 52),
+                  color: textWhite, size: 52),
               const SizedBox(height: 10),
               Text(v.overallResult, style: GoogleFonts.inter(
-                  color: Colors.white, fontSize: 32,
+                  color: textWhite, fontSize: 32,
                   fontWeight: FontWeight.w800, letterSpacing: 2)),
               const SizedBox(height: 4),
               Text(isFit ? 'All visual checks passed'
                   : isPending ? '${v.pendingCount} items pending'
                   : '${v.failCount} item(s) failed',
                   style: GoogleFonts.inter(
-                      color: Colors.white.withOpacity(0.85), fontSize: 13)),
+                      color: textWhite.withOpacity(0.85), fontSize: 13)),
             ]),
           ),
 
@@ -133,7 +133,7 @@ class _ST extends StatelessWidget {
     decoration: BoxDecoration(color: surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: border),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04),
+        boxShadow: [BoxShadow(color: primaryDark.withOpacity(0.04),
             blurRadius: 6, offset: const Offset(0,2))]),
     child: Column(children: [
       Container(width: 32, height: 32,
@@ -151,12 +151,12 @@ class _ST extends StatelessWidget {
 class _CardSection extends StatelessWidget {
   final String t; final IconData i; final Widget child;
   final Color iconColor;
-  const _CardSection(this.t, this.i, this.child, {this.iconColor = navy});
+  const _CardSection(this.t, this.i, this.child, {this.iconColor = primaryDark});
   @override build(BuildContext ctx) => Container(
     decoration: BoxDecoration(color: surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: border),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04),
+        boxShadow: [BoxShadow(color: primaryDark.withOpacity(0.04),
             blurRadius: 8, offset: const Offset(0,2))]),
     child: Column(children: [
       Padding(padding: const EdgeInsets.fromLTRB(16,14,16,12),

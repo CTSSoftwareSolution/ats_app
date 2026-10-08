@@ -68,7 +68,7 @@
 //       onPrimary: whiteColor,
 //       primaryContainer: accentLight,
 //       onPrimaryContainer: appColor,
-//       secondary: navyAccent,
+//       secondary: secondaryColor,
 //       onSecondary: whiteColor,
 //       error: fail,
 //       onError: whiteColor,
@@ -303,7 +303,7 @@
 //       ..textColor = textPrimary
 //       ..textStyle = const TextStyle(fontFamily: "SemiBold", fontSize: 14, color: textPrimary)
 //       ..maskType = EasyLoadingMaskType.custom
-//       ..maskColor = navy.withValues(alpha: 0.35)
+//       ..maskColor = primaryDark.withValues(alpha: 0.35)
 //       ..boxShadow = const <BoxShadow>[]
 //       ..userInteractions = false
 //       ..dismissOnTap = false;

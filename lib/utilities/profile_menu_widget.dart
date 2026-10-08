@@ -105,19 +105,19 @@ Widget buildProfileView({required String title, required String value}) {
           text: title,
           fontSize: 14.5,
           fontFamily: "Bold",
-          textColor: const Color(0xFF8F9BB8),
+          textColor: textMuted,
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 5.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
-            color: const Color(0xFFF0F4FB),
+            color: surface2,
           ),
           child: CustomText(
             text: value,
             fontSize: 14,
             fontFamily: "Medium",
-            textColor: const Color(0xFF1C2A45),
+            textColor: textPrimary,
           ),
         ),
       ],

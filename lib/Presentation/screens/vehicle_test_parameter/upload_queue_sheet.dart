@@ -417,7 +417,7 @@ class _QueueRow extends StatelessWidget {
                   Align(alignment: Alignment.centerLeft, child: status.badge()),
                   if (status == CaptureStatus.uploading) ...[
                     const SizedBox(height: AppSpacing.xs),
-                    const AppProgressBar(color: accent),
+                    const AppProgressBar(color: infoColor),
                   ],
                 ],
               ),

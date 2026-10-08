@@ -31,7 +31,7 @@ class TabletBottomNavigation extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10)),
           gradient: LinearGradient(
-            colors: [Color(0xff345afa), Color(0xff19162e)],
+            colors: [appColor, appGradientColor],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),

@@ -17,7 +17,7 @@ Widget buildVehicleCard({
           image: AssetImage(imagePath),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
-            Colors.black.withValues(alpha: 0.5),
+            mediaScrim,
             BlendMode.darken,
           ),
         ),

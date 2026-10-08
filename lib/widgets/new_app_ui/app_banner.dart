@@ -69,7 +69,7 @@ class AppBanner extends StatelessWidget {
   }) : tone = AppBannerTone.error;
 
   (Color, Color, IconData) get _style => switch (tone) {
-    AppBannerTone.info => (accent, accentLight, Icons.info_outline_rounded),
+    AppBannerTone.info => (infoColor, infoLight, Icons.info_outline_rounded),
     AppBannerTone.success => (
       pass,
       passLight,
