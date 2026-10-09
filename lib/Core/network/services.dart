@@ -54,6 +54,7 @@ String get createQueueUrl           => "${newBaseUrl}queue/create";
 //String get aiResultUrl           => "${newBaseUrl}generate-ai-response/getAiResult";
 String get aiResultUrl           => "${newBaseUrl}generate-ai-response/GetResultDetails";
 String get saveAllResultUrl           => "${newBaseUrl}generate-ai-response/saveResultDetails";
+String get aiInspectionAppListUrl           => "${newBaseUrl}Appointment/ai-inspection-appointment-list";
 
 
 

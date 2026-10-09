@@ -10,6 +10,7 @@ import '../../../utilities/color_data.dart';
 import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../widgets/custom_search_bar.dart';
 import '../../../widgets/new_app_ui/pull_to_refresh_fill.dart';
+import '../ai_inspection_list/ai_inspection_list_screen.dart';
 import '../pre_inspection_form/inspection_page/inspection_page.dart';
 
 class ResultScreen extends StatefulWidget {
@@ -68,6 +69,13 @@ class _ResultScreenState extends State<ResultScreen> {
         automaticallyImplyLeading: false,
         backgroundColor: appColor,
         title: const Text("Result"),
+        actions: [
+          IconButton(
+            tooltip: "AI Inspections",
+            icon: const Icon(Icons.auto_awesome_outlined),
+            onPressed: () => context.push(const AiInspectionListScreen()),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
