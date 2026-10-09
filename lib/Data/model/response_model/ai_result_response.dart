@@ -101,8 +101,9 @@ class ResultData {
     _documentId = json['document_id'];
     _questionText = json['question_text'];
     _inspectionResult = json['inspection_result'];
-    _aiResult = json['ai_result'];
-    _aiResponse = json['ai_response'] != null ? AiResponse.fromJson(json['ai_response']) : null;
+    _aiResult = json['ai_result']?.toString();
+    // Only an object can be parsed; null, "" or any other shape means no AI response.
+    _aiResponse = json['ai_response'] is Map ? AiResponse.fromJson(json['ai_response']) : null;
     _aiRemark = json['ai_remark']?.toString();
   }
   num? _id;

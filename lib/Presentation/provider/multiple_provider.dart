@@ -5,6 +5,9 @@ import 'package:ats_app/Data/repositories_impl/ai_update_result_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/ai_result_repo_impl.dart';
 import 'package:ats_app/Domain/usecases/ai_result_usecases.dart';
 import 'package:ats_app/Presentation/provider/ai_result_provider.dart';
+import 'package:ats_app/Data/repositories_impl/save_all_result_repo_impl.dart';
+import 'package:ats_app/Domain/usecases/save_all_result_usecases.dart';
+import 'package:ats_app/Presentation/provider/save_all_result_provider.dart';
 import 'package:ats_app/Data/repositories_impl/create_bulk_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/create_queue_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/lane_list_impl.dart';
@@ -97,6 +100,7 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CreateQueueProvider(repository: CreateQueueRepositoryImpl(remoteDataSource: CreateQueueRemoteDataSourceImpl(apiService: ApiService())))),
         ChangeNotifierProvider(create: (_) => AiResultProvider(aiResultUseCases: AiResultUseCases(resultRepository: AiResultRepoImpl()))),
+        ChangeNotifierProvider(create: (_) => SaveAllResultProvider(saveAllResultUseCases: SaveAllResultUseCases(saveAllResultRepository: SaveAllResultRepoImpl()))),
 
       ],
       child: const MyApp(),

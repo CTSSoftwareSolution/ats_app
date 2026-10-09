@@ -2,6 +2,7 @@ import 'package:ats_app/Data/model/response_model/ai_result_response.dart';
 import 'package:ats_app/Presentation/provider/ai_result_provider.dart';
 import 'package:ats_app/Presentation/provider/ai_update_result_provider.dart';
 import 'package:ats_app/Presentation/provider/bottom_navigation_provider.dart';
+import 'package:ats_app/Presentation/provider/save_all_result_provider.dart';
 import 'package:ats_app/Presentation/screens/bottom_navigation/bottom_navigation_bar.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +56,34 @@ class _AiResultScreenState extends State<AiResultScreen> {
   }
 
   bool _isNavigating = false;
+
+  /// True from the Done tap until the save-all request finishes, so the
+  /// API is called once per submission.
+  bool _isSubmitting = false;
+
+  /// Saves all results, then returns to the dashboard on success. On failure
+  /// the user stays here and can tap Done again.
+  Future<void> _onDone() async {
+    if (_isSubmitting || _isNavigating) return;
+    setState(() => _isSubmitting = true);
+    CustomLoader.showLoader("Saving result...");
+
+    final response = await context.read<SaveAllResultProvider>().saveAllAiResult(context);
+    if (!mounted) return;
+
+    if (response?.success == true) {
+      CustomLoader.message(
+        _hasText(response!.message) ? response.message!.trim() : "Result saved successfully",
+      );
+      _goToDashboard();
+      return;
+    }
+
+    CustomLoader.errorMessage(
+      _hasText(response?.message) ? response!.message!.trim() : "Unable to save result",
+    );
+    setState(() => _isSubmitting = false);
+  }
 
   /// Clears the inspection flow and returns to the dashboard tab.
   void _goToDashboard() {
@@ -112,7 +141,7 @@ class _AiResultScreenState extends State<AiResultScreen> {
       bottomNavigationBar: BottomActionBar(
         child: PrimaryButton(
           label: "Done",
-          onPressed: _isNavigating ? null : _goToDashboard,
+          onPressed: _isSubmitting || _isNavigating ? null : _onDone,
         ),
       ),
     );
@@ -166,19 +195,22 @@ class _AiResultScreenState extends State<AiResultScreen> {
             label: records.length > 1
                 ? "Inspection Question ${index + 1} of ${records.length}"
                 : "Inspection Question",
-            result: _availableResult(records[index]),
+            result: records[index].aiResult,
             // Not while refreshing: the record is about to be replaced.
             onTap: _isRefreshing
                 ? null
                 : () => _showChangeResultSheet(provider, records[index]),
           ),
-          const SizedBox(height: 16),
-          const Text(
-            "Result Details",
-            style: TextStyle(fontFamily: "Bold", fontSize: 16, color: textPrimary),
-          ),
-          const SizedBox(height: 12),
-          _ResultDetails(item: records[index]),
+          // Result Details only when the API returned usable AI response data.
+          if (_hasAiResponse(records[index])) ...[
+            const SizedBox(height: 16),
+            const Text(
+              "Result Details",
+              style: TextStyle(fontFamily: "Bold", fontSize: 16, color: textPrimary),
+            ),
+            const SizedBox(height: 12),
+            _ResultDetails(response: records[index].aiResponse!),
+          ],
         ],
       ),
     );
@@ -205,6 +237,8 @@ class _AiResultScreenState extends State<AiResultScreen> {
 class _QuestionCard extends StatelessWidget {
   final String? text;
   final String label;
+
+  /// Raw `ai_result` from the API (Pass, Fail, Pending, ...).
   final String? result;
   final VoidCallback? onTap;
 
@@ -221,7 +255,7 @@ class _QuestionCard extends StatelessWidget {
             children: [
               Expanded(child: _SectionLabel(label)),
               const SizedBox(width: 8),
-              _resultBadge(result),
+              _resultBadge(_hasText(result) ? result!.trim() : null),
               const SizedBox(width: 4),
               const Icon(Icons.chevron_right_rounded, size: 20, color: textMuted),
             ],
@@ -243,35 +277,28 @@ class _QuestionCard extends StatelessWidget {
 }
 
 class _ResultDetails extends StatelessWidget {
-  final ResultData item;
+  final AiResponse response;
 
-  const _ResultDetails({required this.item});
+  const _ResultDetails({required this.response});
 
   @override
   Widget build(BuildContext context) {
-    final response = item.aiResponse;
-    final overall = _availableResult(item);
-
-    // No overall result yet (missing or pending): show only the notice.
-    if (response == null || overall == null) {
-      return const _InlineNotice(
-        icon: Icons.info_outline_rounded,
-        text: "AI Result Not Available",
-      );
-    }
+    final overall = response.overallResult;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _KeyValueCard(
-          rows: [
-            _DetailRow(
-              label: "Overall Result",
-              child: StatusBadge.fromResult(overall, dense: true),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
+        if (_hasText(overall)) ...[
+          _KeyValueCard(
+            rows: [
+              _DetailRow(
+                label: "Overall Result",
+                child: StatusBadge.fromResult(overall!.trim(), dense: true),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ],
         _AnalysisCard(analysis: response.analysis, message: response.message),
       ],
     );
@@ -708,9 +735,18 @@ bool _hasText(String? value) => value != null && value.trim().isNotEmpty;
 
 /// The question's overall result, or null when it is missing or still pending.
 String? _availableResult(ResultData item) {
-  final overall = item.aiResponse?.overallResult;
+  final overall = item.aiResult;
   if (!_hasText(overall) || overall!.trim().toLowerCase() == 'pending') return null;
   return overall;
+}
+
+/// True when the record carries an `ai_response` with something to show.
+bool _hasAiResponse(ResultData item) {
+  final response = item.aiResponse;
+  if (response == null) return false;
+  return _hasText(response.overallResult) ||
+      _hasText(response.message) ||
+      !_isEmptyValue(response.analysis);
 }
 
 Widget _resultBadge(String? result) => result == null

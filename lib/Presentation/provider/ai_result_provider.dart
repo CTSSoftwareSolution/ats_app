@@ -36,8 +36,8 @@ class AiResultProvider extends ChangeNotifier{
 
       AiResultReqModel aiResultReqModel = AiResultReqModel(
           vehicleId: classProvider.selectedClass?.registrationNo,
-          appointmentId:  "",
-          documentId: null
+          appointmentId: classProvider.selectedClass?.appointmentId.toString()
+
       );
       aiResultEntity = await aiResultUseCases.execute(aiResultReqModel);
       if (aiResultEntity?.data != null) {
@@ -66,7 +66,8 @@ class AiResultProvider extends ChangeNotifier{
     data[index] = item.copyWith(
       aiResult: result,
       aiRemark: remark,
-      aiResponse: (item.aiResponse ?? AiResponse()).copyWith(overallResult: result),
+      // Keep a missing ai_response missing so Result Details stays hidden.
+      aiResponse: item.aiResponse?.copyWith(overallResult: result),
     );
     notifyListeners();
   }

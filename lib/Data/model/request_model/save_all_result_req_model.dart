@@ -1,20 +1,20 @@
-class AiResultReqModel {
-  AiResultReqModel({
+class SaveAllResultReqModel {
+  SaveAllResultReqModel({
       String? vehicleId, 
       String? appointmentId,}){
     _vehicleId = vehicleId;
     _appointmentId = appointmentId;
 }
 
-  AiResultReqModel.fromJson(dynamic json) {
+  SaveAllResultReqModel.fromJson(dynamic json) {
     _vehicleId = json['vehicle_id'];
     _appointmentId = json['appointment_id'];
   }
   String? _vehicleId;
   String? _appointmentId;
-AiResultReqModel copyWith({  String? vehicleId,
+SaveAllResultReqModel copyWith({  String? vehicleId,
   String? appointmentId,
-}) => AiResultReqModel(  vehicleId: vehicleId ?? _vehicleId,
+}) => SaveAllResultReqModel(  vehicleId: vehicleId ?? _vehicleId,
   appointmentId: appointmentId ?? _appointmentId,
 );
   String? get vehicleId => _vehicleId;
