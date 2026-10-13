@@ -1,5 +1,6 @@
 import 'package:ats_app/Responsive/responsive_ext.dart';
 import 'package:ats_app/utilities/color_data.dart';
+import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../utilities/logo_screen_item.dart';
@@ -8,6 +9,7 @@ import '../../../utilities/new_app_theme/app_spacing.dart';
 import '../../../utilities/new_app_theme/app_text.dart';
 import '../../../widgets/new_app_ui/primary_button.dart';
 import '../../provider/login_provider.dart';
+import '../forgot_password/forgot_password_screen.dart';
 import 'login_screen_item.dart';
 
 class LoginResponsiveLayout extends StatefulWidget {
@@ -68,7 +70,22 @@ class _LoginResponsiveLayoutState extends State<LoginResponsiveLayout> {
                             ),
                             const SizedBox(height: AppSpacing.xl),
                             const LoginScreenItem(),
-                            const SizedBox(height: AppSpacing.xl),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () => context.push(const ForgotPasswordScreen()),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: appColor,
+                                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                                  minimumSize: const Size(0, 36),
+                                ),
+                                child: const Text(
+                                  "Forgot password?",
+                                  style: TextStyle(fontFamily: "SemiBold", fontSize: 13),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.md),
                             PrimaryButton(
                               label: "Login",
                               onPressed: _submit,

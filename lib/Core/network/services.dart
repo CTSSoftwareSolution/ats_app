@@ -56,6 +56,12 @@ String get aiResultUrl           => "${newBaseUrl}generate-ai-response/GetResult
 String get saveAllResultUrl           => "${newBaseUrl}generate-ai-response/saveResultDetails";
 String get aiInspectionAppListUrl           => "${newBaseUrl}Appointment/ai-inspection-appointment-list";
 
+// forgot password
+String get forgotPasswordSendOtpUrl           => "${newBaseUrl}login/forgot-password/send-otp";
+String get forgotPasswordVerifyOtpUrl           => "${newBaseUrl}login/forgot-password/verify-otp-reset";
+String get forgotPasswordResetUrl           => "${newBaseUrl}login/forgot-password/reset";
+String get changePasswordUrl           => "${newBaseUrl}login/change-password";
+
 
 
 

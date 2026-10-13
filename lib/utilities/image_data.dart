@@ -104,19 +104,26 @@ List<ProfileModel> profileGridValues = [
   ),
   const ProfileModel(
     4,
+    'Change Password',
+    'Update your account password',
+    editIcon,
+    ProfileTrailingType.arrow,
+  ),
+  const ProfileModel(
+    5,
     'Ip Config',
     'Change Ip Address to access',
     logoutIcon,
     ProfileTrailingType.none,
   ),
   const ProfileModel(
-    5,
+    6,
     'Logout',
     'Sign out safely and easily',
     logoutIcon,
     ProfileTrailingType.none,
   ),
-  const ProfileModel(6, 'Version', 'Check your version', versionControlIcon, ProfileTrailingType.none),
+  const ProfileModel(7, 'Version', 'Check your version', versionControlIcon, ProfileTrailingType.none),
 ];
 
 List<BottomNavModel> bottomNavValue = [

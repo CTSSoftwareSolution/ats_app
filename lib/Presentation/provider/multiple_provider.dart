@@ -15,6 +15,18 @@ import 'package:ats_app/Data/repositories_impl/create_bulk_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/create_queue_repo_impl.dart';
 import 'package:ats_app/Data/repositories_impl/lane_list_impl.dart';
 import 'package:ats_app/Data/repositories_impl/login_repo_impl.dart';
+import 'package:ats_app/Data/repositories_impl/reset_password_repo_impl.dart';
+import 'package:ats_app/Data/repositories_impl/send_otp_repo_impl.dart';
+import 'package:ats_app/Data/repositories_impl/verify_otp_repo_impl.dart';
+import 'package:ats_app/Domain/usecases/reset_password_usecases.dart';
+import 'package:ats_app/Domain/usecases/send_otp_usecases.dart';
+import 'package:ats_app/Domain/usecases/verify_otp_usecases.dart';
+import 'package:ats_app/Presentation/provider/reset_password_provider.dart';
+import 'package:ats_app/Presentation/provider/send_otp_provider.dart';
+import 'package:ats_app/Presentation/provider/verify_otp_provider.dart';
+import 'package:ats_app/Data/repositories_impl/change_password_repo_impl.dart';
+import 'package:ats_app/Domain/usecases/change_password_usecases.dart';
+import 'package:ats_app/Presentation/provider/change_password_provider.dart';
 import 'package:ats_app/Data/repositories_impl/manual_inspection_list_impl.dart';
 import 'package:ats_app/Data/repositories_impl/pre_save_inspection_impl.dart';
 import 'package:ats_app/Data/repositories_impl/vehicle_class_repo_impl.dart';
@@ -105,6 +117,10 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AiResultProvider(aiResultUseCases: AiResultUseCases(resultRepository: AiResultRepoImpl()))),
         ChangeNotifierProvider(create: (_) => SaveAllResultProvider(saveAllResultUseCases: SaveAllResultUseCases(saveAllResultRepository: SaveAllResultRepoImpl()))),
         ChangeNotifierProvider(create: (_) => AiInspectionListProvider(aiInspectionListUseCases: AiInspectionListUseCases(aiInspectionListRepository: AiInspectionListRepoImpl()))),
+        ChangeNotifierProvider(create: (_) => SendOtpProvider(sendOtpUseCases: SendOtpUseCases(sendOtpRepository: SendOtpRepoImpl()))),
+        ChangeNotifierProvider(create: (_) => VerifyOtpProvider(verifyOtpUseCases: VerifyOtpUseCases(verifyOtpRepository: VerifyOtpRepoImpl()))),
+        ChangeNotifierProvider(create: (_) => ResetPasswordProvider(resetPasswordUseCases: ResetPasswordUseCases(resetPasswordRepository: ResetPasswordRepoImpl()))),
+        ChangeNotifierProvider(create: (_) => ChangePasswordProvider(changePasswordUseCases: ChangePasswordUseCases(changePasswordRepository: ChangePasswordRepoImpl()))),
 
       ],
       child: const MyApp(),

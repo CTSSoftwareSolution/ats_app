@@ -16,6 +16,7 @@ import '../../provider/create_queue_provider.dart';
 import '../../provider/login_provider.dart';
 
 import '../login_page/login_screen.dart';
+import 'change_password_screen.dart';
 
 
 class ProfileScreen extends StatefulWidget {
@@ -28,10 +29,13 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   /// Index of the "Logout" entry in [profileGridValues] (see [click]).
-  static const int _logoutIndex = 5;
+  static const int _logoutIndex = 6;
+
+  /// Index of the "Change Password" entry in [profileGridValues] (see [click]).
+  static const int _changePasswordIndex = 4;
 
   /// Index of the "Ip Config" entry in [profileGridValues] (see [click]).
-  static const int _ipConfigIndex = 4;
+  static const int _ipConfigIndex = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +67,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 final item = profileGridValues[index];
                 return _ProfileMenuTile(
                   image: item.image,
-                  icon: index == _ipConfigIndex ? Icons.settings_ethernet_rounded : null,
+                  icon: index == _ipConfigIndex
+                      ? Icons.settings_ethernet_rounded
+                      : index == _changePasswordIndex
+                          ? Icons.lock_reset_rounded
+                          : null,
                   title: item.title,
                   subtitle: item.subtitle,
                   destructive: index == _logoutIndex,
@@ -91,10 +99,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 3:
 
         break;
-      case 4:
+      case _changePasswordIndex:
+        context.push(const ChangePasswordScreen());
+        break;
+      case _ipConfigIndex:
         showIpAddressBottomSheet(context);
         break;
-      case 5:
+      case _logoutIndex:
         customShowDialog(
           context: context,
           title: "Log out",
@@ -110,8 +121,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             context.push(LoginScreen());
           },
         );
-        break;
-      case 6:
         break;
       default:
         break;

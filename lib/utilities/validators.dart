@@ -102,6 +102,34 @@ class Validators {
     return null;
   }
 
+  static String? currentPasswordValidation(String value) {
+    if (value.isEmpty) {
+      return "Please Enter Current Password";
+    }
+    return null;
+  }
+
+  /// New password rules plus "must differ from the current password".
+  static String? changedPasswordValidation(String value, BuildContext context, String currentPassword) {
+    final error = newPasswordValidation(value, context);
+    if (error != null) return error;
+    if (value == currentPassword) {
+      return "New password must be different from current password";
+    }
+    return null;
+  }
+
+  static String? sixDigitOtpValidation(String value) {
+    String trimmedValue = value.trim();
+    if (trimmedValue.isEmpty) {
+      return "Please enter OTP";
+    }
+    if (!RegExp(r'^[0-9]{6}$').hasMatch(trimmedValue)) {
+      return "OTP must be exactly 6 digits";
+    }
+    return null;
+  }
+
 
   static String? userNameEmailValidation(String value) {
     if (value.isEmpty) {
