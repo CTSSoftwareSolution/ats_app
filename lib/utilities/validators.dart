@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Validators {
 
-  static String? emailValidation(String value, BuildContext context) {
+  static String? emailValidation(String value, [BuildContext? context]) {
     if (value.isEmpty) {
       return "This field is required !";
     }
@@ -39,7 +39,7 @@ class Validators {
     }
     return null;
   }
-  static String? newPasswordValidation(String value, BuildContext context)
+  static String? newPasswordValidation(String value, [BuildContext? context])
   {
     if (value.isEmpty) {
       return "Please Enter New Password";
@@ -52,7 +52,7 @@ class Validators {
     return null;
   }
 
-  static String? confirmPasswordValidation(String value, BuildContext context , String newPasswordController)
+  static String? confirmPasswordValidation(String value, BuildContext? context , String newPasswordController)
   {
     if (value.isEmpty)
     {
@@ -110,8 +110,8 @@ class Validators {
   }
 
   /// New password rules plus "must differ from the current password".
-  static String? changedPasswordValidation(String value, BuildContext context, String currentPassword) {
-    final error = newPasswordValidation(value, context);
+  static String? changedPasswordValidation(String value, String currentPassword) {
+    final error = newPasswordValidation(value);
     if (error != null) return error;
     if (value == currentPassword) {
       return "New password must be different from current password";

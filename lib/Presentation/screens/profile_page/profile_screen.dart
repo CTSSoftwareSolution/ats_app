@@ -1,5 +1,7 @@
 
 import 'package:ats_app/Presentation/screens/profile_page/profile_details_container.dart';
+import 'package:ats_app/Presentation/screens/profile_page/profile_menu_section.dart';
+import 'package:ats_app/Presentation/screens/profile_page/profile_menu_tile.dart';
 import 'package:extensions_pro/extensions_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -62,10 +64,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: EdgeInsets.only(left: AppSpacing.xs, bottom: AppSpacing.sm),
               child: Text("SETTINGS", style: AppText.overline),
             ),
-            _ProfileMenuSection(
+            ProfileMenuSection(
               children: List.generate(profileGridValues.length, (index) {
                 final item = profileGridValues[index];
-                return _ProfileMenuTile(
+                return ProfileMenuTile(
                   image: item.image,
                   icon: index == _ipConfigIndex
                       ? Icons.settings_ethernet_rounded
@@ -128,111 +130,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-/// Flat white group with hairline dividers between its tiles.
-class _ProfileMenuSection extends StatelessWidget {
-  final List<Widget> children;
 
-  const _ProfileMenuSection({required this.children});
 
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(AppRadius.lg);
-    return Container(
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: radius,
-        border: Border.all(color: border),
-      ),
-      child: ClipRRect(
-        borderRadius: radius,
-        child: Material(
-          color: Colors.transparent,
-          child: Column(
-            children: [
-              for (int i = 0; i < children.length; i++) ...[
-                children[i],
-                if (i < children.length - 1)
-                  const Divider(indent: 68, height: 1),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ProfileMenuTile extends StatelessWidget {
-  final String image;
-  final IconData? icon;
-  final String title;
-  final String subtitle;
-  final bool destructive;
-  final VoidCallback onTap;
-
-  const _ProfileMenuTile({
-    required this.image,
-    this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.destructive,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final Color tint = destructive ? fail : appColor;
-    return InkWell(
-      onTap: onTap,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 64),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: destructive ? failLight : accentLight,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-                alignment: Alignment.center,
-                child: icon != null
-                    ? Icon(icon, size: 20, color: tint)
-                    : Image(
-                        image: AssetImage(image),
-                        width: 20,
-                        height: 20,
-                        color: tint,
-                      ),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      title,
-                      style: AppText.title.copyWith(
-                        color: destructive ? fail : textPrimary,
-                      ),
-                    ),
-                    if (subtitle.isNotEmpty) ...[
-                      const SizedBox(height: 2),
-                      Text(subtitle, style: AppText.caption.copyWith(color: textSecondary)),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

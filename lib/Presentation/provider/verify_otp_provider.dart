@@ -1,16 +1,23 @@
 import 'package:ats_app/Data/model/request_model/verify_otp_req_model.dart';
 import 'package:ats_app/Domain/entities/verify_otp_entity.dart';
 import 'package:ats_app/Domain/usecases/verify_otp_usecases.dart';
+import 'package:ats_app/utilities/validators.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../widgets/custom_loader.dart';
+import 'send_otp_provider.dart';
 
 /// Step 2 of the forgot password flow. Keeps the verified OTP because the
 /// reset API needs it again.
 class VerifyOtpProvider extends ChangeNotifier {
   VerifyOtpUseCases verifyOtpUseCases;
 
-  VerifyOtpProvider({required this.verifyOtpUseCases});
+  final SendOtpProvider sendOtpProvider;
+
+  VerifyOtpProvider({required this.verifyOtpUseCases, required this.sendOtpProvider}) {
+    // Rebuild the verify screen for resend countdown / resend results too.
+    sendOtpProvider.addListener(notifyListeners);
+  }
 
   static const String _genericError = "Something went wrong. Please try again.";
 
@@ -21,11 +28,32 @@ class VerifyOtpProvider extends ChangeNotifier {
   String? successMessage;
   String? verifiedOtp;
 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final otpController = TextEditingController();
 
   String get otp => otpController.text.trim();
 
-  /// Clears state left over from a previous attempt / OTP.
+  String get email => sendOtpProvider.email;
+
+  /// True while verifying or (re)sending an OTP.
+  bool get isBusy => isLoading || sendOtpProvider.isLoading;
+
+  bool get canResendOtp => !isLoading && sendOtpProvider.canResendOtp;
+
+  int get resendSecondsLeft => sendOtpProvider.resendSecondsLeft;
+
+  /// Banner text: verify results take precedence over send / resend results.
+  String? get displayErrorMessage => errorMessage ?? sendOtpProvider.errorMessage;
+
+  String? get displaySuccessMessage => successMessage ?? sendOtpProvider.successMessage;
+
+  /// OTP to send with the reset password request.
+  String get otpForReset => verifiedOtp ?? otp;
+
+  String? validateOtp(String? value) => Validators.sixDigitOtpValidation(value ?? "");
+
+  /// Clears state left over from a previous attempt / OTP. Does not notify so
+  /// it can be called from initState.
   void reset() {
     isLoading = false;
     errorMessage = null;
@@ -33,7 +61,21 @@ class VerifyOtpProvider extends ChangeNotifier {
     verifiedOtp = null;
     verifyOtpEntity = null;
     otpController.clear();
+  }
+
+  /// Drops the entered OTP and requests a new one. Returns true when the new
+  /// OTP was sent.
+  Future<bool> resend() async {
+    if (!canResendOtp) return false;
+    reset();
     notifyListeners();
+    return sendOtpProvider.resendOtp();
+  }
+
+  /// Clears verify and send / resend messages (e.g. while the user types).
+  void clearAllMessages() {
+    sendOtpProvider.clearMessages();
+    clearMessages();
   }
 
   void clearMessages() {
@@ -63,9 +105,12 @@ class VerifyOtpProvider extends ChangeNotifier {
     return null;
   }
 
-  /// Returns true when the OTP is valid for [email].
-  Future<bool> verifyOtp(String email) async {
-    if (isLoading) return false;
+  /// Validates the OTP form and verifies it for the email from step 1.
+  /// Returns true on success so the screen can move to the set password step.
+  Future<bool> submit() async {
+    if (isBusy) return false;
+    if (!(formKey.currentState?.validate() ?? false)) return false;
+    sendOtpProvider.clearMessages();
     final enteredOtp = otp;
     final value = await fetchVerifyOtp(email);
     if (value?.success == true) {
@@ -84,6 +129,7 @@ class VerifyOtpProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    sendOtpProvider.removeListener(notifyListeners);
     otpController.dispose();
     super.dispose();
   }

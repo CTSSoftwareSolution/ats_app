@@ -118,8 +118,8 @@ class MultipleProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SaveAllResultProvider(saveAllResultUseCases: SaveAllResultUseCases(saveAllResultRepository: SaveAllResultRepoImpl()))),
         ChangeNotifierProvider(create: (_) => AiInspectionListProvider(aiInspectionListUseCases: AiInspectionListUseCases(aiInspectionListRepository: AiInspectionListRepoImpl()))),
         ChangeNotifierProvider(create: (_) => SendOtpProvider(sendOtpUseCases: SendOtpUseCases(sendOtpRepository: SendOtpRepoImpl()))),
-        ChangeNotifierProvider(create: (_) => VerifyOtpProvider(verifyOtpUseCases: VerifyOtpUseCases(verifyOtpRepository: VerifyOtpRepoImpl()))),
-        ChangeNotifierProvider(create: (_) => ResetPasswordProvider(resetPasswordUseCases: ResetPasswordUseCases(resetPasswordRepository: ResetPasswordRepoImpl()))),
+        ChangeNotifierProvider(create: (context) => VerifyOtpProvider(verifyOtpUseCases: VerifyOtpUseCases(verifyOtpRepository: VerifyOtpRepoImpl()), sendOtpProvider: context.read<SendOtpProvider>())),
+        ChangeNotifierProvider(create: (context) => ResetPasswordProvider(resetPasswordUseCases: ResetPasswordUseCases(resetPasswordRepository: ResetPasswordRepoImpl()), sendOtpProvider: context.read<SendOtpProvider>(), verifyOtpProvider: context.read<VerifyOtpProvider>())),
         ChangeNotifierProvider(create: (_) => ChangePasswordProvider(changePasswordUseCases: ChangePasswordUseCases(changePasswordRepository: ChangePasswordRepoImpl()))),
 
       ],

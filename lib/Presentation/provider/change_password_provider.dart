@@ -2,6 +2,7 @@ import 'package:ats_app/Data/model/request_model/change_password_req_model.dart'
 import 'package:ats_app/Domain/entities/change_password_entity.dart';
 import 'package:ats_app/Domain/usecases/change_password_usecases.dart';
 import 'package:ats_app/utilities/preferences.dart';
+import 'package:ats_app/utilities/validators.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../widgets/custom_loader.dart';
@@ -24,9 +25,18 @@ class ChangePasswordProvider extends ChangeNotifier {
   bool newPasswordObscured = true;
   bool confirmPasswordObscured = true;
 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final currentPasswordController = TextEditingController();
   final newPasswordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
+  String? validateCurrentPassword(String? value) => Validators.currentPasswordValidation(value ?? "");
+
+  String? validateNewPassword(String? value) =>
+      Validators.changedPasswordValidation(value ?? "", currentPasswordController.text);
+
+  String? validateConfirmPassword(String? value) =>
+      Validators.confirmPasswordValidation(value ?? "", null, newPasswordController.text);
 
   /// Clears state left over from a previous visit. Does not notify so it can
   /// be called from initState.
@@ -90,12 +100,15 @@ class ChangePasswordProvider extends ChangeNotifier {
     return null;
   }
 
-  /// Returns true when the password was changed.
-  Future<bool> changePassword() async {
+  /// Validates the form and changes the password. Returns true on success so
+  /// the screen can go back to Profile.
+  Future<bool> submit() async {
     if (isLoading) return false;
+    if (!(formKey.currentState?.validate() ?? false)) return false;
     final value = await fetchChangePassword();
     if (value?.success == true) {
-      successMessage = _nonEmpty(value?.message) ?? "Password changed successfully.";
+      CustomLoader.message(_nonEmpty(value?.message) ?? "Password changed successfully.");
+      reset();
       notifyListeners();
       return true;
     }

@@ -94,8 +94,8 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginProvider(loginUseCases: LoginUseCases(loginRepository: LoginRepoImpl()))),
         ChangeNotifierProvider.value(value: sendOtpProvider),
-        ChangeNotifierProvider(create: (_) => VerifyOtpProvider(verifyOtpUseCases: VerifyOtpUseCases(verifyOtpRepository: verifyRepo))),
-        ChangeNotifierProvider(create: (_) => ResetPasswordProvider(resetPasswordUseCases: ResetPasswordUseCases(resetPasswordRepository: resetRepo))),
+        ChangeNotifierProvider(create: (context) => VerifyOtpProvider(verifyOtpUseCases: VerifyOtpUseCases(verifyOtpRepository: verifyRepo), sendOtpProvider: context.read<SendOtpProvider>())),
+        ChangeNotifierProvider(create: (context) => ResetPasswordProvider(resetPasswordUseCases: ResetPasswordUseCases(resetPasswordRepository: resetRepo), sendOtpProvider: context.read<SendOtpProvider>(), verifyOtpProvider: context.read<VerifyOtpProvider>())),
       ],
       child: MaterialApp(home: home, builder: EasyLoading.init()),
     );

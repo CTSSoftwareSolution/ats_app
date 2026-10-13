@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:ats_app/Data/model/request_model/send_otp_req_model.dart';
 import 'package:ats_app/Domain/entities/send_otp_entity.dart';
 import 'package:ats_app/Domain/usecases/send_otp_usecases.dart';
+import 'package:ats_app/utilities/validators.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../widgets/custom_loader.dart';
@@ -23,6 +24,7 @@ class SendOtpProvider extends ChangeNotifier {
   String? errorMessage;
   String? successMessage;
 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
 
   Timer? _resendTimer;
@@ -32,7 +34,11 @@ class SendOtpProvider extends ChangeNotifier {
 
   bool get canResendOtp => !isLoading && resendSecondsLeft == 0;
 
-  /// Clears state left over from a previous attempt.
+  String? validateEmail(String? value) =>
+      Validators.emailValidation((value ?? "").trim().toLowerCase());
+
+  /// Clears state left over from a previous attempt. Does not notify so it can
+  /// be called from initState.
   void startFlow() {
     _resendTimer?.cancel();
     resendSecondsLeft = 0;
@@ -70,8 +76,21 @@ class SendOtpProvider extends ChangeNotifier {
     return null;
   }
 
-  /// Returns true when the OTP was sent successfully.
-  Future<bool> sendOtp() async {
+  /// Validates the email form and sends the OTP. Returns true on success so
+  /// the screen can move to the verify step.
+  Future<bool> submit() async {
+    if (isLoading) return false;
+    if (!(formKey.currentState?.validate() ?? false)) return false;
+    return _sendOtp();
+  }
+
+  /// Requests a new OTP once the cooldown has passed. Returns true when sent.
+  Future<bool> resendOtp() async {
+    if (!canResendOtp) return false;
+    return _sendOtp();
+  }
+
+  Future<bool> _sendOtp() async {
     if (isLoading) return false;
     final value = await fetchOtp();
     if (value?.success == true) {
@@ -83,11 +102,6 @@ class SendOtpProvider extends ChangeNotifier {
     errorMessage = _nonEmpty(value?.message) ?? _genericError;
     notifyListeners();
     return false;
-  }
-
-  Future<void> resendOtp() async {
-    if (!canResendOtp) return;
-    await sendOtp();
   }
 
   void _startResendTimer() {
